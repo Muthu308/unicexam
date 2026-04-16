@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIC ACADEMY-Student-Summary</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    @media print {
+    /* Hide elements that are not needed for the PDF */
+    button {
+        display: none;
+    }
+
+    /* Adjust table and layout for PDF-friendly format */
+    table {
+        width: 100%;
+        font-size: 12pt;
+    }
+}
+
+.card{
+border-radius:12px;
+}
+
+.card-header{
+font-weight:600;
+}
+
+#responseContent{
+margin-top:20px;
+}
+.card-header{
+font-weight:600;
+}
+
+.table th{
+font-size:14px;
+}
+
+.badge{
+padding:6px 10px;
+}
+</style>
+<body>
+    <div class="container py-3">
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white text-center">
+            <h5 class="mb-0">UNIC ACADEMY - Chennai</h5>
+            <small>Student Responses and Answer Summary</small>
+        </div>
+
+        <div class="card-body">
+
+            <form id="searchForm">
+
+                <div class="row g-2 align-items-end">
+
+                <!-- Exam Module -->
+                <div class="col-md-4">
+                    <label for="examModule" class="form-label"><b>Exam Module</b></label>
+                    <select class="form-control" id="examModule">
+                        <option value="UNIC_TEST_01">TEST-01</option>
+                       <!-- <option value="CBSE-(C10)-2027-BOARD-Prep-TEST-02">TEST-02</option>
+                        <option value="CBSE-(C10)-2027-BOARD-Prep-TEST-03">TEST-03</option>
+                        <option value="CBSE-(C10)-2027-BOARD-Prep-TEST-04">TEST-04</option>-->
+                    </select>
+                </div>
+
+                <!-- Search Type -->
+                <div class="col-md-2">
+                    <label for="searchType" class="form-label"><b>Search By</b></label>
+                    <select class="form-control" id="searchType">
+                        <!--<option value="email">Email</option>-->
+                        <option value="s_id">Student ID</option>
+                    </select>
+                </div>
+
+                <!-- Search Value -->
+                <div class="col-md-4">
+                    <label for="searchValue" class="form-label"><b>Enter Value</b></label>
+                    <input type="text" class="form-control" id="searchValue" placeholder="Email or Student ID">
+                </div>
+
+                <!-- Button -->
+                <div class="col-md-2 d-grid">
+                    <button type="button" class="btn btn-primary" onclick="fetchStudentResponses()">
+                        🔍 Search
+                    </button>
+                </div>
+
+            </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Response -->
+    <div id="responseContent" class="mt-4"></div>
+
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function printToPDF() {
+    window.print();
+}
+
+/*
+  'JEE(C11)PCMT09': {
+    'q1': 'D', 'q2': 'B', 'q3': 'C', 'q4': 'D', 'q5': 'A',
+    'q6': 'D', 'q7': 'C', 'q8': 'D', 'q9': 'D', 'q10': 'C',
+    'q11': 'A', 'q12': 'D', 'q13': 'B', 'q14': 'A', 'q15': 'A',
+    'q16': 'C', 'q17': 'A', 'q18': 'C', 'q19': 'A', 'q20': 'C',
+    'q21': 'C', 'q22': 'B', 'q23': 'C', 'q24': 'B', 'q25': 'B',
+    'q26': 'A', 'q27': 'D', 'q28': 'C', 'q29': 'B', 'q30': 'C',
+    'q31': 'D', 'q32': 'D', 'q33': 'C', 'q34': 'B', 'q35': 'D', 'q36': 'A'
+},
+'JEE(C11)092024MA': {
+    'q1': 'D', 'q2': 'B', 'q3': 'B', 'q4': 'D', 'q5': 'D',
+    'q6': 'D', 'q7': 'B', 'q8': 'C', 'q9': 'B', 'q10': 'C',
+    'q11': 'A', 'q12': 'A', 'q13': 'B', 'q14': 'C', 'q15': 'C',
+    'q16': 'A', 'q17': 'A', 'q18': 'D', 'q19': 'B', 'q20': 'A',
+    'q21': 'D', 'q22': 'A', 'q23': 'D', 'q24': 'D', 'q25': 'C',
+    'q26': 'B', 'q27': 'A', 'q28': 'A', 'q29': 'C', 'q30': 'B',
+    'q31': 'D', 'q32': 'D', 'q33': 'C', 'q34': 'D', 'q35': 'D',
+    'q36': 'B'
+},
+'JEE(C11)092024CH': {
+    'q1': 'B', 'q2': 'D', 'q3': 'C', 'q4': 'B', 'q5': 'A',
+    'q6': 'D', 'q7': 'A', 'q8': 'C', 'q9': 'D', 'q10': 'B',
+    'q11': 'B', 'q12': 'A', 'q13': 'C', 'q14': 'A', 'q15': 'D',
+    'q16': 'C', 'q17': 'A', 'q18': 'D', 'q19': 'C', 'q20': 'A',
+    'q21': 'B', 'q22': 'B', 'q23': 'C', 'q24': 'C', 'q25': 'B',
+    'q26': 'E', 'q27': 'D', 'q28': 'B', 'q29': 'B', 'q30': 'A',
+    'q31': 'A', 'q32': 'A', 'q33': 'A', 'q34': 'C', 'q35': 'A',
+    'q36': 'C'
+},
+'JEE(C11)092024PH': {
+    'q1': 'B', 'q2': 'C', 'q3': 'A', 'q4': 'A', 'q5': 'B',
+    'q6': 'B', 'q7': 'A', 'q8': 'C', 'q9': 'D', 'q10': 'B',
+    'q11': 'C', 'q12': 'C', 'q13': 'C', 'q14': 'A', 'q15': 'D',
+    'q16': 'B', 'q17': 'C', 'q18': 'D', 'q19': 'A', 'q20': 'A',
+    'q21': 'B', 'q22': 'A', 'q23': 'A', 'q24': 'D', 'q25': 'B',
+    'q26': 'A', 'q27': 'B', 'q28': 'C', 'q29': 'A', 'q30': 'B',
+    'q31': 'C', 'q32': 'D', 'q33': 'B', 'q34': 'D', 'q35': 'C',
+    'q36': 'D'
+    }
+
+    ,
+            'CBSE-(C10)-2027-BOARD-Prep-TEST-02': {
+                'q1': 'D', 'q2': 'C', 'q3': 25, 'q4': 'C', 'q5': 'C',
+                'q6': 'D'
+            },
+            'CBSE-(C10)-2027-BOARD-Prep-TEST-03': {
+                'q1': 'C', 'q2': 'D', 'q3': 'D', 'q4': 'B', 'q5': "3 OR -2",
+                'q6': "3 OR -2"
+            },
+            'CBSE-(C10)-2027-BOARD-Prep-TEST-04': {
+                'q1': 'B', 'q2': 'D', 'q3': 'D', 'q4': 'A', 'q5': "D",
+                'q6': "B"
+            }
+
+*/
+        // Define answer keys for each module
+        const answerKeys = {
+          'UNIC_TEST_01': {
+                'q1': 'B', 'q2': 'A', 'q3': 'B', 'q4': 'A', 'q5': 'B',
+                'q6': 'A', 'q7': 'B', 'q8': 'B', 'q9': 'B', 'q10': 'B',
+    'q11': 'B', 'q12': 'A', 'q13': 'B', 'q14': 'B', 'q15': 'A'
+            }
+        };
+
+        // Define marking schemes for each module
+        const markingSchemes = {
+            'UNIC_TEST_01': {
+                correct: 1,
+                wrong: -0.33,
+                noAnswer: 0
+            }
+        };
+
+          function isCorrect(userAnswer, correctAnswer) {
+
+            if (!userAnswer || correctAnswer == null) return false;
+
+            if (Array.isArray(correctAnswer)) {
+                correctAnswer = correctAnswer.join(';');
+            }
+
+            userAnswer = String(userAnswer).trim();
+            correctAnswer = String(correctAnswer).trim();
+
+            const lower = correctAnswer.toLowerCase();
+
+            if (lower.includes('to')) {
+                const [min, max] = correctAnswer.split('to').map(x => Number(x.trim()));
+                const userValue = Number(userAnswer);
+                return userValue >= min && userValue <= max;
+            }
+
+            if (correctAnswer.includes('OR')) {
+                const options = correctAnswer.split('OR').map(a => a.trim());
+                return options.includes(userAnswer);
+            }
+
+            if (correctAnswer.includes(';')) {
+                const correct = correctAnswer.split(';').map(a => a.trim()).sort();
+                const user = userAnswer.split(';').map(a => a.trim()).sort();
+                return correct.length === user.length &&
+                    correct.every((v,i)=>v===user[i]);
+            }
+
+            return userAnswer === correctAnswer;
+        }
+
+        async function fetchStudentResponses() {
+            const examModule = document.getElementById('examModule').value;
+            const searchType = document.getElementById('searchType').value;
+            const searchValue = document.getElementById('searchValue').value;
+
+            const query = `
+                query GetUniqdata($searchValue: String!, $examModule: String!) {
+                    uniqdata(where: {${searchType}: {_eq: $searchValue}, exam_module: {_eq: $examModule}} order_by: {timedate: desc}
+                limit: 1) {
+                        email
+                        exam_module
+                        name
+                        s_id
+                        id
+                        correct
+                        marks
+                        responses
+                        timedate
+                    }
+                }
+            `;
+
+            const variables = {
+                searchValue: searchValue,
+                examModule: examModule
+            };
+
+            try {
+                const response = await fetch(process.env.HASURA_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-hasura-admin-secret': process.env.HASURA_SECRET // Replace with your actual Hasura admin secret
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        variables: variables
+                    })
+                });
+                const result = await response.json();
+                console.log(result);
+                displayResponses(result.data.uniqdata, examModule);
+            } catch (error) {
+                console.error('Error fetching responses:', error);
+                document.getElementById('responseContent').innerHTML = '<p class="text-danger">There was an error fetching the responses. Please try again.</p>';
+            }
+        }
+
+        function displayResponses(responses, examModule) {
+            const responseContent = document.getElementById('responseContent');
+            if (responses.length === 0) {
+                responseContent.innerHTML = '<p class="text-warning">No responses found.</p>';
+                return;
+            }
+            
+
+            // Find the latest timestamp response
+            responses.sort((a, b) => new Date(b.timedate) - new Date(a.timedate));
+            const latestResponse = responses[0];
+
+            // Get the correct answer key and marking scheme for the selected exam module
+            const answerKey = answerKeys[examModule];
+            const markingScheme = markingSchemes[examModule];
+
+            let totalQuestions = Object.keys(answerKey).length;
+            let score = 0;
+
+            const responsesObject = JSON.parse(latestResponse.responses);
+
+            let totalAttempted = 0;
+            let totalCorrect = 0;
+            let positiveMarks = 0;
+            let negativeMarks = 0;
+            let totalnotattemp = 0;
+            let totalwrong = 0;
+
+            // Calculate the marks
+            Object.keys(responsesObject).forEach(question => {
+
+                const userAnswer = responsesObject[question];
+                const correctAnswer = answerKey[question];
+
+                if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
+
+                    score += markingScheme.noAnswer;
+                    totalnotattemp++;
+
+                } 
+                else if (isCorrect(userAnswer, correctAnswer)) {
+
+                    score += markingScheme.correct;
+                    totalCorrect++;
+                    positiveMarks += markingScheme.correct;
+
+                } 
+                else {
+
+                    score += markingScheme.wrong;
+                    totalwrong++;
+                    negativeMarks += markingScheme.wrong;
+
+                }
+
+            });
+            totalAttempted = totalCorrect+totalwrong;
+
+            // Display student info
+            let html = `
+                
+            <div class="card shadow-sm mb-3">
+            <div class="card-header bg-primary text-white">
+            Student Details
+            </div>
+
+            <div class="card-body">
+
+            <div class="row">
+
+            <div class="col-md-6 mb-2">
+            <strong>Email:</strong> ${latestResponse.email}
+            </div>
+
+            <div class="col-md-6 mb-2">
+            <strong>Exam Module:</strong> ${latestResponse.exam_module}
+            </div>
+
+            <div class="col-md-6 mb-2">
+            <strong>Name:</strong> ${latestResponse.name}
+            </div>
+
+            <div class="col-md-6 mb-2">
+            <strong>Student ID:</strong> ${latestResponse.s_id}
+            </div>
+
+            <div class="col-md-12 mt-2">
+            <strong>Total Marks:
+            <span class="badge bg-primary text-white fs-6">
+            ${Number(score.toFixed(2))} / ${totalQuestions * markingScheme.correct}
+            </span></strong> 
+            </div>
+
+            </div>
+
+            </div>
+            </div>`;
+
+            html += `
+            <div class="card shadow-sm mb-3">
+
+            <div class="card-header bg-success text-white">
+            Summary of Results
+            </div>
+
+            <div class="card-body table-responsive">
+
+            <table class="table table-bordered text-center align-middle">
+
+            <thead class="table-light">
+            <tr>
+            <th>Attempted</th>
+            <th>Correct</th>
+            <th>Not Answered</th>
+            <th>Wrong</th>
+            <th>Positive</th>
+            <th>Negative</th>
+            <th>Final</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+
+            <td><span class="badge bg-info">${totalAttempted}</span></td>
+
+            <td><span class="badge bg-success">${totalCorrect}</span></td>
+
+            <td><span class="badge bg-secondary">${totalnotattemp}</span></td>
+
+            <td><span class="badge bg-danger">${totalwrong}</span></td>
+
+            <td class="text-success fw-bold">${positiveMarks}</td>
+
+            <td class="fw-bold ${negativeMarks < 0 ? 'text-danger' : 'text-dark'}">
+            ${negativeMarks}
+            </td>
+
+            <td class="fw-bold text-primary fs-5">
+            <b>${Number(score.toFixed(2))}</b>
+            </td>
+
+            </tr>
+            </tbody>
+
+            </table>
+
+            </div>
+            </div> `;
+
+
+            // Create the HTML table
+            html += `
+                <div class="card shadow-sm">
+
+                <div class="card-header bg-info text-white">
+                Latest Student Response 
+                <span class="badge bg-warning text-dark">
+                ${latestResponse.timedate}
+                </span>
+                </div>
+
+                <div class="card-body table-responsive">
+
+                <table class="table table-hover table-bordered align-middle">
+
+                <thead class="table-light">
+                <tr>
+                <th>Question</th>
+                <th>Your Response</th>
+                <th>Correct Answer</th>
+                <th>Marks</th>
+                </tr>
+                </thead>
+
+                <tbody>`;
+
+            // Add rows for each question and answer
+            Object.keys(responsesObject).forEach(question => {
+                    let marks = 0;
+                    const userAnswer = responsesObject[question];
+                    const correctAnswer = answerKey[question];
+
+                    if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
+
+                        marks = markingScheme.noAnswer;
+
+                    } 
+                    else if (isCorrect(userAnswer, correctAnswer)) {
+
+                        marks = markingScheme.correct;
+
+                    } 
+                    else {
+
+                        marks = markingScheme.wrong;
+
+                    }
+
+                html += `
+                    <tr>
+                        <td>${question.toUpperCase()}</td>
+                        <td>${responsesObject[question]}</td>
+                        <td>${answerKey[question]}</td>
+                        <td style="color: ${marks < 0 ? 'red' : 'black'}">${marks}</td>
+                    </tr>`;
+            });
+
+            html += `
+                    </tbody>
+                </table><br><button class="btn btn-success" onclick="printToPDF()">Print to PDF</button>`;
+
+            responseContent.innerHTML = html;
+        }
+    </script>
+    
+</body>
+</html>
