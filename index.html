@@ -628,6 +628,7 @@ function showPreview(){
 
         let key = "q"+(i+1);
         let ans = answers[key] || "Not Answered";
+        let sectionName = q.section || "General";
 
         html += `<div class="preview-item">
             <b>${sectionName}- Q${i+1}:</b> ${JSON.stringify(ans)}<br>`;
