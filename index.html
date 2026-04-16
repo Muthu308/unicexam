@@ -18,7 +18,7 @@ body { margin:0; font-family:Arial; }
 .logo { font-weight:bold; }
 .tagline { font-size:12px; }
 
-.container { display:flex; height:calc(100vh - 70px); }
+.container { display:flex; }
 
 .left { width:70%; padding:20px; overflow:auto; }
 .right { width:30%; background:#f1f1f1; padding:10px; }
@@ -36,11 +36,11 @@ body { margin:0; font-family:Arial; }
 
 .palette button { height:40px; border:none; }
 
-.answered { background:green; color:white; }
-.not-answered { background:red; color:white; }
-.visited { background:orange; }
-.current { background:purple; color:white; }
-.review { background:#3498db; color:white; }
+.answered { background:green; color:white; padding:2px; }
+.not-answered { background:red; color:white; padding:2px; }
+.visited { background:orange; padding:2px; }
+.current { background:purple; color:white; padding:2px; }
+.review { background:#3498db; color:white; padding:2px;}
 
 .footer-controls {
     position:fixed;
@@ -212,17 +212,31 @@ function startExam(){
 }
 
 // TIMER
+let timerInterval;
+
 function startTimer(){
-    setInterval(()=>{
+    timerInterval = setInterval(()=>{
+
         let min=Math.floor(timeLeft/60);
         let sec=timeLeft%60;
+
         document.getElementById("timer").innerText =
             min+":"+(sec<10?"0":"")+sec;
 
         timeLeft--;
+
         localStorage.setItem(student_id+"_time", timeLeft);
 
-        if(timeLeft<=0) alert("Time Up");
+        // 🚀 AUTO SUBMIT
+        if(timeLeft <= 0){
+
+            clearInterval(timerInterval); // stop timer
+
+            alert("⏰ Time Up! Submitting your exam...");
+
+            submitExam(); // 🔥 IMPORTANT
+        }
+
     },1000);
 }
 
@@ -440,7 +454,12 @@ function checkSubmitReady(){
     }
 }
 
+ 
+    let isSubmitted = false;   
+    
 function submitExam(){
+    if(isSubmitted) return; // 🚀 prevent duplicate
+    isSubmitted = true;
 
     let end_time = new Date().toISOString();
 
@@ -526,6 +545,7 @@ function submitExam(){
             alert("❌ Error submitting form");
         } else {
             alert("✅ Submitted Successfully");
+            document.body.innerHTML = "<h2 style='text-align:center'>Exam Submitted ✅</h2>";
             localStorage.clear();
         }
     })
