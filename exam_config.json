@@ -3,7 +3,7 @@
   "exam_module": "UNIC_TEST_02",
   "status": "yes",
   "duration": 3000,
-  "question_file": "/unic_text_17-06-2026.json.json",
+  "question_file": "/unic_text_17-06-2026.json",
   "instructions": [
     "Total Duration: 40 minutes",
     "Each correct answer: +4",
