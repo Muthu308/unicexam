@@ -52,6 +52,54 @@ body { margin:0; font-family:Arial; }
 }
 
 button { margin:5px; padding:8px; cursor:pointer; }
+
+    /* IMAGE STYLING (QUESTION + PREVIEW) */
+.question-image-container {
+    max-width: 600px;
+    margin: 15px auto;
+    text-align: center;
+}
+
+.question-image {
+    max-width: 100%;
+    height: auto;              /* ✅ maintain aspect ratio */
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* PREVIEW SECTION */
+.preview-container {
+    padding: 10px;
+}
+
+.preview-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* BETTER BUTTON LOOK */
+button {
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* SCROLL IMPROVEMENT */
+.left {
+    scrollbar-width: thin;
+}
+    .question-image:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+    cursor: zoom-in;
+}
 </style>
 </head>
 
@@ -229,7 +277,10 @@ function showQuestion(i){
     let html=`<h3>${q.question}</h3>`;
 
     if(q.image_base64){
-        html+=`<img width="300" src="data:image/jpeg;base64,${q.image_base64}">`;
+        html+=`<div class="question-image-container">
+    <img class="question-image"
+    src="data:image/jpeg;base64,${q.image_base64}">
+</div>`;
     }
 
     if(q.type==="MCQ"){
@@ -349,28 +400,29 @@ function updatePalette(){
 
 // PREVIEW (WITH IMAGE)
 function showPreview(){
-    let html="<h2>Preview</h2>";
+    let html = `<div class="preview-container"><h2>Preview</h2>`;
 
-    questions.forEach((q,i)=>{
-        let key="q"+(i+1);
-        let ans=answers[key]||"Not Answered";
+    filtered.forEach((q,i)=>{
+        let key = "q"+(i+1);
+        let ans = answers[key] || "Not Answered";
 
-        html+=`<div><b>Q${i+1}</b>: ${JSON.stringify(ans)}<br>`;
+        html += `<div class="preview-item">
+            <b>Q${i+1}:</b> ${JSON.stringify(ans)}<br>`;
 
         if(q.image_base64){
-            html+=`<img width="200" src="data:image/jpeg;base64,${q.image_base64}">`;
+            html += `
+            <div class="question-image-container">
+                <img class="question-image"
+                src="data:image/jpeg;base64,${q.image_base64}">
+            </div>`;
         }
 
-        html+="</div><hr>";
+        html += `</div>`;
     });
 
-    html+=`<button id="submitBtn"
-    onclick="submitExam()" 
-    style="width:100%; background:#e74c3c; color:white; font-weight:bold;">
-    🚀 Submit Exam
-</button>`;
+    html += `</div>`;
 
-    document.getElementById("questionArea").innerHTML=html;
+    document.getElementById("questionArea").innerHTML = html;
 }
 
 function checkSubmitReady(){
