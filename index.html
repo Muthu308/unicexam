@@ -177,11 +177,20 @@ button:hover {
     <div>⏱ <span id="timer"></span></div>
 </div>
 
-<div id="loginPage" style="text-align:center;margin-top:100px;">
+<div id="loginPage" style="text-align:center;margin-top:50px;">
     <h2>Login</h2>
+
     <input id="name" placeholder="Name"><br><br>
     <input id="id" placeholder="Student ID"><br><br>
-    <button onclick="startExam()">Start Exam</button>
+
+    <!-- 🔥 EXAM INFO -->
+    <div id="examInfo" style="max-width:500px;margin:auto;text-align:left;"></div>
+
+    <br>
+
+    <button id="startBtn" onclick="startExam()" disabled>
+        Start Exam
+    </button>
 </div>
 
 <div id="examPage" style="display:none;">
@@ -249,16 +258,58 @@ let end_time = "";
 let startTime = Date.now();
 
 let student_id = "";
-let exam_module = "UNIC_TEST_01";
-let timeLeft = 2400;
+let exam_module = "";
+let timeLeft = 0;
+let questions = [];
+let examConfig = {};
+
+// LOAD CONFIG
+fetch("/exam_config.json")
+.then(res => res.json())
+.then(data => {
+
+    examConfig = data;
+
+    exam_module = data.exam_module;
+    timeLeft = data.duration;
+
+    // 🔥 SHOW INSTRUCTIONS
+    let html = `<h3>${data.exam_module}</h3><ul>`;
+
+    data.instructions.forEach(i=>{
+        html += `<li>${i}</li>`;
+    });
+
+    html += `</ul>`;
+
+    if(data.status === "yes"){
+        html += `<span style="color:green;">🟢 Exam Active</span>`;
+        document.getElementById("startBtn").disabled = false;
+    } else {
+        html += `<span style="color:red;">🔴 Exam Closed</span>`;
+    }
+
+    document.getElementById("examInfo").innerHTML = html;
+
+    // 🔥 LOAD QUESTIONS FROM CONFIG
+    return fetch(data.question_file);
+})
+.then(res => res.json())
+.then(qData => {
+    questions = qData;
+    createPalette();
+})
+.catch(err => {
+    console.error("Error loading config:", err);
+});
 
 // LOAD QUESTIONS
-fetch("questions_updated.json")
-.then(res=>res.json())
-.then(data=>{
-    questions=data;
-    createPalette();
-});
+//fetch("questions_updated.json")
+//.then(res=>res.json())
+//.then(data=>{
+//    questions=data;
+//    createPalette();
+//});
 
 // LOGIN
 function startExam(){
@@ -266,6 +317,15 @@ function startExam(){
 
     if(!student_id){
         alert("Enter ID"); return;
+    }
+    if(!exam_module || timeLeft === 0){
+        alert("Exam not loaded yet");
+        return;
+    }
+
+    if(examConfig.status !== "yes"){
+        alert("Exam not active");
+        return;
     }
 
     loadSavedData();
