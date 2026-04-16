@@ -471,7 +471,7 @@ function updateSectionProgress(){
 
 document.getElementById("sectionProgress").innerHTML =
     `<span style="color:${color}">
-    ${currentSection} | Attempted: ${attempted}/${total} | Accuracy: ${accuracy}%
+    ${currentSection} | Attempted: ${attempted}/${total}
     </span>`;
 }
 
@@ -487,10 +487,9 @@ function showQuestion(i){
 
     let html = `
 <div class="question-header">
-    ${sectionName} - Question ${i+1}
+    <b>${sectionName} - Question ${i+1}</b>
 </div>
 
-<div>${q.question}</div>
 `;
 
     if(q.image_base64){
@@ -631,7 +630,7 @@ function showPreview(){
         let ans = answers[key] || "Not Answered";
 
         html += `<div class="preview-item">
-            <b>Q${i+1}:</b> ${JSON.stringify(ans)}<br>`;
+            <b>${sectionName}- Q${i+1}:</b> ${JSON.stringify(ans)}<br>`;
 
         if(q.image_base64){
             html += `
