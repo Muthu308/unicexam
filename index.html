@@ -316,14 +316,14 @@ fetch("/exam_config.json")
 
     questions = qData;
     console.log("Questions Loaded:", questions);
-
+document.getElementById("loading").style.display="none";
     createPalette();
 })
 .catch(err => {
     console.error("Error loading config/questions:", err);
     alert("Failed to load exam data ❌");
 });
-document.getElementById("loading").style.display="none";
+
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
 //.then(res=>res.json())
@@ -431,20 +431,28 @@ function createPalette(){
     
 function updateSectionProgress(){
 
-    let currentSection = filteredQuestions[current]?.section || "General";
+    let currentSection = questions[current]?.section || "General";
 
-    let total = filteredQuestions.length;
+    // 🔥 FILTER QUESTIONS BY SECTION
+    let sectionQuestions = questions.filter(q => 
+        (q.section || "General") === currentSection
+    );
+
+    let total = sectionQuestions.length;
 
     let attempted = 0;
     let correct = 0;
 
-    filteredQuestions.forEach((q,i)=>{
-        let key = "q"+(i+1);
+    sectionQuestions.forEach((q, index)=>{
+
+        // 🔥 FIND ORIGINAL INDEX
+        let originalIndex = questions.findIndex(qq => qq === q);
+
+        let key = "q"+(originalIndex+1);
 
         if(answers[key]){
             attempted++;
 
-            // optional accuracy (if answerKey available)
             if(typeof answerKeys !== "undefined"){
                 let correctAns = answerKeys[exam_module]?.[key];
 
@@ -459,8 +467,12 @@ function updateSectionProgress(){
         ? ((correct / attempted) * 100).toFixed(1)
         : 0;
 
-    document.getElementById("sectionProgress").innerHTML =
-        `${currentSection} | Attempted: ${attempted}/${total} | Accuracy: ${accuracy}%`;
+    let color = accuracy >= 70 ? "green" : accuracy >= 40 ? "orange" : "red";
+
+document.getElementById("sectionProgress").innerHTML =
+    `<span style="color:${color}">
+    ${currentSection} | Attempted: ${attempted}/${total} | Accuracy: ${accuracy}%
+    </span>`;
 }
 
 // SHOW QUESTION
