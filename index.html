@@ -162,6 +162,13 @@ button:hover {
 .left::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 5px;
+},
+    .question-header {
+    background:#ecf0f1;
+    padding:6px 10px;
+    font-weight:bold;
+    border-left:5px solid #3498db;
+    margin-bottom:10px;
 }
 </style>
 </head>
@@ -423,9 +430,16 @@ function showQuestion(i){
     visited[i]=true;
 
     let q=questions[i];
+    let sectionName = q.section || "General";
     let key="q"+(i+1);
 
-    let html=`<h3>${q.question}</h3>`;
+    let html = `
+<div class="question-header">
+    ${sectionName} - Question ${i+1}
+</div>
+
+<div>${q.question}</div>
+`;
 
     if(q.image_base64){
         html+=`<div class="question-image-container">
