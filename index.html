@@ -5,129 +5,258 @@
 <title>UNIC Academy Exam</title>
 
 <style>
-body { margin:0; font-family:Arial; }
-
-.header {
-    background:#0d1b2a;
-    color:white;
-    padding:10px;
-    display:flex;
-    justify-content:space-between;
+/* RESET */
+body {
+    margin: 0;
+    font-family: Arial;
+    padding-bottom: 70px; /* space for footer (desktop) */
 }
 
+/* HEADER */
+.header {
+    background: #0d1b2a;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo { font-weight: bold; }
+.tagline { font-size: 12px; }
+
 /* LAYOUT */
-.container { display:flex; }
-.left { width:70%; padding:20px; }
-.right { width:30%; background:#f1f1f1; padding:10px; }
+.container {
+    display: flex;
+}
+
+.left {
+    width: 70%;
+    padding: 10px;
+    overflow: auto;
+    scrollbar-width: thin;
+    padding-bottom: 50px;
+}
+
+.right {
+    width: 30%;
+    background: #f1f1f1;
+    padding: 10px;
+}
 
 /* MOBILE */
 @media(max-width:768px){
-    .container { flex-direction:column; }
-    .left, .right { width:100%; }
-}
+    .container {
+        flex-direction: column;
+    }
 
-/* SECTION TABS */
-.section-tabs button {
-    padding:8px 15px;
-    margin:5px;
-    border:none;
-    background:#ecf0f1;
-}
-.section-tabs .active {
-    background:#3498db;
-    color:white;
+    .left, .right {
+        width: 100%;
+    }
+
+    body {
+        padding-bottom: 0; /* remove fixed footer space */
+    }
 }
 
 /* PALETTE */
 .palette {
-    display:grid;
+    display: grid;
     grid-template-columns: repeat(5,1fr);
-    gap:5px;
+    gap: 5px;
+    border: 1px solid #ccc;
 }
-.palette button { height:40px; border:none; }
 
-/* COLORS */
-.answered { background:#2ecc71; color:white; }
-.not-answered { background:#e74c3c; color:white; }
-.visited { background:#f39c12; color:white; }
-.current { background:#8e44ad; color:white; }
-.review { background:#3498db; color:white; }
+.palette button {
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+}
 
-/* IMAGE */
-.question-image {
-    max-width:100%;
-    height:auto;
-    border:1px solid #ccc;
-    margin-top:10px;
+/* COLORS (NTA STYLE) */
+.answered { background: #2ecc71; color: white; }
+.not-answered { background: #e74c3c; color: white; }
+.visited { background: #f39c12; color: white; }
+.current { background: #8e44ad; color: white; }
+.review { background: #3498db; color: white; }
+
+/* FOOTER CONTROLS (DESKTOP) */
+.footer-controls {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    z-index: 1000;
+}
+
+/* MOBILE FIX (VERY IMPORTANT) */
+@media(max-width:768px){
+
+    .footer-controls {
+        position: relative;   /* remove fixed */
+        bottom: auto;
+        width: 100%;
+        margin-top: 10px;
+        border-top: none;
+    }
+
+    .footer-controls button {
+        width: 45%;
+        margin: 5px 2%;
+    }
 }
 
 /* BUTTONS */
-.btn-save { background:#2ecc71; color:white; }
-.btn-review { background:#9b59b6; color:white; }
-.submit-btn { width:100%; background:#e74c3c; color:white; margin-top:10px; }
+button {
+    margin: 5px;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.2s;
+}
 
+button:hover {
+    opacity: 0.9;
+}
+
+/* IMAGE STYLING */
+.question-image-container {
+    max-width: 600px;
+    margin: 2px;
+}
+
+.question-image {
+    max-width: 100%;
+    height: auto;              /* maintain ratio */
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 2px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* IMAGE HOVER (OPTIONAL ZOOM EFFECT) */
+.question-image:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+    cursor: zoom-in;
+}
+
+/* PREVIEW */
+.preview-container {
+    padding: 10px;
+}
+
+.preview-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* SCROLL IMPROVEMENT */
+.left::-webkit-scrollbar {
+    width: 6px;
+}
+.left::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <div>UNIC ACADEMY</div>
+    <div>
+        <div class="logo">UNIC ACADEMY (since 2013)</div>
+        <div class="tagline">Clarity - Confidence - Results</div>
+    </div>
     <div id="candidate"></div>
     <div>⏱ <span id="timer"></span></div>
 </div>
 
 <div id="loginPage" style="text-align:center;margin-top:100px;">
+    <h2>Login</h2>
     <input id="name" placeholder="Name"><br><br>
     <input id="id" placeholder="Student ID"><br><br>
-    <button onclick="startExam()">Start</button>
+    <button onclick="startExam()">Start Exam</button>
 </div>
 
 <div id="examPage" style="display:none;">
-<div class="container">
+    <div class="container">
 
-<div class="left">
+        <div class="left">
+            <div id="questionArea"></div>
+                <div>
+        <button onclick="prevQ()">⬅ Prev</button>
+        <button onclick="clearResponse()">Clear</button>
+        <button onclick="markReview()">Mark Review</button>
+        <button onclick="nextQ()">Next ➡</button>
+    </div>
+        </div>
 
-<div id="sectionTabs" class="section-tabs"></div>
+  <div class="right">
+    <div class="palette" id="palette"></div>
 
-<div id="questionArea"></div>
+    <hr>
 
-<br>
+    <button onclick="showPreview()">👁 Preview</button>
 
-<button onclick="clearResponse()">Clear</button>
-<button class="btn-save" onclick="saveNext()">Save & Next</button>
-<button class="btn-review" onclick="markReviewNext()">Mark Review</button>
+    <br>
 
+    <button 
+        onclick="submitExam()" 
+        style="width:100%; background:#e74c3c; color:white; font-weight:bold;">
+        🚀 Submit Exam
+    </button>
+
+    <hr>
+
+    <div >
+        <div style="background:#2ecc71;color:white;">Answered</div>
+        <div style="background:#e74c3c;color:white;">Not Answered</div>
+        <div style="background:#f39c12;color:white;">Visited</div>
+        <div style="background:#8e44ad;color:white;">Current</div>
+        <div style="background:#3498db;color:white;">Review</div>
+    </div>
 </div>
 
-<div class="right">
+    </div>
 
-<div class="palette" id="palette"></div>
-
-<button onclick="showPreview()">Preview</button>
-
-<button class="submit-btn" onclick="submitExam()">Submit</button>
-
+   <!-- <div class="footer-controls">
+        <button onclick="prevQ()">⬅ Prev</button>
+        <button onclick="clearResponse()">Clear</button>
+        <button onclick="markReview()">Mark Review</button>
+        <button onclick="nextQ()">Next ➡</button>
+    </div>-->
 </div>
-
-</div>
-</div>
-
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
-let questions=[], filteredQuestions=[];
-let current=0;
-let answers={}, review={}, visited={}, timeSpent={};
-let student_id="", exam_module="UNIC_TEST_01";
-let timeLeft=1800;
-let isSubmitted=false;
+let questions = [];
+let current = 0;
 
-// LOAD
+let answers = {};
+let review = {};
+let visited = {};
+let timeSpent = {};
+
+let start_time = new Date().toISOString();
+let end_time = "";
+let startTime = Date.now();
+
+let student_id = "";
+let exam_module = "UNIC_TEST_01";
+let timeLeft = 2400;
+
+// LOAD QUESTIONS
 fetch("questions_updated.json")
-.then(r=>r.json())
+.then(res=>res.json())
 .then(data=>{
     questions=data;
-    filteredQuestions=data;
-    buildSections();
     createPalette();
 });
 
@@ -135,153 +264,366 @@ fetch("questions_updated.json")
 function startExam(){
     student_id=document.getElementById("id").value;
 
-    document.getElementById("candidate").innerText=
-        document.getElementById("name").value+" | "+student_id;
+    if(!student_id){
+        alert("Enter ID"); return;
+    }
+
+    loadSavedData();
+
+    document.getElementById("candidate").innerText =
+        document.getElementById("name").value + " | " + student_id;
 
     document.getElementById("loginPage").style.display="none";
     document.getElementById("examPage").style.display="block";
 
-    showQuestion(0);
+    showQuestion(current);
     startTimer();
 }
 
 // TIMER
-function startTimer(){
-    setInterval(()=>{
-        timeLeft--;
-        document.getElementById("timer").innerText=
-            Math.floor(timeLeft/60)+":"+timeLeft%60;
+let timerInterval;
 
-        if(timeLeft<=0){
-            alert("Time Up");
-            submitExam();
+function startTimer(){
+    timerInterval = setInterval(()=>{
+
+        let min=Math.floor(timeLeft/60);
+        let sec=timeLeft%60;
+
+        document.getElementById("timer").innerText =
+            min+":"+(sec<10?"0":"")+sec;
+
+        timeLeft--;
+
+        localStorage.setItem(student_id+"_time", timeLeft);
+
+        // 🚀 AUTO SUBMIT
+        if(timeLeft <= 0){
+
+            clearInterval(timerInterval); // stop timer
+
+            alert("⏰ Time Up! Submitting your exam...");
+
+            submitExam(); // 🔥 IMPORTANT
         }
+
     },1000);
 }
 
-// SECTION
-function buildSections(){
-    let sections=["All", ...new Set(questions.map(q=>q.section||"General"))];
-    let html="";
-    sections.forEach(s=>{
-        html+=`<button onclick="filterSection('${s}')" id="sec_${s}">${s}</button>`;
-    });
-    document.getElementById("sectionTabs").innerHTML=html;
-    document.getElementById("sec_All").classList.add("active");
+// SAVE / LOAD
+function saveData(){
+    let key = student_id + "_" + exam_module;
+
+    localStorage.setItem(key, JSON.stringify({
+        answers, review, visited, timeSpent, current, start_time
+    }));
 }
 
-function filterSection(sec){
-    filteredQuestions = sec==="All"?questions:questions.filter(q=>q.section===sec);
-    current=0;
-    createPalette();
-    showQuestion(0);
+function loadSavedData(){
+    let key = student_id + "_" + exam_module;
+    let saved = JSON.parse(localStorage.getItem(key));
+
+    if(saved){
+        answers=saved.answers||{};
+        review=saved.review||{};
+        visited=saved.visited||{};
+        timeSpent=saved.timeSpent||{};
+        current=saved.current||0;
+        start_time=saved.start_time||start_time;
+    }
+
+    let t = localStorage.getItem(student_id+"_time");
+    if(t) timeLeft=t;
 }
 
 // PALETTE
 function createPalette(){
     let p=document.getElementById("palette");
-    p.innerHTML="";
-    filteredQuestions.forEach((q,i)=>{
-        let b=document.createElement("button");
-        b.innerText=i+1;
-        b.onclick=()=>showQuestion(i);
-        p.appendChild(b);
+
+    questions.forEach((q,i)=>{
+        let btn=document.createElement("button");
+        btn.innerText=i+1;
+        btn.id="p"+i;
+        btn.onclick=()=>showQuestion(i);
+        p.appendChild(btn);
     });
 }
 
-// SHOW
+// SHOW QUESTION
 function showQuestion(i){
+    saveTime();
     current=i;
-    let q=filteredQuestions[i];
+    visited[i]=true;
+
+    let q=questions[i];
     let key="q"+(i+1);
 
     let html=`<h3>${q.question}</h3>`;
 
     if(q.image_base64){
-        html+=`<img class="question-image" src="data:image/jpeg;base64,${q.image_base64}">`;
+        html+=`<div class="question-image-container">
+    <img class="question-image"
+    src="data:image/jpeg;base64,${q.image_base64}">
+</div>`;
     }
 
     if(q.type==="MCQ"){
         q.options.forEach(opt=>{
-            html+=`<div><input type="radio"
+            html+=`<div>
+            <input type="radio" name="q${i}"
             ${answers[key]==opt?"checked":""}
-            onchange="saveAnswer('${opt}')"> ${opt}</div>`;
+            onchange="saveAnswer('${opt}')"> ${opt}
+            </div>`;
         });
     }
 
     if(q.type==="MSQ"){
         q.options.forEach(opt=>{
-            html+=`<div><input type="checkbox"
+            html+=`<div>
+            <input type="checkbox"
             ${answers[key]?.split(";").includes(opt)?"checked":""}
-            onchange="saveMSQ('${opt}',this.checked)"> ${opt}</div>`;
+            onchange="saveMSQ('${opt}', this.checked)"> ${opt}
+            </div>`;
         });
     }
 
     if(q.type==="NAT"){
-        html+=`<input type="number" oninput="saveNAT(this.value)">`;
+        html+=`<input type="number" step="any"
+        value="${answers[key]||""}"
+        oninput="saveNAT(this.value)"
+        placeholder="Enter numeric answer">`;
+    }
+
+    if(q.type==="SA"){
+        html+=`<textarea onchange="saveAnswer(this.value)">
+        ${answers[key]||""}</textarea>`;
     }
 
     document.getElementById("questionArea").innerHTML=html;
+
+    updatePalette();
+    startTime=Date.now();
 }
 
 // SAVE
-function saveAnswer(val){ answers["q"+(current+1)]=val; }
-function saveMSQ(val,c){
+function saveAnswer(val){
+    answers["q"+(current+1)]=val;
+    saveData();
+}
+
+function saveMSQ(val,checked){
     let key="q"+(current+1);
     let arr=answers[key]?answers[key].split(";"):[];
-    if(c) arr.push(val);
+    if(checked){ if(!arr.includes(val)) arr.push(val); }
     else arr=arr.filter(v=>v!==val);
-    answers[key]=arr.join(";");
+
+    if(arr.length===0) delete answers[key];
+    else answers[key]=arr.join(";");
 }
-function saveNAT(val){ answers["q"+(current+1)]=val; }
+
+function saveNAT(val){
+    let key = "q"+(current+1);
+
+    // Handle empty properly
+    if(val === "" || val === null){
+        delete answers[key];
+    } else {
+        answers[key] = parseFloat(val);
+    }
+
+    saveData();
+    updatePalette();
+}
+
+// TIME TRACK
+function saveTime(){
+    let spent=Math.floor((Date.now()-startTime)/1000);
+    timeSpent[current]=(timeSpent[current]||0)+spent;
+}
 
 // NAV
-function saveNext(){ if(current<filteredQuestions.length-1) showQuestion(current+1); }
-function markReviewNext(){ review[current]=true; saveNext(); }
-function clearResponse(){ delete answers["q"+(current+1)]; showQuestion(current); }
+function nextQ(){
+    saveTime();
+    saveData();
 
-// PREVIEW
-function showPreview(){
-    let html="<h2>Preview</h2>";
-    questions.forEach((q,i)=>{
-        html+=`Q${i+1}: ${answers["q"+(i+1)]||"N"}<br>`;
-    });
-    document.getElementById("questionArea").innerHTML=html;
+    if(current<questions.length-1) showQuestion(current+1);
 }
 
-// SUBMIT (VERCEL API)
-function submitExam(){
+function prevQ(){
+    if(current>0) showQuestion(current-1);
+}
 
-    if(isSubmitted) return;
-    isSubmitted=true;
+// REVIEW
+function markReview(){
+    review[current]=true;
+    saveData();
+    nextQ();
+}
 
-    const responses={};
+// CLEAR
+function clearResponse(){
+    delete answers["q"+(current+1)];
+    saveData();
+    showQuestion(current);
+}
+
+// COLORS
+function updatePalette(){
+    questions.forEach((q,i)=>{
+        let btn=document.getElementById("p"+i);
+        btn.className="";
+
+        let key="q"+(i+1);
+
+        if(i===current) btn.classList.add("current");
+        else if(review[i]) btn.classList.add("review");
+        else if(answers[key]) btn.classList.add("answered");
+        else if(visited[i]) btn.classList.add("not-answered");
+    });
+}
+
+// PREVIEW (WITH IMAGE)
+function showPreview(){
+
+    let html = `<div class="preview-container"><h2>Preview</h2>`;
 
     questions.forEach((q,i)=>{
-        let key="q"+(i+1);
-        responses[key]=answers[key]||"N";
+
+        let key = "q"+(i+1);
+        let ans = answers[key] || "Not Answered";
+
+        html += `<div class="preview-item">
+            <b>Q${i+1}:</b> ${JSON.stringify(ans)}<br>`;
+
+        if(q.image_base64){
+            html += `
+            <div class="question-image-container">
+                <img class="question-image"
+                src="data:image/jpeg;base64,${q.image_base64}">
+            </div>`;
+        }
+
+        html += `</div>`;
     });
 
-    const variables={
-        correct: JSON.stringify(timeSpent),
-        marks: "0",
-        responses: JSON.stringify(responses),
+    html += `</div>`;
+
+    document.getElementById("questionArea").innerHTML = html;
+}
+
+function checkSubmitReady(){
+    let total = questions.length;
+    let answered = Object.keys(answers).length;
+
+    let btn = document.getElementById("submitBtn");
+
+    if(answered === 0){
+        btn.disabled = true;
+        btn.style.opacity = 0.5;
+    } else {
+        btn.disabled = false;
+        btn.style.opacity = 1;
+    }
+}
+
+ 
+    let isSubmitted = false;   
+    
+function submitExam(){
+    if(isSubmitted) return; // 🚀 prevent duplicate
+    isSubmitted = true;
+
+    let end_time = new Date().toISOString();
+
+    // ✅ Build responses (correct format)
+    const responses = {};
+
+    questions.forEach((q, i) => {
+        let key = "q" + (i + 1);
+
+        if (!answers[key] || answers[key] === "") {
+            responses[key] = "N";
+        } else {
+            responses[key] = answers[key];
+        }
+    });
+
+    // ✅ Final data object
+    const data = {
         email: student_id,
+        name: document.getElementById("name").value,
         s_id: student_id,
         exam_module: exam_module,
-        name: document.getElementById("name").value
+        start_time: start_time,
+        end_time: end_time,
+        time_spent: timeSpent
     };
 
-    fetch("submit",{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({variables})
+    console.log("Responses:", responses);
+    console.log("Data:", data);
+
+    // ✅ GraphQL mutation
+    const mutation = `
+    mutation InsertUniqdata(
+        $correct: String, 
+        $marks: String, 
+        $responses: String, 
+        $email: String, 
+        $s_id: String, 
+        $name: String, 
+        $exam_module: String
+    ) {
+        insert_uniqdata(objects: {
+            correct: $correct,
+            marks: $marks,
+            responses: $responses,
+            email: $email,
+            s_id: $s_id,
+            exam_module: $exam_module,
+            name: $name
+        }) {
+            affected_rows
+        }
+    }`;
+
+    const variables = {
+        correct: JSON.stringify(data.time_spent),
+        marks: data.end_time + data.start_time,
+        responses: JSON.stringify(responses),
+        email: data.email,
+        s_id: data.s_id,
+        exam_module: data.exam_module,
+        name: data.name
+    };
+
+    console.log("Variables:", variables);
+
+    fetch("https://merry-lemur-83.hasura.app/v1/graphql", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "x-hasura-admin-secret": "NXkzUaSjIx29YWuWf7I9GgOPddk6Vbfm13qt1cQ4UjSW9GucPNMP3irFvs4m0lLU"
+        },
+        body: JSON.stringify({
+            query: mutation,
+            variables: variables
+        })
     })
-    .then(res=>res.json())
-    .then(()=>{
-        alert("Submitted ✅");
+    .then(res => res.json())
+    .then(result => {
+        console.log("Result:", result);
+
+        if(result.errors){
+            alert("❌ Error submitting form");
+        } else {
+            alert("✅ Submitted Successfully");
+            document.body.innerHTML = "<h2 style='text-align:center'>Exam Submitted ✅</h2>";
+            localStorage.clear();
+        }
     })
-    .catch(()=>alert("Error"));
+    .catch(error => {
+        console.error("Error:", error);
+        alert("❌ Submission failed");
+    });
 }
 </script>
 
