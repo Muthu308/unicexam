@@ -2,7 +2,7 @@
 {
   "exam_module": "UNIC_TEST_02",
   "status": "yes",
-  "duration": 3000,
+  "duration": 5000,
   "question_file": "/unic_text_17-06-2026.json",
   "instructions": [
     "Total Duration: 40 minutes",
