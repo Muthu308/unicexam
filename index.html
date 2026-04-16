@@ -204,6 +204,12 @@ button:hover {
     <div class="container">
 
         <div class="left">
+            <div id="sectionProgress" style="
+    background:#ecf0f1;
+    padding:8px;
+    margin-bottom:10px;
+    font-weight:bold;
+"></div>
             <div id="questionArea"></div>
                 <div>
         <button onclick="prevQ()">⬅ Prev</button>
@@ -422,6 +428,40 @@ function createPalette(){
         p.appendChild(btn);
     });
 }
+    
+function updateSectionProgress(){
+
+    let currentSection = filteredQuestions[current]?.section || "General";
+
+    let total = filteredQuestions.length;
+
+    let attempted = 0;
+    let correct = 0;
+
+    filteredQuestions.forEach((q,i)=>{
+        let key = "q"+(i+1);
+
+        if(answers[key]){
+            attempted++;
+
+            // optional accuracy (if answerKey available)
+            if(typeof answerKeys !== "undefined"){
+                let correctAns = answerKeys[exam_module]?.[key];
+
+                if(correctAns && answers[key] === correctAns){
+                    correct++;
+                }
+            }
+        }
+    });
+
+    let accuracy = attempted > 0 
+        ? ((correct / attempted) * 100).toFixed(1)
+        : 0;
+
+    document.getElementById("sectionProgress").innerHTML =
+        `${currentSection} | Attempted: ${attempted}/${total} | Accuracy: ${accuracy}%`;
+}
 
 // SHOW QUESTION
 function showQuestion(i){
@@ -483,6 +523,7 @@ function showQuestion(i){
     document.getElementById("questionArea").innerHTML=html;
 
     updatePalette();
+    updateSectionProgress();
     startTime=Date.now();
 }
 
@@ -490,6 +531,7 @@ function showQuestion(i){
 function saveAnswer(val){
     answers["q"+(current+1)]=val;
     saveData();
+    updateSectionProgress();
 }
 
 function saveMSQ(val,checked){
@@ -500,6 +542,7 @@ function saveMSQ(val,checked){
 
     if(arr.length===0) delete answers[key];
     else answers[key]=arr.join(";");
+    updateSectionProgress();
 }
 
 function saveNAT(val){
@@ -514,6 +557,7 @@ function saveNAT(val){
 
     saveData();
     updatePalette();
+    updateSectionProgress();
 }
 
 // TIME TRACK
@@ -546,6 +590,7 @@ function clearResponse(){
     delete answers["q"+(current+1)];
     saveData();
     showQuestion(current);
+    updateSectionProgress();
 }
 
 // COLORS
