@@ -233,7 +233,7 @@ button:hover {
 </div>
 
     </div>
-
+<div id="loading">Loading Exam...</div>
    <!-- <div class="footer-controls">
         <button onclick="prevQ()">⬅ Prev</button>
         <button onclick="clearResponse()">Clear</button>
@@ -260,11 +260,10 @@ let startTime = Date.now();
 let student_id = "";
 let exam_module = "";
 let timeLeft = 0;
-let questions = [];
 let examConfig = {};
 
 // LOAD CONFIG
-fetch("exam_config.json")
+fetch("/exam_config.json")
 .then(res => res.json())
 .then(data => {
 
@@ -296,13 +295,22 @@ fetch("exam_config.json")
 })
 .then(res => res.json())
 .then(qData => {
+
+    if(!qData || qData.length === 0){
+        alert("Question file empty ❌");
+        return;
+    }
+
     questions = qData;
+    console.log("Questions Loaded:", questions);
+
     createPalette();
 })
 .catch(err => {
-    console.error("Error loading config:", err);
+    console.error("Error loading config/questions:", err);
+    alert("Failed to load exam data ❌");
 });
-
+document.getElementById("loading").style.display="none";
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
 //.then(res=>res.json())
