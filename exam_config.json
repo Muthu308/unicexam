@@ -5,10 +5,18 @@
   "duration": 5000,
   "question_file": "/unic_text_17-06-2026.json",
   "instructions": [
-    "Total Duration: 40 minutes",
+    "1. Login: Enter your NAME IN CAPITAL LETTERS and Roll No exactly as given by the school",
+    "2. Timer: Once you login, the test timer will appear on screen. Test will close automatically after the time ends",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 50 minutes",
     "Each correct answer: +4",
     "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "Each subject (Physics, Chemistry, Mathematics) contains 30 MCQs questions",
+    "Do not refresh the page during the exam",
+    "The exam will be automatically submitted when the time is over"
     "Do not refresh the page",
-    "Timer will auto submit"
+    "Timer will auto submit",
+    "* Unic Academy <br>Building Clarity, Creating Confidence,Delivering Results"
   ]
 }
