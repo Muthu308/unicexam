@@ -477,9 +477,11 @@ function updatePalette(){
 
 // PREVIEW (WITH IMAGE)
 function showPreview(){
+
     let html = `<div class="preview-container"><h2>Preview</h2>`;
 
-    filtered.forEach((q,i)=>{
+    questions.forEach((q,i)=>{
+
         let key = "q"+(i+1);
         let ans = answers[key] || "Not Answered";
 
