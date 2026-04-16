@@ -2,19 +2,25 @@
   "exam_module": "UNIC_TEST_01",
   "status": "no",
   "duration": 2400,
+  "question_file": "/questions_updated.json",
   "instructions": [
     "Total Duration: 40 minutes",
     "Each correct answer: +4",
-    "Each wrong answer: -1"
+    "Each wrong answer: -1",
+    "Do not refresh the page",
+    "Timer will auto submit"
   ]
 },
 {
-  "exam_module": "UNIC_TEST_01",
+  "exam_module": "UNIC_TEST_02",
   "status": "yes",
-  "duration": 2400,
+  "duration": 3000,
+  "question_file": "/unic_text_17-06-2026.json.json",
   "instructions": [
     "Total Duration: 40 minutes",
     "Each correct answer: +4",
-    "Each wrong answer: -1"
+    "Each wrong answer: -1",
+    "Do not refresh the page",
+    "Timer will auto submit"
   ]
 }
