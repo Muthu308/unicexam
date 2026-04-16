@@ -112,7 +112,7 @@ button { margin:5px; padding:8px; cursor:pointer; }
         <button onclick="prevQ()">⬅ Prev</button>
         <button onclick="clearResponse()">Clear</button>
         <button onclick="markReview()">Mark Review</button>
-        <button onclick="nextQ()">Save & Next ➡</button>
+        <button onclick="nextQ()">Next ➡</button>
     </div>
 </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -133,7 +133,7 @@ let startTime = Date.now();
 
 let student_id = "";
 let exam_module = "UNIC_TEST_01";
-let timeLeft = 1800;
+let timeLeft = 2400;
 
 // LOAD QUESTIONS
 fetch("questions_updated.json")
