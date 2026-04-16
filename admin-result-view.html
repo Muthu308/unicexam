@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNIC ACADEMY-Result-Exam-Summary</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<style>
+    @media print {
+        button {
+            display: none;
+        }
+        table {
+            width: 100%;
+            font-size: 12pt;
+        }
+    }
+
+    body{
+    background:#f4f6f9;
+}
+
+.main-card{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+h3{
+    font-weight:600;
+    margin-bottom:25px;
+}
+
+.btn-primary{
+    width:100%;
+    padding:10px;
+    font-size:16px;
+}
+
+@media (min-width:768px){
+    .btn-primary{
+        width:auto;
+        padding:10px 30px;
+    }
+}
+.student-row{
+cursor:pointer;
+transition:0.2s;
+}
+
+.student-row:hover{
+background:#f1f7ff;
+}
+
+
+
+.dashboard-card{
+    background:#f8f9fa;
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.08);
+}
+
+.academy-title{
+    font-weight:700;
+    color:#1a73e8;
+    letter-spacing:1px;
+}
+
+.form-label{
+    font-weight:600;
+}
+
+.form-control{
+    border-radius:10px;  
+}
+
+.search-btn{
+    border-radius:10px;    
+}
+</style>
+<body>
+    <div class="container py-3">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-12">
+
+            <div class="dashboard-card p-3">
+
+                <div class="text-center mb-4">
+                    <h2 class="academy-title">
+                        UNIC ACADEMY
+                    </h2>
+                    <p class="text-muted">
+                        Student Exam Analytics Dashboard
+                    </p>
+                </div>
+
+                <form id="searchForm">
+
+                    <div class="row g-3 align-items-end">
+
+                        <!-- Student Name -->
+                        <div class="col-md-5">
+                            <label class="form-label">
+                                Student ID / Name
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control"
+                                id="searchValue"
+                                placeholder="Enter Student ID or Name">
+                        </div>
+
+                        <!-- Exam Module -->
+                        <div class="col-md-5">
+                            <label class="form-label">
+                                Exam Module (Optional)
+                            </label>
+                            <select class="form-control form-control" id="examModule">
+                                <!--<option value="">All Exams</option>-->
+
+                                <option value="UNIC_TEST_01">
+                                    TEST 01
+                                </option>
+
+                                
+                            </select>
+                        </div>
+
+                        <!-- Search Button -->
+                        <div class="col-md-2">
+                            <button
+                                type="button"
+                                class="btn btn-primary search-btn"
+                                onclick="fetchStudentResponses()">
+                                🔍 Search
+                            </button>
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <div id="responseContent" class="mt-4"></div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+   
+
+<!-- Student Detail Modal -->
+
+<div class="modal fade" id="studentModal" tabindex="-1">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title">Student Response Details</h5>
+<button type="button" class="close" data-dismiss="modal">&times;</button>
+</div>
+
+<div class="modal-body" id="studentDetailContent"></div>
+
+</div>
+</div>
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function printToPDF() {
+            window.print();
+        }
+
+
+/*
+ 'JEE(C11)PCMT09': {
+    'q1': 'D', 'q2': 'B', 'q3': 'C', 'q4': 'D', 'q5': 'A',
+    'q6': 'D', 'q7': 'C', 'q8': 'D', 'q9': 'D', 'q10': 'C',
+    'q11': 'A', 'q12': 'D', 'q13': 'B', 'q14': 'A', 'q15': 'A',
+    'q16': 'C', 'q17': 'A', 'q18': 'C', 'q19': 'A', 'q20': 'C',
+    'q21': 'C', 'q22': 'B', 'q23': 'C', 'q24': 'B', 'q25': 'B',
+    'q26': 'A', 'q27': 'D', 'q28': 'C', 'q29': 'B', 'q30': 'C',
+    'q31': 'D', 'q32': 'D', 'q33': 'C', 'q34': 'B', 'q35': 'D', 'q36': 'A'
+},
+'JEE(C11)092024MA': {
+    'q1': 'D', 'q2': 'B', 'q3': 'B', 'q4': 'D', 'q5': 'D',
+    'q6': 'D', 'q7': 'B', 'q8': 'C', 'q9': 'B', 'q10': 'C',
+    'q11': 'A', 'q12': 'A', 'q13': 'B', 'q14': 'C', 'q15': 'C',
+    'q16': 'A', 'q17': 'A', 'q18': 'D', 'q19': 'B', 'q20': 'A',
+    'q21': 'D', 'q22': 'A', 'q23': 'D', 'q24': 'D', 'q25': 'C',
+    'q26': 'B', 'q27': 'A', 'q28': 'A', 'q29': 'C', 'q30': 'B',
+    'q31': 'D', 'q32': 'D', 'q33': 'C', 'q34': 'D', 'q35': 'D',
+    'q36': 'B'
+},
+'JEE(C11)092024CH': {
+    'q1': 'B', 'q2': 'D', 'q3': 'C', 'q4': 'B', 'q5': 'A',
+    'q6': 'D', 'q7': 'A', 'q8': 'C', 'q9': 'D', 'q10': 'B',
+    'q11': 'B', 'q12': 'A', 'q13': 'C', 'q14': 'A', 'q15': 'D',
+    'q16': 'C', 'q17': 'A', 'q18': 'D', 'q19': 'C', 'q20': 'A',
+    'q21': 'B', 'q22': 'B', 'q23': 'C', 'q24': 'C', 'q25': 'B',
+    'q26': 'E', 'q27': 'D', 'q28': 'B', 'q29': 'B', 'q30': 'A',
+    'q31': 'A', 'q32': 'A', 'q33': 'A', 'q34': 'C', 'q35': 'A',
+    'q36': 'C'
+},
+'JEE(C11)092024PH': {
+    'q1': 'B', 'q2': 'C', 'q3': 'A', 'q4': 'A', 'q5': 'B',
+    'q6': 'B', 'q7': 'A', 'q8': 'C', 'q9': 'D', 'q10': 'B',
+    'q11': 'C', 'q12': 'C', 'q13': 'C', 'q14': 'A', 'q15': 'D',
+    'q16': 'B', 'q17': 'C', 'q18': 'D', 'q19': 'A', 'q20': 'A',
+    'q21': 'B', 'q22': 'A', 'q23': 'A', 'q24': 'D', 'q25': 'B',
+    'q26': 'A', 'q27': 'B', 'q28': 'C', 'q29': 'A', 'q30': 'B',
+    'q31': 'C', 'q32': 'D', 'q33': 'B', 'q34': 'D', 'q35': 'C',
+    'q36': 'D'
+}
+
+'JEE(C11)PCMT09': { correct: 2.78, wrong: -1, noAnswer: 0 },
+            'JEE(C11)092024MA': { correct: 2.78, wrong: -1, noAnswer: 0 },
+            'JEE(C11)092024CH': { correct: 2.78, wrong: -1, noAnswer: 0 },
+            'JEE(C11)092024PH': { correct: 2.78, wrong: -1, noAnswer: 0 }
+
+             'CBSE-(C10)-2027-BOARD-Prep-TEST-01': {
+                'q1': 'A', 'q2': 'C', 'q3': 'A', 'q4': 'A', 'q5': 'C',
+                'q6': 'C'
+            },
+            'CBSE-(C10)-2027-BOARD-Prep-TEST-02': {
+                'q1': 'D', 'q2': 'C', 'q3': "25", 'q4': 'C', 'q5': 'C',
+                'q6': 'D'
+            },
+            'CBSE-(C10)-2027-BOARD-Prep-TEST-03': {
+                'q1': 'C', 'q2': 'D', 'q3': 'D', 'q4': 'B', 'q5': "3 OR -2",
+                'q6': "3 OR -2"
+            },
+             'CBSE-(C10)-2027-BOARD-Prep-TEST-04': {
+                'q1': 'B', 'q2': 'D', 'q3': 'D', 'q4': 'A', 'q5': "D",
+                'q6': "B"
+            }
+
+*/
+
+        const answerKeys = {
+          'UNIC_TEST_01': {
+                'q1': 'B', 'q2': 'A', 'q3': 'B', 'q4': 'A', 'q5': 'B',
+                'q6': 'A', 'q7': 'B', 'q8': 'B', 'q9': 'B', 'q10': 'B',
+    'q11': 'B', 'q12': 'A', 'q13': 'B', 'q14': 'B', 'q15': 'A'}
+            
+        };
+
+        const markingSchemes = {
+             'UNIC_TEST_01': {
+                correct: 1,
+                wrong: -0.33,
+                noAnswer: 0
+            }        
+        };
+
+
+        function isCorrect(userAnswer, correctAnswer) {
+
+            if (!userAnswer) return false;
+
+            userAnswer = userAnswer.trim();
+
+            // RANGE case (3 to 6)
+            if (correctAnswer.toLowerCase().includes('to')) {
+                const [min, max] = correctAnswer.split('to').map(x => Number(x.trim()));
+                const userValue = Number(userAnswer);
+
+                return userValue >= min && userValue <= max;
+            }
+
+            // OR case (3 OR -2)
+            if (correctAnswer.includes('OR')) {
+                const options = correctAnswer.split('OR').map(a => a.trim());
+                return options.includes(userAnswer);
+            }
+
+            // Multiple answers (B;C;D)
+            if (correctAnswer.includes(';')) {
+                const correct = correctAnswer.split(';').map(a => a.trim()).sort();
+                const user = userAnswer.split(';').map(a => a.trim()).sort();
+
+                if (correct.length !== user.length) return false;
+
+                return correct.every((val, index) => val === user[index]);
+            }
+
+            // Normal answer
+            return userAnswer === correctAnswer.trim();
+        }
+        async function fetchStudentResponses() {
+            const examModule = document.getElementById('examModule').value;
+            const searchValue = document.getElementById('searchValue').value;
+
+            const query = `
+                query GetUniqdata($searchValue: String!, $examModule: String!) {
+                    uniqdata(where: {exam_module: {_eq: $examModule}, name: {_ilike: $searchValue}}) {
+                        email
+                        exam_module
+                        name
+                        s_id
+                        id
+                        correct
+                        marks
+                        responses
+                        timedate
+                    }
+                }
+            `;
+
+            const variables = { searchValue: `%${searchValue}%`, examModule: examModule };
+
+            try {
+                const response = await fetch(process.env.HASURA_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-hasura-admin-secret': process.env.HASURA_SECRET // Replace with your actual Hasura admin secret
+                    },
+                    body: JSON.stringify({ query: query, variables: variables })
+                });
+                const result = await response.json();
+                displayResponses(result.data.uniqdata, examModule);
+            } catch (error) {
+                console.error('Error fetching responses:', error);
+                document.getElementById('responseContent').innerHTML = '<p class="text-danger">There was an error fetching the responses. Please try again.</p>';
+            }
+        }
+
+        function displayResponses(responses, examModule) {
+            const responseContent = document.getElementById('responseContent');
+            if (responses.length === 0) {
+                responseContent.innerHTML = '<p class="text-warning">No responses found.</p>';
+                return;
+            }
+
+            // Step 1: Filter to get latest response per student
+            const latestResponses = {};
+            responses.forEach(response => {
+                if (!latestResponses[response.s_id] || new Date(response.timedate) > new Date(latestResponses[response.s_id].timedate)) {
+                    latestResponses[response.s_id] = response;
+                }
+            });
+
+            // Convert the object back to an array
+            const filteredResponses = Object.values(latestResponses);
+
+            let overallScores = {
+                highestScore: 0,
+                totalScore: 0,
+                totalStudents: filteredResponses.length,
+                totalCorrect: 0,
+                totalWrong: 0,
+                totalNotAttempted: 0,
+                totalAttempted: 0,
+                totalTimeSpent: 0
+
+            };
+
+            let html = `<h5 class="mt-4 font-weight-bold text-primary">Individual Results Summary:</h5><table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Student Details</th>
+                                <th>Total Attempted</th>
+                                <th>Correct Answers</th>
+                                <th>Not Attempted</th>
+                                <th>Wrong Answers</th>
+                                <th>Positive Marks</th>
+                                <th>Negative Marks</th>
+                                <th>Final Marks</th>
+                                <th>Time Spent</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            // Step 2: Calculate scores for each student
+                const scoreData = filteredResponses.map(response => {
+                const responsesObject = JSON.parse(response.responses);
+                const answerKey = answerKeys[examModule];
+                const markingScheme = markingSchemes[examModule];
+
+                let score = 0;
+                let totalCorrect = 0;
+                let totalWrong = 0;
+                let totalNotAttempted = 0;
+
+               Object.keys(responsesObject).forEach(question => {
+
+                    const userAnswer = responsesObject[question];
+                    const correctAnswer = answerKey[question];
+
+                    if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
+                        totalNotAttempted++;
+                    }
+                    else if (isCorrect(userAnswer, correctAnswer)) {
+                        score += markingScheme.correct;
+                        totalCorrect++;
+                    }
+                    else {
+                        score += markingScheme.wrong;
+                        totalWrong++;
+                    }
+
+                });
+
+                const totalAttempted = totalCorrect + totalWrong;
+                const totalPositiveMarks = totalCorrect * markingScheme.correct;
+                const totalNegativeMarks = totalWrong * markingScheme.wrong;
+
+                // Step 3: Time Calculation
+                // Try to parse `response.correct` safely
+let timeArray;
+
+try {
+    // Parse the `response.correct` JSON string
+    const parsedData = JSON.parse(response.correct); 
+
+    // Check if parsedData contains an array or some other structure with time data
+    if (Array.isArray(parsedData)) {
+        timeArray = parsedData; // If it's already an array
+    } else if (parsedData.timeSpent) {
+        // If time data is stored in some property, like `timeSpent`
+        timeArray = parsedData.timeSpent; // Adjust this according to the actual structure
+    } else {
+        console.warn('No time array found in the parsed data');
+        timeArray = []; // Default to empty array if no valid time data
+    }
+} catch (e) {
+    console.error('Error parsing time data:', e);
+    timeArray = []; // Default to an empty array if parsing fails
+}
+function secondsToHMS(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+
+    // Pad with leading zeros if necessary
+    const h = hours.toString().padStart(2, '0');
+    const m = minutes.toString().padStart(2, '0');
+    const s = secs.toString().padStart(2, '0');
+
+    return `${h}:${m}:${s}`;
+}
+
+const totalTimeInSeconds = timeArray.slice(0, -1).reduce((sum, time) => {
+    // Treat missing, null, undefined, or 0 times as 0
+    return sum + ((time === 0 || time === null || time === undefined) ? 0 : time);
+}, 0);
+
+const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minutes
+
+                overallScores.totalTimeSpent += totalTimeSpent; // Accumulate total time spen
+                overallScores.totalScore += score;
+                overallScores.totalCorrect += totalCorrect;
+                overallScores.totalWrong += totalWrong;
+                overallScores.totalNotAttempted += totalNotAttempted;
+                overallScores.totalAttempted += totalAttempted;
+
+                if (score > overallScores.highestScore) {
+                    overallScores.highestScore = score;
+                }
+
+                return {
+                    ...response,
+                    totalAttempted,
+                    totalCorrect,
+                    totalNotAttempted,
+                    totalWrong,
+                    totalPositiveMarks,
+                    totalNegativeMarks,
+                    score,
+                    totalTimeSpent // Include total time spent
+                };
+            });
+
+            // Step 3: Sort students by score to determine ranks
+            scoreData.sort((a, b) => b.score - a.score); // Sort descending by score  ${data.exam_module}<br><br>${data.s_id}
+            scoreData.forEach((data, index) => {
+                html += `<tr class="student-row" onclick='showStudentDetails(${JSON.stringify(data)})'>
+                            <td>${index + 1}</td>
+                            <td>${data.name}<br>${data.email}</td>
+                            <td>${data.totalAttempted}</td>
+                            <td>${data.totalCorrect}</td>
+                            <td>${data.totalNotAttempted}</td>
+                            <td>${data.totalWrong}</td>
+                            <td>${data.totalPositiveMarks.toFixed(2)}</td>
+                            <td style="color: ${data.totalNegativeMarks.toFixed(2) < 0 ? 'red' : 'black'}">${data.totalNegativeMarks}</td>
+                            <td>${data.score.toFixed(2)}</td>
+                            <td>${(data.totalTimeSpent)}</td> 
+                        </tr>`;
+            });
+
+            html += `</tbody></table>`;
+
+            // Calculate averages for the filtered data
+            const averageScore = overallScores.totalScore / overallScores.totalStudents;
+            const averageCorrect = overallScores.totalCorrect / overallScores.totalStudents;
+            const averageWrong = overallScores.totalWrong / overallScores.totalStudents;
+           // const averageTimeSpent = overallScores.totalTimeSpent / overallScores.totalStudents; // New: Average time spent per student<th>Average Time Spent (minutes)</th>  <!-- <td>${(averageTimeSpent)} mins</td>-->
+
+            html += `<h5 class="mt-2 font-weight-bold text-primary">Comparison Summary:</h5>
+                     <table class="table table-bordered">
+                        <thead>
+                            <tr style="text-align:center;">
+                                <th>Total Students</th>
+                                <th>Highest Score</th>
+                                <th>Average Score</th>
+                                <th>Total Attempted</th>
+                                <th>Correct Answers</th>
+                                <th>Wrong Answers</th>
+                                <th>Not Attempted</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center;">
+                                <td>${overallScores.totalStudents}</td>
+                                <td>${overallScores.highestScore.toFixed(2)}</td>
+                                <td>${averageScore.toFixed(2)}</td>
+                                <td>${overallScores.totalAttempted}</td>
+                                <td>${overallScores.totalCorrect}</td>
+                                <td>${overallScores.totalWrong}</td>
+                                <td>${overallScores.totalNotAttempted}</td>
+                              
+                            </tr>
+                        </tbody>
+                     </table>
+                    `;
+
+            // Step 4: Question-wise Analysis
+            html += `<h5 class="mt-4 font-weight-bold text-primary">Question-wise Analysis:</h5>
+                     <table class="table table-bordered">
+                        <thead style="text-align:center;">
+                            <tr>
+                                <th>Question</th>
+                                <th>Total Attempted</th>
+                                <th>Correct Answers</th>
+                                <th>Wrong Answers</th>
+                                <th>Not Attempted</th>
+                                <th>Correct Percentage</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            // Initialize question-wise stats<!--   <th>Average Time Spent on Question (minutes)</th>-->
+            const questionStats = {};
+            const totalQuestions = Object.keys(answerKeys[examModule]).length;
+
+            // Collect stats for each question
+            scoreData.forEach(data => {
+                const responsesObject = JSON.parse(data.responses);
+                const timeArray = JSON.parse(data.correct);
+              
+               Object.keys(answerKeys[examModule]).forEach((question, index) => {
+
+                    if (!questionStats[question]) {
+                        questionStats[question] = {
+                            totalAttempted: 0,
+                            correct: 0,
+                            wrong: 0,
+                            notAttempted: 0
+                        };
+                    }
+
+                    const userAnswer = responsesObject[question];
+                    const correctAnswer = answerKeys[examModule][question];
+
+                    if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
+
+                        questionStats[question].notAttempted++;
+
+                    } 
+                    else if (isCorrect(userAnswer, correctAnswer)) {
+
+                        questionStats[question].correct++;
+
+                    } 
+                    else {
+
+                        questionStats[question].wrong++;
+
+                    }
+
+                    questionStats[question].totalAttempted =
+                        questionStats[question].correct + questionStats[question].wrong;
+
+                });
+            });
+
+            // Calculate percentages and generate HTML
+            Object.keys(questionStats).forEach(question => {
+                const stats = questionStats[question];
+                const correctPercentage = (stats.correct / (stats.totalAttempted || 1)) * 100; // Avoid division by zero
+                //const averageTimeSpent = (stats.totalTime / overallScores.totalStudents) || 0;<!-- <td>${(averageTimeSpent).toFixed(2)} mins</td> -->
+                html += `<tr style="text-align:center;">
+                            <td>${question.toUpperCase()}</td>
+                            <td>${stats.totalAttempted}</td>
+                            <td>${stats.correct}</td>
+                            <td>${stats.wrong}</td>
+                            <td>${stats.notAttempted}</td>
+                            <td>${correctPercentage.toFixed(2)}%</td>                           
+                        </tr>`;
+            });
+
+            html += `</tbody></table></div> <button class="btn btn-secondary" onclick="printToPDF()">Print</button>`;
+
+            // Display final HTML
+            responseContent.innerHTML = html;
+        }
+
+  function showStudentDetails(student){
+
+    const examModule = student.exam_module;
+    const answerKey = answerKeys[examModule];
+    const markingScheme = markingSchemes[examModule];
+
+    const responsesObject = JSON.parse(student.responses);
+
+    let timeArray = [];
+
+    try{
+    timeArray = JSON.parse(student.correct);
+    }catch(e){
+    timeArray = [];
+    }
+
+    let totalMarks = 0;
+    let positiveMarks = 0;
+    let negativeMarks = 0;
+
+    let totalCorrect = 0;
+    let totalWrong = 0;
+    let totalNotAttempted = 0;
+
+    let html = `
+<div class="card mb-2 shadow-sm">
+<div class="card-body p-2">
+<div class="row">
+
+<div class="col-md-8">
+<b>👤 Student</b><br>
+${student.name}
+</div>
+
+<div class="col-md-4">
+<b>Email</b><br>
+${student.email} 
+</div>
+<div class="col-md-8">
+<b>Exam</b><br>
+${student.exam_module}
+</div>
+
+<div class="col-md-4">
+<b>ID</b><br>
+${student.s_id}
+</div>
+
+</div>
+
+</div>
+</div>
+    <table class="table table-bordered table-sm">
+    <thead class="thead-light">
+    <tr style="text-align:center;">
+    <th>Question</th>
+    <th>Stud. Answer</th>
+    <th>Correct Answer</th>
+    <th>Status</th>
+    <th>Marks</th>
+    <th>Time Spent</th>
+    </tr>
+    </thead>
+    <tbody>
+    `;
+
+    Object.keys(answerKey).forEach((question,index)=>{
+
+    const userAnswer = responsesObject[question] || "-";
+    const correctAnswer = answerKey[question];
+
+    let status="Not Attempted";
+    let color="secondary";
+    let marks = 0;
+
+    if(userAnswer === "-" || userAnswer === "" || userAnswer === "N"){
+    status="Not Attempted";
+    color="secondary";
+    marks = markingScheme.noAnswer || 0;
+    totalNotAttempted++;
+    }
+
+    else if(isCorrect(userAnswer,correctAnswer)){
+    status="Correct";
+    color="success";
+    marks = markingScheme.correct;
+    positiveMarks += marks;
+    totalCorrect++;
+    }
+
+    else{
+    status="Wrong";
+    color="danger";
+    marks = markingScheme.wrong;
+    negativeMarks += marks;
+    totalWrong++;
+    }
+
+    totalMarks += marks;
+
+    const time = timeArray[index] ? timeArray[index] + " sec" : "0 sec";
+
+    html += `
+    <tr style="text-align:center;">
+    <td>${question}</td>
+    <td>${userAnswer}</td>
+    <td>${correctAnswer}</td>
+    <td><span class="badge badge-${color}">${status}</span></td>
+    <td>${marks}</td>
+    <td>${time}</td>
+    </tr>
+    `;
+
+    });
+
+    html += `
+    </tbody>
+    </table>
+
+    <div class="mt-3">
+    <h6>Score Summary</h6>
+
+    <table class="table table-bordered w-50">
+    <tr>
+    <td>Correct</td>
+    <td>${totalCorrect}</td>
+    </tr>
+
+    <tr>
+    <td>Wrong</td>
+    <td>${totalWrong}</td>
+    </tr>
+
+    <tr>
+    <td>Not Attempted</td>
+    <td>${totalNotAttempted}</td>
+    </tr>
+
+    <tr>
+    <td>Positive Marks</td>
+    <td style="color:green">${positiveMarks}</td>
+    </tr>
+
+    <tr>
+    <td>Negative Marks</td>
+    <td style="color:red">${negativeMarks}</td>
+    </tr>
+
+    <tr>
+    <th><b>Final Score</b></th>
+    <td><b>${totalMarks}</b></td>
+    </tr>
+    </table>
+    </div>
+    `;
+
+document.getElementById("studentDetailContent").innerHTML = html;
+
+$('#studentModal').modal('show');
+
+}
+    </script>
+</body>
+</html>
