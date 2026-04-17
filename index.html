@@ -67,7 +67,7 @@ body {
 }
 
 .palette button {
-    height: 40px;
+    height: 30px;
     border: none;
     border-radius: 5px;
 }
@@ -184,7 +184,7 @@ button:hover {
     <div>⏱ <span id="timer"></span></div>
 </div>
 
-<div id="loginPage" style="text-align:center;margin-top:50px;">
+<div id="loginPage" style="text-align:center;margin-top:50px;box-shadow: 0 2px 6px rgba(0,0,0,0.2)">
     <h2>Login</h2>
 
     <input id="name" placeholder="Name"><br><br>
@@ -220,14 +220,13 @@ button:hover {
         </div>
 
   <div class="right">
+
+      <button onclick="showPreview()">👁 Preview Answer and Show Question Paper</button>
+       <hr>
     <div class="palette" id="palette"></div>
-
-    <hr>
-
-    <button onclick="showPreview()">👁 Preview Answer and Show Question Paper</button>
-
-    <br>
-    <br>
+   
+<hr>
+  
     <button 
         onclick="submitExam()" 
         style="width:60%; background:blue; color:white; font-weight:bold;">
@@ -237,6 +236,7 @@ button:hover {
     <hr>
 
     <div>
+        <h4>Exam Status Color reference</h4>
         <p style="background:#2ecc71;color:white;padding:2px;">Answered</p>
         <p style="background:#e74c3c;color:white;padding:2px;">Not Answered</p>
         <!--<p style="background:#f39c12;color:white;padding:2px;">Visited</p>-->
