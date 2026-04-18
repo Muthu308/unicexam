@@ -47,7 +47,7 @@
 },
   {
   "exam_module": "UNIC_TEST_01",
-  "status": "yes",
+  "status": "no",
   "duration": 2400,
   "question_file": "/questions_updated.json",
   "start_time": "2026-04-16 10:00 AM",
