@@ -233,7 +233,7 @@ button:hover {
     <input id="id" placeholder="Student ID"><br><br>
 
     <!-- 🔥 EXAM INFO -->
-   <!-- <div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>-->
+<div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>
 <div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
     <br>
 
@@ -357,12 +357,13 @@ fetch("/exam_config.json")
     document.getElementById("examList").innerHTML = html;
 });
 
- function selectExam(index){
+    function selectExam(index){
 
     selectedExam = allExams[index];
 
     exam_module = selectedExam.exam_module;
     timeLeft = selectedExam.duration;
+    examConfig = selectedExam;
 
     // highlight selected card
     document.querySelectorAll(".exam-card").forEach(c => c.classList.remove("selected"));
@@ -379,30 +380,7 @@ fetch("/exam_config.json")
     document.getElementById("examInfo").innerHTML = html;
 
     document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
-}   
-
- function selectExam(index){
-
-    selectedExam = allExams[index];
-
-    exam_module = selectedExam.exam_module;
-    timeLeft = selectedExam.duration;
-    examConfig = selectedExam;
-
-    // 🔥 SHOW INSTRUCTIONS
-    let html = `<h3>${selectedExam.exam_module}</h3><ul>`;
-
-    selectedExam.instructions.forEach(i=>{
-        html += `<li>${i}</li>`;
-    });
-
-    html += `</ul>`;
-
-    document.getElementById("examInfo").innerHTML = html;
-
-    document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
 }
-    
 
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
@@ -647,6 +625,8 @@ function saveMSQ(val,checked){
 
     if(arr.length===0) delete answers[key];
     else answers[key]=arr.join(";");
+    saveData();
+    updatePalette();
     updateSectionProgress();
 }
 
