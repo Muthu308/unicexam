@@ -192,7 +192,7 @@ button:hover {
 
     <!-- 🔥 EXAM INFO -->
     <div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>
-
+<div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
     <br>
 
     <button id="startBtn" onclick="startExam()" disabled>
@@ -276,54 +276,78 @@ let timeLeft = 0;
 let examConfig = {};
 
 // LOAD CONFIG
+let allExams = [];
+let selectedExam = null;
+
 fetch("/exam_config.json")
 .then(res => res.json())
 .then(data => {
 
-    examConfig = data;
+    allExams = data;
 
-    exam_module = data.exam_module;
-    timeLeft = data.duration;
+    let html = "";
+
+    data.forEach((exam, index)=>{
+
+        let statusColor = exam.status === "yes" ? "green" : "red";
+
+        html += `
+        <div style="
+            border:1px solid #ccc;
+            padding:10px;
+            width:250px;
+            cursor:pointer;
+        "
+        onclick="selectExam(${index})">
+
+            <h4>${exam.exam_module}</h4>
+            <p>Duration: ${Math.floor(exam.duration/60)} mins</p>
+            <p style="color:${statusColor}">
+                ${exam.status === "yes" ? "Active" : "Closed"}
+            </p>
+
+        </div>`;
+    });
+
+    document.getElementById("examList").innerHTML = html;
+});
+
+ function selectExam(index){
+
+    selectedExam = allExams[index];
+
+    exam_module = selectedExam.exam_module;
+    timeLeft = selectedExam.duration;
+    examConfig = selectedExam;
 
     // 🔥 SHOW INSTRUCTIONS
-    let html = `<h3>${data.exam_module}</h3><ul>`;
+    let html = `<h3>${selectedExam.exam_module}</h3><ul>`;
 
-    data.instructions.forEach(i=>{
+    selectedExam.instructions.forEach(i=>{
         html += `<li>${i}</li>`;
     });
 
     html += `</ul>`;
 
-    if(data.status === "yes"){
-        html += `<span style="color:green;">🟢 Exam Active</span>`;
-        document.getElementById("startBtn").disabled = false;
-    } else {
-        html += `<span style="color:red;">🔴 Exam Closed</span>`;
-    }
-
     document.getElementById("examInfo").innerHTML = html;
 
-    // 🔥 LOAD QUESTIONS FROM CONFIG
-    return fetch(data.question_file);
-})
+    document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
+}
+    
+fetch(selectedExam.question_file)
 .then(res => res.json())
 .then(qData => {
 
-    if(!qData || qData.length === 0){
-        alert("Question file empty ❌");
-        return;
-    }
-
     questions = qData;
-    console.log("Questions Loaded:", questions);
-document.getElementById("loading").style.display="none";
-    createPalette();
-})
-.catch(err => {
-    console.error("Error loading config/questions:", err);
-    alert("Failed to load exam data ❌");
-});
 
+    createPalette();
+
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("examPage").style.display="block";
+
+    showQuestion(0);
+    startTimer();
+});
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
 //.then(res=>res.json())
@@ -334,31 +358,41 @@ document.getElementById("loading").style.display="none";
 
 // LOGIN
 function startExam(){
-    student_id=document.getElementById("id").value;
+
+    student_id = document.getElementById("id").value;
 
     if(!student_id){
         alert("Enter ID"); return;
     }
-    if(!exam_module || timeLeft === 0){
-        alert("Exam not loaded yet");
-        return;
+
+    if(!selectedExam){
+        alert("Select exam first"); return;
     }
 
-    if(examConfig.status !== "yes"){
-        alert("Exam not active");
-        return;
+    if(selectedExam.status !== "yes"){
+        alert("Exam not active"); return;
     }
-
-    loadSavedData();
 
     document.getElementById("candidate").innerText =
         document.getElementById("name").value + " | " + student_id;
 
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("examPage").style.display="block";
+    loadSavedData();
 
-    showQuestion(current);
-    startTimer();
+    // 🔥 LOAD QUESTIONS HERE
+    fetch(selectedExam.question_file)
+    .then(res => res.json())
+    .then(qData => {
+
+        questions = qData;
+
+        createPalette();
+
+        document.getElementById("loginPage").style.display="none";
+        document.getElementById("examPage").style.display="block";
+
+        showQuestion(0);
+        startTimer();
+    });
 }
 
 // TIMER
