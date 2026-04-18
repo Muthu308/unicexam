@@ -225,24 +225,35 @@ button:hover {
     <div id="candidate"></div>
     <div>⏱ <span id="timer"></span></div>
 </div>
-<p class="exam-card">
-Please select an exam from the list below and click "Start Exam" to begin.
-</p>
-<div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
-<div id="loginPage" style="text-align:center;margin-top:50px;box-shadow: 0 2px 6px rgba(0,0,0,0.2)">
+
+<div id="loginPage" style="text-align:center;margin-top:40px;">
+
     <h2>Login</h2>
 
-    <input id="name" placeholder="Name"><br><br>
-    <input id="id" placeholder="Student ID"><br><br>
+    <input id="name" placeholder="Enter Your Name" style="padding:8px;width:200px;"><br><br>
 
-    <!-- 🔥 EXAM INFO -->
-<div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>
+    <input id="id" placeholder="Enter Student ID" style="padding:8px;width:200px;"><br><br>
 
-    <br>
+    <!-- ALERT MESSAGE -->
+    <div style="
+        background:#e8f4fd;
+        color:#0b5394;
+        padding:10px;
+        border-radius:6px;
+        max-width:400px;
+        margin:10px auto;
+    ">
+        ℹ️ Please select an exam below and click <b>Start Exam</b>
+    </div>
+
+    <div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
+
+    <div id="examInfo"></div>
 
     <button id="startBtn" onclick="startExam()" disabled>
         Start Exam
     </button>
+
 </div>
 
 <div id="examPage" style="display:none;">
