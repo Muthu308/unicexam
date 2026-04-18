@@ -225,7 +225,10 @@ button:hover {
     <div id="candidate"></div>
     <div>⏱ <span id="timer"></span></div>
 </div>
-
+<p class="exam-card">
+Please select an exam from the list below and click "Start Exam" to begin.
+</p>
+<div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
 <div id="loginPage" style="text-align:center;margin-top:50px;box-shadow: 0 2px 6px rgba(0,0,0,0.2)">
     <h2>Login</h2>
 
@@ -234,7 +237,7 @@ button:hover {
 
     <!-- 🔥 EXAM INFO -->
 <div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>
-<div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+
     <br>
 
     <button id="startBtn" onclick="startExam()" disabled>
@@ -269,7 +272,7 @@ button:hover {
    
 <hr>
   
-    <button 
+    <button id="submitBtn"
         onclick="submitExam()" 
         style="width:60%; background:blue; color:white; font-weight:bold;">
         🚀 Submit Exam
@@ -426,6 +429,7 @@ function startExam(){
 
         showQuestion(0);
         startTimer();
+        document.getElementById("loading").style.display="none";
     })
     .catch(err=>{
         console.error(err);
