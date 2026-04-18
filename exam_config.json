@@ -4,6 +4,7 @@
   "status": "yes",
   "duration": 3600,
   "question_file": "/unic_text_18-06-2026.json",
+  "start_time": "2026-04-20 10:00 AM",
   "instructions": [
     "Baseline Test 03 - Physics, Chemistry, Mathematics",
     "JEE Preparation: Benchmark (mixed difficulty)",
@@ -26,6 +27,7 @@
   "status": "yes",
   "duration": 3000,
   "question_file": "/unic_text_17-06-2026.json",
+   "start_time": "2026-04-17 10:00 AM",
   "instructions": [
     "Baseline Test 02 - Physics, Chemistry, Mathematics",
     "JEE Preparation: Application (concept understanding)",
@@ -48,6 +50,7 @@
   "status": "yes",
   "duration": 2400,
   "question_file": "/questions_updated.json",
+  "start_time": "2026-04-16 10:00 AM",
   "instructions": [
     "Baseline Test 01 - Physics, Chemistry, Mathematics",
     "JEE Preparation: Basic (concept recall)",
