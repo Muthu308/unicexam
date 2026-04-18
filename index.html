@@ -162,7 +162,7 @@ button:hover {
 .left::-webkit-scrollbar-thumb {
     background: #ccc;
     border-radius: 5px;
-},
+}
     .question-header {
     background:#ecf0f1;
     padding:6px 10px;
@@ -170,6 +170,48 @@ button:hover {
     border-left:5px solid #3498db;
     margin-bottom:10px;
 }
+    .exam-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    width: 260px;
+    background: white;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.exam-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+.exam-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.exam-info {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.exam-status {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.active {
+    color: green;
+}
+
+.closed {
+    color: red;
+}
+  .exam-card.selected {
+    border: 2px solid #3498db;
+}  
 </style>
 </head>
 
@@ -191,7 +233,7 @@ button:hover {
     <input id="id" placeholder="Student ID"><br><br>
 
     <!-- 🔥 EXAM INFO -->
-    <div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>
+   <!-- <div id="examInfo" style="max-width:500px;margin:auto;text-align:left;border:1px solid red;"></div>-->
 <div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
     <br>
 
@@ -289,28 +331,55 @@ fetch("/exam_config.json")
 
     data.forEach((exam, index)=>{
 
-        let statusColor = exam.status === "yes" ? "green" : "red";
+        let statusClass = exam.status === "yes" ? "active" : "closed";
+        let statusText = exam.status === "yes" ? "🟢 Active" : "🔴 Closed";
 
         html += `
-        <div style="
-            border:1px solid #ccc;
-            padding:10px;
-            width:250px;
-            cursor:pointer;
-        "
-        onclick="selectExam(${index})">
+        <div class="exam-card" onclick="selectExam(${index})">
 
-            <h4>${exam.exam_module}</h4>
-            <p>Duration: ${Math.floor(exam.duration/60)} mins</p>
-            <p style="color:${statusColor}">
-                ${exam.status === "yes" ? "Active" : "Closed"}
-            </p>
+            <div class="exam-title">${exam.exam_module}</div>
+
+            <div class="exam-info">
+                ⏱ Duration: ${Math.floor(exam.duration/60)} mins
+            </div>
+
+            <div class="exam-info">
+                📅 Start: ${exam.start_time || "Not Scheduled"}
+            </div>
+
+            <div class="exam-status ${statusClass}">
+                ${statusText}
+            </div>
 
         </div>`;
     });
 
     document.getElementById("examList").innerHTML = html;
 });
+
+ function selectExam(index){
+
+    selectedExam = allExams[index];
+
+    exam_module = selectedExam.exam_module;
+    timeLeft = selectedExam.duration;
+
+    // highlight selected card
+    document.querySelectorAll(".exam-card").forEach(c => c.classList.remove("selected"));
+    document.querySelectorAll(".exam-card")[index].classList.add("selected");
+
+    let html = `<h3>${selectedExam.exam_module}</h3><ul>`;
+
+    selectedExam.instructions.forEach(i=>{
+        html += `<li>${i}</li>`;
+    });
+
+    html += `</ul>`;
+
+    document.getElementById("examInfo").innerHTML = html;
+
+    document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
+}   
 
  function selectExam(index){
 
@@ -334,20 +403,7 @@ fetch("/exam_config.json")
     document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
 }
     
-fetch(selectedExam.question_file)
-.then(res => res.json())
-.then(qData => {
 
-    questions = qData;
-
-    createPalette();
-
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("examPage").style.display="block";
-
-    showQuestion(0);
-    startTimer();
-});
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
 //.then(res=>res.json())
@@ -378,7 +434,7 @@ function startExam(){
 
     loadSavedData();
 
-    // 🔥 LOAD QUESTIONS HERE
+    // ✅ ONLY HERE LOAD QUESTIONS
     fetch(selectedExam.question_file)
     .then(res => res.json())
     .then(qData => {
@@ -392,6 +448,10 @@ function startExam(){
 
         showQuestion(0);
         startTimer();
+    })
+    .catch(err=>{
+        console.error(err);
+        alert("Failed to load question paper ❌");
     });
 }
 
