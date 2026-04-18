@@ -1,4 +1,5 @@
-{
+[
+  {
   "exam_module": "UNIC_TEST_03",
   "status": "yes",
   "duration": 3600,
@@ -42,3 +43,4 @@
     "* Unic Academy - Building Clarity, Creating Confidence, Delivering Results"
   ]
 }
+]  
