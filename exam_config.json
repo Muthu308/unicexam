@@ -19,4 +19,26 @@
     "Timer will auto submit",
     "* Unic Academy - Building Clarity, Creating Confidence, Delivering Results"
   ]
+},
+{
+  "exam_module": "UNIC_TEST_02",
+  "status": "yes",
+  "duration": 3000,
+  "question_file": "/unic_text_17-06-2026.json",
+  "instructions": [
+    "Baseline Test 02 - Physics",
+    "JEE Preparation: Reinforcement & Benchmark",
+    "1. Login: Enter your NAME IN CAPITAL LETTERS and Roll No exactly as given by the school",
+    "2. Timer: Once you login, the test timer will appear on screen. Test will close automatically after the time ends",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 60 minutes",
+    "Each correct answer: +4",
+    "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "Each subject (Physics, Chemistry, Mathematics) contains 36 MCQ questions",
+    "Do not refresh the page during the exam",
+    "The exam will be automatically submitted when the time is over",
+    "Timer will auto submit",
+    "* Unic Academy - Building Clarity, Creating Confidence, Delivering Results"
+  ]
 }
