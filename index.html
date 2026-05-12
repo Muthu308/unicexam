@@ -615,7 +615,7 @@ function showQuestion(i){
             html+=`<div>
             <input type="radio" name="q${i}"
             ${answers[key]==opt?"checked":""}
-            onchange="saveAnswer('${opt}')"> ${opt}
+            onchange="saveAnswer('${opt}')"> (${opt})
             </div>`;
         });
     }
