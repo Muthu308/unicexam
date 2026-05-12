@@ -1,5 +1,6 @@
 [
    {
+      "exam_name": "Weekly Test 01 - Physics, Chemistry, Mathematics",
   "exam_module": "UNIC_TEST_PCM01",
   "status": "yes",
   "duration": 5400,
