@@ -407,7 +407,7 @@ fetch("/exam_config.json")
     document.querySelectorAll(".exam-card").forEach(c => c.classList.remove("selected"));
     document.querySelectorAll(".exam-card")[index].classList.add("selected");
 
-    let html = `<h3>${selectedExam.exam_module}</h3><ul>`;
+    let html = `<h3>${selectedExam.exam_name}</h3><ul>`;
 
     selectedExam.instructions.forEach(i=>{
         html += `<li>${i}</li>`;
