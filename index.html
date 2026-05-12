@@ -123,7 +123,7 @@ button:hover {
 
 /* IMAGE STYLING */
 .question-image-container {
-    max-width: 600px;
+    max-width: 720px;
     margin: 2px;
 }
 
@@ -213,7 +213,7 @@ button:hover {
     border: 2px solid #3498db;
 }  
     #examInfo {
-    max-width: 600px;
+    max-width: 720px;
     margin: 20px auto;              /* center */
     padding: 15px 20px;
     background: #f8fbff;            /* light blue */
@@ -631,7 +631,7 @@ function showQuestion(i){
     }
 
     if(q.type==="NAT"){
-        html+=`<input type="number" step="any"
+        html+=`<input type="number" step="any" class="form-control"
         value="${answers[key]||""}"
         oninput="saveNAT(this.value)"
         placeholder="Enter numeric answer">`;
