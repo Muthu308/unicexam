@@ -236,6 +236,40 @@ button:hover {
     margin-bottom: 6px;
     color: #333;
 }
+.question-card{
+    background:#fff;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
+
+.option-card{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    margin:8px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    background:#f8f9fa;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option-card:hover{
+    background:#e9f3ff;
+    border-color:#0d6efd;
+}
+
+.option-card input{
+    transform:scale(1.1);
+}
+
+textarea.form-control{
+    min-height:120px;
+}
+    
 </style>
 </head>
 
@@ -610,37 +644,51 @@ function showQuestion(i){
 </div>`;
     }
 
-    if(q.type==="MCQ"){
-        q.options.forEach(opt=>{
-            html+=`<div>
-            <input type="radio" name="q${i}"
-            ${answers[key]==opt?"checked":""}
-            onchange="saveAnswer('${opt}')"> (${opt})
-            </div>`;
-        });
-    }
+   html += `<div class="question-card">`;
 
-    if(q.type==="MSQ"){
-        q.options.forEach(opt=>{
-            html+=`<div>
+if(q.type==="MCQ"){
+    q.options.forEach(opt=>{
+        html += `
+        <label class="option-card">
+            <input type="radio"
+                name="q${i}"
+                ${answers[key]==opt?"checked":""}
+                onchange="saveAnswer('${opt}')">
+            ${opt}
+        </label>`;
+    });
+}
+
+if(q.type==="MSQ"){
+    q.options.forEach(opt=>{
+        html += `
+        <label class="option-card">
             <input type="checkbox"
-            ${answers[key]?.split(";").includes(opt)?"checked":""}
-            onchange="saveMSQ('${opt}', this.checked)"> ${opt}
-            </div>`;
-        });
-    }
+                ${answers[key]?.split(";").includes(opt)?"checked":""}
+                onchange="saveMSQ('${opt}', this.checked)">
+            ${opt}
+        </label>`;
+    });
+}
 
-    if(q.type==="NAT"){
-        html+=`<input type="number" step="any" class="form-control"
+if(q.type==="NAT"){
+    html += `
+    <input type="number"
+        step="any"
+        class="form-control mt-3"
         value="${answers[key]||""}"
         oninput="saveNAT(this.value)"
         placeholder="Enter numeric answer">`;
-    }
+}
 
-    if(q.type==="SA"){
-        html+=`<textarea onchange="saveAnswer(this.value)">
-        ${answers[key]||""}</textarea>`;
-    }
+if(q.type==="SA"){
+    html += `
+    <textarea class="form-control mt-3"
+        onchange="saveAnswer(this.value)"
+        placeholder="Write your answer here...">${answers[key]||""}</textarea>`;
+}
+
+html += `</div>`;
 
     document.getElementById("questionArea").innerHTML=html;
 
