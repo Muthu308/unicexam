@@ -1,7 +1,32 @@
 [
+   {
+  "exam_module": "UNIC_TEST_PCM01",
+  "status": "yes",
+  "duration": 5400,
+  "question_file": "/unic_text_15-05-2026.json",
+  "start_time": "2026-05-12 10:00 AM",
+  "instructions": [
+    "Instructions for Weekly Test PCM 01",
+    "JEE Preparation: Benchmark (mixed difficulty)",
+    "Login : Enter your NAME IN CAPITAL LETTERS and Enrollment ID exactly as given by the Academy for this program.",
+    "2. Timer : Once you login, the test timer will appear on screen. ",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 90 minutes",
+    "Each correct answer: +4",
+    "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "Each subject (Physics – 15, Chemistry – 15, Mathematics – 15) contains 30 Multiple Choice Question questions (10 in each subject), contains 15 NAT (5 in each subject)",
+    "+5 (for each subject) if answered only correct answer in total 15 marks.",
+    "+5 if no single wrong answer in the entire question paper.",
+    "Total = 20 marks for smart players.",
+    "Do not refresh the page during the exam",
+    "Clcik the Submit Button End of The Exam is Over",   
+    "* Unic Academy - Clarity-Confidence-Results"
+  ]
+},
   {
   "exam_module": "UNIC_TEST_03",
-  "status": "yes",
+  "status": "no",
   "duration": 3600,
   "question_file": "/unic_text_18-06-2026.json",
   "start_time": "2026-04-20 10:00 AM",
@@ -24,7 +49,7 @@
 },
 {
   "exam_module": "UNIC_TEST_02",
-  "status": "yes",
+  "status": "no",
   "duration": 3000,
   "question_file": "/unic_text_17-06-2026.json",
    "start_time": "2026-04-17 10:00 AM",
@@ -47,7 +72,7 @@
 },
   {
   "exam_module": "UNIC_TEST_01",
-  "status": "yes",
+  "status": "no",
   "duration": 2400,
   "question_file": "/questions_updated.json",
   "start_time": "2026-04-16 10:00 AM",
