@@ -375,7 +375,7 @@ fetch("/exam_config.json")
         html += `
         <div class="exam-card" onclick="selectExam(${index})">
 
-            <div class="exam-title">${exam.exam_module}</div>
+            <div class="exam-title">${exam.exam_name}</div>
 
             <div class="exam-info">
                 ⏱ Duration: ${Math.floor(exam.duration/60)} mins
