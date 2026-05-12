@@ -886,33 +886,33 @@ function submitExam(){
 
     console.log("Variables:", variables);
 
-    fetch("https://merry-lemur-83.hasura.app/v1/graphql", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "x-hasura-admin-secret": "NXkzUaSjIx29YWuWf7I9GgOPddk6Vbfm13qt1cQ4UjSW9GucPNMP3irFvs4m0lLU"
-        },
-        body: JSON.stringify({
-            query: mutation,
-            variables: variables
-        })
+    fetch("/submit", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        variables: variables
     })
-    .then(res => res.json())
-    .then(result => {
-        console.log("Result:", result);
+})
+.then(res => res.json())
+.then(result => {
+    console.log("Result:", result);
 
-        if(result.errors){
-            alert("❌ Error submitting form");
-        } else {
-            alert("✅ Submitted Successfully");
-            document.body.innerHTML = "<h2 style='text-align:center'>Exam Submitted ✅</h2>";
-            localStorage.clear();
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        alert("❌ Submission failed");
-    });
+    if(result.errors){
+        alert("❌ Error submitting form");
+    } else {
+        alert("✅ Submitted Successfully");
+        document.body.innerHTML =
+            "<h2 style='text-align:center'>Exam Submitted ✅</h2>";
+
+        localStorage.clear();
+    }
+})
+.catch(error => {
+    console.error("Error:", error);
+    alert("❌ Submission failed");
+});
 }
 </script>
 
