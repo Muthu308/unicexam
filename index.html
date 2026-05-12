@@ -249,10 +249,7 @@ button:hover {
     align-items:center;
     gap:8px;
     padding:10px 16px;
-    margin:8px;
-    border:1px solid #ddd;
-    border-radius:12px;
-    background:#f8f9fa;
+    margin:8px;   
     cursor:pointer;
     transition:0.3s;
 }
@@ -262,14 +259,6 @@ button:hover {
     border-color:#0d6efd;
 }
 
-.option-card input{
-    transform:scale(1.1);
-}
-
-textarea.form-control{
-    min-height:120px;
-}
-    
 </style>
 </head>
 
@@ -654,7 +643,7 @@ if(q.type==="MCQ"){
                 name="q${i}"
                 ${answers[key]==opt?"checked":""}
                 onchange="saveAnswer('${opt}')">
-            ${opt}
+            ${opt} )
         </label>`;
     });
 }
