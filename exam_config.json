@@ -26,6 +26,7 @@
   ]
 },
   {
+      "exam_name": "Baseline Test 03 - PCM",
   "exam_module": "UNIC_TEST_03",
   "status": "no",
   "duration": 3600,
@@ -49,6 +50,7 @@
   ]
 },
 {
+    "exam_name": "Baseline Test 02 - PCM",
   "exam_module": "UNIC_TEST_02",
   "status": "no",
   "duration": 3000,
@@ -72,6 +74,7 @@
   ]
 },
   {
+      "exam_name": "Baseline Test 01 - PCM",
   "exam_module": "UNIC_TEST_01",
   "status": "no",
   "duration": 2400,
