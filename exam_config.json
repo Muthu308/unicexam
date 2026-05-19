@@ -1,7 +1,7 @@
 [
      {
       "exam_name": "Weekly Test 02 - Physics, Chemistry, Mathematics",
-  "exam_module": "UNIC_TEST_PCM01",
+  "exam_module": "UNIC_TEST_PCM02",
   "status": "yes",
   "duration": 5400,
   "question_file": "/unic_text_19-05-2026.json",
