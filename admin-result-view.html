@@ -150,10 +150,11 @@
     table{
         width:100%;
         border-collapse:collapse;
+        border:1px solid #000; /* Outer table border */
     }
 
     th, td{
-        border:1px solid #000;
+        border:1.5px solid #000; /* Cell borders */ 
         padding:8px;
     }
 
@@ -176,6 +177,15 @@
             padding:6px;
         }
     }
+    @media print{
+    table{
+        border:1px solid #000 !important;
+    }
+
+    th, td{
+        border:1px solid #000 !important;
+    }
+}
 </style>
 <body>
     <div class="container py-3">
