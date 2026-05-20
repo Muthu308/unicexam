@@ -986,10 +986,23 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
     const maxMarks = totalQuestions * markingScheme.correct;
     const percentage = (totalMarks / maxMarks) * 100;
 
-    let grade = "";
-    if (percentage >= 80) grade = "A";
-    else if (percentage >= 50) grade = "B";    
-    else grade = "C";
+ let grade = '';
+
+if (percentage >= 85) {
+    grade = 'A+';
+
+} else if (percentage >= 70) {
+    grade = 'A';
+
+} else if (percentage >= 55) {
+    grade = 'B';
+
+} else if (percentage >= 40) {
+    grade = 'C';
+
+}  else {
+    grade = 'D';
+}
 
     html += `
     </tbody>
@@ -1031,6 +1044,186 @@ document.getElementById("studentDetailContent").innerHTML = html;
 $('#studentModal').modal('show');
 
 }
+
+   html += `
+<h4 class="mt-4 mb-3 text-primary fw-bold">
+    Question-wise Analysis
+</h4>
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-hover align-middle">
+
+<thead class="table-dark">
+
+<tr class="text-center">
+
+    <th>Question</th>
+
+    <th>Total Students</th>
+
+    <th>Correct</th>
+
+    <th>Wrong</th>
+
+    <th>Not Attempted</th>
+
+    <th>Correct %</th>
+
+    <th>Wrong %</th>
+
+    <th>NA %</th>
+
+    <th>Hardness %</th>
+
+    <th>Difficulty Level</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+`;
+
+Object.keys(questionStats).forEach(question => {
+
+    const stats = questionStats[question];
+
+    const totalStudents =
+        overallScores.totalStudents;
+
+    const correctPercentage =
+        (
+            (stats.correct / totalStudents)
+            * 100
+        ).toFixed(2);
+
+    const wrongPercentage =
+        (
+            (stats.wrong / totalStudents)
+            * 100
+        ).toFixed(2);
+
+    const naPercentage =
+        (
+            (stats.notAttempted /
+                totalStudents)
+            * 100
+        ).toFixed(2);
+
+    // Hardness Formula
+    // More wrong answers = more hard
+
+    const hardness =
+        (
+            (
+                stats.wrong +
+                stats.notAttempted
+            ) / totalStudents
+        ) * 100;
+
+    let difficultyLevel = "";
+
+    if (hardness >= 75) {
+
+        difficultyLevel = `
+            <span class="badge bg-danger">
+                Very Hard
+            </span>
+        `;
+
+    } else if (hardness >= 50) {
+
+        difficultyLevel = `
+            <span class="badge bg-warning text-dark">
+                Hard
+            </span>
+        `;
+
+    } else if (hardness >= 30) {
+
+        difficultyLevel = `
+            <span class="badge bg-info text-dark">
+                Medium
+            </span>
+        `;
+
+    } else {
+
+        difficultyLevel = `
+            <span class="badge bg-success">
+                Easy
+            </span>
+        `;
+    }
+
+    html += `
+
+    <tr class="text-center">
+
+        <td class="fw-bold">
+            ${question.toUpperCase()}
+        </td>
+
+        <td>
+            ${totalStudents}
+        </td>
+
+        <td class="text-success fw-bold">
+            ${stats.correct}
+        </td>
+
+        <td class="text-danger fw-bold">
+            ${stats.wrong}
+        </td>
+
+        <td class="text-secondary fw-bold">
+            ${stats.notAttempted}
+        </td>
+
+        <td>
+            ${correctPercentage}%
+        </td>
+
+        <td>
+            ${wrongPercentage}%
+        </td>
+
+        <td>
+            ${naPercentage}%
+        </td>
+
+        <td>
+
+            <div class="progress"
+                 style="height:22px;">
+
+                <div
+                    class="progress-bar bg-danger"
+                    role="progressbar"
+                    style="width:${hardness}%">
+
+                    ${hardness.toFixed(1)}%
+
+                </div>
+
+            </div>
+
+        </td>
+
+        <td>
+            ${difficultyLevel}
+        </td>
+
+    </tr>
+    `;
+});
+
+html += `
+</tbody>
+</table>
+</div>
+`;     
 
 
     </script>
