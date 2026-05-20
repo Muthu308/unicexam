@@ -460,24 +460,6 @@ background:#f1f7ff;
             const examModule = document.getElementById('examModule').value;
             const searchValue = document.getElementById('searchValue').value;
 
-            const query = `
-                query GetUniqdata($searchValue: String!, $examModule: String!) {
-                    uniqdata(where: {exam_module: {_eq: $examModule}, name: {_ilike: $searchValue}}) {
-                        email
-                        exam_module
-                        name
-                        s_id
-                        id
-                        correct
-                        marks
-                        responses
-                        timedate
-                    }
-                }
-            `;
-
-            const variables = { searchValue: `%${searchValue}%`, examModule: examModule };
-
             try {
                 const response = await fetch('/api/fetch_response', {
                     method: 'POST',
