@@ -23,9 +23,9 @@
 
 .main-card{
     background:white;
-    padding:25px;
+    padding:15px;
     border-radius:10px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 h3{
@@ -39,10 +39,10 @@ h3{
     font-size:16px;
 }
 
-@media (min-width:768px){
+@media (min-width:960px){
     .btn-primary{
         width:auto;
-        padding:10px 30px;
+        padding:10px 20px;
     }
 }
 .student-row{
@@ -59,7 +59,7 @@ background:#f1f7ff;
 .dashboard-card{
     background:#f8f9fa;
     border-radius:16px;
-    box-shadow:0 8px 30px rgba(0,0,0,0.08);
+    box-shadow:0 6px 26px rgba(0,0,0,0.08);
 }
 
 .academy-title{
@@ -124,7 +124,15 @@ background:#f1f7ff;
                                 <option value="UNIC_TEST_01">
                                     TEST 01
                                 </option>
-
+                                <option value="UNIC_TEST_02">
+                                    TEST 02
+                                </option>
+                                 <option value="UNIC_TEST_03">
+                                    TEST 03
+                                </option>
+                                <option value="UNIC_TEST_PCM01">
+                                    PCM 03
+                                </option>
                                 
                             </select>
                         </div>
@@ -248,28 +256,171 @@ background:#f1f7ff;
           'UNIC_TEST_01': {
                 'q1': 'B', 'q2': 'A', 'q3': 'B', 'q4': 'A', 'q5': 'B',
                 'q6': 'A', 'q7': 'B', 'q8': 'B', 'q9': 'B', 'q10': 'B',
-    'q11': 'B', 'q12': 'A', 'q13': 'B', 'q14': 'B', 'q15': 'A'}
+                'q11': 'B', 'q12': 'A', 'q13': 'B', 'q14': 'B', 'q15': 'A'},
+            'UNIC_TEST_02': {
+                'q1': 'B',
+                'q2': 'B',
+                'q3': 'B',
+                'q4': 'B',
+                'q5': 'C',
+                'q6': 'C',
+                'q7': 'A',
+                'q8': 'C',
+                'q9': 'B',
+                'q10': 'B',
+                'q11': 'B',
+                'q12': 'C',
+                'q13': 'B',
+                'q14': 'C',
+                'q15': 'C',
+                'q16': 'D',
+                'q17': 'C',
+                'q18': 'B',
+                'q19': 'B',
+                'q20': 'B',
+                'q21': 'A',
+                'q22': 'A',
+                'q23': 'B',
+                'q24': 'A',
+                'q25': 'A',
+                'q26': 'A',
+                'q27': 'A',
+                'q28': 'B',
+                'q29': 'A',
+                'q30': 'A'},
+            'UNIC_TEST_03': {
+                'q1':'C',
+                'q2':'B',
+                'q3':'B',
+                'q4':'B',
+                'q5':'C',
+                'q6':'B',
+                'q7':'C',
+                'q8':'A',
+                'q9':'C',
+                'q10':'B',
+                'q11':'B',
+                'q12':'A',
+                'q13':'B',
+                'q14':'A',
+                'q15':'C',
+                'q16':'B',
+                'q17':'C',
+                'q18':'B',
+                'q19':'B',
+                'q20':'C',
+                'q21':'B',
+                'q22':'D',
+                'q23':'A',
+                'q24':'B',
+                'q25':'A',
+                'q26':'A',
+                'q27':'B',
+                'q28':'A',
+                'q29':'A',
+                'q30':'B',
+                'q31':'A',
+                'q32':'A',
+                'q33':'B',
+                'q34':'B',
+                'q35':'C',
+                'q36':'B'},
+
+            'UNIC_TEST_PCM01': {
+    'q1': '1',
+    'q2': '2',
+    'q3': '2',
+    'q4': '4',
+    'q5': '1',
+    'q6': '1',
+    'q7': '2',
+    'q8': '3',
+    'q9': '4',
+    'q10': '3',
+    'q11': '11',
+    'q12': '100',
+    'q13': '50',
+    'q14': '1620',
+    'q15': '900',
+
+    'q16': '2',
+    'q17': '1',
+    'q18': '3',
+    'q19': 'MTA',
+    'q20': '2',
+    'q21': '1',
+    'q22': '4',
+    'q23': 'MTA',
+    'q24': '3',
+    'q25': '4',
+    'q26': '18',
+    'q27': '44',
+    'q28': '16',
+    'q29': 'MTA',
+    'q30': '1',
+
+    'q31': '1',
+    'q32': '2',
+    'q33': 'MTA',
+    'q34': '1',
+    'q35': '3',
+    'q36': '1',
+    'q37': '3',
+    'q38': '2',
+    'q39': '4',
+    'q40': '2',
+    'q41': '2',
+    'q42': '100',
+    'q43': '100',
+    'q44': '125',
+    'q45': '2'
+}
             
         };
 
         const markingSchemes = {
              'UNIC_TEST_01': {
-                correct: 1,
-                wrong: -0.33,
+                correct: 4,
+                wrong: 0,
                 noAnswer: 0
-            }        
+            },
+            'UNIC_TEST_02': {
+                correct: 4,
+                wrong: 0,
+                noAnswer: 0
+            },
+            'UNIC_TEST_03': {
+                correct: 4,
+                wrong: 0,
+                noAnswer: 0
+            },
+            'UNIC_TEST_PCM01': {
+                correct: 4,
+                wrong: -1,
+                noAnswer: 0
+            }           
         };
 
 
-        function isCorrect(userAnswer, correctAnswer) {
+       function isCorrect(userAnswer, correctAnswer) {
 
-            if (!userAnswer) return false;
+            if (userAnswer === undefined || userAnswer === null ||  String(userAnswer).trim() === '') return false;
 
-            userAnswer = userAnswer.trim();
+            // Convert to string safely
+            userAnswer = String(userAnswer).trim();
+            correctAnswer = String(correctAnswer).trim();
 
+            // MTA = Marks To All
+            if (correctAnswer === 'MTA') {
+                return true;
+            }
+           
             // RANGE case (3 to 6)
             if (correctAnswer.toLowerCase().includes('to')) {
-                const [min, max] = correctAnswer.split('to').map(x => Number(x.trim()));
+                const [min, max] = correctAnswer
+                    .split('to')
+                    .map(x => Number(x.trim()));
+
                 const userValue = Number(userAnswer);
 
                 return userValue >= min && userValue <= max;
@@ -277,14 +428,24 @@ background:#f1f7ff;
 
             // OR case (3 OR -2)
             if (correctAnswer.includes('OR')) {
-                const options = correctAnswer.split('OR').map(a => a.trim());
+                const options = correctAnswer
+                    .split('OR')
+                    .map(a => a.trim());
+
                 return options.includes(userAnswer);
             }
 
             // Multiple answers (B;C;D)
             if (correctAnswer.includes(';')) {
-                const correct = correctAnswer.split(';').map(a => a.trim()).sort();
-                const user = userAnswer.split(';').map(a => a.trim()).sort();
+                const correct = correctAnswer
+                    .split(';')
+                    .map(a => a.trim())
+                    .sort();
+
+                const user = userAnswer
+                    .split(';')
+                    .map(a => a.trim())
+                    .sort();
 
                 if (correct.length !== user.length) return false;
 
@@ -292,8 +453,9 @@ background:#f1f7ff;
             }
 
             // Normal answer
-            return userAnswer === correctAnswer.trim();
+            return userAnswer === correctAnswer;
         }
+
         async function fetchStudentResponses() {
             const examModule = document.getElementById('examModule').value;
             const searchValue = document.getElementById('searchValue').value;
@@ -317,13 +479,15 @@ background:#f1f7ff;
             const variables = { searchValue: `%${searchValue}%`, examModule: examModule };
 
             try {
-                const response = await fetch(process.env.HASURA_URL, {
+                const response = await fetch('/api/fetch_response', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-hasura-admin-secret': process.env.HASURA_SECRET // Replace with your actual Hasura admin secret
-                    },
-                    body: JSON.stringify({ query: query, variables: variables })
+                   headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            searchValue,
+                            examModule
+                        })
                 });
                 const result = await response.json();
                 displayResponses(result.data.uniqdata, examModule);
@@ -351,6 +515,8 @@ background:#f1f7ff;
             // Convert the object back to an array
             const filteredResponses = Object.values(latestResponses);
 
+           
+
             let overallScores = {
                 highestScore: 0,
                 totalScore: 0,
@@ -364,7 +530,7 @@ background:#f1f7ff;
             };
 
             let html = `<h5 class="mt-4 font-weight-bold text-primary">Individual Results Summary:</h5><table class="table table-bordered">
-                        <thead>
+                        <thead style="text-align:center;vertical-align: middle;">
                             <tr>
                                 <th>Rank</th>
                                 <th>Student Details</th>
@@ -375,7 +541,11 @@ background:#f1f7ff;
                                 <th>Positive Marks</th>
                                 <th>Negative Marks</th>
                                 <th>Final Marks</th>
-                                <th>Time Spent</th>
+                                <th>Percentage</th>
+                                <th>Grade</th>
+                                <!--<th>Time Spent</th>
+                                <th>Wrong Qs</th>
+<th>Not Attempted Qs</th>-->
                             </tr>
                         </thead>
                         <tbody>`;
@@ -390,15 +560,29 @@ background:#f1f7ff;
                 let totalCorrect = 0;
                 let totalWrong = 0;
                 let totalNotAttempted = 0;
+                let wrongQuestions = [];         //  NEW
+                let notAttemptedQuestions = [];  //  NEW
 
+                const totalQuestions = Object.keys(answerKey).length;
+                const maxMarks = totalQuestions * markingScheme.correct;
+
+               
                Object.keys(responsesObject).forEach(question => {
 
                     const userAnswer = responsesObject[question];
                     const correctAnswer = answerKey[question];
 
-                    if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
-                        totalNotAttempted++;
+                    if (correctAnswer === 'MTA') {
+                      
+                        score += markingScheme.correct;
+                        totalCorrect++;
+                        
                     }
+                    else if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N')  {
+                        totalNotAttempted++;
+                        notAttemptedQuestions.push(question);
+                    }
+
                     else if (isCorrect(userAnswer, correctAnswer)) {
                         score += markingScheme.correct;
                         totalCorrect++;
@@ -406,9 +590,18 @@ background:#f1f7ff;
                     else {
                         score += markingScheme.wrong;
                         totalWrong++;
+                        wrongQuestions.push(question); 
                     }
 
                 });
+
+                const percentage = (score / maxMarks) * 100;
+
+                // Grade logic
+                let grade = "";
+                if (percentage >= 80) grade = "A";
+                else if (percentage >= 50) grade = "B";               
+                else grade = "C";
 
                 const totalAttempted = totalCorrect + totalWrong;
                 const totalPositiveMarks = totalCorrect * markingScheme.correct;
@@ -476,7 +669,11 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                     totalPositiveMarks,
                     totalNegativeMarks,
                     score,
-                    totalTimeSpent // Include total time spent
+                    percentage,
+                    grade,
+                    totalTimeSpent, // Include total time spent
+                    wrongQuestions,          // 🔥 NEW
+                    notAttemptedQuestions    // 🔥 NEW
                 };
             });
 
@@ -484,17 +681,62 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
             scoreData.sort((a, b) => b.score - a.score); // Sort descending by score  ${data.exam_module}<br><br>${data.s_id}
             scoreData.forEach((data, index) => {
                 html += `<tr class="student-row" onclick='showStudentDetails(${JSON.stringify(data)})'>
-                            <td>${index + 1}</td>
-                            <td>${data.name}<br>${data.email}</td>
-                            <td>${data.totalAttempted}</td>
-                            <td>${data.totalCorrect}</td>
-                            <td>${data.totalNotAttempted}</td>
-                            <td>${data.totalWrong}</td>
-                            <td>${data.totalPositiveMarks.toFixed(2)}</td>
-                            <td style="color: ${data.totalNegativeMarks.toFixed(2) < 0 ? 'red' : 'black'}">${data.totalNegativeMarks}</td>
-                            <td>${data.score.toFixed(2)}</td>
-                            <td>${(data.totalTimeSpent)}</td> 
-                        </tr>`;
+                            <td style="text-align:center;">${index + 1}</td>
+                            <td>${data.name.toUpperCase()}<br>${data.email}</td>
+                            <td style="text-align:center;">${data.totalAttempted}</td>
+                            <td style="text-align:center;">${data.totalCorrect}</td>
+                            <td style="text-align:center;">
+                                ${data.totalNotAttempted}
+
+                                ${data.totalNotAttempted > 0 ? `
+                                <br>
+                                <span style="color:gray;">
+                                    Q: [
+                                    ${data.notAttemptedQuestions.map(q => q.replace("q","")).join(", ")}
+                                    ]
+                                </span>
+                                ` : ""}
+                            </td>
+
+                            <td style="text-align:center;">
+                                ${data.totalWrong}
+
+                                ${data.totalWrong > 0 ? `
+                                <br>
+                                <small style="color:red;">
+                                    Q: [
+                                    ${data.wrongQuestions.map(q => q.replace("q","")).join(", ")}
+                                    ]
+                                </small>
+                                ` : ""}
+                            </td>
+                            <td style="text-align:center;">${data.totalPositiveMarks.toFixed(2)}</td>
+                            <td style="text-align:center;color: ${data.totalNegativeMarks.toFixed(2) < 0 ? 'red' : 'black'}">${data.totalNegativeMarks}</td>
+                            <td style="text-align:center;">${data.score.toFixed(2)}</td>
+                            <td style="text-align:center;">${data.percentage.toFixed(2)}%</td>
+                            <td style="text-align:center;font-weight:bold;color:blue;">${data.grade}</td>
+                           <!-- <td>${(data.totalTimeSpent)}</td> -->
+                            
+                        </tr>
+                        <!--   <tr>
+ <td colspan="10" style="font-size:12px; padding:5px 10px;">
+
+        <span style="color:red;">
+            Wrong: [
+            ${data.wrongQuestions.map(q => q.replace("q","")).join(", ") || "-"}
+            ]
+        </span>
+
+        &nbsp;&nbsp;
+
+        <span style="color:gray;">
+            Q: [
+            ${data.notAttemptedQuestions.map(q => q.replace("q","")).join(", ") || "-"}
+            ]
+        </span>
+
+    </td>
+</tr>-->`;
             });
 
             html += `</tbody></table>`;
@@ -566,7 +808,10 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                             totalAttempted: 0,
                             correct: 0,
                             wrong: 0,
-                            notAttempted: 0
+                            notAttempted: 0,
+                            wrongStudents: [],            
+                            notAttemptedStudents: []      
+
                         };
                     }
 
@@ -576,6 +821,11 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                     if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
 
                         questionStats[question].notAttempted++;
+                        questionStats[question].notAttemptedStudents.push({
+                            name: data.name,
+                            id: data.s_id
+                        });
+
 
                     } 
                     else if (isCorrect(userAnswer, correctAnswer)) {
@@ -586,6 +836,11 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                     else {
 
                         questionStats[question].wrong++;
+
+                        questionStats[question].wrongStudents.push({
+                            name: data.name,
+                            id: data.s_id
+                        });
 
                     }
 
@@ -599,13 +854,21 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
             Object.keys(questionStats).forEach(question => {
                 const stats = questionStats[question];
                 const correctPercentage = (stats.correct / (stats.totalAttempted || 1)) * 100; // Avoid division by zero
+                const wrongList = stats.wrongStudents
+                    .map(s => `${s.name} (${s.id})`)
+                    .join("; ");
+
+                const naList = stats.notAttemptedStudents
+                    .map(s => `${s.name} (${s.id})`)
+                    .join("; ");
+
                 //const averageTimeSpent = (stats.totalTime / overallScores.totalStudents) || 0;<!-- <td>${(averageTimeSpent).toFixed(2)} mins</td> -->
                 html += `<tr style="text-align:center;">
                             <td>${question.toUpperCase()}</td>
                             <td>${stats.totalAttempted}</td>
                             <td>${stats.correct}</td>
-                            <td>${stats.wrong}</td>
-                            <td>${stats.notAttempted}</td>
+                            <td>${stats.wrong}<br><small style="color:red">${wrongList || "-"}</small></td>
+                            <td>${stats.notAttempted}<br><small style="color:gray">${naList || "-"}</small></td>
                             <td>${correctPercentage.toFixed(2)}%</td>                           
                         </tr>`;
             });
@@ -615,6 +878,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
             // Display final HTML
             responseContent.innerHTML = html;
         }
+
 
   function showStudentDetails(student){
 
@@ -632,6 +896,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
     timeArray = [];
     }
 
+  
     let totalMarks = 0;
     let positiveMarks = 0;
     let negativeMarks = 0;
@@ -645,23 +910,19 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
 <div class="card-body p-2">
 <div class="row">
 
-<div class="col-md-8">
-<b>👤 Student</b><br>
-${student.name}
+<div class="col-md-6">
+<b>Student</b>: ${student.name.toUpperCase()}
 </div>
 
-<div class="col-md-4">
-<b>Email</b><br>
-${student.email} 
+<div class="col-md-6">
+<b>Email</b>: ${student.email} 
 </div>
-<div class="col-md-8">
-<b>Exam</b><br>
-${student.exam_module}
+<div class="col-md-6">
+<b>Exam</b>: ${student.exam_module}
 </div>
 
-<div class="col-md-4">
-<b>ID</b><br>
-${student.s_id}
+<div class="col-md-6">
+<b>ID</b>: ${student.s_id}
 </div>
 
 </div>
@@ -691,7 +952,15 @@ ${student.s_id}
     let color="secondary";
     let marks = 0;
 
-    if(userAnswer === "-" || userAnswer === "" || userAnswer === "N"){
+
+    if (correctAnswer === 'MTA') {                      
+        status="MTA";
+        color="success";
+        marks = markingScheme.correct;
+        positiveMarks += marks;
+        totalCorrect++;
+    }
+    else if(userAnswer === "-" || userAnswer === "" || userAnswer === "N"){
     status="Not Attempted";
     color="secondary";
     marks = markingScheme.noAnswer || 0;
@@ -720,7 +989,7 @@ ${student.s_id}
 
     html += `
     <tr style="text-align:center;">
-    <td>${question}</td>
+    <td>${question.toUpperCase()}</td>
     <td>${userAnswer}</td>
     <td>${correctAnswer}</td>
     <td><span class="badge badge-${color}">${status}</span></td>
@@ -731,6 +1000,15 @@ ${student.s_id}
 
     });
 
+    const totalQuestions = Object.keys(answerKey).length;
+    const maxMarks = totalQuestions * markingScheme.correct;
+    const percentage = (totalMarks / maxMarks) * 100;
+
+    let grade = "";
+    if (percentage >= 80) grade = "A";
+    else if (percentage >= 50) grade = "B";    
+    else grade = "C";
+
     html += `
     </tbody>
     </table>
@@ -738,36 +1016,30 @@ ${student.s_id}
     <div class="mt-3">
     <h6>Score Summary</h6>
 
-    <table class="table table-bordered w-50">
+    <table class="table table-bordered">
+        <thead class="thead-light">
     <tr>
     <td>Correct</td>
+     <td>Wrong</td>
+      <td>Not Attempted</td>
+      <td>Positive Marks</td>
+       <td>Negative Marks</td>
+   <th><b>Final Score</b></th>
+       <th>Percentage</th>
+    <th>Grade</th>
+    </tr>
+
+    <tr>
     <td>${totalCorrect}</td>
-    </tr>
-
-    <tr>
-    <td>Wrong</td>
     <td>${totalWrong}</td>
-    </tr>
-
-    <tr>
-    <td>Not Attempted</td>
     <td>${totalNotAttempted}</td>
-    </tr>
-
-    <tr>
-    <td>Positive Marks</td>
     <td style="color:green">${positiveMarks}</td>
-    </tr>
-
-    <tr>
-    <td>Negative Marks</td>
     <td style="color:red">${negativeMarks}</td>
-    </tr>
-
-    <tr>
-    <th><b>Final Score</b></th>
     <td><b>${totalMarks}</b></td>
+    <td>${percentage.toFixed(2)}%</td>
+    <td><b>${grade}</b></td>
     </tr>
+   </thead>
     </table>
     </div>
     `;
@@ -777,6 +1049,9 @@ document.getElementById("studentDetailContent").innerHTML = html;
 $('#studentModal').modal('show');
 
 }
+
+
     </script>
+
 </body>
 </html>
