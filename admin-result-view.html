@@ -8,77 +8,174 @@
 </head>
 <style>
     @media print {
-        button {
-            display: none;
+
+        /* Remove page margins while printing */
+        @page {
+            margin: 5mm;
         }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+        }
+
+        /* Hide buttons in print */
+        button {
+            display: none !important;
+        }
+
+        /* Full width print layout */
+        .main-card,
+        .dashboard-card {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 8px !important;
+            box-shadow: none !important;
+            border: 2px solid #000 !important;
+            border-radius: 0 !important;
+        }
+
         table {
-            width: 100%;
+            width: 100% !important;
+            border-collapse: collapse !important;
             font-size: 12pt;
+        }
+
+        /* Strong black borders */
+        table,
+        th,
+        td {
+            border: 1.5px solid #000 !important;
+        }
+
+        th,
+        td {
+            padding: 8px !important;
+            text-align: center;
+        }
+
+        th {
+            background: #eaeaea !important;
+            color: #000 !important;
+        }
+
+        /* Remove extra left/right spacing */
+        .container,
+        .container-fluid,
+        .row,
+        .col,
+        [class*="col-"] {
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
         }
     }
 
     body{
-    background:#f4f6f9;
-}
-
-.main-card{
-    background:white;
-    padding:10px;
-    border-radius:10px;
-    box-shadow:0 2px 4px rgba(0,0,0,0.1);
-}
-
-h3{
-    font-weight:600;
-    margin-bottom:25px;
-}
-
-.btn-primary{
-    width:100%;
-    padding:10px;
-    font-size:14px;
-}
-
-@media (min-width:960px){
-    .btn-primary{
-        width:auto;
-        padding:8px 16px;
+        background:#f4f6f9;
+        margin:0;
+        padding:0;
     }
-}
-.student-row{
-cursor:pointer;
-transition:0.2s;
-}
 
-.student-row:hover{
-background:#f1f7ff;
-}
+    /* Responsive card */
+    .main-card{
+        background:white;
+        padding:15px;
+        border-radius:10px;
+        box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        width:100%;
+        max-width:100%;
+        overflow-x:auto;
+    }
 
+    h3{
+        font-weight:600;
+        margin-bottom:25px;
+    }
 
+    .btn-primary{
+        width:100%;
+        padding:10px;
+        font-size:14px;
+        border-radius:10px;
+    }
 
-.dashboard-card{
-    background:#f8f9fa;
-    border-radius:16px;
-    box-shadow:0 3px 13px rgba(0,0,0,0.08);
-}
+    @media (min-width:960px){
+        .btn-primary{
+            width:auto;
+            padding:8px 16px;
+        }
+    }
 
-.academy-title{
-    font-weight:700;
-    color:#1a73e8;
-    letter-spacing:1px;
-}
+    .student-row{
+        cursor:pointer;
+        transition:0.2s;
+    }
 
-.form-label{
-    font-weight:600;
-}
+    .student-row:hover{
+        background:#f1f7ff;
+    }
 
-.form-control{
-    border-radius:10px;  
-}
+    /* Responsive dashboard card */
+    .dashboard-card{
+        background:#f8f9fa;
+        border-radius:16px;
+        box-shadow:0 3px 13px rgba(0,0,0,0.08);
+        width:100%;
+        padding:15px;
+        overflow-x:auto;
+    }
 
-.search-btn{
-    border-radius:10px;    
-}
+    .academy-title{
+        font-weight:700;
+        color:#1a73e8;
+        letter-spacing:1px;
+    }
+
+    .form-label{
+        font-weight:600;
+    }
+
+    .form-control{
+        border-radius:10px;
+        width:100%;
+    }
+
+    .search-btn{
+        border-radius:10px;
+    }
+
+    /* Table styling */
+    table{
+        width:100%;
+        border-collapse:collapse;
+    }
+
+    th, td{
+        border:1px solid #000;
+        padding:8px;
+    }
+
+    th{
+        background:#f1f1f1;
+    }
+
+    /* Mobile responsive */
+    @media (max-width:768px){
+        .main-card,
+        .dashboard-card{
+            padding:10px;
+        }
+
+        table{
+            font-size:13px;
+        }
+
+        th, td{
+            padding:6px;
+        }
+    }
 </style>
 <body>
     <div class="container py-3">
