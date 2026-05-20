@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>UNIC Academy Result Dashboard</title>
+
+    <meta charset="UTF-8">
+
+    <style>
+
+        body{
+            font-family:Arial,sans-serif;
+            background:#f4f6f9;
+            margin:0;
+            padding:20px;
+        }
+
+        .header{
+            background:#1e3a5f;
+            color:white;
+            padding:20px;
+            border-radius:10px;
+            margin-bottom:20px;
+        }
+
+        .header h1{
+            margin:0;
+        }
+
+        .topFilters{
+            display:flex;
+            gap:15px;
+            flex-wrap:wrap;
+            margin-top:15px;
+        }
+
+        .topFilters select,
+        .topFilters input{
+
+            padding:10px;
+            border-radius:5px;
+            border:1px solid #ccc;
+            min-width:220px;
+        }
+
+        .summaryGrid{
+
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:15px;
+            margin-bottom:20px;
+        }
+
+        .card{
+
+            background:white;
+            padding:20px;
+            border-radius:10px;
+            box-shadow:0 2px 6px rgba(0,0,0,0.1);
+            text-align:center;
+        }
+
+        .card h3{
+            margin:0;
+            color:#555;
+        }
+
+        .card h1{
+            margin:10px 0 0;
+            color:#1e3a5f;
+        }
+
+        table{
+
+            width:100%;
+            border-collapse:collapse;
+            background:white;
+        }
+
+        th,td{
+
+            border:1px solid #ddd;
+            padding:8px;
+            text-align:center;
+            font-size:14px;
+        }
+
+        th{
+
+            background:#1e3a5f;
+            color:white;
+            position:sticky;
+            top:0;
+        }
+
+        .topper{
+
+            background:#e8ffe8;
+            font-weight:bold;
+        }
+
+        .bandAPlus{
+            color:green;
+            font-weight:bold;
+        }
+
+        .bandA{
+            color:#0056b3;
+            font-weight:bold;
+        }
+
+        .bandB{
+            color:#b36b00;
+            font-weight:bold;
+        }
+
+        .bandC{
+            color:#8a2be2;
+            font-weight:bold;
+        }
+
+        .bandD{
+            color:red;
+            font-weight:bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- =========================
+HEADER
+========================= -->
+
+<div class="header">
+
+    <h1>
+        UNIC Academy Result Dashboard
+    </h1>
+
+    <h3 id="dashboardTitle">
+        All Exams
+    </h3>
+
+    <div class="topFilters">
+
+        <select id="examFilter">
+
+            <option value="">
+                All Exams
+            </option>
+
+        </select>
+
+        <select id="moduleFilter">
+
+            <option value="">
+                All Modules
+            </option>
+
+        </select>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search Student / Roll No"
+        >
+
+    </div>
+
+</div>
+
+<!-- =========================
+SUMMARY CARDS
+========================= -->
+
+<div class="summaryGrid">
+
+    <div class="card">
+
+        <h3>Total Students</h3>
+
+        <h1 id="totalStudents">
+            0
+        </h1>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Average Percentage</h3>
+
+        <h1 id="avgPercentage">
+            0%
+        </h1>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Highest Score</h3>
+
+        <h1 id="highestScore">
+            0
+        </h1>
+
+    </div>
+
+    <div class="card">
+
+        <h3>Pass Percentage</h3>
+
+        <h1 id="passPercentage">
+            0%
+        </h1>
+
+    </div>
+
+</div>
+
+<!-- =========================
+RESULT TABLE
+========================= -->
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>Rank</th>
+
+            <th>Student Name</th>
+
+            <th>Roll No</th>
+
+            <th>Exam</th>
+
+            <th>Module</th>
+
+            <th>PH</th>
+
+            <th>CY</th>
+
+            <th>MA</th>
+
+            <th>Correct</th>
+
+            <th>Wrong</th>
+
+            <th>Not Attempted</th>
+
+            <th>Bonus</th>
+
+            <th>Final Marks</th>
+
+            <th>Percentage</th>
+
+            <th>Band</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody id="resultBody"></tbody>
+
+</table>
+
+<script>
+
+// ==========================================
+// FETCH DATA API / GOOGLE APPS SCRIPT
+// ==========================================
+
+// Example:
+// const API_URL = "YOUR_APPS_SCRIPT_WEBAPP_URL";
+
+const API_URL = "students.json";
+
+// ==========================================
+// GLOBAL
+// ==========================================
+
+let students = [];
+
+// ==========================================
+// FETCH STUDENTS
+// ==========================================
+
+async function fetchStudents(){
+
+    try{
+
+        const response = await fetch(API_URL);
+
+        students = await response.json();
+
+        evaluateStudents();
+
+        loadFilters();
+
+        applyFilters();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert('Failed to load student data');
+    }
+}
+
+// ==========================================
+// EVALUATE STUDENTS
+// ==========================================
+
+function evaluateStudents(){
+
+    students.forEach(student => {
+
+        // -------------------------
+        // TOTAL
+        // -------------------------
+
+        student.total =
+
+            Number(student.ph || 0) +
+
+            Number(student.cy || 0) +
+
+            Number(student.ma || 0) +
+
+            Number(student.bonus || 0);
+
+        // -------------------------
+        // MAX MARKS
+        // -------------------------
+
+        const maxMarks =
+            Number(student.max_marks || 150);
+
+        // -------------------------
+        // PERCENTAGE
+        // -------------------------
+
+        student.percentage =
+
+            (
+                (student.total / maxMarks) * 100
+            ).toFixed(2);
+
+        // -------------------------
+        // BAND / GRADE
+        // -------------------------
+
+        if(student.percentage >= 85){
+
+            student.band = 'A+';
+
+        }else if(student.percentage >= 70){
+
+            student.band = 'A';
+
+        }else if(student.percentage >= 55){
+
+            student.band = 'B';
+
+        }else if(student.percentage >= 40){
+
+            student.band = 'C';
+
+        }else{
+
+            student.band = 'D';
+        }
+
+    });
+
+    // -------------------------
+    // SORT BY TOTAL
+    // -------------------------
+
+    students.sort((a,b)=>
+
+        b.total - a.total
+
+    );
+
+    // -------------------------
+    // RANK
+    // -------------------------
+
+    students.forEach((student,index)=>{
+
+        student.rank = index + 1;
+
+    });
+}
+
+// ==========================================
+// LOAD FILTERS
+// ==========================================
+
+function loadFilters(){
+
+    const examFilter =
+        document.getElementById('examFilter');
+
+    const moduleFilter =
+        document.getElementById('moduleFilter');
+
+    // UNIQUE EXAMS
+
+    const exams =
+
+        [...new Set(
+            students.map(s=>s.exam_name)
+        )];
+
+    exams.forEach(exam => {
+
+        examFilter.innerHTML += `
+            <option value="${exam}">
+                ${exam}
+            </option>
+        `;
+    });
+
+    // UNIQUE MODULES
+
+    const modules =
+
+        [...new Set(
+            students.map(s=>s.exam_module)
+        )];
+
+    modules.forEach(module => {
+
+        moduleFilter.innerHTML += `
+            <option value="${module}">
+                ${module}
+            </option>
+        `;
+    });
+}
+
+// ==========================================
+// APPLY FILTERS
+// ==========================================
+
+function applyFilters(){
+
+    const exam =
+
+        document.getElementById('examFilter').value;
+
+    const module =
+
+        document.getElementById('moduleFilter').value;
+
+    const search =
+
+        document.getElementById('searchInput')
+        .value
+        .toLowerCase();
+
+    let filtered = [...students];
+
+    // -------------------------
+    // EXAM FILTER
+    // -------------------------
+
+    if(exam){
+
+        filtered = filtered.filter(student =>
+
+            student.exam_name === exam
+
+        );
+    }
+
+    // -------------------------
+    // MODULE FILTER
+    // -------------------------
+
+    if(module){
+
+        filtered = filtered.filter(student =>
+
+            student.exam_module === module
+
+        );
+    }
+
+    // -------------------------
+    // SEARCH
+    // -------------------------
+
+    if(search){
+
+        filtered = filtered.filter(student =>
+
+            student.name.toLowerCase()
+            .includes(search)
+
+            ||
+
+            student.s_id.toLowerCase()
+            .includes(search)
+
+        );
+    }
+
+    // -------------------------
+    // RENDER
+    // -------------------------
+
+    renderTable(filtered);
+
+    loadSummary(filtered);
+
+    updateDashboardTitle(filtered);
+}
+
+// ==========================================
+// RENDER TABLE
+// ==========================================
+
+function renderTable(data){
+
+    let html = '';
+
+    data.forEach(student => {
+
+        let bandClass = '';
+
+        if(student.band === 'A+'){
+
+            bandClass = 'bandAPlus';
+
+        }else if(student.band === 'A'){
+
+            bandClass = 'bandA';
+
+        }else if(student.band === 'B'){
+
+            bandClass = 'bandB';
+
+        }else if(student.band === 'C'){
+
+            bandClass = 'bandC';
+
+        }else{
+
+            bandClass = 'bandD';
+        }
+
+        html += `
+
+        <tr class="${student.rank === 1 ? 'topper':''}">
+
+            <td>${student.rank}</td>
+
+            <td>${student.name}</td>
+
+            <td>${student.s_id}</td>
+
+            <td>${student.exam_name}</td>
+
+            <td>${student.exam_module}</td>
+
+            <td>${student.ph}</td>
+
+            <td>${student.cy}</td>
+
+            <td>${student.ma}</td>
+
+            <td>${student.correct}</td>
+
+            <td>${student.wrong}</td>
+
+            <td>${student.not_attempted}</td>
+
+            <td>${student.bonus}</td>
+
+            <td>
+                <b>${student.total}</b>
+            </td>
+
+            <td>
+                ${student.percentage}%
+            </td>
+
+            <td class="${bandClass}">
+                ${student.band}
+            </td>
+
+        </tr>
+        `;
+    });
+
+    document.getElementById('resultBody')
+        .innerHTML = html;
+}
+
+// ==========================================
+// SUMMARY
+// ==========================================
+
+function loadSummary(data){
+
+    document.getElementById('totalStudents')
+        .innerText = data.length;
+
+    // -------------------------
+    // AVERAGE
+    // -------------------------
+
+    const avg =
+
+        (
+            data.reduce((sum,s)=>
+
+                sum + Number(s.percentage)
+
+            ,0)
+
+            /
+
+            (data.length || 1)
+
+        ).toFixed(2);
+
+    document.getElementById('avgPercentage')
+        .innerText = avg + '%';
+
+    // -------------------------
+    // HIGHEST
+    // -------------------------
+
+    const highest =
+
+        Math.max(
+            ...data.map(s=>s.total),
+            0
+        );
+
+    document.getElementById('highestScore')
+        .innerText = highest;
+
+    // -------------------------
+    // PASS %
+    // -------------------------
+
+    const passCount =
+
+        data.filter(s=>
+
+            Number(s.percentage) >= 40
+
+        ).length;
+
+    const passPercentage =
+
+        (
+            (passCount / (data.length || 1))
+            * 100
+        ).toFixed(2);
+
+    document.getElementById('passPercentage')
+        .innerText = passPercentage + '%';
+}
+
+// ==========================================
+// HEADER TITLE
+// ==========================================
+
+function updateDashboardTitle(data){
+
+    if(data.length === 0){
+
+        document.getElementById('dashboardTitle')
+            .innerText = 'No Data Found';
+
+        return;
+    }
+
+    const exam =
+        data[0].exam_name;
+
+    const module =
+        data[0].exam_module;
+
+    document.getElementById('dashboardTitle')
+        .innerHTML =
+
+        `
+        Exam:
+        <b>${exam}</b>
+
+        |
+
+        Module:
+        <b>${module}</b>
+        `;
+}
+
+// ==========================================
+// EVENTS
+// ==========================================
+
+document.getElementById('examFilter')
+.addEventListener('change', applyFilters);
+
+document.getElementById('moduleFilter')
+.addEventListener('change', applyFilters);
+
+document.getElementById('searchInput')
+.addEventListener('keyup', applyFilters);
+
+// ==========================================
+// START
+// ==========================================
+
+fetchStudents();
+
+</script>
+
+</body>
+</html>
