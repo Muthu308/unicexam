@@ -1,6 +1,3 @@
-# UNIC Academy Advanced Analytics Dashboard
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -235,7 +232,15 @@ body{
     <!-- TOP 3 PER EXAM -->
     <!-- ========================================= -->
 
-    <div class="row mb-4" id="topperSection"></div>
+    <div class="card-box mb-4">
+
+    <h3 class="section-title">
+        Exam & Subject Wise Top 3 Students
+    </h3>
+
+    <div id="topperSection"></div>
+
+</div>
 
     <!-- ========================================= -->
     <!-- SUBJECT TOPPERS -->
@@ -341,6 +346,74 @@ body{
         </div>
 
     </div>
+
+    <!-- ========================================= -->
+<!-- PERFORMANCE INSIGHTS -->
+<!-- ========================================= -->
+
+<div class="card-box mt-4 mb-4">
+
+    <h3 class="section-title">
+        Performance Insights
+    </h3>
+
+    <div class="row g-3" id="insightSection"></div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- STUDENT GROWTH TABLE -->
+<!-- ========================================= -->
+
+<div class="card-box mb-4">
+
+    <h3 class="section-title">
+        Student Growth Analysis
+    </h3>
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Student</th>
+
+                    <th>First Exam</th>
+
+                    <th>Latest Exam</th>
+
+                    <th>Growth</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="growthBody"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- ========================================= -->
+<!-- SUBJECT AVERAGE -->
+<!-- ========================================= -->
+
+<div class="card-box mb-4">
+
+    <h3 class="section-title">
+        Subject Average Analysis
+    </h3>
+
+    <div class="row g-3" id="subjectAverageSection"></div>
+
+</div>
 
 </div>
 
@@ -492,6 +565,10 @@ function applyFilters(){
     renderComparison(filtered);
 
     renderExamChart(filtered);
+    renderInsights(filtered);
+    renderGrowthAnalysis(filtered);
+    
+    renderSubjectAverage(filtered);
 
     updateDashboardTitle();
 }
@@ -646,91 +723,254 @@ function renderTable(data){
 // =========================================
 // TOP 3 EXAM WISE
 // =========================================
-
 function renderTopThree(data){
 
     const topperSection =
-        document.getElementById('topperSection');
+        document.getElementById(
+            'topperSection'
+        );
 
     topperSection.innerHTML = '';
 
     const grouped = {};
 
+    // =====================================
+    // GROUP EXAMS
+    // =====================================
+
     data.forEach(student => {
 
         if(!grouped[student.exam_name]){
+
             grouped[student.exam_name] = [];
         }
 
-        grouped[student.exam_name].push(student);
+        grouped[student.exam_name]
+            .push(student);
     });
+
+    let finalHTML = '';
+
+    // =====================================
+    // EACH EXAM
+    // =====================================
 
     Object.keys(grouped).forEach(exam => {
 
-        const top3 = [...grouped[exam]]
-            .sort((a,b)=>b.total-a.total)
+        const examStudents =
+            grouped[exam];
+
+        // =================================
+        // TOTAL TOP 3
+        // =================================
+
+        const overallTop3 =
+
+            [...examStudents]
+
+            .sort((a,b)=>
+                b.total-a.total
+            )
+
             .slice(0,3);
 
-        let cardHTML = `
+        // =================================
+        // SUBJECT TOPPERS
+        // =================================
 
-        <div class="col-lg-6 mb-3">
+        const physicsTop =
 
-            <div class="card-box topper-card">
+            [...examStudents]
 
-                <h3 class="mb-4">
-                    ${exam} - Top 3 Students
-                </h3>
+            .sort((a,b)=>
+                b.ph-a.ph
+            )
 
-                <div class="row g-3">
-        `;
+            .slice(0,3);
 
-        top3.forEach((student,index)=>{
+        const chemistryTop =
 
-            let badgeClass = 'bronze';
+            [...examStudents]
 
-            if(index === 0){
-                badgeClass = 'gold';
-            }
-            else if(index === 1){
-                badgeClass = 'silver';
-            }
+            .sort((a,b)=>
+                b.cy-a.cy
+            )
 
-            cardHTML += `
+            .slice(0,3);
 
-            <div class="col-md-4">
+        const mathsTop =
 
-                <div class="student-card text-center">
+            [...examStudents]
 
-                    <div class="rank-badge ${badgeClass} mx-auto mb-2">
-                        ${index+1}
+            .sort((a,b)=>
+                b.ma-a.ma
+            )
+
+            .slice(0,3);
+
+        finalHTML += `
+
+        <div class="card-box mb-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h4>
+                    ${exam}
+                </h4>
+
+                <span class="badge bg-primary">
+                    ${examStudents.length} Students
+                </span>
+
+            </div>
+
+            <div class="row g-4">
+
+                <!-- ===================== -->
+                <!-- OVERALL -->
+                <!-- ===================== -->
+
+                <div class="col-lg-3">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <h5 class="mb-3 text-primary">
+                            Overall Top 3
+                        </h5>
+
+                        ${generateTopList(
+                            overallTop3,
+                            'total'
+                        )}
+
                     </div>
 
-                    <h6>
-                        ${student.name}
-                    </h6>
+                </div>
 
-                    <div>
-                        <b>${student.total}</b>
+                <!-- ===================== -->
+                <!-- PHYSICS -->
+                <!-- ===================== -->
+
+                <div class="col-lg-3">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <h5 class="mb-3 text-success">
+                            Physics Top 3
+                        </h5>
+
+                        ${generateTopList(
+                            physicsTop,
+                            'ph'
+                        )}
+
                     </div>
 
-                    <small>
-                        ${student.percentage}%
-                    </small>
+                </div>
+
+                <!-- ===================== -->
+                <!-- CHEMISTRY -->
+                <!-- ===================== -->
+
+                <div class="col-lg-3">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <h5 class="mb-3 text-warning">
+                            Chemistry Top 3
+                        </h5>
+
+                        ${generateTopList(
+                            chemistryTop,
+                            'cy'
+                        )}
+
+                    </div>
+
+                </div>
+
+                <!-- ===================== -->
+                <!-- MATHS -->
+                <!-- ===================== -->
+
+                <div class="col-lg-3">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <h5 class="mb-3 text-danger">
+                            Maths Top 3
+                        </h5>
+
+                        ${generateTopList(
+                            mathsTop,
+                            'ma'
+                        )}
+
+                    </div>
 
                 </div>
 
             </div>
-            `;
-        });
 
-        cardHTML += `
-                </div>
-            </div>
         </div>
         `;
-
-        topperSection.innerHTML += cardHTML;
     });
+
+    topperSection.innerHTML = finalHTML;
+}
+
+// =========================================
+// GENERATE TOP LIST
+// =========================================
+
+function generateTopList(data,key){
+
+    let html = '';
+
+    data.forEach((student,index)=>{
+
+        let medal = '🥉';
+
+        if(index === 0){
+            medal = '🥇';
+        }
+
+        if(index === 1){
+            medal = '🥈';
+        }
+
+        html += `
+
+        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+
+            <div>
+
+                <div class="fw-bold">
+
+                    ${medal}
+                    ${student.name}
+
+                </div>
+
+                <small class="text-muted">
+
+                    ${student.s_id}
+
+                </small>
+
+            </div>
+
+            <div class="fw-bold text-primary">
+
+                ${student[key]}
+
+            </div>
+
+        </div>
+        `;
+    });
+
+    return html;
 }
 
 // =========================================
@@ -993,6 +1233,341 @@ function updateDashboardTitle(){
     document.getElementById('dashboardTitle')
         .innerHTML = title;
 }
+
+ // =========================================
+// PERFORMANCE INSIGHTS
+// =========================================
+
+function renderInsights(data){
+
+    const section =
+        document.getElementById('insightSection');
+
+    if(!data.length){
+
+        section.innerHTML = '';
+
+        return;
+    }
+
+    const physicsAvg = (
+        data.reduce((sum,s)=>
+            sum + Number(s.ph || 0)
+        ,0)
+        /
+        data.length
+    ).toFixed(2);
+
+    const chemistryAvg = (
+        data.reduce((sum,s)=>
+            sum + Number(s.cy || 0)
+        ,0)
+        /
+        data.length
+    ).toFixed(2);
+
+    const mathsAvg = (
+        data.reduce((sum,s)=>
+            sum + Number(s.ma || 0)
+        ,0)
+        /
+        data.length
+    ).toFixed(2);
+
+    const subjectMap = {
+        Physics: Number(physicsAvg),
+        Chemistry: Number(chemistryAvg),
+        Maths: Number(mathsAvg)
+    };
+
+    const bestSubject =
+        Object.keys(subjectMap)
+        .reduce((a,b)=>
+            subjectMap[a] > subjectMap[b]
+            ? a
+            : b
+        );
+
+    const weakSubject =
+        Object.keys(subjectMap)
+        .reduce((a,b)=>
+            subjectMap[a] < subjectMap[b]
+            ? a
+            : b
+        );
+
+    const highestStudent =
+        [...data]
+        .sort((a,b)=>b.total-a.total)[0];
+
+    const negativeCount =
+        data.filter(s=>
+
+            s.ph < 0
+            ||
+            s.cy < 0
+            ||
+            s.ma < 0
+
+        ).length;
+
+    section.innerHTML = `
+
+    <div class="col-md-3">
+
+        <div class="student-card text-center">
+
+            <h5>
+                Best Subject
+            </h5>
+
+            <div class="summary-value">
+                ${bestSubject}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="student-card text-center">
+
+            <h5>
+                Weak Subject
+            </h5>
+
+            <div class="summary-value">
+                ${weakSubject}
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="student-card text-center">
+
+            <h5>
+                Top Performer
+            </h5>
+
+            <div class="summary-value">
+                ${highestStudent.name}
+            </div>
+
+            <small>
+                ${highestStudent.total} Marks
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="student-card text-center">
+
+            <h5>
+                Negative Scores
+            </h5>
+
+            <div class="summary-value">
+                ${negativeCount}
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}
+
+// =========================================
+// STUDENT GROWTH
+// =========================================
+
+function renderGrowthAnalysis(data){
+
+    const growthBody =
+        document.getElementById('growthBody');
+
+    const grouped = {};
+
+    data.forEach(student => {
+
+        const key = student.normalized_name;
+
+        if(!grouped[key]){
+
+            grouped[key] = [];
+        }
+
+        grouped[key].push(student);
+    });
+
+    let html = '';
+
+    Object.keys(grouped).forEach(name => {
+
+        const exams = grouped[name];
+
+        if(exams.length < 2){
+            return;
+        }
+
+        const first =
+            exams[0];
+
+        const latest =
+            exams[exams.length - 1];
+
+        const growth =
+            latest.total - first.total;
+
+        let status =
+            'Stable';
+
+        let statusClass =
+            'text-primary';
+
+        if(growth > 0){
+
+            status =
+                'Improved';
+
+            statusClass =
+                'text-success';
+        }
+
+        if(growth < 0){
+
+            status =
+                'Declined';
+
+            statusClass =
+                'text-danger';
+        }
+
+        html += `
+
+        <tr>
+
+            <td>
+                ${latest.name}
+            </td>
+
+            <td>
+                ${first.exam_name}
+                (${first.total})
+            </td>
+
+            <td>
+                ${latest.exam_name}
+                (${latest.total})
+            </td>
+
+            <td class="${
+                growth >= 0
+                ? 'text-success'
+                : 'text-danger'
+            } fw-bold">
+
+                ${
+                    growth > 0
+                    ? '+'
+                    : ''
+                }${growth}
+
+            </td>
+
+            <td class="${statusClass} fw-bold">
+                ${status}
+            </td>
+
+        </tr>
+        `;
+    });
+
+    growthBody.innerHTML = html;
+}
+
+// =========================================
+// SUBJECT AVERAGE
+// =========================================
+
+function renderSubjectAverage(data){
+
+    const section =
+        document.getElementById(
+            'subjectAverageSection'
+        );
+
+    const subjects = [
+
+        {
+            key:'ph',
+            label:'Physics'
+        },
+
+        {
+            key:'cy',
+            label:'Chemistry'
+        },
+
+        {
+            key:'ma',
+            label:'Maths'
+        }
+
+    ];
+
+    let html = '';
+
+    subjects.forEach(subject => {
+
+        const avg = (
+
+            data.reduce((sum,s)=>
+
+                sum + Number(
+                    s[subject.key] || 0
+                )
+
+            ,0)
+
+            /
+
+            (data.length || 1)
+
+        ).toFixed(2);
+
+        html += `
+
+        <div class="col-md-4">
+
+            <div class="student-card text-center">
+
+                <h4>
+                    ${subject.label}
+                </h4>
+
+                <div class="summary-value">
+                    ${avg}
+                </div>
+
+                <small>
+                    Average Marks
+                </small>
+
+            </div>
+
+        </div>
+        `;
+    });
+
+    section.innerHTML = html;
+}   
 
 // =========================================
 // EVENTS
