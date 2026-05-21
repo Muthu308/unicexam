@@ -259,6 +259,80 @@ button:hover {
     border-color:#0d6efd;
 }
 
+    .nat-container{
+
+    max-width:300px;
+    margin:auto;
+}
+
+.nat-display{
+
+    width:100%;
+    height:60px;
+
+    text-align:center;
+
+    font-size:28px;
+    font-weight:bold;
+
+    border:2px solid #333;
+    border-radius:10px;
+
+    margin-bottom:15px;
+
+    pointer-events:none;
+    user-select:none;
+}
+
+.nat-keypad{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:10px;
+}
+
+.nat-keypad button{
+
+    height:60px;
+
+    font-size:24px;
+    font-weight:bold;
+
+    border:none;
+    border-radius:10px;
+
+    background:#f2f2f2;
+
+    cursor:pointer;
+}
+
+.nat-keypad button:hover{
+
+    background:#ddd;
+}
+
+.clear-btn{
+
+    width:100%;
+
+    margin-top:12px;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:red;
+    color:white;
+
+    font-size:18px;
+    font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -662,12 +736,61 @@ if(q.type==="MSQ"){
 
 if(q.type==="NAT"){
     html += `
-    <input type="number"
-        step="any"
-        class="form-control mt-3"
-        value="${answers[key]||""}"
-        oninput="saveNAT(this.value)"
-        placeholder="Enter numeric answer">`;
+    <input
+    type="text"
+
+    id="natDisplay"
+
+    class="nat-display"
+
+    value="${answers[key] || ''}"
+
+    readonly
+
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+
+    inputmode="none"
+
+    onkeydown="return false"
+    onkeypress="return false"
+    onkeyup="return false"
+
+    onpaste="return false"
+    ondrop="return false"
+
+    oncontextmenu="return false"
+
+    onfocus="this.blur()" >`;
+    html += `<div class="nat-keypad">
+
+    <button type="button" onclick="addNAT('1')">1</button>
+    <button type="button" onclick="addNAT('2')">2</button>
+    <button type="button" onclick="addNAT('3')">3</button>
+
+    <button type="button" onclick="addNAT('4')">4</button>
+    <button type="button" onclick="addNAT('5')">5</button>
+    <button type="button" onclick="addNAT('6')">6</button>
+
+    <button type="button" onclick="addNAT('7')">7</button>
+    <button type="button" onclick="addNAT('8')">8</button>
+    <button type="button" onclick="addNAT('9')">9</button>
+
+    <button type="button" onclick="addNAT('.')">.</button>
+
+    <button type="button" onclick="addNAT('0')">0</button>
+
+    <button type="button" onclick="deleteNAT()">
+        ⌫
+    </button>
+
+    <button type="button" onclick="addNAT('-')">
+        ±
+    </button>
+
+</div>`;
 }
 
 if(q.type==="SA"){
@@ -684,6 +807,52 @@ html += `</div>`;
     updatePalette();
     updateSectionProgress();
     startTime=Date.now();
+}
+
+function addNAT(value){
+
+    const input =
+        document.getElementById('natDisplay');
+
+    // Allow only one minus sign
+    if(value === '-'){
+
+        if(input.value.includes('-')) return;
+
+        // Minus only at beginning
+        input.value = '-' + input.value.replace('-', '');
+
+    }else{
+
+        // Allow only one decimal
+        if(value === '.' && input.value.includes('.')){
+            return;
+        }
+
+        input.value += value;
+    }
+
+    saveNAT(input.value);
+}
+function deleteNAT(){
+
+    const input =
+        document.getElementById('natDisplay');
+
+    input.value =
+        input.value.slice(0, -1);
+
+    saveNAT(input.value);
+}
+
+function clearNAT(){
+
+    const input =
+        document.getElementById('natDisplay');
+
+    input.value = '';
+
+    saveNAT('');
 }
 
 // SAVE
