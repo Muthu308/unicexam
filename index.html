@@ -265,72 +265,100 @@ button:hover {
     margin:auto;
 }
 
+.nat-wrapper{
+
+    width:170px;
+
+    background:#ececec;
+
+    padding:10px;
+
+    border-radius:4px;
+
+    border:1px solid #cfcfcf;
+}
+
 .nat-display{
 
     width:100%;
-    height:60px;
 
-    text-align:center;
+    height:32px;
 
-    font-size:28px;
+    font-size:20px;
     font-weight:bold;
 
-    border:2px solid #333;
-    border-radius:10px;
+    text-align:right;
 
-    margin-bottom:15px;
+    padding-right:8px;
 
-    pointer-events:none;
-    user-select:none;
+    border:1px solid #999;
+
+    margin-bottom:10px;
+
+    background:white;
 }
 
-.nat-keypad{
+.nat-grid{
 
     display:grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(3, 1fr);
 
-    gap:10px;
+    gap:6px;
+
+    margin-top:8px;
 }
 
-.nat-keypad button{
+.nat-btn{
 
-    height:60px;
+    height:40px;
 
-    font-size:24px;
+    font-size:22px;
     font-weight:bold;
 
-    border:none;
-    border-radius:10px;
+    border:1px solid #666;
+
+    border-radius:6px;
 
     background:#f2f2f2;
 
     cursor:pointer;
+
+    box-shadow:
+        inset 0 1px 0 #fff,
+        1px 1px 2px rgba(0,0,0,0.2);
 }
 
-.nat-keypad button:hover{
+.nat-btn:hover{
 
     background:#ddd;
 }
 
-.clear-btn{
+.wide-btn{
 
     width:100%;
 
-    margin-top:12px;
+    margin-bottom:8px;
 
-    height:50px;
+    font-size:16px;
+}
 
-    border:none;
+.arrow-row{
 
-    border-radius:10px;
+    display:flex;
 
-    background:red;
-    color:white;
+    gap:10px;
 
-    font-size:18px;
-    font-weight:bold;
+    margin-top:10px;
+    margin-bottom:10px;
+
+    justify-content:center;
+}
+
+.small-btn{
+
+    width:55px;
 }
 
 </style>
@@ -736,7 +764,7 @@ if(q.type==="MSQ"){
 
 if(q.type==="NAT"){
     html += `
-    <input
+    <div class="nat-wrapper"><input
     type="text"
 
     id="natDisplay"
@@ -764,33 +792,69 @@ if(q.type==="NAT"){
     oncontextmenu="return false"
 
     onfocus="this.blur()" >`;
-    html += `<div class="nat-keypad">
-
-    <button type="button" onclick="addNAT('1')">1</button>
-    <button type="button" onclick="addNAT('2')">2</button>
-    <button type="button" onclick="addNAT('3')">3</button>
-
-    <button type="button" onclick="addNAT('4')">4</button>
-    <button type="button" onclick="addNAT('5')">5</button>
-    <button type="button" onclick="addNAT('6')">6</button>
-
-    <button type="button" onclick="addNAT('7')">7</button>
-    <button type="button" onclick="addNAT('8')">8</button>
-    <button type="button" onclick="addNAT('9')">9</button>
-
-    <button type="button" onclick="addNAT('.')">.</button>
-
-    <button type="button" onclick="addNAT('0')">0</button>
-
-    <button type="button" onclick="deleteNAT()">
-        ⌫
+    html += `<button
+        type="button"
+        class="nat-btn wide-btn"
+        onclick="deleteNAT()"
+    >
+        Backspace
     </button>
 
-    <button type="button" onclick="addNAT('-')">
-        ±
-    </button>
+    <!-- NUMBER PAD -->
 
-</div>`;
+    <div class="nat-grid">
+
+        <button type="button" class="nat-btn" onclick="addNAT('7')">7</button>
+        <button type="button" class="nat-btn" onclick="addNAT('8')">8</button>
+        <button type="button" class="nat-btn" onclick="addNAT('9')">9</button>
+
+        <button type="button" class="nat-btn" onclick="addNAT('4')">4</button>
+        <button type="button" class="nat-btn" onclick="addNAT('5')">5</button>
+        <button type="button" class="nat-btn" onclick="addNAT('6')">6</button>
+
+        <button type="button" class="nat-btn" onclick="addNAT('1')">1</button>
+        <button type="button" class="nat-btn" onclick="addNAT('2')">2</button>
+        <button type="button" class="nat-btn" onclick="addNAT('3')">3</button>
+
+        <button type="button" class="nat-btn" onclick="addNAT('0')">0</button>
+
+        <button type="button" class="nat-btn" onclick="addNAT('.')">.</button>
+
+        <button type="button" class="nat-btn" onclick="addNAT('-')">-</button>
+
+    </div>
+
+    <!-- ARROWS -->
+
+    <div class="arrow-row">
+
+        <button
+            type="button"
+            class="nat-btn small-btn"
+            onclick="moveCursorLeft()"
+        >
+            ←
+        </button>
+
+        <button
+            type="button"
+            class="nat-btn small-btn"
+            onclick="moveCursorRight()"
+        >
+            →
+        </button>
+
+    </div>
+
+    <!-- CLEAR -->
+
+    <button
+        type="button"
+        class="nat-btn wide-btn"
+        onclick="clearNAT()"
+    >
+        Clear All
+    </button></div>`;
 }
 
 if(q.type==="SA"){
@@ -809,41 +873,95 @@ html += `</div>`;
     startTime=Date.now();
 }
 
+let cursorPosition = 0;
+
+// ======================================
+// ADD VALUE
+// ======================================
+
 function addNAT(value){
 
     const input =
         document.getElementById('natDisplay');
 
-    // Allow only one minus sign
+    let current =
+        input.value;
+
+    // Only one decimal
+    if(value === '.' &&
+       current.includes('.')){
+
+        return;
+    }
+
+    // Only one minus
     if(value === '-'){
 
-        if(input.value.includes('-')) return;
-
-        // Minus only at beginning
-        input.value = '-' + input.value.replace('-', '');
-
-    }else{
-
-        // Allow only one decimal
-        if(value === '.' && input.value.includes('.')){
+        if(current.includes('-')){
             return;
         }
 
-        input.value += value;
+        current =
+            '-' + current;
+
+        input.value = current;
+
+        cursorPosition =
+            current.length;
+
+        saveNAT(current);
+
+        return;
     }
+
+    // Insert at cursor position
+
+    const before =
+        current.slice(0, cursorPosition);
+
+    const after =
+        current.slice(cursorPosition);
+
+    input.value =
+        before + value + after;
+
+    cursorPosition++;
 
     saveNAT(input.value);
 }
+
+// ======================================
+// BACKSPACE
+// ======================================
+
 function deleteNAT(){
 
     const input =
         document.getElementById('natDisplay');
 
+    let current =
+        input.value;
+
+    if(cursorPosition <= 0){
+        return;
+    }
+
     input.value =
-        input.value.slice(0, -1);
+
+        current.slice(0, cursorPosition - 1)
+
+        +
+
+        current.slice(cursorPosition);
+
+    cursorPosition--;
 
     saveNAT(input.value);
 }
+
+// ======================================
+// CLEAR
+// ======================================
 
 function clearNAT(){
 
@@ -852,7 +970,36 @@ function clearNAT(){
 
     input.value = '';
 
+    cursorPosition = 0;
+
     saveNAT('');
+}
+
+// ======================================
+// MOVE LEFT
+// ======================================
+
+function moveCursorLeft(){
+
+    if(cursorPosition > 0){
+
+        cursorPosition--;
+    }
+}
+
+// ======================================
+// MOVE RIGHT
+// ======================================
+
+function moveCursorRight(){
+
+    const input =
+        document.getElementById('natDisplay');
+
+    if(cursorPosition < input.value.length){
+
+        cursorPosition++;
+    }
 }
 
 // SAVE
