@@ -389,18 +389,7 @@ body{
                         Total Growth
                     </th>
                 
-                    <th>
-                        PH Growth
-                    </th>
-                
-                    <th>
-                        CY Growth
-                    </th>
-                
-                    <th>
-                        MA Growth
-                    </th>
-
+                   
                     <th>Status</th>
 
                 </tr>
@@ -1462,24 +1451,7 @@ function renderGrowthAnalysis(data){
             statusClass =
                 'text-danger';
         }
-         // ==================================
-        // SUBJECT WISE
-        // ==================================
-
-        const phGrowth =
-            (latest.ph? || 0)
-            -
-            (first.ph?. || 0);
-
-        const cyGrowth =
-            (latest.cy? || 0)
-            -
-            (first.cy? || 0);
-
-        const maGrowth =
-            (latest.ma? || 0)
-            -
-            (first.ma? || 0);
+        
 
         // ==================================
         // PERFORMANCE INSIGHT
@@ -1525,55 +1497,7 @@ function renderGrowthAnalysis(data){
 
             </td>
 
-            <!-- PH -->
-
-            <td class="${
-                phGrowth >= 0
-                ? 'text-success'
-                : 'text-danger'
-            } fw-bold">
-
-                ${
-                    phGrowth > 0
-                    ? '+'
-                    : ''
-                }${phGrowth}
-
-            </td>
-
-            <!-- CY -->
-
-            <td class="${
-                cyGrowth >= 0
-                ? 'text-success'
-                : 'text-danger'
-            } fw-bold">
-
-                ${
-                    cyGrowth > 0
-                    ? '+'
-                    : ''
-                }${cyGrowth}
-
-            </td>
-
-            <!-- MA -->
-
-            <td class="${
-                maGrowth >= 0
-                ? 'text-success'
-                : 'text-danger'
-            } fw-bold">
-
-                ${
-                    maGrowth > 0
-                    ? '+'
-                    : ''
-                }${maGrowth}
-
-            </td>
-
-            <td class="${statusClass} fw-bold">
+              <td class="${statusClass} fw-bold">
                 ${status}
             </td>
 
