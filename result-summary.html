@@ -385,7 +385,21 @@ body{
 
                     <th>Latest Exam</th>
 
-                    <th>Growth</th>
+                    <th>
+                        Total Growth
+                    </th>
+                
+                    <th>
+                        PH Growth
+                    </th>
+                
+                    <th>
+                        CY Growth
+                    </th>
+                
+                    <th>
+                        MA Growth
+                    </th>
 
                     <th>Status</th>
 
@@ -1448,6 +1462,28 @@ function renderGrowthAnalysis(data){
             statusClass =
                 'text-danger';
         }
+         // ==================================
+        // SUBJECT WISE
+        // ==================================
+
+        const phGrowth =
+            (latest.section_marks?.PH || 0)
+            -
+            (first.section_marks?.PH || 0);
+
+        const cyGrowth =
+            (latest.section_marks?.CY || 0)
+            -
+            (first.section_marks?.CY || 0);
+
+        const maGrowth =
+            (latest.section_marks?.MA || 0)
+            -
+            (first.section_marks?.MA || 0);
+
+        // ==================================
+        // PERFORMANCE INSIGHT
+        // ==================================
 
         html += `
 
@@ -1463,9 +1499,22 @@ function renderGrowthAnalysis(data){
             </td>
 
             <td>
-                ${latest.exam_name}
-                (${latest.total})
+                ${first.exam_name}
+                <br>
+                <small>
+                    ${first.total}
+                </small>
             </td>
+
+            <td>
+                ${latest.exam_name}
+                <br>
+                <small>
+                    ${latest.total}
+                </small>
+            </td>
+
+            <!-- TOTAL -->
 
             <td class="${
                 growth >= 0
@@ -1478,6 +1527,54 @@ function renderGrowthAnalysis(data){
                     ? '+'
                     : ''
                 }${growth}
+
+            </td>
+
+            <!-- PH -->
+
+            <td class="${
+                phGrowth >= 0
+                ? 'text-success'
+                : 'text-danger'
+            } fw-bold">
+
+                ${
+                    phGrowth > 0
+                    ? '+'
+                    : ''
+                }${phGrowth}
+
+            </td>
+
+            <!-- CY -->
+
+            <td class="${
+                cyGrowth >= 0
+                ? 'text-success'
+                : 'text-danger'
+            } fw-bold">
+
+                ${
+                    cyGrowth > 0
+                    ? '+'
+                    : ''
+                }${cyGrowth}
+
+            </td>
+
+            <!-- MA -->
+
+            <td class="${
+                maGrowth >= 0
+                ? 'text-success'
+                : 'text-danger'
+            } fw-bold">
+
+                ${
+                    maGrowth > 0
+                    ? '+'
+                    : ''
+                }${maGrowth}
 
             </td>
 
