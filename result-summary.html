@@ -1467,19 +1467,19 @@ function renderGrowthAnalysis(data){
         // ==================================
 
         const phGrowth =
-            (latest.section_marks?.PH || 0)
+            (latest.ph? || 0)
             -
-            (first.section_marks?.PH || 0);
+            (first.ph?. || 0);
 
         const cyGrowth =
-            (latest.section_marks?.CY || 0)
+            (latest.sy? || 0)
             -
-            (first.section_marks?.CY || 0);
+            (first.sy? || 0);
 
         const maGrowth =
-            (latest.section_marks?.MA || 0)
+            (latest.ma? || 0)
             -
-            (first.section_marks?.MA || 0);
+            (first.ma? || 0);
 
         // ==================================
         // PERFORMANCE INSIGHT
@@ -1493,12 +1493,7 @@ function renderGrowthAnalysis(data){
                 ${latest.name}
             </td>
 
-            <td>
-                ${first.exam_name}
-                (${first.total})
-            </td>
-
-            <td>
+               <td>
                 ${first.exam_name}
                 <br>
                 <small>
