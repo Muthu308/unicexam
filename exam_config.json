@@ -1,8 +1,80 @@
 [
+
+{
+      "exam_name": "JEE ’27 Monthly Test for Physics - 01",
+  "exam_module": "UNIC_TEST_MTPH01",
+  "status": "yes",
+  "duration": 3600,
+  "question_file": "/unic_text_ph_02-06-2026.json",
+  "start_time": "2026-06-2 10:00 AM",
+  "instructions": [
+    "Instructions for Monthly Test Physics - 01",
+    "JEE Preparation: Benchmark (mixed difficulty)",
+    "Login : Enter your NAME IN CAPITAL LETTERS and Enrollment ID exactly as given by the Academy for this program.",
+    "2. Timer : Once you login, the test timer will appear on screen. ",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 60 minutes",
+    "Each correct answer: +4",
+    "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "First 20 questions are MCQs contains a single correct answer. Next 5 questions are integer type questions, student has enter only integer value",    
+    "Do not refresh the page during the exam",
+    "Clcik the Submit Button End of The Exam is Over",   
+    "* Unic Academy - Clarity-Confidence-Results"
+  ]
+},
+     {
+      "exam_name": "JEE ’27 Monthly Test for Chemistry - 01",
+  "exam_module": "UNIC_TEST_MTCY01",
+  "status": "yes",
+  "duration": 3600,
+  "question_file": "/unic_text_cy_02-06-2026.json",
+  "start_time": "2026-06-2 10:00 AM",
+  "instructions": [
+    "Instructions for Monthly Test Chemistry - 01",
+    "JEE Preparation: Benchmark (mixed difficulty)",
+    "Login : Enter your NAME IN CAPITAL LETTERS and Enrollment ID exactly as given by the Academy for this program.",
+    "2. Timer : Once you login, the test timer will appear on screen. ",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 60 minutes",
+    "Each correct answer: +4",
+    "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "First 20 questions are MCQs contains a single correct answer. Next 5 questions are integer type questions, student has enter only integer value",    
+    "Do not refresh the page during the exam",
+    "Clcik the Submit Button End of The Exam is Over",   
+    "* Unic Academy - Clarity-Confidence-Results"
+  ]
+},
+     {
+      "exam_name": "JEE ’27 Monthly Test for Mathematics - 01",
+  "exam_module": "UNIC_TEST_MTMA01",
+  "status": "yes",
+  "duration": 3600,
+  "question_file": "/unic_text_ma-02-06-2026.json",
+  "start_time": "2026-06-2 10:00 AM",
+  "instructions": [
+    "Instructions for Monthly Test Mathematics - 01",
+    "JEE Preparation: Benchmark (mixed difficulty)",
+    "Login : Enter your NAME IN CAPITAL LETTERS and Enrollment ID exactly as given by the Academy for this program.",
+    "2. Timer : Once you login, the test timer will appear on screen. ",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 60 minutes",
+    "Each correct answer: +4",
+    "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "First 20 questions are MCQs contains a single correct answer. Next 5 questions are integer type questions, student has enter only integer value",    
+    "Do not refresh the page during the exam",
+    "Clcik the Submit Button End of The Exam is Over",   
+    "* Unic Academy - Clarity-Confidence-Results"
+  ]
+},
+     
+     
      {
       "exam_name": "Weekly Test 02 - Physics, Chemistry, Mathematics",
   "exam_module": "UNIC_TEST_PCM02",
-  "status": "yes",
+  "status": "no",
   "duration": 5400,
   "question_file": "/unic_text_19-05-2026.json",
   "start_time": "2026-05-20 10:00 AM",
