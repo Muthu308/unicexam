@@ -404,6 +404,42 @@ body{
 
 </div>
 
+<div class="card-box mb-4">
+
+    <h3 class="section-title">
+        Subject Wise Growth Analysis
+    </h3>
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Student</th>
+
+                    <th>Physics</th>
+
+                    <th>Chemistry</th>
+
+                    <th>Maths</th>
+
+                    <th>Overall</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="subjectGrowthBody"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
 <!-- ========================================= -->
 <!-- SUBJECT AVERAGE -->
 <!-- ========================================= -->
@@ -1502,6 +1538,122 @@ function renderGrowthAnalysis(data){
             </td>
 
         </tr>
+        `;
+    });
+
+    growthBody.innerHTML = html;
+}
+
+    // =========================================
+// SUBJECT WISE GROWTH ANALYSIS
+// =========================================
+
+function renderSubjectGrowthAnalysis(data){
+
+    const growthBody =
+        document.getElementById(
+            'subjectGrowthBody'
+        );
+
+    const grouped = {};
+
+    data.forEach(student => {
+
+        const key =
+            student.normalized_name;
+
+        if(!grouped[key]){
+
+            grouped[key] = [];
+        }
+
+        grouped[key].push(student);
+    });
+
+    let html = '';
+
+    Object.keys(grouped).forEach(name => {
+
+        const exams =
+            grouped[name];
+
+        if(exams.length < 2){
+            return;
+        }
+
+        const first =
+            exams[0];
+
+        const latest =
+            exams[exams.length - 1];
+
+        const phGrowth =
+            latest.ph - first.ph;
+
+        const cyGrowth =
+            latest.cy - first.cy;
+
+        const maGrowth =
+            latest.ma - first.ma;
+
+        const totalGrowth =
+            latest.total - first.total;
+
+        const getClass = value => {
+
+            if(value > 0)
+                return 'text-success';
+
+            if(value < 0)
+                return 'text-danger';
+
+            return 'text-primary';
+        };
+
+function subjectGrowthCell(firstMark, latestMark){
+
+    const growth = latestMark - firstMark;
+
+    let cls = 'text-primary';
+
+    if(growth > 0) cls = 'text-success';
+    if(growth < 0) cls = 'text-danger';
+
+    return `
+        ${firstMark} → ${latestMark}
+        <br>
+        <span class="${cls} fw-bold">
+            (${growth > 0 ? '+' : ''}${growth})
+        </span>
+    `;
+}
+
+        html += `
+
+        <tr>
+
+            <td>
+                ${latest.name}
+            </td>
+
+            <td>
+    ${subjectGrowthCell(first.ph, latest.ph)}
+</td>
+
+<td>
+    ${subjectGrowthCell(first.cy, latest.cy)}
+</td>
+
+<td>
+    ${subjectGrowthCell(first.ma, latest.ma)}
+</td>
+
+<td>
+    ${subjectGrowthCell(first.total, latest.total)}
+</td>
+
+        </tr>
+
         `;
     });
 
