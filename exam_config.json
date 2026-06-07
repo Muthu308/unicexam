@@ -2,7 +2,7 @@
  {
   "exam_name": "Weekly Test 03 - Physics, Chemistry, Mathematics",
   "exam_module": "UNIC_TEST_PCM03",
-  "status": "yes",
+  "status": "no",
   "duration": 5400,
   "question_file": "/unic_text_08-06-2026.json",
   "start_time": "2026-06-08 7:00 AM",
