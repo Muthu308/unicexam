@@ -76,6 +76,10 @@ export default async function handler(req, res) {
 
         const checkData =
             await checkResponse.json();
+        console.log(
+    "CHECK RESPONSE",
+    JSON.stringify(checkData, null, 2)
+);
 
         if(
             checkData.data.user_student.length
@@ -216,6 +220,11 @@ export default async function handler(req, res) {
 
         const insertData =
             await insertResponse.json();
+
+        console.log(
+    "INSERT RESPONSE",
+    JSON.stringify(insertData, null, 2)
+);
 
         if(insertData.errors){
 
