@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+//import bcrypt from "bcryptjs";
 
 export default async function handler(req, res) {
 
@@ -76,10 +76,7 @@ export default async function handler(req, res) {
 
         const checkData =
             await checkResponse.json();
-        console.log(
-    "CHECK RESPONSE",
-    JSON.stringify(checkData, null, 2)
-);
+       
 
         if(
             checkData.data.user_student.length
@@ -98,11 +95,11 @@ export default async function handler(req, res) {
 
         // HASH PASSWORD
 
-        const hashedPassword =
-            await bcrypt.hash(
-                password,
-                10
-            );
+     //   const hashedPassword =
+        //    await bcrypt.hash(
+      //          password,
+      //          10
+      //      );
 
         // INSERT
 
@@ -193,8 +190,7 @@ export default async function handler(req, res) {
 
                             email_id,
 
-                            password:
-                                hashedPassword,
+                            password,
 
                             name,
 
@@ -221,11 +217,7 @@ export default async function handler(req, res) {
         const insertData =
             await insertResponse.json();
 
-        console.log(
-    "INSERT RESPONSE",
-    JSON.stringify(insertData, null, 2)
-);
-
+       
         if(insertData.errors){
 
             return res.status(400).json({
