@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+//import bcrypt from "bcryptjs";
 
 export default async function handler(req, res){
 
@@ -110,13 +110,7 @@ export default async function handler(req, res){
         }
 
         const match =
-            await bcrypt.compare(
-
-                password,
-
-                student.password
-
-            );
+    password === student.password;
 
         if(!match){
 
