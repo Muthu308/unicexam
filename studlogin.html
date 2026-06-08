@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Student Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+        body{
+            background:#f5f6fa;
+        }
+
+        .login-card{
+
+            max-width:450px;
+
+            margin:80px auto;
+
+            background:#fff;
+
+            padding:30px;
+
+            border-radius:15px;
+
+            box-shadow:0 2px 15px rgba(0,0,0,.1);
+        }
+
+        .logo{
+
+            text-align:center;
+
+            margin-bottom:25px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="login-card">
+
+        <div class="logo">
+
+            <h2>
+                Student Login
+            </h2>
+
+            <p>
+                Login to your account
+            </p>
+
+        </div>
+
+        <form id="loginForm">
+
+            <div class="mb-3">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="email_id"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <div class="mb-3">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <div class="text-center mt-3">
+
+            New Student?
+
+            <a href="register.html">
+                Register Here
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+document
+.getElementById('loginForm')
+.addEventListener(
+    'submit',
+    async function(e){
+
+        e.preventDefault();
+
+        const email_id =
+            document.getElementById(
+                'email_id'
+            ).value;
+
+        const password =
+            document.getElementById(
+                'password'
+            ).value;
+
+        try{
+
+            const response =
+                await fetch(
+                    '/api/login',
+                    {
+                        method:'POST',
+
+                        headers:{
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        body:JSON.stringify({
+
+                            email_id,
+                            password
+
+                        })
+                    }
+                );
+
+            const result =
+                await response.json();
+
+            if(result.success){
+
+                localStorage.setItem(
+                    'student',
+                    JSON.stringify(
+                        result.user
+                    )
+                );
+
+                window.location =
+                    '/dashboard.html';
+
+            }else{
+
+                alert(
+                    result.message
+                );
+            }
+
+        }catch(error){
+
+            console.log(error);
+
+            alert(
+                'Login Failed'
+            );
+        }
+    }
+);
+
+</script>
+
+</body>
+</html>
