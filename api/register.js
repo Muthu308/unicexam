@@ -94,7 +94,7 @@ export default async function handler(req, res) {
         }
 
         // HASH PASSWORD
-
+const hashedPassword = password;
      //   const hashedPassword =
         //    await bcrypt.hash(
       //          password,
@@ -190,7 +190,8 @@ export default async function handler(req, res) {
 
                             email_id,
 
-                            password,
+                            password:
+                                hashedPassword,
 
                             name,
 
