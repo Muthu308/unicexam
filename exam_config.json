@@ -1,4 +1,30 @@
 [
+  {
+  "exam_name": "Weekly Test 04 - Physics, Chemistry, Mathematics",
+  "exam_module": "UNIC_TEST_PCM04",
+  "status": "yes",
+  "duration": 5400,
+  "question_file": "/unic_text_15-06-2026.json",
+  "start_time": "2026-06-16 7:00 AM",
+  "instructions": [
+    "Instructions for Weekly Test PCM 04",
+    "JEE Preparation: Benchmark (mixed difficulty)",
+    "Login : Enter your NAME IN CAPITAL LETTERS and Enrollment ID exactly as given by the Academy for this program.",
+    "2. Timer : Once you login, the test timer will appear on screen. ",
+    "3. Changing Answers: You can change any option before final submit. To remove your selected option, click 'Clear' and choose again.",
+    "Total Duration: 90 minutes",
+    "Each correct answer: +4",
+    "Each wrong answer: -1",
+    "No negative marks for unattempted questions",
+    "Each subject (Physics – 15, Chemistry – 15, Mathematics – 15) contains 30 Multiple Choice Question questions (10 in each subject), contains 15 NAT (5 in each subject)",
+    "+5 (for each subject) if answered only correct answer in total 15 marks.",
+    "+5 if no single wrong answer in the entire question paper.",
+    "Total = 20 marks for smart players.",
+    "Do not refresh the page during the exam",
+    "Clcik the Submit Button End of The Exam is Over",   
+    "* Unic Academy - Clarity-Confidence-Results"
+  ]
+},
  {
   "exam_name": "Weekly Test 03 - Physics, Chemistry, Mathematics",
   "exam_module": "UNIC_TEST_PCM03",
