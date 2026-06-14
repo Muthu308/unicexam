@@ -28,7 +28,7 @@
  {
   "exam_name": "Weekly Test 03 - Physics, Chemistry, Mathematics",
   "exam_module": "UNIC_TEST_PCM03",
-  "status": "yes",
+  "status": "no",
   "duration": 5400,
   "question_file": "/unic_text_08-06-2026.json",
   "start_time": "2026-06-08 7:00 AM",
@@ -54,7 +54,7 @@
 {
       "exam_name": "JEE ’27 Monthly Test for Physics - 01",
   "exam_module": "UNIC_TEST_MTPH01",
-  "status": "yes",
+  "status": "no",
   "duration": 3600,
   "question_file": "/unic_text_ph_02-06-2026.json",
   "start_time": "2026-06-2 10:00 AM",
@@ -77,7 +77,7 @@
      {
       "exam_name": "JEE ’27 Monthly Test for Chemistry - 01",
   "exam_module": "UNIC_TEST_MTCY01",
-  "status": "yes",
+  "status": "no",
   "duration": 3600,
   "question_file": "/unic_text_cy_02-06-2026.json",
   "start_time": "2026-06-2 10:00 AM",
@@ -100,7 +100,7 @@
      {
       "exam_name": "JEE ’27 Monthly Test for Mathematics - 01",
   "exam_module": "UNIC_TEST_MTMA01",
-  "status": "yes",
+  "status": "no",
   "duration": 3600,
   "question_file": "/unic_text_ma-02-06-2026.json",
   "start_time": "2026-06-2 10:00 AM",
