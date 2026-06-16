@@ -33,12 +33,102 @@
 
             margin-bottom:20px;
         }
+        body{
+    background:linear-gradient(
+        135deg,
+        #f4f7ff,
+        #eef6ff
+    );
+}
+
+.hero-section{
+    background:linear-gradient(
+        135deg,
+        #0d6efd,
+        #001f5c
+    );
+
+    color:white;
+
+    padding:50px 20px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+
+.academy-logo{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:50%;
+    background:white;
+    padding:8px;
+    margin-bottom:15px;
+}
+
+.register-card{
+    max-width:800px;
+    margin:auto;
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 8px 25px rgba(0,0,0,.12);
+}
+        .footer-section{
+
+    background:#0b172a;
+
+    color:white;
+
+    margin-top:50px;
+
+    padding:40px;
+
+    border-radius:20px 20px 0 0;
+}
+
+.founder-photo{
+
+    width:140px;
+
+    height:140px;
+
+    border-radius:50%;
+
+    border:4px solid white;
+
+    object-fit:cover;
+}
 
     </style>
 
 </head>
 <body>
+<header class="hero-section">
+    <div class="text-center">
+        <img
+            src="YOUR_LOGO_URL"
+            alt="UNIC Academy"
+            class="academy-logo"
+        >
 
+        <h1>UNIC ACADEMY</h1>
+
+        <div class="badge bg-warning text-dark mb-2">
+            Since 2013
+        </div>
+
+        <h5>
+            Clarity • Confidence • Results
+        </h5>
+
+        <p>
+            Empowering Students for IIT-JEE, NEET and
+            Academic Excellence
+        </p>
+    </div>
+</header>
 <div class="container">
 
     <div class="register-card">
@@ -197,7 +287,113 @@
     </div>
 
 </div>
+<footer class="footer-section mt-5">
 
+    <div class="row">
+
+        <div class="col-md-3 text-center">
+
+            <img
+                src="https://yt3.googleusercontent.com/4zz5DZpTwnglUebmPAPF4jet3mYSqqBlfZ5ecE0MQH-StzY0cUziqxE8syW5Zz0TUVY1jOTE5A=s120-c-k-c0x00ffffff-no-rj"
+                class="founder-photo"
+            >
+
+        </div>
+
+        <div class="col-md-9">
+
+            <h3>
+                Arun Sundara Nayagam D
+            </h3>
+
+            <h6>
+                Founder, UNIC Academy
+            </h6>
+
+            <p>
+                Educationist | Lecturer in Engineering,
+                Mathematics and Science | Researcher
+            </p>
+
+            <p>
+                📍 Tirunelveli, Tamil Nadu
+            </p>
+
+            <p>
+                📧 davidarun112@gmail.com
+            </p>
+
+            <p>
+                📞 +91 90034 09796
+            </p>
+
+            <a
+                href="https://www.youtube.com/@arunsidea6897"
+                target="_blank"
+                class="btn btn-danger"
+            >
+                YouTube Channel
+            </a>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <h5>Achievements</h5>
+
+            <ul>
+                <li>
+                    AIR 12 – GATE 2022
+                </li>
+
+                <li>
+                    GATE Qualified (2011–2024)
+                </li>
+
+                <li>
+                    IIT JAM Physics Qualified
+                </li>
+            </ul>
+
+        </div>
+
+        <div class="col-md-6">
+
+            <h5>UNIC Academy Journey</h5>
+
+            <p>
+
+                Started during Navarathiri 2012 with
+                just 4 students. Today more than
+                1000+ students have benefited from
+                coaching in GATE, IIT JAM, NEET,
+                JEE and Engineering subjects.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <div class="text-center">
+
+        © 2025 UNIC Academy
+
+        <br>
+
+        Clarity • Confidence • Results
+
+    </div>
+
+</footer>
 <script>
 document
 .getElementById('registerForm')
