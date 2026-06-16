@@ -2,7 +2,7 @@
   {
   "exam_name": "Weekly Test 04 - Physics, Chemistry, Mathematics",
   "exam_module": "UNIC_TEST_PCM04",
-  "status": "no",
+  "status": "yes",
   "duration": 5400,
   "question_file": "/unic_text_15-06-2026.json",
   "start_time": "2026-06-16 7:00 AM",
