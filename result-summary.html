@@ -273,9 +273,11 @@ body{
                 <thead>
                     <tr>
                         <th>Student</th>
-                        <th>Exams Attended</th>
-                        <th>Best Score</th>
-                        <th>Average Score</th>
+                        <th>Exams</th>
+                        <th>Total (Min/Avg/Max)</th>
+                        <th>PH (Min/Avg/Max)</th>
+                        <th>CY (Min/Avg/Max)</th>
+                        <th>MA (Min/Avg/Max)</th>                     
                         <th>Improvement</th>
                     </tr>
                 </thead>
@@ -1108,13 +1110,48 @@ function renderComparison(data){
 
         const scores = exams.map(e=>e.total);
 
-        const best = Math.max(...scores);
+        const minScore = Math.min(...scores);
+        
+        const maxScore = Math.max(...scores);
 
         const avg = (
-            scores.reduce((a,b)=>a+b,0)
-            /
-            scores.length
-        ).toFixed(2);
+                    scores.reduce((a,b)=>a+b,0)
+                    /
+                    scores.length
+                ).toFixed(2);
+        
+        const phScores = exams.map(e => Number(e.ph));
+
+        const phMin = Math.min(...phScores);
+        
+        const phMax = Math.max(...phScores);
+        
+        const phAvg = (
+            phScores.reduce((a,b)=>a+b,0)
+            / phScores.length
+        ).toFixed(1);
+
+        const cyScores = exams.map(e => Number(e.cy));
+
+        const cyMin = Math.min(...cyScores);
+        
+        const cyMax = Math.max(...cyScores);
+        
+        const cyAvg = (
+            cyScores.reduce((a,b)=>a+b,0)
+            / cyScores.length
+        ).toFixed(1);
+        
+        const maScores = exams.map(e => Number(e.ma));
+
+        const maMin = Math.min(...maScores);
+        
+        const maMax = Math.max(...maScores);
+        
+        const maAvg = (
+            maScores.reduce((a,b)=>a+b,0)
+            / maScores.length
+        ).toFixed(1);
 
         let improvement = 0;
 
@@ -1138,13 +1175,19 @@ function renderComparison(data){
             </td>
 
             <td>
-                ${best}
+                ${minScore} | {avg} | ${maxScore}
             </td>
 
             <td>
-                ${avg}
+                ${phMin} | ${phAvg} | ${phMax}
             </td>
-
+            <td>
+                 ${cyMin} | ${cyAvg} | ${cyMax}
+            </td>
+            <td>
+                 ${maMin} | ${maAvg} | ${maMax}
+            </td>
+           
             <td class="${improvement >= 0 ? 'text-success':'text-danger'} fw-bold">
                 ${improvement > 0 ? '+' : ''}${improvement}
             </td>
