@@ -6,7 +6,17 @@ export default async function handler(req, res) {
     });
   }
 
+  let checkData = null;
+  let insertData = null;
+
   try {
+    if (!process.env.HASURA_URL || !process.env.HASURA_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "Server configuration error",
+      });
+    }
+
     const {
       email_id,
       password,
@@ -19,7 +29,9 @@ export default async function handler(req, res) {
       dob,
     } = req.body;
 
-    // Validation
+    console.log("Incoming Body:", req.body);
+
+    // Required field validation
     if (
       !email_id ||
       !password ||
@@ -34,6 +46,32 @@ export default async function handler(req, res) {
       });
     }
 
+    // Convert DOB to YYYY-MM-DD
+    let formattedDob = null;
+
+    if (dob) {
+      const dobStr = String(dob).trim();
+
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dobStr)) {
+        // Already YYYY-MM-DD
+        formattedDob = dobStr;
+      } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(dobStr)) {
+        // DD/MM/YYYY
+        const [day, month, year] = dobStr.split("/");
+        formattedDob = `${year}-${month}-${day}`;
+      } else if (/^\d{2}-\d{2}-\d{4}$/.test(dobStr)) {
+        // DD-MM-YYYY
+        const [day, month, year] = dobStr.split("-");
+        formattedDob = `${year}-${month}-${day}`;
+      } else {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invalid DOB format. Use YYYY-MM-DD or DD/MM/YYYY",
+        });
+      }
+    }
+
     // Check existing email
     const checkResponse = await fetch(process.env.HASURA_URL, {
       method: "POST",
@@ -43,7 +81,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         query: `
-          query CheckStudent($email_id:String!) {
+          query CheckStudent($email_id: String!) {
             user_student(
               where: {
                 email_id: {
@@ -61,7 +99,12 @@ export default async function handler(req, res) {
       }),
     });
 
-    const checkData = await checkResponse.json();
+    checkData = await checkResponse.json();
+
+    console.log(
+      "Check Data:",
+      JSON.stringify(checkData, null, 2)
+    );
 
     if (checkData.errors) {
       return res.status(400).json({
@@ -77,8 +120,6 @@ export default async function handler(req, res) {
       });
     }
 
-
-
     // Insert student
     const insertResponse = await fetch(process.env.HASURA_URL, {
       method: "POST",
@@ -89,15 +130,15 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         query: `
           mutation RegisterStudent(
-            $email_id:String!,
-            $password:String!,
-            $name:String!,
-            $school_name:String!,
-            $mobile:String!,
-            $class_name:String!,
-            $school_venue:String,
-            $std_id:String,
-            $dob:date
+            $email_id: String!,
+            $password: String!,
+            $name: String!,
+            $school_name: String!,
+            $mobile: String!,
+            $class_name: String!,
+            $school_venue: String,
+            $std_id: String,
+            $dob: date
           ) {
             insert_user_student_one(
               object: {
@@ -106,7 +147,7 @@ export default async function handler(req, res) {
                 name: $name,
                 school_name: $school_name,
                 mobile: $mobile,
-                class: $class_name,
+                class_name: $class_name,
                 school_venue: $school_venue,
                 std_id: $std_id,
                 dob: $dob
@@ -125,15 +166,18 @@ export default async function handler(req, res) {
           class_name,
           school_venue: school_venue || null,
           std_id: std_id || null,
-          dob: dob || null,
+          dob: formattedDob,
         },
       }),
     });
 
-    const insertData = await insertResponse.json();
+    insertData = await insertResponse.json();
+
     console.log(
-  JSON.stringify(insertData, null, 2)
-);
+      "Insert Data:",
+      JSON.stringify(insertData, null, 2)
+    );
+
     if (
       insertData.errors ||
       !insertData.data?.insert_user_student_one
@@ -141,25 +185,24 @@ export default async function handler(req, res) {
       return res.status(400).json({
         success: false,
         message: "Registration failed",
-        errors: insertData.errors,
+        errors: insertData.errors || null,
       });
     }
 
     return res.status(200).json({
       success: true,
       message: "Registration Successful",
-      user_id: insertData.data.insert_user_student_one.user_id,
+      user_id:
+        insertData.data.insert_user_student_one.user_id,
     });
   } catch (error) {
     console.error("Register Error:", error);
-    console.log("BODY", req.body);
-    console.log("CHECK", checkData);
-    console.log("INSERT", insertData);
+    console.error("Check Data:", checkData);
+    console.error("Insert Data:", insertData);
+
     return res.status(500).json({
-      success:false,
-      message:error.message,
-      error:error
+      success: false,
+      message: error.message || "Internal Server Error",
     });
-    
   }
 }
