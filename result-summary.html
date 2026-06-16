@@ -337,6 +337,10 @@ body{
                         <th>Bonus</th>
                         <th>Percentage</th>
                         <th>Band</th>
+                        <th>Attempt%</th>
+                        <th>Accuracy%</th>
+                        <th>Risk</th>
+                         <th>Remark</th>
 
                     </tr>
 
@@ -683,6 +687,103 @@ function renderTable(data){
         else if(student.band === 'C'){
             bandClass = 'bandC';
         }
+       const TOTAL_QP = 45;
+        
+        const attempted =
+            student.correct + student.wrong;
+        
+        const attemptPct =
+        (
+            attempted / TOTAL_QP * 100
+        ).toFixed(1);
+        
+        const accuracy =
+        attempted
+        ?
+        (
+            student.correct / attempted * 100
+        ).toFixed(1)
+        :
+        0;
+        
+        const conversionPct =
+        (
+            student.correct / TOTAL_QP * 100
+        ).toFixed(1);
+        
+        const negativeLoss = student.wrong;
+        
+        const riskScore =
+        (
+            student.wrong / Math.max(1, attempted) * 100
+        ).toFixed(1);
+
+        let riskBadge = '';
+        
+        if (riskScore < 15) {
+            riskBadge =
+            '<span class="badge bg-success">Low Risk</span>';
+        }
+        else if (riskScore < 30) {
+            riskBadge =
+            '<span class="badge bg-warning text-dark">Medium Risk</span>';
+        }
+        else {
+            riskBadge =
+            '<span class="badge bg-danger">High Risk</span>';
+        }
+        let remark = '';
+        
+        if (accuracy >= 85 && attemptPct >= 75) {
+        
+            remark =
+            '🏆 Excellent balance of accuracy and attempts';
+        
+        }
+        else if (accuracy >= 80 && attemptPct < 60) {
+        
+            remark =
+            '🎯 Very accurate. Increase attempts';
+        
+        }
+        else if (student.wrong >= 12) {
+        
+            remark =
+            `⚠️ Lost ${student.wrong} marks due to negative scoring`;
+        
+        }
+        else if (student.not_attempted >= 20) {
+        
+            remark =
+            '📚 Many questions skipped. Improve confidence';
+        
+        }
+        else if (accuracy < 60) {
+        
+            remark =
+            '❌ Too many wrong attempts. Focus on question selection';
+        
+        }
+        else {
+        
+            remark =
+            '✅ Balanced performance';
+        
+        }
+        const correctClass =
+        student.correct >= 25
+            ? 'text-success fw-bold'
+            : '';
+    
+    const wrongClass =
+        student.wrong >= 10
+            ? 'text-danger fw-bold'
+            : '';
+    
+    const naClass =
+        student.not_attempted >= 20
+            ? 'text-warning fw-bold'
+            : '';
 
         html += `
 
@@ -731,7 +832,7 @@ function renderTable(data){
             <td>
                 ${student.not_attempted}
             </td>
-
+            
             <td>
                 ${student.bonus}
             </td>
@@ -751,6 +852,27 @@ function renderTable(data){
 
             <td class="${bandClass}">
                 ${student.band}
+            </td>
+            <td>
+                ${attemptPct}%
+            </td>
+            
+            <td class="${
+                accuracy >= 80
+                ? 'text-success fw-bold'
+                : accuracy >= 65
+                ? 'text-warning'
+                : 'text-danger'
+            }">
+                ${accuracy}%
+            </td>
+            
+            <td>
+                ${riskBadge}
+            </td>
+            
+            <td style="max-width:250px;font-size:12px">
+                ${remark}
             </td>
 
         </tr>
