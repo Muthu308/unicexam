@@ -77,6 +77,8 @@ export default async function handler(req, res) {
       });
     }
 
+
+
     // Insert student
     const insertResponse = await fetch(process.env.HASURA_URL, {
       method: "POST",
@@ -129,7 +131,9 @@ export default async function handler(req, res) {
     });
 
     const insertData = await insertResponse.json();
-
+    console.log(
+  JSON.stringify(insertData, null, 2)
+);
     if (
       insertData.errors ||
       !insertData.data?.insert_user_student_one
@@ -148,10 +152,14 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Register Error:", error);
-
+    console.log("BODY", req.body);
+    console.log("CHECK", checkData);
+    console.log("INSERT", insertData);
     return res.status(500).json({
-      success: false,
-      message: "Server Error",
+      success:false,
+      message:error.message,
+      error:error
     });
+    
   }
 }
