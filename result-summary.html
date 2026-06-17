@@ -249,7 +249,7 @@ body{
     <div class="card-box mb-4">
 
         <h4 class="section-title">
-            Over All Test Subject-wise Toppers and Hegist Marks
+            Overall Test Performance Summary: Subject-wise Toppers, Highest Marks & Average Scores
         </h4>
 
         <div class="row g-3" id="subjectTopperSection"></div>
@@ -1143,58 +1143,55 @@ function generateTopList(data,key){
 
 function renderSubjectToppers(data){
 
-    const section =
-        document.getElementById('subjectTopperSection');
+    const section = document.getElementById('subjectTopperSection');
 
     const subjects = [
-        {
-            key:'ph',
-            label:'Physics'
-        },
-        {
-            key:'cy',
-            label:'Chemistry'
-        },
-        {
-            key:'ma',
-            label:'Maths'
-        }
+        { key:'ph', label:'Physics' },
+        { key:'cy', label:'Chemistry' },
+        { key:'ma', label:'Maths' }
     ];
 
-    let html = '';
+    let html = `
+        <h3 class="text-center mb-4">
+            Overall Test Performance Summary:
+            Subject-wise Toppers, Highest Marks & Average Scores
+        </h3>
+    `;
 
     subjects.forEach(subject => {
 
         const topper = [...data]
-            .sort((a,b)=>
-                b[subject.key]-a[subject.key]
-            )[0];
+            .sort((a, b) => b[subject.key] - a[subject.key])[0];
 
-        if(topper){
+        const average =
+            data.reduce(
+                (sum, student) => sum + (student[subject.key] || 0),
+                0
+            ) / data.length;
 
-            html += `
-
-            <div class="col-md-4">
+        html += `
+            <div class="col-md-4 mb-3">
 
                 <div class="student-card text-center">
 
-                    <h4>
-                        ${subject.label}
-                    </h4>
+                    <h4>${subject.label}</h4>
 
-                    <h5>
-                        ${topper.name}
-                    </h5>
+                    <h5>${topper.name}</h5>
 
-                    <div class="summary-value">
+                    <p class="mb-1">
+                        <strong>Highest Marks:</strong>
                         ${topper[subject.key]}
-                    </div>
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Average Score:</strong>
+                        ${average.toFixed(2)}
+                    </p>
 
                 </div>
 
             </div>
-            `;
-        }
+        `;
     });
 
     section.innerHTML = html;
