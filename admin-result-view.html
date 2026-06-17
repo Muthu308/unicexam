@@ -1194,10 +1194,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                     .map(s => `${s.name} (${s.id})`)
                     .join("; ");
 
-                const naList = stats.notAttemptedStudents
-                    .map(s => `${s.name} (${s.id})`)
-                    .join("; ");
-                const naList = stats.notAttemptedStudents
+               const naList = stats.notAttemptedStudents
                                 .map(s => {
                                     const isNotVisited = stats.notVisittedStudents
                                         .some(v => v.id === s.id);
