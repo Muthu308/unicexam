@@ -537,7 +537,7 @@ function loadFilters(){
     const examFilter = document.getElementById('examFilter');
     const moduleFilter = document.getElementById('moduleFilter');
 
-    const exams = [...new Set(students.map(s => s.exam_module))];
+    const exams = [...new Set(students.map(s => s.exam_name))];
 
     exams.forEach(exam => {
 
@@ -566,19 +566,19 @@ function loadFilters(){
 
 function applyFilters(){
 
-   // const exam = document.getElementById('examFilter').value;
+    const exam = document.getElementById('examFilter').value;
     const module = document.getElementById('moduleFilter').value;
     const search = document.getElementById('searchInput').value.toLowerCase();
 
     let filtered = [...students];
 
-   /* if(exam){
+    if(exam){
 
         filtered = filtered.filter(s =>
             s.exam_name === exam
         );
     }
-*/
+
     if(module){
 
         filtered = filtered.filter(s =>
