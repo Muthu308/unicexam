@@ -978,7 +978,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                                             .includes(num);
                                 
                                         return isNotVisited
-                                            ? `<span style="color:red; font-weight:bold;">${num}</span>`
+                                            ? `<span style="color:blue;">${num}</span>`
                                             : num;
                                     }).join(", ")}
                                     ]
@@ -1033,6 +1033,23 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
             const averageScore = overallScores.totalScore / overallScores.totalStudents;
             const averageCorrect = overallScores.totalCorrect / overallScores.totalStudents;
             const averageWrong = overallScores.totalWrong / overallScores.totalStudents;
+            const avgAttempted =
+                    overallScores.totalAttempted / overallScores.totalStudents;
+                
+                const avgCorrect =
+                    overallScores.totalCorrect / overallScores.totalStudents;
+                
+                const avgWrong =
+                    overallScores.totalWrong / overallScores.totalStudents;
+                
+                const avgNotAttempted =
+                    overallScores.totalNotAttempted / overallScores.totalStudents;
+                
+                const avgNotVisited =
+                    overallScores.totalNotvisitted / overallScores.totalStudents;
+                
+                //const avgTimeSpent =
+                 //   overallScores.totalTimeSpent / overallScores.totalStudents;
            // const averageTimeSpent = overallScores.totalTimeSpent / overallScores.totalStudents; // New: Average time spent per student<th>Average Time Spent (minutes)</th>  <!-- <td>${(averageTimeSpent)} mins</td>-->
 
             html += `<h5 class="mt-2 font-weight-bold text-primary">Comparison Summary:</h5>
@@ -1041,24 +1058,24 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                             <tr style="text-align:center;">
                                 <th>Total Students</th>
                                 <th>Highest Score</th>
-                                <th>Average Score</th>
-                                <th>Total Attempted</th>
-                                <th>Correct Answers</th>
-                                <th>Wrong Answers</th>
-                                <th>Not Attempted</th>
+                                <th>Avg. Score</th>
+                                <th>Avg. Attempted</th>
+                                <th>Avg. Correct</th>
+                                <th>Avg. Wrong</th>
+                                <th>Avg. Not Attempted</th>
                                 
                                 
                             </tr>
                         </thead>
                         <tbody>
                             <tr style="text-align:center;">
-                                <td>${overallScores.totalStudents}</td>
+                               <td>${overallScores.totalStudents}</td>
                                 <td>${overallScores.highestScore.toFixed(2)}</td>
                                 <td>${averageScore.toFixed(2)}</td>
-                                <td>${overallScores.totalAttempted}</td>
-                                <td>${overallScores.totalCorrect}</td>
-                                <td>${overallScores.totalWrong}</td>
-                                <td>${overallScores.totalNotAttempted} [${overallScores.totalNotvisitted}]</td>
+                                <td>${avgAttempted.toFixed(2)}</td>
+                                <td>${avgCorrect.toFixed(2)}</td>
+                                <td>${avgWrong.toFixed(2)}</td>
+                                <td>${avgNotAttempted.toFixed(2)} [${avgNotVisited.toFixed(2)}]</td>
                               
                             </tr>
                         </tbody>
@@ -1200,7 +1217,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                                         .some(v => v.id === s.id);
                             
                                     return isNotVisited
-                                        ? `<span style="color:blue; font-weight:bold;">
+                                        ? `<span style="color:blue;">
                                             ${s.name} (${s.id})
                                            </span>`
                                         : `<span style="color:gray;">
