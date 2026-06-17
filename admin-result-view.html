@@ -817,8 +817,10 @@
                 let totalCorrect = 0;
                 let totalWrong = 0;
                 let totalNotAttempted = 0;
+                let totalNotvisitted = 0;
                 let wrongQuestions = [];         //  NEW
                 let notAttemptedQuestions = [];  //  NEW
+                let notvisittedQuestions = [];  //  NEW
 
                 const totalQuestions = Object.keys(answerKey).length;
                 const maxMarks = totalQuestions * markingScheme.correct;
@@ -829,17 +831,14 @@
                     const userAnswer = responsesObject[question];
                     const correctAnswer = answerKey[question];
 
-                    if (correctAnswer === 'MTA') {
-                      
+                    if (correctAnswer === 'MTA') {                      
                         score += markingScheme.correct;
-                        totalCorrect++;
-                        
+                        totalCorrect++;                        
                     }
-                    else if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N')  {
+                    else if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N' || userAnswer === 'NV')  {
                         totalNotAttempted++;
                         notAttemptedQuestions.push(question);
                     }
-
                     else if (isCorrect(userAnswer, correctAnswer)) {
                         score += markingScheme.correct;
                         totalCorrect++;
@@ -849,6 +848,12 @@
                         totalWrong++;
                         wrongQuestions.push(question); 
                     }
+
+                   if (userAnswer === 'NV')  {
+                        totalNotvisitted++;
+                        notvisittedQuestions.push(question);
+                   }
+                   
 
                 });
 
@@ -925,6 +930,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                 overallScores.totalWrong += totalWrong;
                 overallScores.totalNotAttempted += totalNotAttempted;
                 overallScores.totalAttempted += totalAttempted;
+                overallScores.totalNotvisitted += totalNotvisitted;
 
                 if (score > overallScores.highestScore) {
                     overallScores.highestScore = score;
@@ -943,7 +949,9 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                     grade,
                     totalTimeSpent, // Include total time spent
                     wrongQuestions,          // 🔥 NEW
-                    notAttemptedQuestions    // 🔥 NEW
+                    notAttemptedQuestions,    // 🔥 NEW
+                    totalNotvisitted,
+                    notvisittedQuestions
                 };
             });
 
@@ -956,13 +964,23 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                             <td style="text-align:center;">${data.totalAttempted}</td>
                             <td style="text-align:center;">${data.totalCorrect}</td>
                             <td style="text-align:center;">
-                                ${data.totalNotAttempted}
+                                ${data.totalNotAttempted} [${totalNotvisitted}]
 
                                 ${data.totalNotAttempted > 0 ? `
                                 <br>
                                 <span style="color:gray;">
                                     Q: [
-                                    ${data.notAttemptedQuestions.map(q => q.replace("q","")).join(", ")}
+                                    ${data.notAttemptedQuestions.map(q => {
+                                        const num = q.replace("q", ""); // "q1" -> "1"
+                                
+                                        const isNotVisited = data.notvisittedQuestions
+                                            .map(v => v.replace("q", ""))   // "q1" -> "1"
+                                            .includes(num);
+                                
+                                        return isNotVisited
+                                            ? `<span style="color:red; font-weight:bold;">${num}</span>`
+                                            : num;
+                                    }).join(", ")}
                                     ]
                                 </span>
                                 ` : ""}
@@ -1040,7 +1058,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                                 <td>${overallScores.totalAttempted}</td>
                                 <td>${overallScores.totalCorrect}</td>
                                 <td>${overallScores.totalWrong}</td>
-                                <td>${overallScores.totalNotAttempted}</td>
+                                <td>${overallScores.totalNotAttempted} [${overallScores.totalNotvisitted}]</td>
                               
                             </tr>
                         </tbody>
@@ -1083,24 +1101,31 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                             correct: 0,
                             wrong: 0,
                             notAttempted: 0,
+                            notvisitted: 0,
                             wrongStudents: [],            
-                            notAttemptedStudents: []      
+                            notAttemptedStudents: [],
+                            notVisittedStudents: [] 
 
                         };
                     }
 
                     const userAnswer = responsesObject[question];
                     const correctAnswer = answerKeys[examModule][question];
+                   if (userAnswer === 'NV') {
+                        questionStats[question].notvisitted++;
+                        questionStats[question].notVisittedStudents.push({
+                            name: data.name,
+                            id: data.s_id
+                        });
+                    } 
 
-                    if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N') {
+                    if (userAnswer === '' || userAnswer === 'Not Answered' || userAnswer === 'N' || userAnswer === 'NV') {
 
                         questionStats[question].notAttempted++;
                         questionStats[question].notAttemptedStudents.push({
                             name: data.name,
                             id: data.s_id
                         });
-
-
                     } 
                     else if (isCorrect(userAnswer, correctAnswer)) {
 
@@ -1118,8 +1143,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
 
                     }
 
-                    questionStats[question].totalAttempted =
-                        questionStats[question].correct + questionStats[question].wrong;
+                    questionStats[question].totalAttempted = questionStats[question].correct + questionStats[question].wrong;
 
                 });
             });
@@ -1131,6 +1155,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                 const correctPercentage = (stats.correct / (stats.totalAttempted || 1)) * 100; // Avoid division by zero
                 const wrongPercentage =   (stats.wrong / (stats.totalAttempted || 1)) * 100;
                 const naPercentage = (stats.notAttempted / (totalStudents || 1)) * 100;
+                const navPercentage = (stats.notvisitted / (totalStudents || 1)) * 100;                
                 const hardness = ((stats.wrong +stats.notAttempted) / totalStudents) * 100;
                 let difficultyLevel = "";
                         if (hardness >= 75) {
@@ -1172,6 +1197,20 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                 const naList = stats.notAttemptedStudents
                     .map(s => `${s.name} (${s.id})`)
                     .join("; ");
+                const naList = stats.notAttemptedStudents
+                                .map(s => {
+                                    const isNotVisited = stats.notVisittedStudents
+                                        .some(v => v.id === s.id);
+                            
+                                    return isNotVisited
+                                        ? `<span style="color:blue; font-weight:bold;">
+                                            ${s.name} (${s.id})
+                                           </span>`
+                                        : `<span style="color:gray;">
+                                            ${s.name} (${s.id})
+                                           </span>`;
+                                })
+                                .join("; ");
 
                 //const averageTimeSpent = (stats.totalTime / overallScores.totalStudents) || 0;<!-- <td>${(averageTimeSpent).toFixed(2)} mins</td> -->
                 html += `<tr style="text-align:center;">
@@ -1179,10 +1218,10 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
                             <td>${stats.totalAttempted}</td>
                             <td>${stats.correct}</td>
                             <td>${stats.wrong}<br><small style="color:red">${wrongList || "-"}</small></td>
-                            <td>${stats.notAttempted}<br><small style="color:gray">${naList || "-"}</small></td>
+                            <td>${stats.notAttempted} [${stats.notvisitted}]<br><small>${naList || "-"}</small></td>
                             <td>${correctPercentage.toFixed(2)}%</td>
                             <td>${wrongPercentage.toFixed(2)}%</td>                
-                            <td>${naPercentage.toFixed(2)}%</td>                    
+                            <td>${naPercentage.toFixed(2)}% [${navPercentage.toFixed(2)}]</td>                    
                             <td>                    
                                 <div class="progress" style="height:22px;">                    
                                     <div class="progress-bar bg-danger" role="progressbar" style="width:${hardness}%">                    
@@ -1283,7 +1322,7 @@ const totalTimeSpent = secondsToHMS(totalTimeInSeconds); // Total time in minute
         positiveMarks += marks;
         totalCorrect++;
     }
-    else if(userAnswer === "-" || userAnswer === "" || userAnswer === "N"){
+    else if(userAnswer === "-" || userAnswer === "" || userAnswer === "N" || userAnswer === "NV"){
     status="Not Attempted";
     color="secondary";
     marks = markingScheme.noAnswer || 0;
