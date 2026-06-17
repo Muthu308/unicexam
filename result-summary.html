@@ -1141,20 +1141,16 @@ function generateTopList(data,key){
 // SUBJECT TOPPERS
 // =========================================
 
-function renderSubjectToppers(data){
+function renderSubjectToppers(data) {
 
-    const section =
-        document.getElementById('subjectTopperSection');
+    const section = document.getElementById('subjectTopperSection');
 
-    if(!data.length){
-
+    if (!data.length) {
         section.innerHTML = '';
-
         return;
-
     }
 
-    const medals = ['🥇','🥈','🥉'];
+    const medals = ['🥇', '🥈', '🥉'];
 
     // ==========================
     // GROUP STUDENT DATA
@@ -1170,317 +1166,177 @@ function renderSubjectToppers(data){
             row.id ||
             row.name;
 
-        if(!studentMap[id]){
+        if (!studentMap[id]) {
 
             studentMap[id] = {
-
                 name: row.name,
-
                 rollNo: id,
-
                 tests: 0,
 
                 totalSum: 0,
                 phSum: 0,
                 cySum: 0,
                 maSum: 0,
-            
+
                 highestTotal: 0,
                 highestTotalTest: '',
-            
+
                 highestPh: 0,
                 highestPhTest: '',
-            
+
                 highestCy: 0,
                 highestCyTest: '',
-            
+
                 highestMa: 0,
                 highestMaTest: ''
-
             };
-
         }
 
-        const student =
-            studentMap[id];
+        const student = studentMap[id];
 
-        const total =
-            Number(
-                row.final_marks ||
-                row.total ||
-                0
-            );
-        const ph =
-            Number(row.ph || 0);
-        
-        const cy =
-            Number(row.cy || 0);
-        
-        const ma =
-            Number(row.ma || 0);
-        
-        const exam =
-            row.exam_module || '';
-        
+        const total = Number(row.final_marks || row.total || 0);
+        const ph = Number(row.ph || 0);
+        const cy = Number(row.cy || 0);
+        const ma = Number(row.ma || 0);
+        const exam = row.exam_module || '';
+
         student.tests++;
 
         student.totalSum += total;
         student.phSum += ph;
         student.cySum += cy;
-        student.maSum += ma;        
-      if(total > student.highestTotal){
+        student.maSum += ma;
 
+        if (total > student.highestTotal) {
             student.highestTotal = total;
             student.highestTotalTest = exam;
-        
-        }
-        
-        if(ph > student.highestPh){
-        
-            student.highestPh = ph;
-            student.highestPhTest = exam;
-        
-        }
-        
-        if(cy > student.highestCy){
-        
-            student.highestCy = cy;
-            student.highestCyTest = exam;
-        
-        }
-        
-        if(ma > student.highestMa){
-        
-            student.highestMa = ma;
-            student.highestMaTest = exam;
-        
         }
 
+        if (ph > student.highestPh) {
+            student.highestPh = ph;
+            student.highestPhTest = exam;
+        }
+
+        if (cy > student.highestCy) {
+            student.highestCy = cy;
+            student.highestCyTest = exam;
+        }
+
+        if (ma > student.highestMa) {
+            student.highestMa = ma;
+            student.highestMaTest = exam;
+        }
     });
 
     // ==========================
     // CALCULATE AVERAGES
     // ==========================
 
-    const students =
-        Object.values(studentMap)
-        .map(student => ({
+    const students = Object.values(studentMap).map(student => ({
+        ...student,
+        avgTotal: student.totalSum / student.tests,
+        avgPhysics: student.phSum / student.tests,
+        avgChemistry: student.cySum / student.tests,
+        avgMaths: student.maSum / student.tests
+    }));
 
-            ...student,
-
-            avgTotal:
-                student.totalSum /
-                student.tests,
-
-            avgPhysics:
-                student.phSum /
-                student.tests,
-
-            avgChemistry:
-                student.cySum /
-                student.tests,
-
-            avgMaths:
-                student.maSum /
-                student.tests
-
-        }));
+    if (!students.length) {
+        section.innerHTML = '';
+        return;
+    }
 
     // ==========================
     // OVERALL AVERAGES
     // ==========================
 
-    const overallAvgTotal =
-        (
-            students.reduce(
-                (sum,s)=>
-                    sum + s.avgTotal,
-                0
-            )
-            /
-            students.length
-        ).toFixed(2);
+    const overallAvgTotal = (
+        students.reduce((sum, s) => sum + s.avgTotal, 0) / students.length
+    ).toFixed(2);
 
-    const overallAvgPhysics =
-        (
-            students.reduce(
-                (sum,s)=>
-                    sum + s.avgPhysics,
-                0
-            )
-            /
-            students.length
-        ).toFixed(2);
+    const overallAvgPhysics = (
+        students.reduce((sum, s) => sum + s.avgPhysics, 0) / students.length
+    ).toFixed(2);
 
-    const overallAvgChemistry =
-        (
-            students.reduce(
-                (sum,s)=>
-                    sum + s.avgChemistry,
-                0
-            )
-            /
-            students.length
-        ).toFixed(2);
+    const overallAvgChemistry = (
+        students.reduce((sum, s) => sum + s.avgChemistry, 0) / students.length
+    ).toFixed(2);
 
-    const overallAvgMaths =
-        (
-            students.reduce(
-                (sum,s)=>
-                    sum + s.avgMaths,
-                0
-            )
-            /
-            students.length
-        ).toFixed(2);
+    const overallAvgMaths = (
+        students.reduce((sum, s) => sum + s.avgMaths, 0) / students.length
+    ).toFixed(2);
 
     // ==========================
     // CARD BUILDER
     // ==========================
 
-    function createTopCard(
-        title,
-        averageLabel,
-        scoreField
-    ){
+    function createTopCard(title, averageLabel, scoreField) {
 
-        const top3 =
-            [...students]
-            .sort(
-                (a,b)=>
-                    b[scoreField]
-                    -
-                    a[scoreField]
-            )
-            .slice(0,3);
+        const top3 = [...students]
+            .sort((a, b) => b[scoreField] - a[scoreField])
+            .slice(0, 3);
 
-        const highest =
-            top3[0]?.[scoreField] || 0;
+        const highest = top3[0]?.[scoreField] || 0;
 
         let html = `
-
             <div class="col-lg-6 mb-4">
-
                 <div class="student-card h-100">
 
-                    <h4 class="mb-3">
-
-                        ${title}
-
-                    </h4>
+                    <h4 class="mb-3">${title}</h4>
 
                     <div class="d-flex justify-content-between">
-
-                        <span>
-                            Highest Average
-                        </span>
-
-                        <strong class="text-primary">
-
-                            ${highest.toFixed(2)}
-
-                        </strong>
-
+                        <span>Highest Average</span>
+                        <strong class="text-primary">${highest.toFixed(2)}</strong>
                     </div>
 
                     <div class="d-flex justify-content-between mb-3">
-
-                        <span>
-                            Overall Average
-                        </span>
-
-                        <strong class="text-success">
-
-                            ${averageLabel}
-
-                        </strong>
-
+                        <span>Overall Average</span>
+                        <strong class="text-success">${averageLabel}</strong>
                     </div>
 
                     <hr>
-
         `;
 
-        top3.forEach((student,index)=>{
+        top3.forEach((student, index) => {
+
+            let highestText = '';
+
+            if (scoreField === 'avgTotal') {
+                highestText = `${student.highestTotal} (${student.highestTotalTest})`;
+            } else if (scoreField === 'avgPhysics') {
+                highestText = `${student.highestPh} (${student.highestPhTest})`;
+            } else if (scoreField === 'avgChemistry') {
+                highestText = `${student.highestCy} (${student.highestCyTest})`;
+            } else {
+                highestText = `${student.highestMa} (${student.highestMaTest})`;
+            }
 
             html += `
-
                 <div class="border-bottom py-2">
 
-    <div class="fw-bold">
+                    <div class="fw-bold">
+                        ${medals[index]} ${student.name}
+                    </div>
 
-        ${medals[index]}
-        ${student.name}
+                    <small class="text-muted">
+                        ${student.rollNo}
+                    </small>
 
-    </div>
-
-    <small class="text-muted">
-
-        ${student.rollNo}
-
-    </small>
-
-    <div class="mt-1">
-
-        Tests: ${student.tests}
-        |
-        Avg: ${student[scoreField].toFixed(2)}
-        |
-        Highest: ${highestText}
-
-    </div>
-
-</div>
-
-                       let highestText = '';
-
-                    if(scoreField === 'avgTotal'){
-                    
-                        highestText =
-                            `${student.highestTotal}
-                            (${student.highestTotalTest})`;
-                    
-                    }
-                    else if(scoreField === 'avgPhysics'){
-                    
-                        highestText =
-                            `${student.highestPh}
-                            (${student.highestPhTest})`;
-                    
-                    }
-                    else if(scoreField === 'avgChemistry'){
-                    
-                        highestText =
-                            `${student.highestCy}
-                            (${student.highestCyTest})`;
-                    
-                    }
-                    else{
-                    
-                        highestText =
-                            `${student.highestMa}
-                            (${student.highestMaTest})`;
-                    
-                    }
-
+                    <div class="mt-1">
+                        Tests: ${student.tests} |
+                        Avg: ${student[scoreField].toFixed(2)} |
+                        Highest: ${highestText}
                     </div>
 
                 </div>
-
             `;
-
         });
 
         html += `
-
                 </div>
-
             </div>
-
         `;
 
         return html;
-
     }
 
     // ==========================
@@ -1514,7 +1370,6 @@ function renderSubjectToppers(data){
     );
 
     section.innerHTML = html;
-
 }
 
 // =========================================
