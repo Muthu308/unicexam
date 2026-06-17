@@ -1153,174 +1153,301 @@ function renderSubjectToppers(data){
         return;
     }
 
-    const medals = ['🥇','🥈','🥉'];
+    const medals = [
+        '🥇',
+        '🥈',
+        '🥉',
+        '4️⃣',
+        '5️⃣'
+    ];
+
+    // =========================
+    // OVERALL TOP 5
+    // =========================
+
+    const top5 =
+        [...data]
+        .sort((a,b)=>
+            Number(b.total || 0)
+            -
+            Number(a.total || 0)
+        )
+        .slice(0,5);
 
     const avgTotal =
         (
             data.reduce(
-                (sum,s)=>sum + Number(s.total || 0),
+                (sum,s)=>
+                    sum + Number(s.total || 0),
                 0
-            ) / data.length
+            )
+            /
+            data.length
         ).toFixed(2);
 
-    const avgPhysics =
-        (
-            data.reduce(
-                (sum,s)=>sum + Number(s.ph || 0),
-                0
-            ) / data.length
-        ).toFixed(2);
+    const highestTotal =
+        top5[0]?.total || 0;
 
-    const avgChemistry =
-        (
-            data.reduce(
-                (sum,s)=>sum + Number(s.cy || 0),
-                0
-            ) / data.length
-        ).toFixed(2);
+    // =========================
+    // SUBJECT STATS
+    // =========================
 
-    const avgMaths =
-        (
-            data.reduce(
-                (sum,s)=>sum + Number(s.ma || 0),
-                0
-            ) / data.length
-        ).toFixed(2);
+    const subjects = [
 
-    const overallTop3 =
-        [...data]
-        .sort((a,b)=>b.total-a.total)
-        .slice(0,3);
+        {
+            key:'ph',
+            label:'⚛️ Physics'
+        },
 
-    const physicsTop3 =
-        [...data]
-        .sort((a,b)=>b.ph-a.ph)
-        .slice(0,3);
+        {
+            key:'cy',
+            label:'🧪 Chemistry'
+        },
 
-    const chemistryTop3 =
-        [...data]
-        .sort((a,b)=>b.cy-a.cy)
-        .slice(0,3);
+        {
+            key:'ma',
+            label:'➗ Maths'
+        }
 
-    const mathsTop3 =
-        [...data]
-        .sort((a,b)=>b.ma-a.ma)
-        .slice(0,3);
+    ];
 
-    function createTopList(
-        title,
-        students,
-        scoreKey,
-        average
-    ){
+    let html = `
 
-        const highest =
-            students.length
-            ?
-            students[0][scoreKey]
-            :
-            0;
+        <div class="col-lg-6 mb-4">
 
-        let html = `
-            <div class="col-lg-6 mb-4">
+            <div class="student-card">
 
-                <div class="student-card">
+                <h4 class="mb-3">
+                    🏆 Overall Top 5
+                </h4>
 
-                    <h4 class="text-center mb-3">
-                        ${title}
-                    </h4>
+                <div class="row text-center mb-3">
 
-                    <div class="text-center mb-3">
+                    <div class="col-6">
 
-                        <strong>
-                            Highest Score:
-                        </strong>
-                        ${highest}
+                        <small>
+                            Highest Score
+                        </small>
 
-                        <br>
-
-                        <strong>
-                            Average Score:
-                        </strong>
-                        ${average}
+                        <h5 class="text-primary">
+                            ${highestTotal}
+                        </h5>
 
                     </div>
-        `;
 
-        students.forEach((student,index)=>{
+                    <div class="col-6">
 
-            html += `
+                        <small>
+                            Average Score
+                        </small>
+
+                        <h5 class="text-success">
+                            ${avgTotal}
+                        </h5>
+
+                    </div>
+
+                </div>
+
+    `;
+
+    top5.forEach((student,index)=>{
+
+        html += `
+
+            <div
+                class="
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                    border-bottom
+                    py-2
+                "
+            >
+
+                <div>
+
+                    <div
+                        style="
+                            font-weight:600;
+                            font-size:18px;
+                        "
+                    >
+
+                        ${medals[index]}
+                        ${student.name}
+
+                    </div>
+
+                    <small
+                        class="
+                            text-muted
+                        "
+                    >
+
+                        ${
+                            student.rollNo
+                            ||
+                            student.regNo
+                            ||
+                            student.id
+                            ||
+                            '-'
+                        }
+
+                    </small>
+
+                </div>
 
                 <div
                     class="
-                        border
-                        rounded
-                        p-2
-                        mb-2
+                        text-primary
+                        fw-bold
+                    "
+                    style="
+                        font-size:22px;
                     "
                 >
 
-                    <h5>
-                        ${medals[index]}
-                        ${student.name}
-                    </h5>
-
-                    <div>
-                        ${student.rollNo || student.id || '-'}
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Score:
-                        </strong>
-
-                        ${student[scoreKey]}
-
-                    </div>
+                    ${student.total}
 
                 </div>
 
-            `;
-        });
+            </div>
+
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    // =========================
+    // SUBJECT CARDS
+    // =========================
+
+    subjects.forEach(subject => {
+
+        const topper =
+            [...data]
+            .sort((a,b)=>
+                Number(b[subject.key] || 0)
+                -
+                Number(a[subject.key] || 0)
+            )[0];
+
+        const highest =
+            topper?.[subject.key] || 0;
+
+        const average =
+            (
+                data.reduce(
+                    (sum,s)=>
+                        sum +
+                        Number(
+                            s[subject.key] || 0
+                        ),
+                    0
+                )
+                /
+                data.length
+            ).toFixed(2);
 
         html += `
+
+            <div class="col-lg-6 mb-4">
+
+                <div class="student-card h-100">
+
+                    <h4 class="mb-3">
+                        ${subject.label}
+                    </h4>
+
+                    <div
+                        class="
+                            d-flex
+                            justify-content-between
+                            mb-2
+                        "
+                    >
+
+                        <span>
+                            Highest Score
+                        </span>
+
+                        <strong
+                            class="
+                                text-primary
+                            "
+                        >
+                            ${highest}
+                        </strong>
+
+                    </div>
+
+                    <div
+                        class="
+                            d-flex
+                            justify-content-between
+                            mb-3
+                        "
+                    >
+
+                        <span>
+                            Average Score
+                        </span>
+
+                        <strong
+                            class="
+                                text-success
+                            "
+                        >
+                            ${average}
+                        </strong>
+
+                    </div>
+
+                    <hr>
+
+                    <div>
+
+                        <small
+                            class="
+                                text-muted
+                            "
+                        >
+                            Top Performer
+                        </small>
+
+                        <h5 class="mb-1">
+
+                            🥇 ${topper.name}
+
+                        </h5>
+
+                        <small>
+
+                            ${
+                                topper.rollNo
+                                ||
+                                topper.regNo
+                                ||
+                                topper.id
+                                ||
+                                '-'
+                            }
+
+                        </small>
+
+                    </div>
+
                 </div>
+
             </div>
+
         `;
-
-        return html;
-    }
-
-    let html = '';
-
-    html += createTopList(
-        '🏆 Overall Top 3',
-        overallTop3,
-        'total',
-        avgTotal
-    );
-
-    html += createTopList(
-        '⚛️ Physics Top 3',
-        physicsTop3,
-        'ph',
-        avgPhysics
-    );
-
-    html += createTopList(
-        '🧪 Chemistry Top 3',
-        chemistryTop3,
-        'cy',
-        avgChemistry
-    );
-
-    html += createTopList(
-        '➗ Maths Top 3',
-        mathsTop3,
-        'ma',
-        avgMaths
-    );
+    });
 
     section.innerHTML = html;
 }
