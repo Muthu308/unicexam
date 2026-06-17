@@ -782,7 +782,8 @@
                 totalWrong: 0,
                 totalNotAttempted: 0,
                 totalAttempted: 0,
-                totalTimeSpent: 0
+                totalTimeSpent: 0,
+                totalNotvisitted: 0
 
             };
 
@@ -860,7 +861,7 @@
                 const percentage = (score / maxMarks) * 100;
 
                 // Grade logic
-                 let grade = '';
+                let grade = '';
 
                 if (percentage >= 85) {
                     grade = 'A+';
