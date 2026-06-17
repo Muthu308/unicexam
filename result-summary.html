@@ -1154,73 +1154,218 @@ function renderSubjectToppers(data){
 
     }
 
-    const medals = [
-        '🥇',
-        '🥈',
-        '🥉'
-    ];
+    const medals = ['🥇','🥈','🥉'];
+
+    // ==========================
+    // GROUP STUDENT DATA
+    // ==========================
+
+    const studentMap = {};
+
+    data.forEach(row => {
+
+        const id =
+            row.rollNo ||
+            row.regNo ||
+            row.id ||
+            row.name;
+
+        if(!studentMap[id]){
+
+            studentMap[id] = {
+
+                name: row.name,
+
+                rollNo: id,
+
+                tests: 0,
+
+                totalSum: 0,
+
+                phSum: 0,
+
+                cySum: 0,
+
+                maSum: 0,
+
+                highestTotal: 0,
+
+                highestTest: ''
+
+            };
+
+        }
+
+        const student =
+            studentMap[id];
+
+        const total =
+            Number(
+                row.final_marks ||
+                row.total ||
+                0
+            );
+
+        student.tests++;
+
+        student.totalSum += total;
+
+        student.phSum +=
+            Number(row.ph || 0);
+
+        student.cySum +=
+            Number(row.cy || 0);
+
+        student.maSum +=
+            Number(row.ma || 0);
+
+        if(total > student.highestTotal){
+
+            student.highestTotal =
+                total;
+
+            student.highestTest =
+                row.exam_module || '';
+
+        }
+
+    });
+
+    // ==========================
+    // CALCULATE AVERAGES
+    // ==========================
+
+    const students =
+        Object.values(studentMap)
+        .map(student => ({
+
+            ...student,
+
+            avgTotal:
+                student.totalSum /
+                student.tests,
+
+            avgPhysics:
+                student.phSum /
+                student.tests,
+
+            avgChemistry:
+                student.cySum /
+                student.tests,
+
+            avgMaths:
+                student.maSum /
+                student.tests
+
+        }));
+
+    // ==========================
+    // OVERALL AVERAGES
+    // ==========================
+
+    const overallAvgTotal =
+        (
+            students.reduce(
+                (sum,s)=>
+                    sum + s.avgTotal,
+                0
+            )
+            /
+            students.length
+        ).toFixed(2);
+
+    const overallAvgPhysics =
+        (
+            students.reduce(
+                (sum,s)=>
+                    sum + s.avgPhysics,
+                0
+            )
+            /
+            students.length
+        ).toFixed(2);
+
+    const overallAvgChemistry =
+        (
+            students.reduce(
+                (sum,s)=>
+                    sum + s.avgChemistry,
+                0
+            )
+            /
+            students.length
+        ).toFixed(2);
+
+    const overallAvgMaths =
+        (
+            students.reduce(
+                (sum,s)=>
+                    sum + s.avgMaths,
+                0
+            )
+            /
+            students.length
+        ).toFixed(2);
+
+    // ==========================
+    // CARD BUILDER
+    // ==========================
 
     function createTopCard(
         title,
-        scoreKey,
-        average
+        averageLabel,
+        scoreField
     ){
 
         const top3 =
-            [...data]
+            [...students]
             .sort(
                 (a,b)=>
-                    Number(b[scoreKey] || 0)
+                    b[scoreField]
                     -
-                    Number(a[scoreKey] || 0)
+                    a[scoreField]
             )
             .slice(0,3);
 
         const highest =
-            top3[0]?.[scoreKey] || 0;
+            top3[0]?.[scoreField] || 0;
 
-        let card = `
+        let html = `
 
             <div class="col-lg-6 mb-4">
 
                 <div class="student-card h-100">
 
                     <h4 class="mb-3">
+
                         ${title}
+
                     </h4>
 
-                    <div
-                        class="
-                            d-flex
-                            justify-content-between
-                            mb-2
-                        "
-                    >
+                    <div class="d-flex justify-content-between">
 
                         <span>
-                            Highest Marks
+                            Highest Average
                         </span>
 
                         <strong class="text-primary">
-                            ${highest}
+
+                            ${highest.toFixed(2)}
+
                         </strong>
 
                     </div>
 
-                    <div
-                        class="
-                            d-flex
-                            justify-content-between
-                            mb-3
-                        "
-                    >
+                    <div class="d-flex justify-content-between mb-3">
 
                         <span>
-                            Average Marks
+                            Overall Average
                         </span>
 
                         <strong class="text-success">
-                            ${average}
+
+                            ${averageLabel}
+
                         </strong>
 
                     </div>
@@ -1231,72 +1376,68 @@ function renderSubjectToppers(data){
 
         top3.forEach((student,index)=>{
 
-            card += `
+            html += `
 
                 <div
                     class="
-                        d-flex
-                        justify-content-between
-                        align-items-center
                         border-bottom
                         py-2
                     "
                 >
 
-                    <div>
-
-                        <div
-                            style="
-                                font-weight:600;
-                            "
-                        >
-
-                            ${medals[index]}
-                            ${student.name}
-
-                        </div>
-
-                        <small
-                            class="
-                                text-muted
-                            "
-                        >
-
-                            ${
-                                student.rollNo
-                                ||
-                                student.regNo
-                                ||
-                                student.id
-                                ||
-                                '-'
-                            }
-
-                        </small>
-
-                        ${
-                            student.test_name
-                            ?
-                            `
-                                <br>
-                                <small class="text-info">
-                                    ${student.test_name}
-                                </small>
-                            `
-                            :
-                            ''
-                        }
-
-                    </div>
-
                     <div
                         class="
-                            text-primary
                             fw-bold
                         "
                     >
 
-                        ${student[scoreKey]}
+                        ${medals[index]}
+                        ${student.name}
+
+                    </div>
+
+                    <small
+                        class="
+                            text-muted
+                        "
+                    >
+
+                        ${student.rollNo}
+
+                    </small>
+
+                    <div>
+
+                        Tests:
+                        ${student.tests}
+
+                    </div>
+
+                    <div>
+
+                        Average:
+                        <strong>
+
+                            ${student[
+                                scoreField
+                            ].toFixed(2)}
+
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        Highest:
+                        ${student.highestTotal}
+
+                        ${
+                            student.highestTest
+                            ?
+                            `(${student.highestTest})`
+                            :
+                            ''
+                        }
 
                     </div>
 
@@ -1306,7 +1447,7 @@ function renderSubjectToppers(data){
 
         });
 
-        card += `
+        html += `
 
                 </div>
 
@@ -1314,61 +1455,9 @@ function renderSubjectToppers(data){
 
         `;
 
-        return card;
+        return html;
 
     }
-
-    // ==========================
-    // AVERAGES
-    // ==========================
-
-    const avgTotal =
-        (
-            data.reduce(
-                (sum,s)=>
-                    sum +
-                    Number(s.total || 0),
-                0
-            )
-            /
-            data.length
-        ).toFixed(2);
-
-    const avgPhysics =
-        (
-            data.reduce(
-                (sum,s)=>
-                    sum +
-                    Number(s.ph || 0),
-                0
-            )
-            /
-            data.length
-        ).toFixed(2);
-
-    const avgChemistry =
-        (
-            data.reduce(
-                (sum,s)=>
-                    sum +
-                    Number(s.cy || 0),
-                0
-            )
-            /
-            data.length
-        ).toFixed(2);
-
-    const avgMaths =
-        (
-            data.reduce(
-                (sum,s)=>
-                    sum +
-                    Number(s.ma || 0),
-                0
-            )
-            /
-            data.length
-        ).toFixed(2);
 
     // ==========================
     // RENDER
@@ -1377,27 +1466,27 @@ function renderSubjectToppers(data){
     let html = '';
 
     html += createTopCard(
-        '🏆 Overall Top 3',
-        'total',
-        avgTotal
+        '🏆 Overall Top 3 Students',
+        overallAvgTotal,
+        'avgTotal'
     );
 
     html += createTopCard(
         '⚛️ Physics Top 3',
-        'ph',
-        avgPhysics
+        overallAvgPhysics,
+        'avgPhysics'
     );
 
     html += createTopCard(
         '🧪 Chemistry Top 3',
-        'cy',
-        avgChemistry
+        overallAvgChemistry,
+        'avgChemistry'
     );
 
     html += createTopCard(
         '➗ Maths Top 3',
-        'ma',
-        avgMaths
+        overallAvgMaths,
+        'avgMaths'
     );
 
     section.innerHTML = html;
