@@ -1143,56 +1143,184 @@ function generateTopList(data,key){
 
 function renderSubjectToppers(data){
 
-    const section = document.getElementById('subjectTopperSection');
+    const section =
+        document.getElementById('subjectTopperSection');
 
-    const subjects = [
-        { key:'ph', label:'Physics' },
-        { key:'cy', label:'Chemistry' },
-        { key:'ma', label:'Maths' }
-    ];
+    if(!data.length){
 
-    let html = `
-        <h3 class="text-center mb-4">
-            Overall Test Performance Summary:
-            Subject-wise Toppers, Highest Marks & Average Scores
-        </h3>
-    `;
+        section.innerHTML = '';
 
-    subjects.forEach(subject => {
+        return;
+    }
 
-        const topper = [...data]
-            .sort((a, b) => b[subject.key] - a[subject.key])[0];
+    const medals = ['🥇','🥈','🥉'];
 
-        const average =
+    const avgTotal =
+        (
             data.reduce(
-                (sum, student) => sum + (student[subject.key] || 0),
+                (sum,s)=>sum + Number(s.total || 0),
                 0
-            ) / data.length;
+            ) / data.length
+        ).toFixed(2);
 
-        html += `
-            <div class="col-md-4 mb-3">
+    const avgPhysics =
+        (
+            data.reduce(
+                (sum,s)=>sum + Number(s.ph || 0),
+                0
+            ) / data.length
+        ).toFixed(2);
 
-                <div class="student-card text-center">
+    const avgChemistry =
+        (
+            data.reduce(
+                (sum,s)=>sum + Number(s.cy || 0),
+                0
+            ) / data.length
+        ).toFixed(2);
 
-                    <h4>${subject.label}</h4>
+    const avgMaths =
+        (
+            data.reduce(
+                (sum,s)=>sum + Number(s.ma || 0),
+                0
+            ) / data.length
+        ).toFixed(2);
 
-                    <h5>${topper.name}</h5>
+    const overallTop3 =
+        [...data]
+        .sort((a,b)=>b.total-a.total)
+        .slice(0,3);
 
-                    <p class="mb-1">
-                        <strong>Highest Marks:</strong>
-                        ${topper[subject.key]}
-                    </p>
+    const physicsTop3 =
+        [...data]
+        .sort((a,b)=>b.ph-a.ph)
+        .slice(0,3);
 
-                    <p class="mb-0">
-                        <strong>Average Score:</strong>
-                        ${average.toFixed(2)}
-                    </p>
+    const chemistryTop3 =
+        [...data]
+        .sort((a,b)=>b.cy-a.cy)
+        .slice(0,3);
+
+    const mathsTop3 =
+        [...data]
+        .sort((a,b)=>b.ma-a.ma)
+        .slice(0,3);
+
+    function createTopList(
+        title,
+        students,
+        scoreKey,
+        average
+    ){
+
+        const highest =
+            students.length
+            ?
+            students[0][scoreKey]
+            :
+            0;
+
+        let html = `
+            <div class="col-lg-6 mb-4">
+
+                <div class="student-card">
+
+                    <h4 class="text-center mb-3">
+                        ${title}
+                    </h4>
+
+                    <div class="text-center mb-3">
+
+                        <strong>
+                            Highest Score:
+                        </strong>
+                        ${highest}
+
+                        <br>
+
+                        <strong>
+                            Average Score:
+                        </strong>
+                        ${average}
+
+                    </div>
+        `;
+
+        students.forEach((student,index)=>{
+
+            html += `
+
+                <div
+                    class="
+                        border
+                        rounded
+                        p-2
+                        mb-2
+                    "
+                >
+
+                    <h5>
+                        ${medals[index]}
+                        ${student.name}
+                    </h5>
+
+                    <div>
+                        ${student.rollNo || student.id || '-'}
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Score:
+                        </strong>
+
+                        ${student[scoreKey]}
+
+                    </div>
 
                 </div>
 
+            `;
+        });
+
+        html += `
+                </div>
             </div>
         `;
-    });
+
+        return html;
+    }
+
+    let html = '';
+
+    html += createTopList(
+        '🏆 Overall Top 3',
+        overallTop3,
+        'total',
+        avgTotal
+    );
+
+    html += createTopList(
+        '⚛️ Physics Top 3',
+        physicsTop3,
+        'ph',
+        avgPhysics
+    );
+
+    html += createTopList(
+        '🧪 Chemistry Top 3',
+        chemistryTop3,
+        'cy',
+        avgChemistry
+    );
+
+    html += createTopList(
+        '➗ Maths Top 3',
+        mathsTop3,
+        'ma',
+        avgMaths
+    );
 
     section.innerHTML = html;
 }
@@ -1495,34 +1623,59 @@ function renderInsights(data){
         return;
     }
 
+    // Calculate attempted & accuracy
+
+    data.forEach(student => {
+
+        student.attempted =
+            Number(student.correct || 0)
+            +
+            Number(student.wrong || 0);
+
+        student.accuracy =
+            student.attempted > 0
+            ?
+            (
+                student.correct
+                /
+                student.attempted
+            ) * 100
+            :
+            0;
+
+    });
+
+    // Subject averages
+
     const physicsAvg = (
-        data.reduce((sum,s)=>
-            sum + Number(s.ph || 0)
-        ,0)
-        /
-        data.length
+        data.reduce(
+            (sum,s)=>sum + Number(s.ph || 0),
+            0
+        ) / data.length
     ).toFixed(2);
 
     const chemistryAvg = (
-        data.reduce((sum,s)=>
-            sum + Number(s.cy || 0)
-        ,0)
-        /
-        data.length
+        data.reduce(
+            (sum,s)=>sum + Number(s.cy || 0),
+            0
+        ) / data.length
     ).toFixed(2);
 
     const mathsAvg = (
-        data.reduce((sum,s)=>
-            sum + Number(s.ma || 0)
-        ,0)
-        /
-        data.length
+        data.reduce(
+            (sum,s)=>sum + Number(s.ma || 0),
+            0
+        ) / data.length
     ).toFixed(2);
 
     const subjectMap = {
+
         Physics: Number(physicsAvg),
+
         Chemistry: Number(chemistryAvg),
+
         Maths: Number(mathsAvg)
+
     };
 
     const bestSubject =
@@ -1541,30 +1694,109 @@ function renderInsights(data){
             : b
         );
 
+    // Top performer
+
     const highestStudent =
         [...data]
-        .sort((a,b)=>b.total-a.total)[0];
+        .sort((a,b)=>
+            Number(b.total || 0)
+            -
+            Number(a.total || 0)
+        )[0];
+
+    // Highest accuracy
+
+    const accuracyTopper =
+        [...data]
+        .sort((a,b)=>
+            b.accuracy
+            -
+            a.accuracy
+        )[0];
+
+    // Most attempted
+
+    const mostAttempted =
+        [...data]
+        .sort((a,b)=>
+            b.attempted
+            -
+            a.attempted
+        )[0];
+
+    // Negative mark students
 
     const negativeCount =
-        data.filter(s=>
-
-            s.ph < 0
-            ||
-            s.cy < 0
-            ||
-            s.ma < 0
-
+        data.filter(
+            s => Number(s.wrong || 0) > 0
         ).length;
+
+    // Heavy negative marking
+
+    const highNegativeCount =
+        data.filter(
+            s => Number(s.wrong || 0) >= 10
+        ).length;
+
+    // Top 5 Overall
+
+    const top5Overall =
+        [...data]
+        .sort((a,b)=>
+            Number(b.total || 0)
+            -
+            Number(a.total || 0)
+        )
+        .slice(0,5);
+
+    // Top 5 Accuracy
+
+    const top5Accuracy =
+        [...data]
+        .sort((a,b)=>
+            b.accuracy
+            -
+            a.accuracy
+        )
+        .slice(0,5);
+
+    let overallHtml = '';
+
+    top5Overall.forEach((student,index)=>{
+
+        overallHtml += `
+            <div>
+                ${index + 1}.
+                ${student.name}
+                -
+                ${student.total} Marks
+            </div>
+        `;
+
+    });
+
+    let accuracyHtml = '';
+
+    top5Accuracy.forEach((student,index)=>{
+
+        accuracyHtml += `
+            <div>
+                ${index + 1}.
+                ${student.name}
+                -
+                ${student.accuracy.toFixed(1)}%
+            </div>
+        `;
+
+    });
 
     section.innerHTML = `
 
-    <div class="col-md-3">
+    <div class="col-md-2 mb-3">
 
         <div class="student-card text-center">
 
-            <h5>
-                Best Subject
-            </h5>
+            <h5>Best Subject</h5>
 
             <div class="summary-value">
                 ${bestSubject}
@@ -1574,13 +1806,11 @@ function renderInsights(data){
 
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2 mb-3">
 
         <div class="student-card text-center">
 
-            <h5>
-                Weak Subject
-            </h5>
+            <h5>Weak Subject</h5>
 
             <div class="summary-value">
                 ${weakSubject}
@@ -1590,13 +1820,11 @@ function renderInsights(data){
 
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2 mb-3">
 
         <div class="student-card text-center">
 
-            <h5>
-                Top Performer
-            </h5>
+            <h5>Overall Topper</h5>
 
             <div class="summary-value">
                 ${highestStudent.name}
@@ -1610,21 +1838,108 @@ function renderInsights(data){
 
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-2 mb-3">
 
         <div class="student-card text-center">
 
-            <h5>
-                Negative Scores
-            </h5>
+            <h5>Highest Accuracy</h5>
+
+            <div class="summary-value">
+                ${accuracyTopper.accuracy.toFixed(1)}%
+            </div>
+
+            <small>
+                ${accuracyTopper.name}
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-2 mb-3">
+
+        <div class="student-card text-center">
+
+            <h5>Most Attempts</h5>
+
+            <div class="summary-value">
+                ${mostAttempted.attempted}
+            </div>
+
+            <small>
+                ${mostAttempted.name}
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-2 mb-3">
+
+        <div class="student-card text-center">
+
+            <h5>Negative Marking</h5>
 
             <div class="summary-value">
                 ${negativeCount}
             </div>
 
+            <small>
+                Students
+            </small>
+
         </div>
 
     </div>
+
+    <div class="col-md-6 mb-3">
+
+        <div class="student-card">
+
+            <h5>
+                🏆 Top 5 Overall Performers
+            </h5>
+
+            ${overallHtml}
+
+        </div>
+
+    </div>
+
+    <div class="col-md-6 mb-3">
+
+        <div class="student-card">
+
+            <h5>
+                🎯 Top 5 Accuracy Leaders
+            </h5>
+
+            ${accuracyHtml}
+
+        </div>
+
+    </div>
+
+    <div class="col-md-12">
+
+        <div class="student-card text-center">
+
+            <h5>
+                Students with Heavy Negative Marking
+            </h5>
+
+            <div class="summary-value">
+                ${highNegativeCount}
+            </div>
+
+            <small>
+                10+ Wrong Answers
+            </small>
+
+        </div>
+
+    </div>
+
     `;
 }
 
