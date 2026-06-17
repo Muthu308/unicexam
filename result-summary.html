@@ -1151,217 +1151,42 @@ function renderSubjectToppers(data){
         section.innerHTML = '';
 
         return;
+
     }
 
     const medals = [
         '🥇',
         '🥈',
-        '🥉',
-        '4️⃣',
-        '5️⃣'
+        '🥉'
     ];
 
-    // =========================
-    // OVERALL TOP 5
-    // =========================
+    function createTopCard(
+        title,
+        scoreKey,
+        average
+    ){
 
-    const top5 =
-        [...data]
-        .sort((a,b)=>
-            Number(b.total || 0)
-            -
-            Number(a.total || 0)
-        )
-        .slice(0,5);
-
-    const avgTotal =
-        (
-            data.reduce(
-                (sum,s)=>
-                    sum + Number(s.total || 0),
-                0
-            )
-            /
-            data.length
-        ).toFixed(2);
-
-    const highestTotal =
-        top5[0]?.total || 0;
-
-    // =========================
-    // SUBJECT STATS
-    // =========================
-
-    const subjects = [
-
-        {
-            key:'ph',
-            label:'⚛️ Physics'
-        },
-
-        {
-            key:'cy',
-            label:'🧪 Chemistry'
-        },
-
-        {
-            key:'ma',
-            label:'➗ Maths'
-        }
-
-    ];
-
-    let html = `
-
-        <div class="col-lg-6 mb-4">
-
-            <div class="student-card">
-
-                <h4 class="mb-3">
-                    🏆 Overall Top 5
-                </h4>
-
-                <div class="row text-center mb-3">
-
-                    <div class="col-6">
-
-                        <small>
-                            Highest Score
-                        </small>
-
-                        <h5 class="text-primary">
-                            ${highestTotal}
-                        </h5>
-
-                    </div>
-
-                    <div class="col-6">
-
-                        <small>
-                            Average Score
-                        </small>
-
-                        <h5 class="text-success">
-                            ${avgTotal}
-                        </h5>
-
-                    </div>
-
-                </div>
-
-    `;
-
-    top5.forEach((student,index)=>{
-
-        html += `
-
-            <div
-                class="
-                    d-flex
-                    justify-content-between
-                    align-items-center
-                    border-bottom
-                    py-2
-                "
-            >
-
-                <div>
-
-                    <div
-                        style="
-                            font-weight:600;
-                            font-size:18px;
-                        "
-                    >
-
-                        ${medals[index]}
-                        ${student.name}
-
-                    </div>
-
-                    <small
-                        class="
-                            text-muted
-                        "
-                    >
-
-                        ${
-                            student.rollNo
-                            ||
-                            student.regNo
-                            ||
-                            student.id
-                            ||
-                            '-'
-                        }
-
-                    </small>
-
-                </div>
-
-                <div
-                    class="
-                        text-primary
-                        fw-bold
-                    "
-                    style="
-                        font-size:22px;
-                    "
-                >
-
-                    ${student.total}
-
-                </div>
-
-            </div>
-
-        `;
-    });
-
-    html += `
-            </div>
-        </div>
-    `;
-
-    // =========================
-    // SUBJECT CARDS
-    // =========================
-
-    subjects.forEach(subject => {
-
-        const topper =
+        const top3 =
             [...data]
-            .sort((a,b)=>
-                Number(b[subject.key] || 0)
-                -
-                Number(a[subject.key] || 0)
-            )[0];
+            .sort(
+                (a,b)=>
+                    Number(b[scoreKey] || 0)
+                    -
+                    Number(a[scoreKey] || 0)
+            )
+            .slice(0,3);
 
         const highest =
-            topper?.[subject.key] || 0;
+            top3[0]?.[scoreKey] || 0;
 
-        const average =
-            (
-                data.reduce(
-                    (sum,s)=>
-                        sum +
-                        Number(
-                            s[subject.key] || 0
-                        ),
-                    0
-                )
-                /
-                data.length
-            ).toFixed(2);
-
-        html += `
+        let card = `
 
             <div class="col-lg-6 mb-4">
 
                 <div class="student-card h-100">
 
                     <h4 class="mb-3">
-                        ${subject.label}
+                        ${title}
                     </h4>
 
                     <div
@@ -1373,14 +1198,10 @@ function renderSubjectToppers(data){
                     >
 
                         <span>
-                            Highest Score
+                            Highest Marks
                         </span>
 
-                        <strong
-                            class="
-                                text-primary
-                            "
-                        >
+                        <strong class="text-primary">
                             ${highest}
                         </strong>
 
@@ -1395,14 +1216,10 @@ function renderSubjectToppers(data){
                     >
 
                         <span>
-                            Average Score
+                            Average Marks
                         </span>
 
-                        <strong
-                            class="
-                                text-success
-                            "
-                        >
+                        <strong class="text-success">
                             ${average}
                         </strong>
 
@@ -1410,46 +1227,181 @@ function renderSubjectToppers(data){
 
                     <hr>
 
+        `;
+
+        top3.forEach((student,index)=>{
+
+            card += `
+
+                <div
+                    class="
+                        d-flex
+                        justify-content-between
+                        align-items-center
+                        border-bottom
+                        py-2
+                    "
+                >
+
                     <div>
+
+                        <div
+                            style="
+                                font-weight:600;
+                            "
+                        >
+
+                            ${medals[index]}
+                            ${student.name}
+
+                        </div>
 
                         <small
                             class="
                                 text-muted
                             "
                         >
-                            Top Performer
-                        </small>
-
-                        <h5 class="mb-1">
-
-                            🥇 ${topper.name}
-
-                        </h5>
-
-                        <small>
 
                             ${
-                                topper.rollNo
+                                student.rollNo
                                 ||
-                                topper.regNo
+                                student.regNo
                                 ||
-                                topper.id
+                                student.id
                                 ||
                                 '-'
                             }
 
                         </small>
 
+                        ${
+                            student.test_name
+                            ?
+                            `
+                                <br>
+                                <small class="text-info">
+                                    ${student.test_name}
+                                </small>
+                            `
+                            :
+                            ''
+                        }
+
                     </div>
+
+                    <div
+                        class="
+                            text-primary
+                            fw-bold
+                        "
+                    >
+
+                        ${student[scoreKey]}
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+        card += `
 
                 </div>
 
             </div>
 
         `;
-    });
+
+        return card;
+
+    }
+
+    // ==========================
+    // AVERAGES
+    // ==========================
+
+    const avgTotal =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    Number(s.total || 0),
+                0
+            )
+            /
+            data.length
+        ).toFixed(2);
+
+    const avgPhysics =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    Number(s.ph || 0),
+                0
+            )
+            /
+            data.length
+        ).toFixed(2);
+
+    const avgChemistry =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    Number(s.cy || 0),
+                0
+            )
+            /
+            data.length
+        ).toFixed(2);
+
+    const avgMaths =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    Number(s.ma || 0),
+                0
+            )
+            /
+            data.length
+        ).toFixed(2);
+
+    // ==========================
+    // RENDER
+    // ==========================
+
+    let html = '';
+
+    html += createTopCard(
+        '🏆 Overall Top 3',
+        'total',
+        avgTotal
+    );
+
+    html += createTopCard(
+        '⚛️ Physics Top 3',
+        'ph',
+        avgPhysics
+    );
+
+    html += createTopCard(
+        '🧪 Chemistry Top 3',
+        'cy',
+        avgChemistry
+    );
+
+    html += createTopCard(
+        '➗ Maths Top 3',
+        'ma',
+        avgMaths
+    );
 
     section.innerHTML = html;
+
 }
 
 // =========================================
