@@ -1700,21 +1700,29 @@ function renderInsights(data){
         section.innerHTML = '';
 
         return;
+
     }
 
-    // =========================
-    // STUDENT METRICS
-    // =========================
+    const TOTAL_QUESTIONS = 45;
 
     data.forEach(student => {
 
-        student.attempted =
-            Number(student.correct || 0)
-            +
+        student.correct =
+            Number(student.correct || 0);
+
+        student.wrong =
             Number(student.wrong || 0);
 
+        student.attempted =
+            student.correct +
+            student.wrong;
+
+        student.skipped =
+            TOTAL_QUESTIONS -
+            student.attempted;
+
         student.accuracy =
-            student.attempted
+            student.attempted > 0
             ?
             (
                 student.correct /
@@ -1725,77 +1733,31 @@ function renderInsights(data){
 
     });
 
-    // =========================
-    // OVERALL STATS
-    // =========================
+    // ======================
+    // OVERALL ANALYSIS
+    // ======================
 
     const topper =
         [...data]
-        .sort((a,b)=>b.total-a.total)[0];
+        .sort((a,b)=>
+            Number(b.total || 0)
+            -
+            Number(a.total || 0)
+        )[0];
 
-    const accuracyTopper =
+    const bestAccuracy =
         [...data]
-        .sort((a,b)=>b.accuracy-a.accuracy)[0];
+        .sort((a,b)=>
+            b.accuracy -
+            a.accuracy
+        )[0];
 
     const mostAttempted =
         [...data]
-        .sort((a,b)=>b.attempted-a.attempted)[0];
-
-    const negativeStudents =
-        data.filter(
-            s => Number(s.wrong || 0) > 0
-        ).length;
-
-    const guessingStudents =
-        data.filter(student => {
-
-            const attempted =
-                Number(student.correct || 0)
-                +
-                Number(student.wrong || 0);
-
-            const accuracy =
-                attempted
-                ?
-                (
-                    student.correct /
-                    attempted
-                ) * 100
-                :
-                0;
-
-            return (
-                attempted >= 35
-                &&
-                accuracy < 50
-            );
-
-        }).length;
-
-    const totalCorrect =
-        data.reduce(
-            (sum,s)=>
-                sum +
-                Number(s.correct || 0),
-            0
-        );
-
-    const totalWrong =
-        data.reduce(
-            (sum,s)=>
-                sum +
-                Number(s.wrong || 0),
-            0
-        );
-
-    const overallAccuracy =
-        (
-            totalCorrect /
-            (
-                totalCorrect +
-                totalWrong
-            )
-        ) * 100;
+        .sort((a,b)=>
+            b.attempted -
+            a.attempted
+        )[0];
 
     const avgMarks =
         (
@@ -1809,45 +1771,144 @@ function renderInsights(data){
             data.length
         ).toFixed(2);
 
-    // =========================
+    const avgCorrect =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    s.correct,
+                0
+            )
+            /
+            data.length
+        ).toFixed(1);
+
+    const avgWrong =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    s.wrong,
+                0
+            )
+            /
+            data.length
+        ).toFixed(1);
+
+    const avgAttempted =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    s.attempted,
+                0
+            )
+            /
+            data.length
+        ).toFixed(1);
+
+    const avgSkipped =
+        (
+            data.reduce(
+                (sum,s)=>
+                    sum +
+                    s.skipped,
+                0
+            )
+            /
+            data.length
+        ).toFixed(1);
+
+    const totalCorrect =
+        data.reduce(
+            (sum,s)=>
+                sum + s.correct,
+            0
+        );
+
+    const totalWrong =
+        data.reduce(
+            (sum,s)=>
+                sum + s.wrong,
+            0
+        );
+
+    const overallAccuracy =
+        (
+            totalCorrect /
+            (totalCorrect + totalWrong)
+            * 100
+        ).toFixed(1);
+
+    // ======================
+    // TOP NEGATIVE
+    // ======================
+
+    const medals =
+        ['🥇','🥈','🥉'];
+
+    const topNegative =
+        [...data]
+        .sort((a,b)=>
+            b.wrong -
+            a.wrong
+        )
+        .slice(0,3);
+
+    let negativeHtml = '';
+
+    topNegative.forEach((student,index)=>{
+
+        negativeHtml += `
+
+            <div
+                class="
+                    d-flex
+                    justify-content-between
+                    border-bottom
+                    py-2
+                "
+            >
+
+                <div>
+
+                    ${medals[index]}
+                    ${student.name}
+
+                </div>
+
+                <strong
+                    class="
+                        text-danger
+                    "
+                >
+
+                    ${student.wrong}
+
+                </strong>
+
+            </div>
+
+        `;
+
+    });
+
+    // ======================
     // SUBJECT ANALYSIS
-    // =========================
+    // ======================
 
-    const subjects = [
-
-        {
-            label:'Physics',
-            correct:'ph_correct',
-            wrong:'ph_wrong',
-            notAttempted:'ph_not_attempted'
-        },
-
-        {
-            label:'Chemistry',
-            correct:'cy_correct',
-            wrong:'cy_wrong',
-            notAttempted:'cy_not_attempted'
-        },
-
-        {
-            label:'Maths',
-            correct:'ma_correct',
-            wrong:'ma_wrong',
-            notAttempted:'ma_not_attempted'
-        }
-
-    ];
-
-    let subjectHtml = '';
-
-    subjects.forEach(subject => {
+    function getSubjectStats(
+        correctField,
+        wrongField,
+        skipField
+    ){
 
         const correct =
             data.reduce(
                 (sum,s)=>
                     sum +
                     Number(
-                        s[subject.correct] || 0
+                        s[correctField] || 0
                     ),
                 0
             );
@@ -1857,78 +1918,116 @@ function renderInsights(data){
                 (sum,s)=>
                     sum +
                     Number(
-                        s[subject.wrong] || 0
+                        s[wrongField] || 0
                     ),
                 0
             );
 
-        const notAttempted =
+        const skipped =
             data.reduce(
                 (sum,s)=>
                     sum +
                     Number(
-                        s[subject.notAttempted] || 0
+                        s[skipField] || 0
                     ),
                 0
             );
 
-        const attempted =
-            correct + wrong;
-
         const accuracy =
-            attempted
-            ?
             (
                 correct /
-                attempted
-            ) * 100
-            :
-            0;
+                (correct + wrong)
+                * 100
+            );
 
-        subjectHtml += `
+        return {
+
+            avgCorrect:
+                (
+                    correct /
+                    data.length
+                ).toFixed(1),
+
+            avgWrong:
+                (
+                    wrong /
+                    data.length
+                ).toFixed(1),
+
+            avgSkipped:
+                (
+                    skipped /
+                    data.length
+                ).toFixed(1),
+
+            accuracy:
+                accuracy.toFixed(1)
+
+        };
+
+    }
+
+    const physics =
+        getSubjectStats(
+            'ph_correct',
+            'ph_wrong',
+            'ph_not_attempted'
+        );
+
+    const chemistry =
+        getSubjectStats(
+            'cy_correct',
+            'cy_wrong',
+            'cy_not_attempted'
+        );
+
+    const maths =
+        getSubjectStats(
+            'ma_correct',
+            'ma_wrong',
+            'ma_not_attempted'
+        );
+
+    function subjectCard(
+        title,
+        stats
+    ){
+
+        return `
 
             <div class="col-md-4 mb-3">
 
                 <div class="student-card">
 
-                    <h5>
-                        ${subject.label}
-                    </h5>
+                    <h5>${title}</h5>
 
                     <div>
-                        Attempts :
+                        Avg Correct:
                         <strong>
-                            ${attempted}
+                            ${stats.avgCorrect}/15
                         </strong>
                     </div>
 
                     <div>
-                        Correct :
-                        <strong class="text-success">
-                            ${correct}
-                        </strong>
-                    </div>
-
-                    <div>
-                        Wrong :
-                        <strong class="text-danger">
-                            ${wrong}
-                        </strong>
-                    </div>
-
-                    <div>
-                        Not Attempted :
+                        Avg Wrong:
                         <strong>
-                            ${notAttempted}
+                            ${stats.avgWrong}/15
+                        </strong>
+                    </div>
+
+                    <div>
+                        Avg Skipped:
+                        <strong>
+                            ${stats.avgSkipped}/15
                         </strong>
                     </div>
 
                     <hr>
 
                     <div>
-                        Accuracy :
+                        Accuracy:
                         <strong>
-                            ${accuracy.toFixed(1)}%
+                            ${stats.accuracy}%
                         </strong>
                     </div>
 
@@ -1938,143 +2037,136 @@ function renderInsights(data){
 
         `;
 
-    });
+    }
 
-    // =========================
+    // ======================
     // RENDER
-    // =========================
+    // ======================
 
     section.innerHTML = `
 
         <div class="col-md-2 mb-3">
-
             <div class="student-card text-center">
-
                 <h6>🏆 Topper</h6>
-
                 <div class="summary-value">
                     ${topper.total}
                 </div>
-
-                <small>
-                    ${topper.name}
-                </small>
-
+                <small>${topper.name}</small>
             </div>
-
         </div>
 
         <div class="col-md-2 mb-3">
-
             <div class="student-card text-center">
-
-                <h6>🎯 Accuracy</h6>
-
+                <h6>🎯 Best Accuracy</h6>
                 <div class="summary-value">
-                    ${accuracyTopper.accuracy.toFixed(1)}%
+                    ${bestAccuracy.accuracy.toFixed(1)}%
                 </div>
-
-                <small>
-                    ${accuracyTopper.name}
-                </small>
-
+                <small>${bestAccuracy.name}</small>
             </div>
-
         </div>
 
         <div class="col-md-2 mb-3">
-
             <div class="student-card text-center">
-
-                <h6>📝 Attempts</h6>
-
+                <h6>📝 Most Attempted</h6>
                 <div class="summary-value">
-                    ${mostAttempted.attempted}
+                    ${mostAttempted.attempted}/45
                 </div>
-
-                <small>
-                    ${mostAttempted.name}
-                </small>
-
+                <small>${mostAttempted.name}</small>
             </div>
-
         </div>
 
         <div class="col-md-2 mb-3">
-
             <div class="student-card text-center">
+                <h6>📊 Avg Marks</h6>
+                <div class="summary-value">
+                    ${avgMarks}
+                </div>
+            </div>
+        </div>
 
+        <div class="col-md-2 mb-3">
+            <div class="student-card text-center">
                 <h6>📈 Accuracy</h6>
-
                 <div class="summary-value">
-                    ${overallAccuracy.toFixed(1)}%
+                    ${overallAccuracy}%
                 </div>
-
-                <small>
-                    Overall
-                </small>
-
             </div>
-
         </div>
 
         <div class="col-md-2 mb-3">
-
             <div class="student-card text-center">
-
-                <h6>⚠️ Negative</h6>
-
+                <h6>❌ Avg Wrong</h6>
                 <div class="summary-value">
-                    ${negativeStudents}
+                    ${avgWrong}
                 </div>
-
-                <small>
-                    Students
-                </small>
-
             </div>
-
-        </div>
-
-        <div class="col-md-2 mb-3">
-
-            <div class="student-card text-center">
-
-                <h6>🎲 Guessing</h6>
-
-                <div class="summary-value">
-                    ${guessingStudents}
-                </div>
-
-                <small>
-                    High Attempt / Low Accuracy
-                </small>
-
-            </div>
-
         </div>
 
         <div class="col-md-12 mb-3">
 
-            <div class="student-card text-center">
+            <div class="student-card">
 
                 <h5>
-                    Overall Test Statistics
+                    📊 Test Summary
                 </h5>
 
-                <div class="summary-value">
-                    ${avgMarks}
-                </div>
+                <div class="row text-center">
 
-                <small>
-                    Average Marks
-                </small>
+                    <div class="col">
+                        Avg Attempted
+                        <br>
+                        <strong>
+                            ${avgAttempted}/45
+                        </strong>
+                    </div>
+
+                    <div class="col">
+                        Avg Correct
+                        <br>
+                        <strong>
+                            ${avgCorrect}/45
+                        </strong>
+                    </div>
+
+                    <div class="col">
+                        Avg Wrong
+                        <br>
+                        <strong>
+                            ${avgWrong}/45
+                        </strong>
+                    </div>
+
+                    <div class="col">
+                        Avg Skipped
+                        <br>
+                        <strong>
+                            ${avgSkipped}/45
+                        </strong>
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
-        ${subjectHtml}
+        <div class="col-md-6 mb-3">
+
+            <div class="student-card">
+
+                <h5>
+                    ⚠️ Top 3 Negative Marking
+                </h5>
+
+                ${negativeHtml}
+
+            </div>
+
+        </div>
+
+        ${subjectCard('⚛️ Physics', physics)}
+        ${subjectCard('🧪 Chemistry', chemistry)}
+        ${subjectCard('➗ Maths', maths)}
 
     `;
 }
