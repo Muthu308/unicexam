@@ -151,13 +151,13 @@ body{
 
                 <div class="row g-2 mt-2">
 
-                   <!-- <div class="col-md-4">
+                    <div class="col-md-4">
                         <select class="form-select" id="examFilter">
                             <option value="">
                                 All Exams
                             </option>
                         </select>
-                    </div>-->
+                    </div>
 
                     <div class="col-md-4">
                         <select class="form-select" id="moduleFilter">
@@ -534,12 +534,12 @@ function normalizeStudents(){
 
 function loadFilters(){
 
-   // const examFilter = document.getElementById('examFilter');
+    const examFilter = document.getElementById('examFilter');
     const moduleFilter = document.getElementById('moduleFilter');
 
-   // const exams = [...new Set(students.map(s => s.exam_name))];
+    const exams = [...new Set(students.map(s => s.exam_module))];
 
-    /*exams.forEach(exam => {
+    exams.forEach(exam => {
 
         examFilter.innerHTML += `
             <option value="${exam}">
@@ -547,7 +547,7 @@ function loadFilters(){
             </option>
         `;
     });
-*/
+
     const modules = [...new Set(students.map(s => s.exam_module))];
 
     modules.forEach(module => {
