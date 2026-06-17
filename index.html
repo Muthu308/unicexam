@@ -475,6 +475,25 @@ let start_time = new Date().toISOString();
 let end_time = "";
 let startTime = Date.now();
 
+let hiddenStart = null;
+
+document.addEventListener("visibilitychange", () => {
+
+    if (document.hidden) {
+
+        hiddenStart = Date.now();
+
+    } else if (hiddenStart) {
+
+        let hiddenDuration =
+            Date.now() - hiddenStart;
+
+        startTime += hiddenDuration;
+
+        hiddenStart = null;
+    }
+});
+
 let student_id = "";
 let exam_module = "";
 let timeLeft = 0;
@@ -1136,6 +1155,7 @@ function checkSubmitReady(){
     
 function submitExam(){
     if(isSubmitted) return; // 🚀 prevent duplicate
+    saveTime()
     isSubmitted = true;
 
     let end_time = new Date().toISOString();
@@ -1146,7 +1166,9 @@ function submitExam(){
     questions.forEach((q, i) => {
         let key = "q" + (i + 1);
 
-        if (!answers[key] || answers[key] === "") {
+        if (!visited[i]) {
+            responses[key] = "NV"; // Not Visited
+        } else if (answers[key] === undefined || answers[key] === null || answers[key] === "") {
             responses[key] = "N";
         } else {
             responses[key] = answers[key];
