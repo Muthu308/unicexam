@@ -1279,7 +1279,7 @@ function renderSubjectToppers(data) {
         const highest = top3[0]?.[scoreField] || 0;
 
         let html = `
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-3 mb-4">
                 <div class="student-card h-100">
 
                     <h4 class="mb-3">${title}</h4>
@@ -1312,24 +1312,26 @@ function renderSubjectToppers(data) {
             }
 
             html += `
-                <div class="border-bottom py-2 d-flex justify-content-between align-items-center">
-
-                   <div class="d-flex align-items-center gap-3">
-                    <div class="fw-bold">
+                <div class="border-bottom py-2">
+            
+                <!-- Name + Roll (same line) -->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="fw-bold text-primary">
                         ${medals[index]} ${student.name}
                     </div>
-                    <small class="text-muted">
-                        ${student.rollNo}
+                    <small class="text-primary opacity-75">
+                        (${student.rollNo})
                     </small>
                 </div>
             
-                <div class="small text-muted text-primary">
+                <!-- Stats (second line) -->
+                <div class="small text-primary opacity-75 mt-1">
                     Tests: ${student.tests} |
                     Avg: ${student[scoreField].toFixed(2)} |
                     Highest: ${highestText}
                 </div>
-
-                </div>
+            
+            </div>
             `;
         });
 
