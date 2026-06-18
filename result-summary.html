@@ -1312,21 +1312,22 @@ function renderSubjectToppers(data) {
             }
 
             html += `
-                <div class="border-bottom py-2">
+                <div class="border-bottom py-2 d-flex justify-content-between align-items-center">
 
+                   <div class="d-flex align-items-center gap-3">
                     <div class="fw-bold">
                         ${medals[index]} ${student.name}
                     </div>
-
                     <small class="text-muted">
                         ${student.rollNo}
                     </small>
-
-                    <div class="mt-1">
-                        Tests: ${student.tests} |
-                        Avg: ${student[scoreField].toFixed(2)} |
-                        Highest: ${highestText}
-                    </div>
+                </div>
+            
+                <div class="small text-muted text-primary">
+                    Tests: ${student.tests} |
+                    Avg: ${student[scoreField].toFixed(2)} |
+                    Highest: ${highestText}
+                </div>
 
                 </div>
             `;
