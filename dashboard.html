@@ -43,65 +43,26 @@ body{background:#f0f4fb;color:#1e293b}
 .page.active{display:block}
 
 /* Profile */
-.profile-card{
-    background:#fff;
-    border-radius:12px;
-    padding:20px;
-    box-shadow:0 2px 10px rgba(0,0,0,.08);
-}
-
-.profile-header-card{
-    margin-bottom:20px;
-}
-
-.profile-hdr{
-    display:flex;
-    align-items:center;
-    gap:15px;
-}
-
-.profile-av{
-    font-size:60px;
-    color:#0d6efd;
-}
-
-.profile-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-}
-
-.info-group-title{
-    font-size:18px;
-    font-weight:700;
-    color:#0d6efd;
-    margin-bottom:15px;
-    padding-bottom:10px;
-    border-bottom:1px solid #eee;
-}
-
-.info-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px 0;
-    border-bottom:1px dashed #e5e5e5;
-}
-
-.info-row label{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    color:#6c757d;
-    font-weight:600;
-}
-
-/* Mobile */
-@media(max-width:768px){
-    .profile-grid{
-        grid-template-columns:1fr;
-    }
-}
+.pc-wrap{padding:1.5rem 0;font-family:var(--font-sans)}
+.pc-hero{background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%);border-radius:var(--border-radius-lg);padding:1.5rem;display:flex;align-items:center;gap:1.25rem;margin-bottom:1rem}
+.pc-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pc-avatar i{font-size:30px;color:#fff}
+.pc-name{font-size:20px;font-weight:500;color:#fff;margin:0 0 2px}
+.pc-id{font-size:13px;color:rgba(255,255,255,0.8);margin:0;display:flex;align-items:center;gap:5px}
+.pc-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 10px;border-radius:20px;background:rgba(255,255,255,0.2);color:#fff;font-weight:500;margin-top:6px;border:0.5px solid rgba(255,255,255,0.35)}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.pc-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.pc-sec-hdr{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%)}
+.pc-sec-hdr i{font-size:16px;color:#fff}
+.pc-sec-hdr span{font-size:13px;font-weight:500;color:#fff;letter-spacing:.01em}
+.pc-row{display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:11px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.pc-row:last-child{border-bottom:none}
+.pc-lbl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-secondary)}
+.pc-lbl i{font-size:15px;flex-shrink:0}
+.pc-val{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.pc-status{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:2px 10px;border-radius:20px;background:var(--color-background-success);color:var(--color-text-success);font-weight:500}
+.pc-inst{font-size:12px;padding:2px 10px;border-radius:20px;background:#E6F1FB;color:#0C447C;font-weight:500}
+@media(max-width:520px){.pc-grid{grid-template-columns:1fr}}
 
 /* Stat cards row */
 .cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
@@ -189,6 +150,23 @@ td.na-val{color:#94a3b8}
 #overlay.show{
  display:block;
 }
+/* Group Colors */
+th.ph-group{
+    background:#2563eb !important;
+}
+
+th.cy-group{
+    background:#16a34a !important;
+}
+
+th.ma-group{
+    background:#d97706 !important;
+}
+
+th.total-group{
+    background:#7c3aed !important;
+}
+
 @media(max-width:768px){
   .mob-toggle{display:flex}
   .sidebar{transform:translateX(-100%)}
@@ -241,80 +219,57 @@ td.na-val{color:#94a3b8}
     <span class="badge-active">&#10003; Active</span>
   </div>
 
- <div class="page active" id="page-profile">
+ <div class="pc-wrap">
+  <div class="pc-hero">
+    <div class="pc-avatar"><i class="ti ti-user-circle" aria-hidden="true"></i></div>
+    <div>
+      <p class="pc-name" id="p_name">Student Name</p>
+      <p class="pc-id"><i class="ti ti-id-badge" style="font-size:13px" aria-hidden="true"></i><span id="p_stdid">Student ID</span></p>
+      <div class="pc-badge"><i class="ti ti-circle-check" style="font-size:12px" aria-hidden="true"></i> Active</div>
+    </div>
+  </div>
 
-    <!-- Top Profile Header Card -->
-    <div class="profile-card profile-header-card">
-        <div class="profile-hdr">
-            <div class="profile-av">
-                <i class="ti ti-user-circle"></i>
-            </div>
-            <div>
-                <h2 id="p_name">Student Name</h2>
-                <p id="p_stdid">Student ID</p>
-            </div>
-        </div>
+  <div class="pc-grid">
+    <div class="pc-section">
+      <div class="pc-sec-hdr"><i class="ti ti-user" aria-hidden="true"></i><span>Personal information</span></div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-mail" aria-hidden="true"></i>Email</div>
+        <div class="pc-val" id="p_email">—</div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-phone" aria-hidden="true"></i>Mobile</div>
+        <div class="pc-val" id="p_mobile">—</div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-calendar" aria-hidden="true"></i>Date of birth</div>
+        <div class="pc-val" id="p_dob">—</div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-id-badge" aria-hidden="true"></i>Student ID</div>
+        <div class="pc-val" id="p_id">—</div>
+      </div>
     </div>
 
-    <!-- Two Column Layout -->
-    <div class="profile-grid">
-
-        <!-- Personal Information -->
-        <div class="profile-card">
-            <div class="info-group-title">
-                <i class="ti ti-user"></i> Personal Information
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-mail"></i> Email</label>
-                <strong id="p_email">—</strong>
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-phone"></i> Mobile</label>
-                <strong id="p_mobile">—</strong>
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-calendar"></i> Date of Birth</label>
-                <strong id="p_dob">—</strong>
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-id-badge"></i> Student ID</label>
-                <strong id="p_id">—</strong>
-            </div>
-        </div>
-
-        <!-- Academic Information -->
-        <div class="profile-card">
-            <div class="info-group-title">
-                <i class="ti ti-building"></i> Academic Information
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-book"></i> Class</label>
-                <strong id="p_class">—</strong>
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-school"></i> School</label>
-                <strong id="p_school">—</strong>
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-map-pin"></i> Institute</label>
-                <strong>UNIC Academy</strong>
-            </div>
-
-            <div class="info-row">
-                <label><i class="ti ti-circle-check"></i> Status</label>
-                <strong>Active</strong>
-            </div>
-        </div>
-
+    <div class="pc-section">
+      <div class="pc-sec-hdr"><i class="ti ti-building" aria-hidden="true"></i><span>Academic information</span></div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-book" aria-hidden="true"></i>Class</div>
+        <div class="pc-val" id="p_class">—</div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-school" aria-hidden="true"></i>School</div>
+        <div class="pc-val" id="p_school">—</div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-map-pin" aria-hidden="true"></i>Institute</div>
+        <div class="pc-val"><span class="pc-inst">UNIC Academy</span></div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-lbl"><i class="ti ti-circle-check" aria-hidden="true"></i>Status</div>
+        <div class="pc-val"><span class="pc-status"><i class="ti ti-point-filled" style="font-size:10px"></i> Active</span></div>
+      </div>
     </div>
-
+  </div>
 </div>
   <!-- EXAM RESULTS -->
   <div class="page" id="page-results">
@@ -362,12 +317,24 @@ td.na-val{color:#94a3b8}
         <table>
           <thead>
             <tr>
-              <th rowspan="2">Exam</th>
-              <th colspan="3">Physics</th>
-              <th colspan="3">Chemistry</th>
-              <th colspan="3">Maths</th>
-              <th colspan="3">Total</th>
-            </tr>
+    <th rowspan="2">Exam</th>
+
+    <th colspan="3" class="ph-group">
+        ⚡ Physics
+    </th>
+
+    <th colspan="3" class="cy-group">
+        🧪 Chemistry
+    </th>
+
+    <th colspan="3" class="ma-group">
+        ∫ Mathematics
+    </th>
+
+    <th colspan="3" class="total-group">
+        📊 Total
+    </th>
+</tr>
             <tr class="sub-hdr">
               <th>✓ C</th><th>✗ W</th><th>— NA</th>
               <th>✓ C</th><th>✗ W</th><th>— NA</th>
@@ -466,7 +433,7 @@ function getTrend(curr, prev) {
   const markDiff = parseFloat(curr.final_marks) - parseFloat(prev.final_marks);
   const pStr = diff > 0 ? `<span class="up">▲ ${diff.toFixed(1)}%</span>` : diff < 0 ? `<span class="dn">▼ ${Math.abs(diff).toFixed(1)}%</span>` : `<span class="same">━ No change</span>`;
   const mStr = markDiff > 0 ? `<span class="up">+${markDiff} marks</span>` : markDiff < 0 ? `<span class="dn">${markDiff} marks</span>` : "";
-  return `vs prev: ${pStr}${mStr ? " &nbsp;|&nbsp; " + mStr : ""}`;
+  return `${prev.exam_name} ➜ ${curr.exam_name} &nbsp;&nbsp;: ${pStr}${mStr ? " &nbsp;|&nbsp; " + mStr : ""}`;
 }
 
 let allResults = [];
@@ -569,23 +536,51 @@ async function loadStudentResults() {
     const improvement = sorted[2];
 
     const subjectCards = `
-        <div class="sc">
-          <h3>💪 Strongest Subject</h3>
-          <p>${strongest.name}</p>
-          <small>Avg: ${strongest.avg}</small>
-        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
 
-        <div class="sc">
-          <h3>📈 Stable Subject</h3>
-          <p>${stable.name}</p>
-          <small>Avg: ${stable.avg}</small>
+    <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;">
+          <i class="ti ti-trophy" style="font-size:16px;color:#3B6D11;"></i>
         </div>
+        <span style="font-size:11px;font-weight:500;color:#3B6D11;letter-spacing:.03em;">Strongest subject</span>
+      </div>
+      <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${strongest.name}</div>
+      <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;">
+        <div style="height:100%;width:${strongest.avg}%;background:#639922;border-radius:4px;"></div>
+      </div>
+      <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${strongest.avg}%</span></div>
+    </div>
 
-        <div class="sc">
-          <h3>🎯 Needs Improvement</h3>
-          <p>${improvement.name}</p>
-          <small>Avg: ${improvement.avg}</small>
+    <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;">
+          <i class="ti ti-chart-line" style="font-size:16px;color:#185FA5;"></i>
         </div>
+        <span style="font-size:11px;font-weight:500;color:#185FA5;letter-spacing:.03em;">Stable subject</span>
+      </div>
+      <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${stable.name}</div>
+      <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;">
+        <div style="height:100%;width:${stable.avg}%;background:#378ADD;border-radius:4px;"></div>
+      </div>
+      <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${stable.avg}%</span></div>
+    </div>
+
+    <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:#FCEBEB;display:flex;align-items:center;justify-content:center;">
+          <i class="ti ti-target" style="font-size:16px;color:#A32D2D;"></i>
+        </div>
+        <span style="font-size:11px;font-weight:500;color:#A32D2D;letter-spacing:.03em;">Needs improvement</span>
+      </div>
+      <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${improvement.name}</div>
+      <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;">
+        <div style="height:100%;width:${improvement.avg}%;background:#E24B4A;border-radius:4px;"></div>
+      </div>
+      <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${improvement.avg}%</span></div>
+    </div>
+
+  </div>
       `;
 
     document.getElementById("summaryContent").innerHTML = `
@@ -593,14 +588,15 @@ async function loadStudentResults() {
       <div class="cards-row">
         <div class="sc b"><h3>Total Exams</h3><p>${total}</p></div>
         <div class="sc a"><h3>Avg Marks</h3><p>${avgMarks}</p></div>
-        <div class="sc a"><h3>Avg %</h3><p>${avgPct}%</p></div>
-        ${subjectCards}
+        <div class="sc a"><h3>Avg %</h3><p>${avgPct}%</p></div>        
         <div class="sc g"><h3>Best Exam</h3><p style="font-size:13px;margin-top:3px">${best.exam_name}</p><span>${best.percentage}%</span></div>
         <div class="sc r"><h3>Needs Work</h3><p style="font-size:13px;margin-top:3px">${worst.exam_name}</p><span>${worst.percentage}%</span></div>
         <div class="sc g"><h3>Avg Correct</h3><p>${avgCorrect}</p></div>
         <div class="sc r"><h3>Avg Wrong</h3><p>${avgWrong}</p></div>
         <div class="sc"><h3>Avg Not Attempted</h3><p>${avgNA}</p></div>
       </div>
+      
+      ${subjectCards}
 
       <!-- Subject cards -->
       <div class="subj-cards">
