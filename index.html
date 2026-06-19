@@ -4,1256 +4,439 @@
 <meta charset="UTF-8">
 <title>UNIC Academy Exam</title>
 
+
 <style>
-/* RESET */
-body {
-    margin: 0;
-    font-family: Arial;
-    padding-bottom: 70px; /* space for footer (desktop) */
-}
-
-/* HEADER */
-.header {
-    background: #0d1b2a;
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.logo { font-weight: bold; }
-.tagline { font-size: 12px; }
-
-/* LAYOUT */
-.container {
-    display: flex;
-}
-
-.left {
-    width: 70%;
-    padding: 10px;
-    overflow: auto;
-    scrollbar-width: thin;
-    padding-bottom: 50px;
-}
-
-.right {
-    width: 30%;
-    background: #f1f1f1;
-    padding: 10px;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-    .container {
-        flex-direction: column;
-    }
-
-    .left, .right {
-        width: 100%;
-    }
-
-    body {
-        padding-bottom: 0; /* remove fixed footer space */
-    }
-}
-
-/* PALETTE */
-.palette {
-    display: grid;
-    grid-template-columns: repeat(5,1fr);
-    gap: 5px;
-    border: 1px solid #ccc;
-}
-
-.palette button {
-    height: 35px;
-    border: none;
-    border-radius: 5px;
-}
-
-/* COLORS (NTA STYLE) */
-.answered { background: #2ecc71; color: white; }
-.not-answered { background: #e74c3c; color: white; }
-.visited { background: #f39c12; color: white; }
-.current { background: #8e44ad; color: white; }
-.review { background: #3498db; color: white; }
-
-/* FOOTER CONTROLS (DESKTOP) */
-.footer-controls {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: white;
-    padding: 10px;
-    text-align: center;
-    border-top: 1px solid #ccc;
-    z-index: 1000;
-}
-
-/* MOBILE FIX (VERY IMPORTANT) */
-@media(max-width:768px){
-
-    .footer-controls {
-        position: relative;   /* remove fixed */
-        bottom: auto;
-        width: 100%;
-        margin-top: 10px;
-        border-top: none;
-    }
-
-    .footer-controls button {
-        width: 45%;
-        margin: 5px 2%;
-    }
-}
-
-/* BUTTONS */
-button {
-    margin: 5px;
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: 0.2s;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-/* IMAGE STYLING */
-.question-image-container {
-    max-width: 720px;
-    margin: 2px;
-}
-
-.question-image {
-    max-width: 100%;
-    height: auto;              /* maintain ratio */
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: #fff;
-    padding: 2px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-/* IMAGE HOVER (OPTIONAL ZOOM EFFECT) */
-.question-image:hover {
-    transform: scale(1.05);
-    transition: 0.3s;
-    cursor: zoom-in;
-}
-
-/* PREVIEW */
-.preview-container {
-    padding: 10px;
-}
-
-.preview-item {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-/* SCROLL IMPROVEMENT */
-.left::-webkit-scrollbar {
-    width: 6px;
-}
-.left::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 5px;
-}
-    .question-header {
-    background:#ecf0f1;
-    padding:6px 10px;
-    font-weight:bold;
-    border-left:5px solid #3498db;
-    margin-bottom:10px;
-}
-    .exam-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    width: 260px;
-    background: white;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.exam-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
-}
-
-.exam-title {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.exam-info {
-    font-size: 13px;
-    margin-bottom: 5px;
-}
-
-.exam-status {
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.active {
-    color: green;
-}
-
-.closed {
-    color: red;
-}
-  .exam-card.selected {
-    border: 2px solid #3498db;
-}  
-    #examInfo {
-    max-width: 720px;
-    margin: 20px auto;              /* center */
-    padding: 15px 20px;
-    background: #f8fbff;            /* light blue */
-    border-left: 5px solid #3498db;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    text-align: left;
-}
-
-#examInfo h3 {
-    margin-top: 0;
-    color: #2c3e50;
-}
-
-#examInfo ul {
-    padding-left: 20px;
-}
-
-#examInfo li {
-    margin-bottom: 6px;
-    color: #333;
-}
-.question-card{
-    background:#fff;
-    border-radius:16px;
-    padding:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-bottom:20px;
-}
-
-.option-card{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 16px;
-    margin:8px;   
-    cursor:pointer;
-    transition:0.3s;
-}
-
-.option-card:hover{
-    background:#e9f3ff;
-    border-color:#0d6efd;
-}
-
-    .nat-container{
-
-    max-width:300px;
-    margin:auto;
-}
-
-.nat-wrapper{
-
-    width:170px;
-
-    background:#ececec;
-
-    padding:10px;
-
-    border-radius:4px;
-
-    border:1px solid #cfcfcf;
-}
-
-.nat-display{
-
-    width:100%;
-
-    height:32px;
-
-    font-size:20px;
-    font-weight:bold;
-
-    text-align:right;
-
-    padding-right:8px;
-
-    border:1px solid #999;
-
-    margin-bottom:10px;
-
-    background:white;
-}
-
-.nat-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap:6px;
-
-    margin-top:8px;
-}
-
-.nat-btn{
-
-    height:40px;
-
-    font-size:22px;
-    font-weight:bold;
-
-    border:1px solid #666;
-
-    border-radius:6px;
-
-    background:#f2f2f2;
-
-    cursor:pointer;
-
-    box-shadow:
-        inset 0 1px 0 #fff,
-        1px 1px 2px rgba(0,0,0,0.2);
-}
-
-.nat-btn:hover{
-
-    background:#ddd;
-}
-
-.wide-btn{
-
-    width:100%;
-
-    margin-bottom:8px;
-
-    font-size:16px;
-}
-
-.arrow-row{
-
-    display:flex;
-
-    gap:10px;
-
-    margin-top:10px;
-    margin-bottom:10px;
-
-    justify-content:center;
-}
-
-.small-btn{
-
-    width:55px;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);min-height:100vh}
+.site-header{background:linear-gradient(135deg,#1a2f6e 0%,#0e1e4a 100%);padding:0;position:relative;overflow:hidden}
+.header-glow{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,215,0,0.08);pointer-events:none}
+.header-inner{padding:2rem 1.5rem 1.5rem;position:relative;z-index:1}
+.brand-row{display:flex;align-items:center;gap:14px;margin-bottom:0.5rem}
+.brand-logo{width:52px;height:52px;background:#f0b800;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#1a2f6e;flex-shrink:0;letter-spacing:-0.5px}
+.brand-name{color:#fff;font-size:25px;font-weight:600;line-height:1.2}
+.brand-tagline{color:rgba(255,255,255,0.55);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+.brand-since{color:#f0b800;font-size:12px;font-weight:500;margin-top:3px}
+.header-sub{color:rgba(255,255,255,0.7);font-size:12.5px;margin-top:0.6rem;line-height:1.5}
+.tab-bar{display:flex;background:#111e4a;border-bottom:1px solid rgba(255,255,255,0.08)}
+.tab-btn{flex:1;padding:0.85rem 0.5rem;font-size:14.5px;color:rgba(255,255,255,0.5);border:none;background:none;cursor:pointer;font-family:var(--font-sans);border-bottom:3px solid transparent;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.tab-btn.active{color:#f0b800;border-bottom-color:#f0b800}
+.tab-btn:hover:not(.active){color:rgba(255,255,255,0.8)}
+.main{padding:1.5rem}
+.panel{display:none}
+.panel.active{display:block}
+
+.auth-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.5rem;max-width:420px;margin:0 auto}
+.auth-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.3rem}
+.auth-sub{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.form-row{margin-bottom:0.9rem}
+.form-label{display:block;font-size:14px;color:var(--color-text-secondary);margin-bottom:5px;font-weight:500}
+.form-row input,.form-row select{width:100%;padding:9px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:16px;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);outline:none;transition:border 0.15s}
+.form-row input:focus,.form-row select:focus{border-color:#1a2f6e;box-shadow:0 0 0 3px rgba(26,47,110,0.08)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem 1rem}
+.btn-primary{width:100%;padding:10px;background:#1a2f6e;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14.5px;font-weight:500;cursor:pointer;font-family:var(--font-sans);margin-top:0.5rem;transition:background 0.15s}
+.btn-primary:hover{background:#142558}
+.auth-link{text-align:center;margin-top:1rem;font-size:13px;color:var(--color-text-secondary)}
+.auth-link a{color:#1a2f6e;text-decoration:none;font-weight:500}
+
+.about-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.about-name{font-size:16px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.about-role{font-size:12.5px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:1rem}
+.contact-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;color:var(--color-text-secondary)}
+.contact-row a{color:#1a2f6e;text-decoration:none}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1rem 0}
+.yt-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#cc0000;color:#fff;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;text-decoration:none;margin-top:0.2rem}
+
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem}
+.stat-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;text-align:center}
+.stat-num{font-size:22px;font-weight:600;color:#1a2f6e;line-height:1}
+.stat-lbl{font-size:11.5px;color:var(--color-text-secondary);margin-top:4px}
+
+.badge-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.75rem}
+.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:#e8edff;color:#1a2f6e}
+.badge.gold{background:#fff4cc;color:#7a5500}
+
+.journey-text{font-size:13.5px;color:var(--color-text-secondary);line-height:1.7}
+
+.ftr{background:#0a1535;padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.ftr-left{display:flex;align-items:center;gap:8px}
+.ftr-ico{width:28px;height:28px;background:#f0b800;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0e1e4a}
+.ftr-name{color:rgba(255,255,255,0.6);font-size:14px}
+.ftr-links{display:flex;gap:1rem}
+.ftr-links a{color:rgba(255,255,255,0.3);font-size:14px;text-decoration:none}
+.ftr-links a:hover{color:#f0b800}
+.ftr-copy{width:100%;text-align:center;color:rgba(255,255,255,0.18);font-size:12px;padding-top:0.6rem;border-top:0.5px solid rgba(255,255,255,0.06)}
 </style>
-</head>
 
-<body>
-
-<div class="header">
-    <div>
-        <div class="logo">UNIC ACADEMY (since 2013)</div>
-        <div class="tagline">Clarity - Confidence - Results</div>
+<div class="site-header">
+  <div class="header-glow"></div>
+  <div class="header-inner">
+    <div class="brand-row">
+      <div class="brand-logo">U</div>
+      <div>
+        <div class="brand-name">UNIC Academy</div>
+        <div class="brand-since">Since 2013</div>
+        <div class="brand-tagline">Clarity • Confidence • Results</div>
+      </div>
     </div>
-    <div id="candidate"></div>
-    <div>⏱ <span id="timer"></span></div>
-</div>
-
-<div id="loginPage" style="text-align:center;margin-top:40px;">
-
-    <h2>Login</h2>
-
-    <input id="name" placeholder="Enter Your Name" style="padding:8px;width:200px;"><br><br>
-
-    <input id="id" placeholder="Enter Student ID" style="padding:8px;width:200px;"><br><br>
-
-    <!-- ALERT MESSAGE -->
-    <div style="
-        background:#e8f4fd;
-        color:#0b5394;
-        padding:10px;
-        border-radius:6px;
-        max-width:400px;
-        margin:10px auto;
-    ">
-        ℹ️ Please select an exam below and click <b>Start Exam</b>
-    </div>
-
-    <div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
-
-    <div id="examInfo"></div>
-
-    <button id="startBtn" onclick="startExam()" disabled>
-        Start Exam
+    <div class="header-sub">Empowering Students for IIT-JEE, NEET &amp; Academic Excellence</div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('register',this)">
+      <i class="ti ti-user-plus" aria-hidden="true"></i> Register
     </button>
-
+    <button class="tab-btn" onclick="showTab('login',this)">
+      <i class="ti ti-login" aria-hidden="true"></i> Login
+    </button>
+    <button class="tab-btn" onclick="showTab('about',this)">
+      <i class="ti ti-info-circle" aria-hidden="true"></i> About
+    </button>
+  </div>
 </div>
 
-<div id="examPage" style="display:none;">
-    <div class="container">
+<div class="main">
 
-        <div class="left">
-            <div id="sectionProgress" style="
-    background:#ecf0f1;
-    padding:8px;
-    margin-bottom:10px;
-    font-weight:bold;
-"></div>
-            <div id="questionArea"></div>
-                <div>
-        <button onclick="prevQ()">⬅ Prev</button>
-        <button onclick="clearResponse()">Clear</button>
-        <button onclick="markReview()">Mark Review</button>
-        <button onclick="nextQ()">Next ➡</button>
-    </div>
+  <!-- Register Panel -->
+<div class="panel active" id="panel-register">
+  <div class="auth-card">
+    <div class="auth-title">Create your account</div>
+    <div class="auth-sub">Start your journey with UNIC Academy</div>
+
+    <form id="registerForm">
+      <div class="form-grid">
+
+        <div class="form-row">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="name" placeholder="Your name" required>
         </div>
 
-  <div class="right">
+        <div class="form-row">
+          <label class="form-label">Email</label>
+          <input type="email" id="email_id" placeholder="email@example.com" required>
+        </div>
 
-      <button onclick="showPreview()">👁 Show Question Paper and Preview your Answer</button>
-       <hr>
-    <div class="palette" id="palette"></div>
-   
-<hr>
-  
-    <button id="submitBtn"
-        onclick="submitExam()" 
-        style="width:60%; background:blue; color:white; font-weight:bold;">
-        🚀 Submit Exam
-    </button>
+        <div class="form-row">
+          <label class="form-label">Mobile</label>
+          <input type="tel" id="mobile" placeholder="+91 XXXXX XXXXX" required>
+        </div>
 
-    <hr>
+        <div class="form-row">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" id="dob">
+        </div>
 
-    <div>
-        <h4>Exam Status Color reference</h4>
-        <p style="background:#2ecc71;color:white;padding:2px;">Answered</p>
-        <p style="background:#e74c3c;color:white;padding:2px;">Not Answered</p>
-        <!--<p style="background:#f39c12;color:white;padding:2px;">Visited</p>-->
-        <p style="background:#8e44ad;color:white;padding:2px;">Current</p>
-        <p style="background:#3498db;color:white;padding:2px;">Review</p>
+        <div class="form-row">
+          <label class="form-label">Class</label>
+          <select id="class_name" required>
+            <option value="">Select class</option>
+            <option>Class 9</option>
+            <option>Class 10</option>
+            <option>Class 11</option>
+            <option>Class 12</option>
+            <option>Dropper</option>
+            <option>Engineering</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Student ID</label>
+          <input type="text" id="std_id" placeholder="Assigned ID">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">School Name</label>
+          <input type="text" id="school_name" placeholder="Your school" required>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">School Venue</label>
+          <input type="text" id="school_venue" placeholder="Branch / center">
+        </div>
+
+      </div>
+
+      <div class="form-row" style="margin-top:0.1rem">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" placeholder="Create a password" required>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        Register →
+      </button>
+    </form>
+
+    <div class="auth-link">
+      Already have an account?
+      <a href="#" onclick="switchTab('login')">Login here</a>
     </div>
+  </div>
 </div>
 
+<!-- Login Panel -->
+<div class="panel" id="panel-login">
+  <div class="auth-card">
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Login to your UNIC Academy account</div>
+
+    <form id="loginForm">
+
+      <div class="form-row">
+        <label class="form-label">Email</label>
+        <input type="email" id="login_email_id" placeholder="email@example.com" required>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Password</label>
+        <input type="password" id="login_password" placeholder="Your password" required>
+      </div>
+
+      <button type="submit" class="btn-primary">
+        Login →
+      </button>
+
+    </form>
+
+    <div class="auth-link">
+      New student?
+      <a href="#" onclick="switchTab('register')">Register here</a>
     </div>
-<div id="loading">Loading Exam...</div>
-   <!-- <div class="footer-controls">
-        <button onclick="prevQ()">⬅ Prev</button>
-        <button onclick="clearResponse()">Clear</button>
-        <button onclick="markReview()">Mark Review</button>
-        <button onclick="nextQ()">Next ➡</button>
-    </div>-->
+  </div>
 </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <div class="panel" id="panel-about">
+    <div class="about-card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:0.75rem">
+        <div style="width:50px;height:50px;border-radius:50%;background:#e8edff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;color:#1a2f6e;flex-shrink:0">AS</div>
+        <div>
+          <div class="about-name">Arun Sundara Nayagam D</div>
+          <div class="about-role">Founder, UNIC Academy<br>Educationist · Lecturer in Engineering, Maths &amp; Science · Researcher</div>
+        </div>
+      </div>
+      <div class="contact-row"><i class="ti ti-map-pin" style="font-size:15px" aria-hidden="true"></i> Tirunelveli, Tamil Nadu</div>
+      <div class="contact-row"><i class="ti ti-mail" style="font-size:15px" aria-hidden="true"></i> <a href="mailto:davidarun112@gmail.com">davidarun112@gmail.com</a></div>
+      <div class="contact-row"><i class="ti ti-phone" style="font-size:15px" aria-hidden="true"></i> <a href="tel:+919003409796">+91 90034 09796</a></div>
+      <a class="yt-btn" href="https://www.youtube.com/@arunsidea6897"><i class="ti ti-brand-youtube" style="font-size:16px" aria-hidden="true"></i> YouTube Channel</a>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num">1000+</div>
+        <div class="stat-lbl">Students Benefited</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">12+</div>
+        <div class="stat-lbl">Years of Excellence</div>
+      </div>
+    </div>
+
+    <div class="about-card">
+      <div class="about-name" style="font-size:14px;margin-bottom:0.6rem">Achievements</div>
+      <div class="badge-list">
+        <span class="badge gold">AIR 12 – GATE 2022</span>
+        <span class="badge gold">GATE Qualified (2011–2024)</span>
+        <span class="badge">IIT JAM Physics</span>
+        <span class="badge">JEE Coaching</span>
+        <span class="badge">NEET Coaching</span>
+        <span class="badge">GATE Coaching</span>
+      </div>
+      <hr class="divider">
+      <div class="about-name" style="font-size:14px;margin-bottom:0.5rem">Our Journey</div>
+      <div class="journey-text">Started during Navarathiri 2012 with just 4 students. Today more than 1000+ students have benefited from coaching in GATE, IIT JAM, NEET, JEE and Engineering subjects.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="ftr">
+  <div class="ftr-left">
+    <div class="ftr-ico">U</div>
+    <div class="ftr-name">UNIC Academy &nbsp;·&nbsp; Tirunelveli, Tamil Nadu</div>
+  </div>
+  <div class="ftr-links">
+    <a href="#">Home</a>
+    <a href="#">Courses</a>
+    <a href="#">Results</a>
+    <a href="#">Contact</a>
+    <a href="#">Privacy</a>
+  </div>
+  <div class="ftr-copy">© 2025 UNIC Academy · All rights reserved · Clarity · Confidence · Results</div>
+</footer>
+
 <script>
-let questions = [];
-let current = 0;
-
-let answers = {};
-let review = {};
-let visited = {};
-let timeSpent = {};
-
-let start_time = new Date().toISOString();
-let end_time = "";
-let startTime = Date.now();
-
-let hiddenStart = null;
-
-document.addEventListener("visibilitychange", () => {
-
-    if (document.hidden) {
-
-        hiddenStart = Date.now();
-
-    } else if (hiddenStart) {
-
-        let hiddenDuration =
-            Date.now() - hiddenStart;
-
-        startTime += hiddenDuration;
-
-        hiddenStart = null;
-    }
-});
-
-let student_id = "";
-let exam_module = "";
-let timeLeft = 0;
-let examConfig = {};
-
-// LOAD CONFIG
-let allExams = [];
-let selectedExam = null;
-
-fetch("/exam_config.json")
-.then(res => res.json())
-.then(data => {
-
-    allExams = data;
-
-    let html = "";
-
-    data.forEach((exam, index)=>{
-
-        let statusClass = exam.status === "yes" ? "active" : "closed";
-        let statusText = exam.status === "yes" ? "🟢 Active" : "🔴 Closed";
-
-        html += `
-        <div class="exam-card" onclick="selectExam(${index})">
-
-            <div class="exam-title">${exam.exam_name}</div>
-
-            <div class="exam-info">
-                ⏱ Duration: ${Math.floor(exam.duration/60)} mins
-            </div>
-
-            <div class="exam-info">
-                📅 Start: ${exam.start_time || "Not Scheduled"}
-            </div>
-
-            <div class="exam-status ${statusClass}">
-                ${statusText}
-            </div>
-
-        </div>`;
-    });
-
-    document.getElementById("examList").innerHTML = html;
-});
-
-    function selectExam(index){
-
-    selectedExam = allExams[index];
-
-    exam_module = selectedExam.exam_module;
-    timeLeft = selectedExam.duration;
-    examConfig = selectedExam;
-
-    // highlight selected card
-    document.querySelectorAll(".exam-card").forEach(c => c.classList.remove("selected"));
-    document.querySelectorAll(".exam-card")[index].classList.add("selected");
-
-    let html = `<h3>${selectedExam.exam_name}</h3><ul>`;
-
-    selectedExam.instructions.forEach(i=>{
-        html += `<li>${i}</li>`;
-    });
-
-    html += `</ul>`;
-
-    document.getElementById("examInfo").innerHTML = html;
-
-    document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
+function showTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+function switchTab(name) {
+  const btn = document.querySelectorAll('.tab-btn');
+  const tabs = ['register','login','about'];
+  const idx = tabs.indexOf(name);
+  if(idx >= 0) showTab(name, btn[idx]);
 }
 
-// LOAD QUESTIONS
-//fetch("questions_updated.json")
-//.then(res=>res.json())
-//.then(data=>{
-//    questions=data;
-//    createPalette();
-//});
+document
+.getElementById('loginForm')
+.addEventListener(
+    'submit',
+    async function(e){
 
-// LOGIN
-function startExam(){
+        e.preventDefault();
 
-    student_id = document.getElementById("id").value;
+        const email_id =
+            document.getElementById(
+                'email_id'
+            ).value;
 
-    if(!student_id){
-        alert("Enter your Roll Number/ID"); return;
-    }
+        const password =
+            document.getElementById(
+                'password'
+            ).value;
 
-    if(!selectedExam){
-        alert("Select exam first"); return;
-    }
+        try{
 
-    if(selectedExam.status !== "yes"){
-        alert("Exam not active"); return;
-    }
+            const response =
+                await fetch(
+                    '/api/login',
+                    {
+                        method:'POST',
 
-    document.getElementById("candidate").innerText =
-        document.getElementById("name").value + " | " + student_id;
+                        headers:{
+                            'Content-Type':
+                                'application/json'
+                        },
 
-    loadSavedData();
+                        body:JSON.stringify({
 
-    // ✅ ONLY HERE LOAD QUESTIONS
-    fetch(selectedExam.question_file)
-    .then(res => res.json())
-    .then(qData => {
+                            email_id,
+                            password
 
-        questions = qData;
+                        })
+                    }
+                );
 
-        createPalette();
+            const result =
+                await response.json();
 
-        document.getElementById("loginPage").style.display="none";
-        document.getElementById("examPage").style.display="block";
+            if(result.success){
 
-        showQuestion(0);
-        startTimer();
-        document.getElementById("loading").style.display="none";
-    })
-    .catch(err=>{
-        console.error(err);
-        alert("Failed to load question paper ❌");
-    });
-}
+                localStorage.setItem(
+                    'student',
+                    JSON.stringify(
+                        result.user
+                    )
+                );
 
-// TIMER
-let timerInterval;
+                window.location =
+                    '/dashboard.html';
 
-function startTimer(){
-    timerInterval = setInterval(()=>{
+            }else{
 
-        let min=Math.floor(timeLeft/60);
-        let sec=timeLeft%60;
-
-        document.getElementById("timer").innerText =
-            min+":"+(sec<10?"0":"")+sec;
-
-        timeLeft--;
-
-        localStorage.setItem(student_id+"_time", timeLeft);
-
-        // 🚀 AUTO SUBMIT
-        if(timeLeft <= 0){
-
-            clearInterval(timerInterval); // stop timer
-
-            alert("⏰ Time Up! Submitting your exam...");
-
-            submitExam(); // 🔥 IMPORTANT
-        }
-
-    },1000);
-}
-
-// SAVE / LOAD
-function saveData(){
-    let key = student_id + "_" + exam_module;
-
-    localStorage.setItem(key, JSON.stringify({
-        answers, review, visited, timeSpent, current, start_time
-    }));
-}
-
-function loadSavedData(){
-    let key = student_id + "_" + exam_module;
-    let saved = JSON.parse(localStorage.getItem(key));
-
-    if(saved){
-        answers=saved.answers||{};
-        review=saved.review||{};
-        visited=saved.visited||{};
-        timeSpent=saved.timeSpent||{};
-        current=saved.current||0;
-        start_time=saved.start_time||start_time;
-    }
-
-    let t = localStorage.getItem(student_id+"_time");
-    if(t) timeLeft=t;
-}
-
-// PALETTE
-function createPalette(){
-    let p=document.getElementById("palette");
-
-    questions.forEach((q,i)=>{
-        let btn=document.createElement("button");
-        btn.innerText=i+1;
-        btn.id="p"+i;
-        btn.onclick=()=>showQuestion(i);
-        p.appendChild(btn);
-    });
-}
-    
-function updateSectionProgress(){
-
-    let currentSection = questions[current]?.section || "General";
-
-    // 🔥 FILTER QUESTIONS BY SECTION
-    let sectionQuestions = questions.filter(q => 
-        (q.section || "General") === currentSection
-    );
-
-    let total = sectionQuestions.length;
-
-    let attempted = 0;
-    let correct = 0;
-
-    sectionQuestions.forEach((q, index)=>{
-
-        // 🔥 FIND ORIGINAL INDEX
-        let originalIndex = questions.findIndex(qq => qq === q);
-
-        let key = "q"+(originalIndex+1);
-
-        if(answers[key]){
-            attempted++;
-
-            if(typeof answerKeys !== "undefined"){
-                let correctAns = answerKeys[exam_module]?.[key];
-
-                if(correctAns && answers[key] === correctAns){
-                    correct++;
-                }
+                alert(
+                    result.message
+                );
             }
+
+        }catch(error){
+
+            console.log(error);
+
+            alert(
+                'Login Failed'
+            );
         }
-    });
-
-    let accuracy = attempted > 0 
-        ? ((correct / attempted) * 100).toFixed(1)
-        : 0;
-
-    let color = accuracy >= 70 ? "green" : accuracy >= 40 ? "orange" : "red";
-
-document.getElementById("sectionProgress").innerHTML =
-    `<span style="color:${color}">
-    ${currentSection} | Attempted: ${attempted}/${total}
-    </span>`;
-}
-
-// SHOW QUESTION
-function showQuestion(i){
-    saveTime();
-    current=i;
-    visited[i]=true;
-
-    let q=questions[i];
-    let sectionName = q.section || "General";
-    let key="q"+(i+1);
-
-    let html = `
-<div class="question-header">
-    <b>${sectionName} - Question ${i+1}</b>
-</div>
-
-`;
-
-    if(q.image_base64){
-        html+=`<div class="question-image-container">
-    <img class="question-image"
-    src="data:image/jpeg;base64,${q.image_base64}">
-</div>`;
     }
+);
 
-   html += `<div class="question-card">`;
 
-if(q.type==="MCQ"){
-    q.options.forEach(opt=>{
-        html += `
-        <label class="option-card">
-            <input type="radio"
-                name="q${i}"
-                ${answers[key]==opt?"checked":""}
-                onchange="saveAnswer('${opt}')">
-            ${opt} )
-        </label>`;
-    });
-}
+document
+.getElementById('registerForm')
+.addEventListener(
+    'submit',
+    async function(e){
 
-if(q.type==="MSQ"){
-    q.options.forEach(opt=>{
-        html += `
-        <label class="option-card">
-            <input type="checkbox"
-                ${answers[key]?.split(";").includes(opt)?"checked":""}
-                onchange="saveMSQ('${opt}', this.checked)">
-            ${opt}
-        </label>`;
-    });
-}
+        e.preventDefault();
 
-if(q.type==="NAT"){
-    html += `
-    <div class="nat-wrapper">
-    <input
-    type="text"
+        const payload = {
 
-    id="natDisplay"
+            name:
+                document.getElementById('name').value,
 
-    class="nat-display"
+            email_id:
+                document.getElementById('email_id').value,
 
-    value="${answers[key] || ''}"
+            mobile:
+                document.getElementById('mobile').value,
 
-    readonly
+            class_name:
+                document.getElementById('class_name').value,
 
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    spellcheck="false"
+            school_name:
+                document.getElementById('school_name').value,
 
-    inputmode="none"
+            school_venue:
+                document.getElementById('school_venue').value,
 
-    onkeydown="return false"
-    onkeypress="return false"
-    onkeyup="return false"
+            std_id:
+                document.getElementById('std_id').value,
 
-    onpaste="return false"
-    ondrop="return false"
+            dob:
+                document.getElementById('dob').value,
 
-    oncontextmenu="return false"
+            password:
+                document.getElementById('password').value
 
-    onfocus="this.blur()" >`;
-    html += `<button
-        type="button"
-        class="nat-btn wide-btn"
-        onclick="deleteNAT()"
-    >
-        Backspace
-    </button>
+        };
 
-    <!-- NUMBER PAD -->
+        try{
 
-    <div class="nat-grid">
+            const response =
+                await fetch(
+                    '/api/register',
+                    {
+                        method:'POST',
 
-        <button type="button" class="nat-btn" onclick="addNAT('7')">7</button>
-        <button type="button" class="nat-btn" onclick="addNAT('8')">8</button>
-        <button type="button" class="nat-btn" onclick="addNAT('9')">9</button>
+                        headers:{
+                            'Content-Type':
+                                'application/json'
+                        },
 
-        <button type="button" class="nat-btn" onclick="addNAT('4')">4</button>
-        <button type="button" class="nat-btn" onclick="addNAT('5')">5</button>
-        <button type="button" class="nat-btn" onclick="addNAT('6')">6</button>
+                        body:
+                            JSON.stringify(payload)
+                    }
+                );
 
-        <button type="button" class="nat-btn" onclick="addNAT('1')">1</button>
-        <button type="button" class="nat-btn" onclick="addNAT('2')">2</button>
-        <button type="button" class="nat-btn" onclick="addNAT('3')">3</button>
+            const result =
+                await response.json();
+console.log(result);
+            if(result.success){
 
-        <button type="button" class="nat-btn" onclick="addNAT('0')">0</button>
+                alert(
+                    'Registration Successful'
+                );
 
-        <button type="button" class="nat-btn" onclick="addNAT('.')">.</button>
+                switchTab('login');
 
-        <button type="button" class="nat-btn" onclick="addNAT('-')">-</button>
+            }else{
 
-    </div>
+                alert(
+                    result.message ||
+                    'Registration Failed'
+                );
+            }
 
-    <!-- ARROWS 
+        }catch(error){
 
-    <div class="arrow-row">
+            console.error(error);
 
-        <button
-            type="button"
-            class="nat-btn small-btn"
-            onclick="moveCursorLeft()"
-        >
-            ←
-        </button>
-
-        <button
-            type="button"
-            class="nat-btn small-btn"
-            onclick="moveCursorRight()"
-        >
-            →
-        </button>
-
-    </div>-->
-
-    <!-- CLEAR -->
-
-    <button
-        type="button"
-        class="nat-btn wide-btn"
-        onclick="clearNAT()"
-    >
-        Clear All
-    </button></div>`;
-}
-
-if(q.type==="SA"){
-    html += `
-    <textarea class="form-control mt-3"
-        onchange="saveAnswer(this.value)"
-        placeholder="Write your answer here...">${answers[key]||""}</textarea>`;
-}
-
-html += `</div>`;
-
-    document.getElementById("questionArea").innerHTML=html;
-
-    updatePalette();
-    updateSectionProgress();
-    startTime=Date.now();
-}
-
-let cursorPosition = 0;
-
-// ======================================
-// ADD VALUE
-// ======================================
-
-function addNAT(value){
-
-    const input =
-        document.getElementById('natDisplay');
-
-    let current =
-        input.value;
-
-    // Only one decimal
-    if(value === '.' &&
-       current.includes('.')){
-
-        return;
-    }
-
-    // Only one minus
-    if(value === '-'){
-
-        if(current.includes('-')){
-            return;
+            alert(
+                'Server Error'
+            );
         }
-
-        current =
-            '-' + current;
-
-        input.value = current;
-
-        cursorPosition =
-            current.length;
-
-        saveNAT(current);
-
-        return;
     }
-
-    // Insert at cursor position
-
-    const before =
-        current.slice(0, cursorPosition);
-
-    const after =
-        current.slice(cursorPosition);
-
-    input.value =
-        before + value + after;
-
-    cursorPosition++;
-
-    saveNAT(input.value);
-}
-
-// ======================================
-// BACKSPACE
-// ======================================
-
-function deleteNAT(){
-
-    const input =
-        document.getElementById('natDisplay');
-
-    let current =
-        input.value;
-
-    if(cursorPosition <= 0){
-        return;
-    }
-
-    input.value =
-
-        current.slice(0, cursorPosition - 1)
-
-        +
-
-        current.slice(cursorPosition);
-
-    cursorPosition--;
-
-    saveNAT(input.value);
-}
-
-// ======================================
-// CLEAR
-// ======================================
-
-function clearNAT(){
-
-    const input =
-        document.getElementById('natDisplay');
-
-    input.value = '';
-
-    cursorPosition = 0;
-
-    saveNAT('');
-}
-
-// ======================================
-// MOVE LEFT
-// ======================================
-
-function moveCursorLeft(){
-
-    if(cursorPosition > 0){
-
-        cursorPosition--;
-    }
-}
-
-// ======================================
-// MOVE RIGHT
-// ======================================
-
-function moveCursorRight(){
-
-    const input =
-        document.getElementById('natDisplay');
-
-    if(cursorPosition < input.value.length){
-
-        cursorPosition++;
-    }
-}
-
-// SAVE
-function saveAnswer(val){
-    answers["q"+(current+1)]=val;
-    saveData();
-    updateSectionProgress();
-}
-
-function saveMSQ(val,checked){
-    let key="q"+(current+1);
-    let arr=answers[key]?answers[key].split(";"):[];
-    if(checked){ if(!arr.includes(val)) arr.push(val); }
-    else arr=arr.filter(v=>v!==val);
-
-    if(arr.length===0) delete answers[key];
-    else answers[key]=arr.join(";");
-    saveData();
-    updatePalette();
-    updateSectionProgress();
-}
-
-function saveNAT(val){
-    let key = "q"+(current+1);
-
-    // Handle empty properly
-    if(val === "" || val === null){
-        delete answers[key];
-    } else {
-        answers[key] = parseFloat(val);
-    }
-
-    saveData();
-    updatePalette();
-    updateSectionProgress();
-}
-
-// TIME TRACK
-function saveTime(){
-    let spent=Math.floor((Date.now()-startTime)/1000);
-    timeSpent[current]=(timeSpent[current]||0)+spent;
-}
-
-// NAV
-function nextQ(){
-    saveTime();
-    saveData();
-
-    if(current<questions.length-1) showQuestion(current+1);
-}
-
-function prevQ(){
-    if(current>0) showQuestion(current-1);
-}
-
-// REVIEW
-function markReview(){
-    review[current]=true;
-    saveData();
-    nextQ();
-}
-
-// CLEAR
-function clearResponse(){
-    delete answers["q"+(current+1)];
-    saveData();
-    showQuestion(current);
-    updateSectionProgress();
-}
-
-// COLORS
-function updatePalette(){
-    questions.forEach((q,i)=>{
-        let btn=document.getElementById("p"+i);
-        btn.className="";
-
-        let key="q"+(i+1);
-
-        if(i===current) btn.classList.add("current");
-        else if(review[i]) btn.classList.add("review");
-        else if(answers[key]) btn.classList.add("answered");
-        else if(visited[i]) btn.classList.add("not-answered");
-    });
-}
-
-// PREVIEW (WITH IMAGE)
-function showPreview(){
-
-    let html = `<div class="preview-container"><h2>Preview</h2>`;
-
-    questions.forEach((q,i)=>{
-
-        let key = "q"+(i+1);
-        let ans = answers[key] || "Not Answered";
-        let sectionName = q.section || "General";
-
-        html += `<div class="preview-item">
-            <b>${sectionName}- Q${i+1}:</b> ${JSON.stringify(ans)}<br>`;
-
-        if(q.image_base64){
-            html += `
-            <div class="question-image-container">
-                <img class="question-image"
-                src="data:image/jpeg;base64,${q.image_base64}">
-            </div>`;
-        }
-
-        html += `</div>`;
-    });
-
-    html += `</div>`;
-
-    document.getElementById("questionArea").innerHTML = html;
-}
-
-function checkSubmitReady(){
-    let total = questions.length;
-    let answered = Object.keys(answers).length;
-
-    let btn = document.getElementById("submitBtn");
-
-    if(answered === 0){
-        btn.disabled = true;
-        btn.style.opacity = 0.5;
-    } else {
-        btn.disabled = false;
-        btn.style.opacity = 1;
-    }
-}
-
- 
-    let isSubmitted = false;   
-    
-function submitExam(){
-    if(isSubmitted) return; // 🚀 prevent duplicate
-    saveTime()
-    isSubmitted = true;
-
-    let end_time = new Date().toISOString();
-
-    // ✅ Build responses (correct format)
-    const responses = {};
-
-    questions.forEach((q, i) => {
-        let key = "q" + (i + 1);
-
-        if (!visited[i]) {
-            responses[key] = "NV"; // Not Visited
-        } else if (answers[key] === undefined || answers[key] === null || answers[key] === "") {
-            responses[key] = "N";
-        } else {
-            responses[key] = answers[key];
-        }
-    });
-
-    // ✅ Final data object
-    const data = {
-        email: student_id,
-        name: document.getElementById("name").value,
-        s_id: student_id,
-        exam_module: exam_module,
-        start_time: start_time,
-        end_time: end_time,
-        time_spent: timeSpent
-    };
-
-    console.log("Responses:", responses);
-    console.log("Data:", data);
-
-    // ✅ GraphQL mutation
-    const mutation = `
-    mutation InsertUniqdata(
-        $correct: String, 
-        $marks: String, 
-        $responses: String, 
-        $email: String, 
-        $s_id: String, 
-        $name: String, 
-        $exam_module: String
-    ) {
-        insert_uniqdata(objects: {
-            correct: $correct,
-            marks: $marks,
-            responses: $responses,
-            email: $email,
-            s_id: $s_id,
-            exam_module: $exam_module,
-            name: $name
-        }) {
-            affected_rows
-        }
-    }`;
-
-    const variables = {
-        correct: JSON.stringify(data.time_spent),
-        marks: data.end_time + data.start_time,
-        responses: JSON.stringify(responses),
-        email: data.email,
-        s_id: data.s_id,
-        exam_module: data.exam_module,
-        name: data.name
-    };
-
-    console.log("Variables:", variables);
-
-    fetch("/api/submit", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        variables: variables
-    })
-})
-.then(res => res.json())
-.then(result => {
-    console.log("Result:", result);
-
-    if(result.errors){
-        alert("❌ Error submitting form");
-    } else {
-        alert("✅ Submitted Successfully");
-        document.body.innerHTML =
-            "<h2 style='text-align:center'>Exam Submitted ✅</h2>";
-
-        localStorage.clear();
-    }
-})
-.catch(error => {
-    console.error("Error:", error);
-    alert("❌ Submission failed");
-});
-}
+);
 </script>
+
 
 </body>
 </html>
