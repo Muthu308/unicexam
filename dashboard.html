@@ -5,169 +5,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UNIC Academy – Student Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{background:#f4f7fc;color:#1e293b}
+body{background:#f0f4fb;color:#1e293b}
 
-/* ── Sidebar ── */
-.sidebar{
-  width:240px;position:fixed;top:0;left:0;height:100vh;
-  background:#0e1e4a;
-  display:flex;flex-direction:column;
-  padding:0;overflow:hidden;z-index:100;
-  transition:transform .3s;
-}
-.sb-brand{
-  padding:22px 20px 18px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  display:flex;align-items:center;gap:10px;
-}
-.sb-logo{
-  width:38px;height:38px;background:#f0b800;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:15px;color:#0e1e4a;flex-shrink:0;
-}
-.sb-name{color:#fff;font-size:13.5px;font-weight:600;line-height:1.2}
-.sb-tag{color:rgba(255,255,255,.35);font-size:9px;letter-spacing:.9px;text-transform:uppercase}
-.sb-student{
-  padding:16px 20px;
-  border-bottom:1px solid rgba(255,255,255,.06);
-  display:flex;align-items:center;gap:10px;
-}
-.sb-av{
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(240,184,0,.15);border:1.5px solid rgba(240,184,0,.35);
-  display:flex;align-items:center;justify-content:center;
-  font-size:15px;flex-shrink:0;
-}
-.sb-sname{color:#fff;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-sid{color:rgba(255,255,255,.35);font-size:10px}
-.sb-nav{flex:1;padding:12px 12px;overflow-y:auto}
-.nav-label{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.25);padding:10px 8px 4px}
-.nav-item{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 12px;border-radius:8px;margin-bottom:2px;
-  color:rgba(255,255,255,.55);font-size:12.5px;
-  text-decoration:none;cursor:pointer;border:none;background:none;
-  width:100%;text-align:left;transition:.2s;
-}
-.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.08);color:#fff}
-.nav-item.active{color:#f0b800}
-.nav-item i{font-size:16px;flex-shrink:0;width:18px}
-.sb-bottom{
-  padding:14px 12px;
-  border-top:1px solid rgba(255,255,255,.07);
-}
-.logout-btn{
-  display:flex;align-items:center;gap:9px;
-  width:100%;padding:10px 12px;border-radius:8px;
-  background:rgba(239,68,68,.1);border:none;
-  color:#fca5a5;font-size:12.5px;cursor:pointer;
-  font-family:'Poppins',sans-serif;transition:.2s;
-}
+/* Sidebar */
+.sidebar{width:240px;position:fixed;top:0;left:0;height:100vh;background:#0e1e4a;display:flex;flex-direction:column;z-index:100;transition:transform .3s;overflow:hidden}
+.sb-brand{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sb-logo{width:36px;height:36px;background:#f0b800;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0e1e4a;flex-shrink:0}
+.sb-name{color:#fff;font-size:13px;font-weight:600;line-height:1.2}
+.sb-tag{color:rgba(255,255,255,.3);font-size:9px;letter-spacing:.9px;text-transform:uppercase}
+.sb-student{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:9px}
+.sb-av{width:34px;height:34px;border-radius:50%;background:rgba(240,184,0,.15);border:1.5px solid rgba(240,184,0,.35);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sb-sname{color:#fff;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-sid{color:rgba(255,255,255,.32);font-size:10px}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.nav-label{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:8px;margin-bottom:2px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:.2s;font-family:'Poppins',sans-serif}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(240,184,0,.12);color:#f0b800}
+.nav-item i{font-size:15px;flex-shrink:0;width:17px}
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.07)}
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;border-radius:8px;background:rgba(239,68,68,.1);border:none;color:#fca5a5;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s}
 .logout-btn:hover{background:rgba(239,68,68,.2)}
 
-/* ── Main ── */
-.main{margin-left:240px;min-height:100vh;padding:24px;background:#f0f4fb}
+/* Main */
+.main{margin-left:240px;min-height:100vh;padding:20px;background:#f0f4fb}
+.topbar{background:#fff;border-radius:12px;padding:14px 20px;box-shadow:0 1px 5px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.topbar h1{font-size:17px;font-weight:600;color:#0e1e4a}
+.topbar p{font-size:11.5px;color:#94a3b8;margin-top:1px}
+.badge-active{padding:4px 12px;border-radius:20px;background:#dcfce7;color:#15803d;font-size:11px;font-weight:500}
 
-/* Top bar */
-.topbar{
-  background:#fff;border-radius:14px;padding:16px 22px;
-  box-shadow:0 1px 6px rgba(0,0,0,.06);
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:20px;
-}
-.topbar-left h1{font-size:18px;font-weight:600;color:#0e1e4a}
-.topbar-left p{font-size:12px;color:#94a3b8;margin-top:1px}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.badge-active{
-  padding:4px 12px;border-radius:20px;
-  background:#dcfce7;color:#15803d;font-size:11px;font-weight:500;
-}
-
-/* Page sections */
 .page{display:none}
 .page.active{display:block}
 
 /* Profile */
-.profile-card{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px}
-.profile-header{display:flex;align-items:center;gap:18px;padding-bottom:18px;border-bottom:1px solid #f1f5f9;margin-bottom:18px}
-.profile-av{
-  width:70px;height:70px;border-radius:50%;background:#0e1e4a;
-  color:#f0b800;font-size:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.profile-header h2{font-size:17px;font-weight:600;color:#0e1e4a}
-.profile-header p{font-size:12.5px;color:#64748b;margin-top:2px}
-.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.profile-item{background:#f8fafc;border-radius:10px;padding:13px 15px;border:1px solid #e8edf5}
-.profile-item label{display:block;font-size:11px;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.profile-item strong{color:#1e293b;font-size:13.5px}
-.status-active{color:#16a34a;font-weight:600}
+.profile-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
+.profile-hdr{display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:1px solid #f1f5f9;margin-bottom:16px}
+.profile-av{width:64px;height:64px;border-radius:50%;background:#0e1e4a;color:#f0b800;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.profile-hdr h2{font-size:16px;font-weight:600;color:#0e1e4a}
+.profile-hdr p{font-size:12px;color:#64748b;margin-top:2px}
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.pi{background:#f8fafc;border-radius:9px;padding:12px 14px;border:1px solid #e8edf5}
+.pi label{display:block;font-size:10.5px;color:#94a3b8;margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px}
+.pi strong{color:#1e293b;font-size:13px}
+.status-ok{color:#16a34a;font-weight:600}
 
-/* Stats cards */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
-.stat-card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,.06);border-left:3px solid #0e1e4a}
-.stat-card.green{border-left-color:#16a34a}
-.stat-card.amber{border-left-color:#f0b800}
-.stat-card.red{border-left-color:#dc2626}
-.stat-card.blue{border-left-color:#2563eb}
-.stat-card h3{font-size:11px;color:#94a3b8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
-.stat-card p{font-size:22px;font-weight:700;color:#0e1e4a}
-.stat-card span{font-size:11px;color:#64748b}
+/* Stat cards row */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.sc{background:#fff;border-radius:12px;padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a}
+.sc.g{border-left-color:#16a34a}
+.sc.a{border-left-color:#f0b800}
+.sc.r{border-left-color:#dc2626}
+.sc.b{border-left-color:#2563eb}
+.sc.p{border-left-color:#7c3aed}
+.sc h3{font-size:10px;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.sc p{font-size:20px;font-weight:700;color:#0e1e4a;line-height:1}
+.sc span{font-size:10.5px;color:#64748b}
+
+/* Subject summary cards */
+.subj-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.subj-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 5px rgba(0,0,0,.06)}
+.subj-card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #f1f5f9}
+.subj-card-title.ph{border-color:#2563eb;color:#1d4ed8}
+.subj-card-title.cy{border-color:#16a34a;color:#15803d}
+.subj-card-title.ma{border-color:#dc2626;color:#b91c1c}
+.subj-stat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f8fafc;font-size:12px}
+.subj-stat-row:last-child{border-bottom:none}
+.subj-stat-row label{color:#94a3b8;font-size:11px}
+.subj-stat-row strong{color:#1e293b;font-weight:600}
+.subj-stat-row.correct strong{color:#16a34a}
+.subj-stat-row.wrong strong{color:#dc2626}
+.subj-stat-row.na strong{color:#94a3b8}
 
 /* Section box */
-.sec-box{background:#fff;border-radius:14px;padding:22px;box-shadow:0 1px 6px rgba(0,0,0,.06);margin-bottom:20px}
-.sec-box h2{font-size:15px;font-weight:600;color:#0e1e4a;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.sec-box h2 i{font-size:18px;color:#f0b800}
+.sec-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
+.sec-box h2{font-size:14px;font-weight:600;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.sec-box h2 i{font-size:17px;color:#f0b800}
 
 /* Tables */
 .tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
 thead tr{background:#0e1e4a}
-thead th{color:#fff;padding:11px 14px;font-weight:500;text-align:center;font-size:12px}
-thead th:first-child{text-align:left;border-radius:0}
-tbody td{padding:11px 14px;text-align:center;border-bottom:1px solid #f1f5f9;color:#374151}
+thead th{color:#fff;padding:10px 12px;font-weight:500;text-align:center;font-size:11.5px;white-space:nowrap}
+thead th:first-child{text-align:left}
+/* Sub-header row */
+thead tr.sub-hdr th{background:#1a3060;font-size:10.5px;color:rgba(255,255,255,.7);padding:6px 12px;font-weight:400}
+tbody td{padding:10px 12px;text-align:center;border-bottom:1px solid #f1f5f9;color:#374151;white-space:nowrap}
 tbody td:first-child{text-align:left;font-weight:500;color:#0e1e4a}
 tbody tr:hover{background:#f8fafc}
 tbody tr:last-child td{border-bottom:none}
-.rank-badge{
-  display:inline-block;padding:2px 9px;border-radius:20px;
-  background:#eff6ff;color:#1d4ed8;font-size:11.5px;font-weight:600;
-}
+/* Trend row below each result row */
+tbody tr.trend-row td{background:#fafbfe;font-size:11px;color:#64748b;padding:4px 12px 8px;border-bottom:2px solid #f0f4fb}
+tbody tr.trend-row td span.up{color:#16a34a;font-weight:600}
+tbody tr.trend-row td span.dn{color:#dc2626;font-weight:600}
+tbody tr.trend-row td span.same{color:#94a3b8}
+.rank-badge{display:inline-block;padding:2px 8px;border-radius:20px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700}
+.rank-first{background:#fef9c3;color:#92400e}
 .pct-good{color:#16a34a;font-weight:600}
 .pct-avg{color:#d97706;font-weight:600}
 .pct-low{color:#dc2626;font-weight:600}
+.pos-marks{color:#16a34a;font-weight:600}
+.neg-marks{color:#dc2626;font-weight:600}
+.comment-strong{background:#dcfce7;color:#15803d;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+.comment-weak{background:#fee2e2;color:#b91c1c;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+.comment-avg{background:#fef9c3;color:#92400e;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
 
-/* Subject analysis cells */
-.subj-cell{font-size:11.5px;line-height:1.7;text-align:left}
-.subj-cell .c{color:#16a34a}
-.subj-cell .w{color:#dc2626}
-.subj-cell .n{color:#94a3b8}
+/* Combined analysis table */
+.grp-hdr{background:#1a3060 !important}
+.grp-hdr th{color:rgba(255,255,255,.75) !important;font-size:10.5px !important;padding:5px 12px !important}
+td.correct-val{color:#16a34a;font-weight:600}
+td.wrong-val{color:#dc2626;font-weight:600}
+td.na-val{color:#94a3b8}
 
 /* PDF */
-.pdf-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
-.pdf-btn{
-  padding:8px 16px;background:#0e1e4a;color:#fff;
-  border:none;border-radius:8px;cursor:pointer;
-  font-family:'Poppins',sans-serif;font-size:12.5px;
-  transition:.2s;
-}
-.pdf-btn:hover,.pdf-btn.active-pdf{background:#f0b800;color:#0e1e4a}
+.pdf-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pdf-btn{padding:7px 14px;background:#0e1e4a;color:#fff;border:none;border-radius:7px;cursor:pointer;font-family:'Poppins',sans-serif;font-size:12px;transition:.2s}
+.pdf-btn:hover,.pdf-btn.active-pdf{background:#f0b800;color:#0e1e4a;font-weight:600}
 .pdf-frame{width:100%;height:680px;border:none;border-radius:10px;background:#f8fafc}
-.no-data{text-align:center;padding:40px;color:#94a3b8;font-size:13px}
+.no-data{text-align:center;padding:36px;color:#94a3b8;font-size:13px}
 
-/* Mobile toggle */
-.mob-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:#0e1e4a;border:none;color:#fff;width:38px;height:38px;border-radius:8px;font-size:20px;cursor:pointer;align-items:center;justify-content:center}
+.mob-toggle{display:none;position:fixed;top:13px;left:13px;z-index:200;background:#0e1e4a;border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:20px;cursor:pointer;align-items:center;justify-content:center}
 
 @media(max-width:768px){
   .mob-toggle{display:flex}
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0;padding:16px;padding-top:60px}
-  .topbar{flex-direction:column;align-items:flex-start;gap:8px}
+  .main{margin-left:0;padding:14px;padding-top:56px}
+  .topbar{flex-direction:column;align-items:flex-start;gap:6px}
+  .subj-cards{grid-template-columns:1fr}
 }
 </style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 </head>
 <body>
 
@@ -190,49 +159,31 @@ tbody tr:last-child td{border-bottom:none}
   </div>
   <nav class="sb-nav">
     <div class="nav-label">Main</div>
-    <button class="nav-item active" onclick="showPage('profile',this)">
-      <i class="ti ti-user"></i> Profile
-    </button>
-    <button class="nav-item" onclick="showPage('results',this)">
-      <i class="ti ti-chart-bar"></i> Exam Results
-    </button>
-    <button class="nav-item" onclick="showPage('summary',this)">
-      <i class="ti ti-trending-up"></i> Performance Summary
-    </button>
-    <button class="nav-item" onclick="showPage('analysis',this)">
-      <i class="ti ti-clipboard-list"></i> Exam Analysis
-    </button>
-    <button class="nav-item" onclick="showPage('subject',this)">
-      <i class="ti ti-books"></i> Subject Analysis
-    </button>
+    <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
+    <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
+    <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
+    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Full Analysis</button>
     <div class="nav-label">Resources</div>
-    <button class="nav-item" onclick="showPage('pdf',this)">
-      <i class="ti ti-file-type-pdf"></i> Result PDF
-    </button>
+    <button class="nav-item" onclick="showPage('pdf',this)"><i class="ti ti-file-type-pdf"></i> Result PDF</button>
   </nav>
   <div class="sb-bottom">
-    <button class="logout-btn" onclick="logout()">
-      <i class="ti ti-logout" style="font-size:16px"></i> Logout
-    </button>
+    <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:15px"></i> Logout</button>
   </div>
 </div>
 
 <div class="main">
-
   <div class="topbar">
-    <div class="topbar-left">
+    <div>
       <h1 id="topbar_name">Welcome</h1>
       <p>Academic Dashboard — UNIC Academy</p>
     </div>
-    <div class="topbar-right">
-      <span class="badge-active">&#10003; Active</span>
-    </div>
+    <span class="badge-active">&#10003; Active</span>
   </div>
 
-  <!-- Profile -->
+  <!-- PROFILE -->
   <div class="page active" id="page-profile">
     <div class="profile-card">
-      <div class="profile-header">
+      <div class="profile-hdr">
         <div class="profile-av">&#x1F393;</div>
         <div>
           <h2 id="p_name">Student Name</h2>
@@ -240,73 +191,79 @@ tbody tr:last-child td{border-bottom:none}
         </div>
       </div>
       <div class="profile-grid">
-        <div class="profile-item"><label>Email</label><strong id="p_email">—</strong></div>
-        <div class="profile-item"><label>Mobile</label><strong id="p_mobile">—</strong></div>
-        <div class="profile-item"><label>Class</label><strong id="p_class">—</strong></div>
-        <div class="profile-item"><label>School</label><strong id="p_school">—</strong></div>
-        <div class="profile-item"><label>Date of Birth</label><strong id="p_dob">—</strong></div>
-        <div class="profile-item"><label>Student ID</label><strong id="p_id">—</strong></div>
-        <div class="profile-item"><label>Status</label><strong class="status-active">Active &#10003;</strong></div>
-        <div class="profile-item"><label>Institute</label><strong>UNIC Academy</strong></div>
+        <div class="pi"><label>Email</label><strong id="p_email">—</strong></div>
+        <div class="pi"><label>Mobile</label><strong id="p_mobile">—</strong></div>
+        <div class="pi"><label>Class</label><strong id="p_class">—</strong></div>
+        <div class="pi"><label>School</label><strong id="p_school">—</strong></div>
+        <div class="pi"><label>Date of Birth</label><strong id="p_dob">—</strong></div>
+        <div class="pi"><label>Student ID</label><strong id="p_id">—</strong></div>
+        <div class="pi"><label>Status</label><strong class="status-ok">Active &#10003;</strong></div>
+        <div class="pi"><label>Institute</label><strong>UNIC Academy</strong></div>
       </div>
     </div>
   </div>
 
-  <!-- Results -->
+  <!-- EXAM RESULTS -->
   <div class="page" id="page-results">
     <div class="sec-box">
       <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr>
-              <th>Exam</th><th>Physics</th><th>Chemistry</th><th>Maths</th>
-              <th>Total</th><th>Percentage</th><th>Rank</th>
+            <tr>              
+              <th>Exam</th>
+              <th>Rank</th>
+              <th>Physics</th>
+              <th>Chemistry</th>
+              <th>Maths</th>
+              <th>Positive<br><span style="font-size:10px;font-weight:400">Correct×4</span></th>
+              <th>Negative<br><span style="font-size:10px;font-weight:400">Wrong×(−1)</span></th>
+              <th>Bonus</th>
+              <th>Total Marks</th>
+              <th>%</th>
+              <th>Comment</th>
             </tr>
           </thead>
           <tbody id="resultTable">
-            <tr><td colspan="7" class="no-data">Loading results…</td></tr>
+            <tr><td colspan="11" class="no-data">Loading results…</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Summary -->
+  <!-- PERFORMANCE SUMMARY -->
   <div class="page" id="page-summary">
-    <div class="cards" id="summaryCards">
-      <div class="stat-card"><h3>Loading</h3><p>—</p></div>
+    <div id="summaryContent">
+      <div class="cards-row" id="summaryCards">
+        <div class="sc"><h3>Loading</h3><p>—</p></div>
+      </div>
     </div>
   </div>
 
-  <!-- Analysis -->
+  <!-- FULL ANALYSIS -->
   <div class="page" id="page-analysis">
     <div class="sec-box">
-      <h2><i class="ti ti-clipboard-list"></i> Exam Analysis</h2>
+      <h2><i class="ti ti-clipboard-list"></i> Exam Analysis — Correct / Wrong / Not Attempted</h2>
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr><th>Exam</th><th>Correct</th><th>Wrong</th><th>Not Attempted</th></tr>
+            <tr>
+              <th rowspan="2">Exam</th>
+              <th colspan="3">Physics</th>
+              <th colspan="3">Chemistry</th>
+              <th colspan="3">Maths</th>
+              <th colspan="3">Total</th>
+            </tr>
+            <tr class="sub-hdr">
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+            </tr>
           </thead>
           <tbody id="analysisTable">
-            <tr><td colspan="4" class="no-data">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- Subject -->
-  <div class="page" id="page-subject">
-    <div class="sec-box">
-      <h2><i class="ti ti-books"></i> Subject Wise Analysis</h2>
-      <div class="tbl-wrap">
-        <table>
-          <thead>
-            <tr><th>Exam</th><th>Physics</th><th>Chemistry</th><th>Mathematics</th></tr>
-          </thead>
-          <tbody id="subjectTable">
-            <tr><td colspan="4" class="no-data">Loading…</td></tr>
+            <tr><td colspan="13" class="no-data">Loading…</td></tr>
           </tbody>
         </table>
       </div>
@@ -317,32 +274,29 @@ tbody tr:last-child td{border-bottom:none}
   <div class="page" id="page-pdf">
     <div class="sec-box">
       <h2><i class="ti ti-file-type-pdf"></i> Result PDF Viewer</h2>
-      <div class="pdf-bar" id="pdfButtons"><p style="color:#94a3b8;font-size:13px">Loading PDFs…</p></div>
+      <div class="pdf-bar" id="pdfButtons"><p style="color:#94a3b8;font-size:12.5px">Loading PDFs…</p></div>
       <iframe class="pdf-frame" id="pdfFrame" title="Result PDF"></iframe>
     </div>
   </div>
-
 </div>
 
 <script>
 const user = JSON.parse(localStorage.getItem("student"));
 if (!user) window.location.href = "studlogin.html";
 
-// Fill profile
-const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || "—"; };
-set("sb_name", user.name);
-set("sb_sid", "ID: " + (user.std_id || "—"));
-set("topbar_name", "Welcome, " + (user.name || "Student"));
-set("p_name", user.name);
-set("p_stdid", "ID: " + user.std_id);
-set("p_email", user.email);
-set("p_mobile", user.mobile);
-set("p_class", user.class);
-set("p_school", user.school);
-set("p_dob", user.dob);
-set("p_id", user.std_id);
+const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || "—"; };
+setText("sb_name", user.name);
+setText("sb_sid", "ID: " + (user.std_id || "—"));
+setText("topbar_name", "Welcome, " + (user.name || "Student"));
+setText("p_name", user.name);
+setText("p_stdid", "ID: " + user.std_id);
+setText("p_email", user.email);
+setText("p_mobile", user.mobile);
+setText("p_class", user.class);
+setText("p_school", user.school);
+setText("p_dob", user.dob);
+setText("p_id", user.std_id);
 
-// Navigation
 function showPage(name, btn) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
@@ -350,11 +304,7 @@ function showPage(name, btn) {
   if (btn) btn.classList.add("active");
   if (window.innerWidth <= 768) document.getElementById("sidebar").classList.remove("open");
 }
-
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("open");
-}
-
+function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); }
 function logout() {
   if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("student");
@@ -369,8 +319,35 @@ function pctClass(p) {
   return "pct-low";
 }
 
-// Load results
+// Compute strength comment per exam
+function getComment(r) {
+  const phPct = r.ph_correct / (r.ph_correct + r.ph_wrong + r.ph_not_attempted) * 100;
+  const cyPct = r.cy_correct / (r.cy_correct + r.cy_wrong + r.cy_not_attempted) * 100;
+  const maPct = r.ma_correct / (r.ma_correct + r.ma_wrong + r.ma_not_attempted) * 100;
+  const parts = [];
+  const strong = [], weak = [];
+  if (phPct >= 60) strong.push("PH"); else if (phPct < 35) weak.push("PH");
+  if (cyPct >= 60) strong.push("CY"); else if (cyPct < 35) weak.push("CY");
+  if (maPct >= 60) strong.push("MA"); else if (maPct < 35) weak.push("MA");
+  let html = "";
+  if (strong.length) html += `<span class="comment-strong">Strong: ${strong.join(", ")}</span> `;
+  if (weak.length) html += `<span class="comment-weak">Focus: ${weak.join(", ")}</span>`;
+  if (!html) html = `<span class="comment-avg">Balanced</span>`;
+  return html;
+}
+
+// Trend arrow vs previous exam
+function getTrend(curr, prev) {
+  if (!prev) return "";
+  const diff = parseFloat(curr.percentage) - parseFloat(prev.percentage);
+  const markDiff = parseFloat(curr.final_marks) - parseFloat(prev.final_marks);
+  const pStr = diff > 0 ? `<span class="up">▲ ${diff.toFixed(1)}%</span>` : diff < 0 ? `<span class="dn">▼ ${Math.abs(diff).toFixed(1)}%</span>` : `<span class="same">━ No change</span>`;
+  const mStr = markDiff > 0 ? `<span class="up">+${markDiff} marks</span>` : markDiff < 0 ? `<span class="dn">${markDiff} marks</span>` : "";
+  return `vs prev: ${pStr}${mStr ? " &nbsp;|&nbsp; " + mStr : ""}`;
+}
+
 let allResults = [];
+
 async function loadStudentResults() {
   try {
     const res = await fetch("students.json");
@@ -378,86 +355,212 @@ async function loadStudentResults() {
     allResults = data.filter(item => String(item.s_id) === String(user.std_id));
 
     if (!allResults.length) {
-      ["resultTable","analysisTable","subjectTable"].forEach(id => {
-        document.getElementById(id).innerHTML = `<tr><td colspan="7" class="no-data">No results found for your ID.</td></tr>`;
-      });
+      document.getElementById("resultTable").innerHTML = `<tr><td colspan="11" class="no-data">No results found for your ID.</td></tr>`;
+      document.getElementById("analysisTable").innerHTML = `<tr><td colspan="13" class="no-data">No data.</td></tr>`;
       return;
     }
 
-    // Results table
-    document.getElementById("resultTable").innerHTML = allResults.map(r => `
-      <tr>
-        <td>${r.exam_name}</td>
-        <td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>
-        <td><strong>${r.final_marks}</strong></td>
-        <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
-        <td><span class="rank-badge">#${r.rank}</span></td>
-      </tr>`).join("");
+    // ── Exam Results Table ──
+    let resultRows = "";
+    allResults.forEach((r, i) => {
+      const posMarks = r.correct * 4;
+      const negMarks = r.wrong * 1;
+      const bonus = Number(r.bonus) || 0;
+      const rankCls = r.rank === 1 ? "rank-badge rank-first" : "rank-badge";
+      const trend = getTrend(r, allResults[i - 1]);
+      resultRows += `
+        <tr>
+          <td><span class="${rankCls}">#${r.rank}</span></td>
+          <td>${r.exam_name}</td>
+          <td>${r.ph}</td>
+          <td>${r.cy}</td>
+          <td>${r.ma}</td>
+          <td class="pos-marks">+${posMarks}</td>
+          <td class="neg-marks">−${negMarks}</td>
+          <td>${bonus > 0 ? '<span class="pos-marks">+' + bonus + '</span>' : '—'}</td>
+          <td><strong>${r.final_marks}</strong></td>
+          <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+          <td>${getComment(r)}</td>
+        </tr>
+        ${trend ? `<tr class="trend-row"><td></td><td colspan="10">${trend}</td></tr>` : ""}
+      `;
+    });
+    document.getElementById("resultTable").innerHTML = resultRows;
 
-    // Analysis table
+    // ── Full Analysis Table ──
     document.getElementById("analysisTable").innerHTML = allResults.map(r => `
       <tr>
         <td>${r.exam_name}</td>
-        <td style="color:#16a34a;font-weight:600">${r.correct}</td>
-        <td style="color:#dc2626;font-weight:600">${r.wrong}</td>
-        <td style="color:#94a3b8">${r.not_attempted}</td>
+        <td class="correct-val">${r.ph_correct}</td>
+        <td class="wrong-val">${r.ph_wrong}</td>
+        <td class="na-val">${r.ph_not_attempted}</td>
+        <td class="correct-val">${r.cy_correct}</td>
+        <td class="wrong-val">${r.cy_wrong}</td>
+        <td class="na-val">${r.cy_not_attempted}</td>
+        <td class="correct-val">${r.ma_correct}</td>
+        <td class="wrong-val">${r.ma_wrong}</td>
+        <td class="na-val">${r.ma_not_attempted}</td>
+        <td class="correct-val">${r.correct}</td>
+        <td class="wrong-val">${r.wrong}</td>
+        <td class="na-val">${r.not_attempted}</td>
       </tr>`).join("");
 
-    // Subject table
-    document.getElementById("subjectTable").innerHTML = allResults.map(r => `
-      <tr>
-        <td>${r.exam_name}</td>
-        <td class="subj-cell"><span class="c">✓ ${r.ph_correct}</span> &nbsp;<span class="w">✗ ${r.ph_wrong}</span> &nbsp;<span class="n">— ${r.ph_not_attempted}</span></td>
-        <td class="subj-cell"><span class="c">✓ ${r.cy_correct}</span> &nbsp;<span class="w">✗ ${r.cy_wrong}</span> &nbsp;<span class="n">— ${r.cy_not_attempted}</span></td>
-        <td class="subj-cell"><span class="c">✓ ${r.ma_correct}</span> &nbsp;<span class="w">✗ ${r.ma_wrong}</span> &nbsp;<span class="n">— ${r.ma_not_attempted}</span></td>
-      </tr>`).join("");
-
-    // Summary cards
+    // ── Performance Summary ──
     const total = allResults.length;
     const avgMarks = (allResults.reduce((s,r) => s + Number(r.final_marks), 0) / total).toFixed(1);
-    const avgPct = (allResults.reduce((s,r) => s + Number(r.percentage), 0) / total).toFixed(1);
-    const totalCorrect = allResults.reduce((s,r) => s + Number(r.correct), 0);
-    const totalWrong = allResults.reduce((s,r) => s + Number(r.wrong), 0);
-    const totalNA = allResults.reduce((s,r) => s + Number(r.not_attempted), 0);
-    const best = allResults.reduce((b,r) => Number(r.percentage) > Number(b.percentage) ? r : b, allResults[0]);
+    const avgPct  = (allResults.reduce((s,r) => s + Number(r.percentage), 0) / total).toFixed(1);
+    const totCorrect = allResults.reduce((s,r) => s + Number(r.correct), 0);
+    const totWrong   = allResults.reduce((s,r) => s + Number(r.wrong), 0);
+    const totNA      = allResults.reduce((s,r) => s + Number(r.not_attempted), 0);
+    const avgCorrect = (allResults.reduce((s, r) => s + Number(r.correct), 0) / total).toFixed(2);
+    const avgWrong = (allResults.reduce((s, r) => s + Number(r.wrong), 0) / total).toFixed(2);
+    const avgNA = (allResults.reduce((s, r) => s + Number(r.not_attempted), 0) / total).toFixed(2);
 
-    document.getElementById("summaryCards").innerHTML = `
-      <div class="stat-card blue"><h3>Total Exams</h3><p>${total}</p></div>
-      <div class="stat-card"><h3>Avg Marks</h3><p>${avgMarks}</p></div>
-      <div class="stat-card amber"><h3>Avg Percentage</h3><p>${avgPct}%</p></div>
-      <div class="stat-card green"><h3>Best Exam</h3><p style="font-size:14px;margin-top:4px">${best.exam_name}</p><span>${best.percentage}%</span></div>
-      <div class="stat-card green"><h3>Total Correct</h3><p>${totalCorrect}</p></div>
-      <div class="stat-card red"><h3>Total Wrong</h3><p>${totalWrong}</p></div>
-      <div class="stat-card"><h3>Not Attempted</h3><p>${totalNA}</p></div>
+    const best = allResults.reduce((b,r) => Number(r.percentage) > Number(b.percentage) ? r : b, allResults[0]);
+    const worst = allResults.reduce((b,r) => Number(r.percentage) < Number(b.percentage) ? r : b, allResults[0]);
+
+    // Subject-wise aggregates
+    const phMarks  = allResults.map(r => Number(r.ph));
+    const cyMarks  = allResults.map(r => Number(r.cy));
+    const maMarks  = allResults.map(r => Number(r.ma));
+    const avg  = arr => (arr.reduce((a,b) => a+b, 0) / arr.length).toFixed(1);
+    const maxV = arr => Math.max(...arr);
+    const minV = arr => Math.min(...arr);
+    const avgC = (key) => (allResults.reduce((s,r) => s + Number(r[key]), 0) / total).toFixed(1);
+
+    const avgPh = avg(phMarks);
+    const avgCy = avg(cyMarks);
+    const avgMa = avg(maMarks);
+
+    const subjects = [
+      { name: 'Physics', avg: avgPh },
+      { name: 'Chemistry', avg: avgCy },
+      { name: 'Mathematics', avg: avgMa }
+    ];
+
+    // Sort by average marks
+    const sorted = [...subjects].sort((a, b) => b.avg - a.avg);
+
+    const strongest = sorted[0];
+    const stable = sorted[1];
+    const improvement = sorted[2];
+
+    const subjectCards = `
+        <div class="sc">
+          <h3>💪 Strongest Subject</h3>
+          <p>${strongest.name}</p>
+          <small>Avg: ${strongest.avg}</small>
+        </div>
+
+        <div class="sc">
+          <h3>📈 Stable Subject</h3>
+          <p>${stable.name}</p>
+          <small>Avg: ${stable.avg}</small>
+        </div>
+
+        <div class="sc">
+          <h3>🎯 Needs Improvement</h3>
+          <p>${improvement.name}</p>
+          <small>Avg: ${improvement.avg}</small>
+        </div>
+      `;
+
+    document.getElementById("summaryContent").innerHTML = `
+      <!-- Overall cards -->
+      <div class="cards-row">
+        <div class="sc b"><h3>Total Exams</h3><p>${total}</p></div>
+        <div class="sc a"><h3>Avg Marks</h3><p>${avgMarks}</p></div>
+        <div class="sc a"><h3>Avg %</h3><p>${avgPct}%</p></div>
+        ${subjectCards}
+        <div class="sc g"><h3>Best Exam</h3><p style="font-size:13px;margin-top:3px">${best.exam_name}</p><span>${best.percentage}%</span></div>
+        <div class="sc r"><h3>Needs Work</h3><p style="font-size:13px;margin-top:3px">${worst.exam_name}</p><span>${worst.percentage}%</span></div>
+        <div class="sc g"><h3>Avg Correct</h3><p>${avgCorrect}</p></div>
+        <div class="sc r"><h3>Avg Wrong</h3><p>${avgWrong}</p></div>
+        <div class="sc"><h3>Avg Not Attempted</h3><p>${avgNA}</p></div>
+      </div>
+
+      <!-- Subject cards -->
+      <div class="subj-cards">
+        <div class="subj-card">
+          <div class="subj-card-title ph">&#9889; Physics</div>
+          <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(phMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(phMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(phMarks)}</strong></div>
+          <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ph_correct")}</strong></div>
+          <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ph_wrong")}</strong></div>
+          <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ph_not_attempted")}</strong></div>
+        </div>
+        <div class="subj-card">
+          <div class="subj-card-title cy">&#9877; Chemistry</div>
+          <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(cyMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(cyMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(cyMarks)}</strong></div>
+          <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("cy_correct")}</strong></div>
+          <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("cy_wrong")}</strong></div>
+          <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("cy_not_attempted")}</strong></div>
+        </div>
+        <div class="subj-card">
+          <div class="subj-card-title ma">&#8747; Mathematics</div>
+          <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(maMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(maMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(maMarks)}</strong></div>
+          <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ma_correct")}</strong></div>
+          <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ma_wrong")}</strong></div>
+          <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ma_not_attempted")}</strong></div>
+        </div>
+      </div>
+
+      <!-- Exam table below summary -->
+      <div class="sec-box" style="margin-bottom:0">
+        <h2><i class="ti ti-table"></i> All Exams Overview</h2>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Exam</th>
+                <th>PH</th><th>CY</th><th>MA</th>
+                <th>Total</th><th>%</th><th>Rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${allResults.map(r => `
+                <tr>
+                  <td>${r.exam_name}</td>
+                  <td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>
+                  <td><strong>${r.final_marks}</strong></td>
+                  <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+                  <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
     `;
+
   } catch(err) {
     console.error(err);
-    document.getElementById("resultTable").innerHTML = `<tr><td colspan="7" class="no-data">Error loading results. Please try again.</td></tr>`;
+    document.getElementById("resultTable").innerHTML = `<tr><td colspan="11" class="no-data">Error loading results. Please try again.</td></tr>`;
   }
 }
 
-// Load PDFs
+// PDF
 let studentPdfs = [];
 async function loadPdf() {
   try {
     const res = await fetch("drive_link.json");
     const pdfs = await res.json();
     studentPdfs = pdfs.filter(p => String(p.std_id) === String(user.std_id));
-
     if (!studentPdfs.length) {
       document.getElementById("pdfButtons").innerHTML = `<p class="no-data">No PDFs available yet.</p>`;
       return;
     }
-
-    document.getElementById("pdfButtons").innerHTML = studentPdfs.map(pdf => `
-      <button class="pdf-btn" onclick="showPdf('${pdf.exam_name}', this)">${pdf.exam_name}</button>
-    `).join("");
+    document.getElementById("pdfButtons").innerHTML = studentPdfs.map(pdf =>
+      `<button class="pdf-btn" onclick="showPdf('${pdf.exam_name}',this)">${pdf.exam_name}</button>`
+    ).join("");
   } catch(err) {
-    console.error(err);
     document.getElementById("pdfButtons").innerHTML = `<p class="no-data">Could not load PDFs.</p>`;
   }
 }
-
 function showPdf(examName, btn) {
   const pdf = studentPdfs.find(p => p.exam_name === examName);
   if (!pdf) return;
