@@ -668,38 +668,60 @@ async function loadStudentResults() {
 
 // PDF
 let studentPdfs = [];
+
+/* Load PDFs from JSON */
 async function loadPdf() {
   try {
     const res = await fetch("drive_link.json");
     const pdfs = await res.json();
-    studentPdfs = pdfs.filter(p => String(p.std_id) === String(user.std_id));
+
+    // IMPORTANT: ensure user.std_id exists
+    studentPdfs = pdfs.filter(
+      p => String(p.std_id) === String(user.std_id)
+    );
+
+    const container = document.getElementById("pdfButtons");
+
     if (!studentPdfs.length) {
-      document.getElementById("pdfButtons").innerHTML = `<p class="no-data">No PDFs available yet.</p>`;
+      container.innerHTML =
+        `<p class="no-data">No PDFs available yet.</p>`;
       return;
     }
-    document.getElementById("pdfButtons").innerHTML = studentPdfs.map(pdf =>
-      `<button class="pdf-btn" onclick="showPdf('${pdf.exam_name}',this)">${pdf.exam_name}</button>`
+
+    container.innerHTML = studentPdfs.map(pdf =>
+      `<button class="pdf-btn"
+        onclick="showPdf('${pdf.exam_name}', this)">
+        ${pdf.exam_name}
+      </button>`
     ).join("");
-  } catch(err) {
-    document.getElementById("pdfButtons").innerHTML = `<p class="no-data">Could not load PDFs.</p>`;
+
+  } catch (err) {
+    console.error("Load error:", err);
+    document.getElementById("pdfButtons").innerHTML =
+      `<p class="no-data">Could not load PDFs.</p>`;
   }
 }
- 
-function getEmbedUrl(url) {
-  // Handle both share link formats:
-  // https://drive.google.com/file/d/FILE_ID/view
-  // https://drive.google.com/open?id=FILE_ID
-  const match = url.match(/(?:\/d\/|id=)([\w-]+)/);
-  if (!match) return url;
-  return `https://drive.google.com/file/d/${match[1]}/preview`;
-}
 
+/* Show selected PDF */
 function showPdf(examName, btn) {
   const pdf = studentPdfs.find(p => p.exam_name === examName);
-  if (!pdf) return;
-  document.querySelectorAll(".pdf-btn").forEach(b => b.classList.remove("active-pdf"));
+
+  if (!pdf) {
+    console.error("PDF not found for:", examName);
+    return;
+  }
+
+  // remove active class from all buttons
+  document.querySelectorAll(".pdf-btn")
+    .forEach(b => b.classList.remove("active-pdf"));
+
+  // set active button
   if (btn) btn.classList.add("active-pdf");
-  document.getElementById("pdfFrame").src = getEmbedUrl(pdf.pdf_url);
+
+  console.log("Loading PDF:", pdf.pdf_url);
+
+  // load into iframe
+  document.getElementById("pdfFrame").src = pdf.pdf_url;
 }
 
 loadStudentResults();
