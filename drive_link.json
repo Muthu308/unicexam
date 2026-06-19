@@ -91,7 +91,7 @@
   },
   {
     "exam_name": "PCM03",
-    "std_id": "1226J7S007",
+    "std_id": "1226JYS007",
     "pdf_url": "https://drive.google.com/file/d/1RMnHDj8Y1AS8GPfqzdYUhAHoFW0A__Mb/preview"
   },
   {
@@ -213,5 +213,10 @@
     "exam_name": "PCM01",
     "std_id": "1126JYS001",
     "pdf_url": "https://drive.google.com/file/d/1dHoA5fxbI066L_-vQwiwVaZcNPU2wP9I/preview"
+  },
+  {
+    "exam_name": "PCM02",
+    "std_id": "1226JYS007",
+    "pdf_url": "https://drive.google.com/file/d/1pAKx9A0Nbum6n8G0212aNQHyhMIof140/preview"
   }
 ]
