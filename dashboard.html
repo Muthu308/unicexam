@@ -44,238 +44,63 @@ body{background:#f0f4fb;color:#1e293b}
 
 /* Profile */
 .profile-card{
-background:#ffffff;
-border-radius:20px;
-padding:25px;
-box-shadow:0 4px 20px rgba(15,23,42,.06);
-border:1px solid #eef2f7;
-margin-bottom:20px;
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
 }
 
-/* Header */
+.profile-header-card{
+    margin-bottom:20px;
+}
 
 .profile-hdr{
-display;
-align-items;
-gap:18px;
-padding-bottom:20px;
-margin-bottom:24px;
-border-bottom:1px solid #eef2f7;
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
 .profile-av{
-width:80px;
-height:80px;
-border-radius:50%;
-background(135deg,#0e1e4a,#1d4ed8);
-color:#f0b800;
-display;
-align-items;
-justify-content;
-font-size:34px;
-flex-shrink:0;
-box-shadow:0 8px 18px rgba(14,30,74,.18);
+    font-size:60px;
+    color:#0d6efd;
 }
 
-.profile-hdr h2{
-font-size:22px;
-font-weight:700;
-color:#0e1e4a;
-margin-bottom:4px;
-}
-
-.profile-hdr p{
-font-size:13px;
-color:#64748b;
-}
-
-/* Body Grid */
-
-.profile-body{
-display;
-grid-template-columns(auto-fit,minmax(350px,1fr));
-gap:20px;
-}
-
-/* Information Card */
-
-.info-group{
-background:#ffffff;
-border:1px solid #e8edf5;
-border-radius:16px;
-overflow;
-transition:.25s ease;
-}
-
-.info-group{
-transform(-3px);
-box-shadow:0 12px 24px rgba(15,23,42,.08);
+.profile-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
 }
 
 .info-group-title{
-display;
-align-items;
-gap:8px;
-padding:16px 18px;
-background:#f8fafc;
-border-bottom:1px solid #eef2f7;
-color:#0e1e4a;
-font-size:13px;
-font-weight:700;
-letter-spacing:.3px;
-}
-
-.info-group-title i{
-font-size:16px;
-color:#f0b800;
-}
-
-/* Rows */
-
-.info-row{
-display;
-justify-content;
-align-items;
-padding:15px 18px;
-border-bottom:1px solid #f1f5f9;
+    font-size:18px;
+    font-weight:700;
+    color:#0d6efd;
+    margin-bottom:15px;
+    padding-bottom:10px;
+    border-bottom:1px solid #eee;
 }
 
 .info-row{
-border-bottom;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px dashed #e5e5e5;
 }
 
 .info-row label{
-display;
-align-items;
-gap:8px;
-font-size:13px;
-color:#64748b;
-font-weight:500;
-}
-
-.info-row label i{
-font-size:15px;
-color:#94a3b8;
-}
-
-.info-row strong{
-color:#0f172a;
-font-size:13px;
-font-weight:600;
-text-align;
-}
-
-/* Institute Badge */
-
-.inst-pill{
-display;
-align-items;
-gap:6px;
-padding:5px 12px;
-border-radius:999px;
-background:#eff6ff;
-color:#1d4ed8;
-font-size:12px;
-font-weight:600;
-}
-
-.inst-pill i{
-font-size:13px;
-}
-
-/* Status Badge */
-
-.status-pill{
-display;
-align-items;
-gap:6px;
-padding:5px 12px;
-border-radius:999px;
-background:#dcfce7;
-color:#15803d;
-font-size:12px;
-font-weight:600;
-}
-
-.status-dot{
-width:8px;
-height:8px;
-border-radius:50%;
-background:#16a34a;
-}
-
-/* Optional Stats Grid */
-
-.profile-grid{
-display;
-grid-template-columns(auto-fit,minmax(180px,1fr));
-gap:12px;
-}
-
-.pi{
-background:#f8fafc;
-border:1px solid #e8edf5;
-border-radius:12px;
-padding:14px;
-}
-
-.pi label{
-display;
-font-size:11px;
-color:#94a3b8;
-text-transform;
-letter-spacing:.5px;
-margin-bottom:5px;
-}
-
-.pi strong{
-font-size:14px;
-color:#0f172a;
-font-weight:600;
-}
-
-.status-ok{
-color:#16a34a;
-font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#6c757d;
+    font-weight:600;
 }
 
 /* Mobile */
-
-@media (max-width:768px){
-
-.profile-card{
-    padding:18px;
-}
-
-.profile-hdr{
-    flex-direction:column;
-    text-align:center;
-}
-
-.profile-av{
-    width:70px;
-    height:70px;
-    font-size:30px;
-}
-
-.profile-hdr h2{
-    font-size:18px;
-}
-
-.profile-body{
-    grid-template-columns:1fr;
-}
-
-.info-row{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:5px;
-}
-
-.info-row strong{
-    text-align:left;
-}
-
+@media(max-width:768px){
+    .profile-grid{
+        grid-template-columns:1fr;
+    }
 }
 
 /* Stat cards row */
@@ -406,60 +231,81 @@ td.na-val{color:#94a3b8}
     <span class="badge-active">&#10003; Active</span>
   </div>
 
-  <!-- PROFILE -->
-  <div class="page active" id="page-profile">
-    <div class="profile-card">
-      <div class="profile-hdr">
-        <div class="profile-av">&#x1F393;</div>
-        <div>
-          <h2 id="p_name">Student Name</h2>
-          <p id="p_stdid">Student ID</p>
+ <div class="page active" id="page-profile">
+
+    <!-- Top Profile Header Card -->
+    <div class="profile-card profile-header-card">
+        <div class="profile-hdr">
+            <div class="profile-av">
+                <i class="ti ti-user-circle"></i>
+            </div>
+            <div>
+                <h2 id="p_name">Student Name</h2>
+                <p id="p_stdid">Student ID</p>
+            </div>
         </div>
-      </div>
-      <div class="profile-body">
-    <div class="info-group">
-      <div class="info-group-title"><i class="ti ti-user" aria-hidden="true"></i> Personal Info</div>
-      <div class="info-row">
-        <label><i class="ti ti-mail" aria-hidden="true"></i> Email</label>
-        <strong id="p_email">—</strong>
-      </div>
-      <div class="info-row">
-        <label><i class="ti ti-phone" aria-hidden="true"></i> Mobile</label>
-        <strong id="p_mobile">—</strong>
-      </div>
-      <div class="info-row">
-        <label><i class="ti ti-calendar" aria-hidden="true"></i> Date of Birth</label>
-        <strong id="p_dob">—</strong>
-      </div>
-      <div class="info-row">
-        <label><i class="ti ti-id-badge" aria-hidden="true"></i> Student ID</label>
-        <strong id="p_id">—</strong>
-      </div>
     </div>
 
-    <div class="info-group">
-      <div class="info-group-title"><i class="ti ti-building" aria-hidden="true"></i> Academic Info</div>
-      <div class="info-row">
-        <label><i class="ti ti-book" aria-hidden="true"></i> Class</label>
-        <strong id="p_class">—</strong>
-      </div>
-      <div class="info-row">
-        <label><i class="ti ti-school" aria-hidden="true"></i> School</label>
-        <strong id="p_school">—</strong>
-      </div>
-      <div class="info-row">
-        <label><i class="ti ti-map-pin" aria-hidden="true"></i> Institute</label>
-        <strong><span class="inst-pill"><i class="ti ti-award" style="font-size:12px" aria-hidden="true"></i> UNIC Academy</span></strong>
-      </div>
-      <div class="info-row">
-        <label><i class="ti ti-circle-check" aria-hidden="true"></i> Status</label>
-        <strong><span class="status-pill"><span class="status-dot"></span> Active</span></strong>
-      </div>
+    <!-- Two Column Layout -->
+    <div class="profile-grid">
+
+        <!-- Personal Information -->
+        <div class="profile-card">
+            <div class="info-group-title">
+                <i class="ti ti-user"></i> Personal Information
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-mail"></i> Email</label>
+                <strong id="p_email">—</strong>
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-phone"></i> Mobile</label>
+                <strong id="p_mobile">—</strong>
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-calendar"></i> Date of Birth</label>
+                <strong id="p_dob">—</strong>
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-id-badge"></i> Student ID</label>
+                <strong id="p_id">—</strong>
+            </div>
+        </div>
+
+        <!-- Academic Information -->
+        <div class="profile-card">
+            <div class="info-group-title">
+                <i class="ti ti-building"></i> Academic Information
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-book"></i> Class</label>
+                <strong id="p_class">—</strong>
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-school"></i> School</label>
+                <strong id="p_school">—</strong>
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-map-pin"></i> Institute</label>
+                <strong>UNIC Academy</strong>
+            </div>
+
+            <div class="info-row">
+                <label><i class="ti ti-circle-check"></i> Status</label>
+                <strong>Active</strong>
+            </div>
+        </div>
+
     </div>
 
-  </div>
-  </div>
-
+</div>
   <!-- EXAM RESULTS -->
   <div class="page" id="page-results">
     <div class="sec-box">
@@ -623,12 +469,12 @@ async function loadStudentResults() {
       const posMarks = r.correct * 4;
       const negMarks = r.wrong * 1;
       const bonus = Number(r.bonus) || 0;
-      const rankCls = r.rank === 1 ? "rank-badge rank-first" : "rank-badge";
+      const rankCls = Number(r.rank) === 1 ? "rank-badge rank-first" : "rank-badge";
       const trend = getTrend(r, allResults[i - 1]);
       resultRows += `
         <tr>
-          <td><span class="${rankCls}">#${r.rank}</span></td>
           <td>${r.exam_name}</td>
+          <td><span class="${rankCls}">${r.rank}</span></td>          
           <td>${r.ph}</td>
           <td>${r.cy}</td>
           <td>${r.ma}</td>
@@ -690,9 +536,9 @@ async function loadStudentResults() {
     const avgMa = avg(maMarks);
 
     const subjects = [
-      { name: 'Physics', avg: avgPh },
-      { name: 'Chemistry', avg: avgCy },
-      { name: 'Mathematics', avg: avgMa }
+      { name: 'Physics', avg: Number(avgPh) },
+      { name: 'Chemistry', avg: Number(avgCy) },
+      { name: 'Mathematics', avg: Number(avgMa) }
     ];
 
     // Sort by average marks
