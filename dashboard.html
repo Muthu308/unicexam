@@ -29,7 +29,17 @@ body{background:#f0f4fb;color:#1e293b}
 .sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.07)}
 .logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;border-radius:8px;background:rgba(239,68,68,.1);border:none;color:#fca5a5;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s}
 .logout-btn:hover{background:rgba(239,68,68,.2)}
-
+.info-group{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.info-group-title{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px;font-weight:600;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.6px;background:var(--color-background-secondary)}
+.info-group-title i{font-size:15px;color:#0e1e4a}
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.info-row:last-child{border-bottom:none}
+.info-row label{font-size:11.5px;color:var(--color-text-secondary);display:flex;align-items:center;gap:6px}
+.info-row label i{font-size:13px}
+.info-row strong{font-size:12.5px;color:var(--color-text-primary);font-weight:500;text-align:right;max-width:55%}
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;background:#dcfce7;color:#15803d;font-size:11.5px;font-weight:500}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#16a34a}
+.inst-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;background:#e8edff;color:#1d4ed8;font-size:11.5px;font-weight:500}
 /* Main */
 .main{margin-left:240px;min-height:100vh;padding:20px;background:#f0f4fb}
 .topbar{background:#fff;border-radius:12px;padding:14px 20px;box-shadow:0 1px 5px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
@@ -190,17 +200,49 @@ td.na-val{color:#94a3b8}
           <p id="p_stdid">Student ID</p>
         </div>
       </div>
-      <div class="profile-grid">
-        <div class="pi"><label>Email</label><strong id="p_email">—</strong></div>
-        <div class="pi"><label>Mobile</label><strong id="p_mobile">—</strong></div>
-        <div class="pi"><label>Class</label><strong id="p_class">—</strong></div>
-        <div class="pi"><label>School</label><strong id="p_school">—</strong></div>
-        <div class="pi"><label>Date of Birth</label><strong id="p_dob">—</strong></div>
-        <div class="pi"><label>Student ID</label><strong id="p_id">—</strong></div>
-        <div class="pi"><label>Status</label><strong class="status-ok">Active &#10003;</strong></div>
-        <div class="pi"><label>Institute</label><strong>UNIC Academy</strong></div>
+      <div class="profile-body">
+
+    <div class="info-group">
+      <div class="info-group-title"><i class="ti ti-user" aria-hidden="true"></i> Personal Info</div>
+      <div class="info-row">
+        <label><i class="ti ti-mail" aria-hidden="true"></i> Email</label>
+        <strong id="p_email">—</strong>
+      </div>
+      <div class="info-row">
+        <label><i class="ti ti-phone" aria-hidden="true"></i> Mobile</label>
+        <strong id="p_mobile">—</strong>
+      </div>
+      <div class="info-row">
+        <label><i class="ti ti-calendar" aria-hidden="true"></i> Date of Birth</label>
+        <strong id="p_dob">—</strong>
+      </div>
+      <div class="info-row">
+        <label><i class="ti ti-id-badge" aria-hidden="true"></i> Student ID</label>
+        <strong id="p_id">—</strong>
       </div>
     </div>
+
+    <div class="info-group">
+      <div class="info-group-title"><i class="ti ti-building" aria-hidden="true"></i> Academic Info</div>
+      <div class="info-row">
+        <label><i class="ti ti-book" aria-hidden="true"></i> Class</label>
+        <strong id="p_class">—</strong>
+      </div>
+      <div class="info-row">
+        <label><i class="ti ti-school" aria-hidden="true"></i> School</label>
+        <strong id="p_school">—</strong>
+      </div>
+      <div class="info-row">
+        <label><i class="ti ti-map-pin" aria-hidden="true"></i> Institute</label>
+        <strong><span class="inst-pill"><i class="ti ti-award" style="font-size:12px" aria-hidden="true"></i> UNIC Academy</span></strong>
+      </div>
+      <div class="info-row">
+        <label><i class="ti ti-circle-check" aria-hidden="true"></i> Status</label>
+        <strong><span class="status-pill"><span class="status-dot"></span> Active</span></strong>
+      </div>
+    </div>
+
+  </div>
   </div>
 
   <!-- EXAM RESULTS -->
@@ -290,10 +332,10 @@ setText("sb_sid", "ID: " + (user.std_id || "—"));
 setText("topbar_name", "Welcome, " + (user.name || "Student"));
 setText("p_name", user.name);
 setText("p_stdid", "ID: " + user.std_id);
-setText("p_email", user.email);
+setText("p_email", user.email_id);
 setText("p_mobile", user.mobile);
-setText("p_class", user.class);
-setText("p_school", user.school);
+setText("p_class", user.class_name);
+setText("p_school", user.school_name);
 setText("p_dob", user.dob);
 setText("p_id", user.std_id);
 
