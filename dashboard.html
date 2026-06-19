@@ -285,7 +285,28 @@ iframe{
 }
 
 }
-    
+ .pdf-btn{
+
+    background:#2563eb;
+    color:#fff;
+
+    border:none;
+
+    padding:10px 15px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    margin:4px;
+
+}
+
+.pdf-btn:hover{
+
+    background:#1d4ed8;
+
+}   
 
 </style>
 </head>
@@ -377,37 +398,47 @@ iframe{
 
 <div class="section" id="results">
 
-<h2>Exam Results</h2>
+    <h2>Exam Results</h2>
 
-<table>
-<thead>
-<tr>
-<th>Exam</th>
-<th>Maths</th>
-<th>Science</th>
-<th>English</th>
-<th>Total</th>
-<th>Percentage</th>
-</tr>
-</thead>
+    <table>
 
-<tbody id="resultTable">
-<tr>
-<td colspan="6">Loading Results...</td>
-</tr>
-</tbody>
+        <thead>
+            <tr>
+                <th>Exam</th>
+                <th>Physics</th>
+                <th>Chemistry</th>
+                <th>Maths</th>
+                <th>Total Marks</th>
+                <th>Percentage</th>
+                <th>Rank</th>
+            </tr>
+        </thead>
 
-</table>
+        <tbody id="resultTable">
+            <tr>
+                <td colspan="7">Loading Results...</td>
+            </tr>
+        </tbody>
+
+    </table>
 
 </div>
 
 <div id="resultContent"></div>
 
-<a id="downloadBtn" class="btn" target="_blank">
-📥 Download Result PDF
-</a>
+<div class="section" id="pdf">
 
-<iframe id="pdfFrame"></iframe>
+    <h2>📄 Result PDF Viewer</h2>
+
+    <div id="pdfButtons"></div>
+
+    <br>
+
+    <iframe
+        id="pdfFrame"
+        width="100%"
+        height="700">
+    </iframe>
 
 </div>
 </div>
@@ -422,187 +453,294 @@ if (!user) {
 
 document.getElementById("studentName").innerText = user.name;
 document.getElementById("stdId").innerText = user.std_id;
+document.getElementById("p_name").innerText =
+user.name || "-";
 
+document.getElementById("p_stdid").innerText =
+user.std_id || "-";
+
+document.getElementById("stdId").innerText =
+user.std_id || "-";
+
+document.getElementById("studentClass").innerText =
+user.class || "-";
+
+document.getElementById("schoolName").innerText =
+user.school || "-";
+
+document.getElementById("p_email").innerText =
+user.email || "-";
+
+document.getElementById("p_mobile").innerText =
+user.mobile || "-";
 // Load Exam Results
 async function loadStudentResults() {
-  try {
-    const res = await fetch("students.json");
-    const data = await res.json();
 
-    const student = data.find(
-      s => String(s.s_id) === String(user.std_id)
-    );
+    try {
 
-    if (!student) {
-      document.getElementById("resultContent").innerHTML =
-        "<h3>No Result Found</h3>";
-      return;
+        const res = await fetch("students.json");
+        const data = await res.json();
+
+        const results = data.filter(
+            item => String(item.s_id) === String(user.std_id)
+        );
+
+        if (!results.length) {
+
+            document.getElementById("resultTable").innerHTML =
+                `<tr><td colspan="7">No Results Found</td></tr>`;
+
+            return;
+        }
+
+        let rows = "";
+
+        let totalMarks = 0;
+        let totalPercentage = 0;
+
+        let totalCorrect = 0;
+        let totalWrong = 0;
+        let totalNotAttempted = 0;
+
+        let bestPercentage = 0;
+        let bestExam = "-";
+
+        results.forEach(r => {
+
+            rows += `
+                <tr>
+                    <td>${r.exam_name}</td>
+                    <td>${r.ph}</td>
+                    <td>${r.cy}</td>
+                    <td>${r.ma}</td>
+                    <td>${r.final_marks}</td>
+                    <td>${r.percentage}%</td>
+                    <td>#${r.rank}</td>
+                </tr>
+            `;
+
+            totalMarks += Number(r.final_marks);
+            totalPercentage += Number(r.percentage);
+
+            totalCorrect += Number(r.correct);
+            totalWrong += Number(r.wrong);
+            totalNotAttempted += Number(r.not_attempted);
+
+            if (Number(r.percentage) > bestPercentage) {
+                bestPercentage = Number(r.percentage);
+                bestExam = r.exam_name;
+            }
+
+        });
+
+        document.getElementById("resultTable").innerHTML = rows;
+
+        const avgMarks =
+            (totalMarks / results.length).toFixed(2);
+
+        const avgPercentage =
+            (totalPercentage / results.length).toFixed(2);
+
+        document.getElementById("resultContent").innerHTML = `
+
+        <div class="section">
+
+            <h2>Performance Summary</h2>
+
+            <div class="cards">
+
+                <div class="card">
+                    <h3>Total Exams</h3>
+                    <p>${results.length}</p>
+                </div>
+
+                <div class="card">
+                    <h3>Average Marks</h3>
+                    <p>${avgMarks}</p>
+                </div>
+
+                <div class="card">
+                    <h3>Average %</h3>
+                    <p>${avgPercentage}%</p>
+                </div>
+
+                <div class="card">
+                    <h3>Best Exam</h3>
+                    <p>${bestExam}</p>
+                </div>
+
+                <div class="card">
+                    <h3>Total Correct</h3>
+                    <p>${totalCorrect}</p>
+                </div>
+
+                <div class="card">
+                    <h3>Total Wrong</h3>
+                    <p>${totalWrong}</p>
+                </div>
+
+                <div class="card">
+                    <h3>Not Attempted</h3>
+                    <p>${totalNotAttempted}</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <h2>Exam Analysis</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Exam</th>
+                        <th>Correct</th>
+                        <th>Wrong</th>
+                        <th>Not Attempted</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                ${results.map(r => `
+                    <tr>
+                        <td>${r.exam_name}</td>
+                        <td>${r.correct}</td>
+                        <td>${r.wrong}</td>
+                        <td>${r.not_attempted}</td>
+                    </tr>
+                `).join("")}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="section">
+
+            <h2>Subject Wise Analysis</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Exam</th>
+                        <th>Physics</th>
+                        <th>Chemistry</th>
+                        <th>Mathematics</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                ${results.map(r => `
+                    <tr>
+
+                        <td>${r.exam_name}</td>
+
+                        <td>
+                            Correct: ${r.ph_correct}<br>
+                            Wrong: ${r.ph_wrong}<br>
+                            NA: ${r.ph_not_attempted}
+                        </td>
+
+                        <td>
+                            Correct: ${r.cy_correct}<br>
+                            Wrong: ${r.cy_wrong}<br>
+                            NA: ${r.cy_not_attempted}
+                        </td>
+
+                        <td>
+                            Correct: ${r.ma_correct}<br>
+                            Wrong: ${r.ma_wrong}<br>
+                            NA: ${r.ma_not_attempted}
+                        </td>
+
+                    </tr>
+                `).join("")}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        `;
+
+    }
+    catch(err) {
+
+        console.error(err);
+
+        document.getElementById("resultTable").innerHTML =
+            `<tr><td colspan="7">Error loading results</td></tr>`;
     }
 
-    document.getElementById("resultContent").innerHTML = `
-
-      <div class="cards">
-
-        <div class="card">
-          <h3>Exam</h3>
-          <p>${student.exam_name}</p>
-        </div>
-
-        <div class="card">
-          <h3>Marks</h3>
-          <p>${student.final_marks}/200</p>
-        </div>
-
-        <div class="card">
-          <h3>Percentage</h3>
-          <p>${student.percentage}%</p>
-        </div>
-
-        <div class="card">
-          <h3>Rank</h3>
-          <p>#${student.rank}</p>
-        </div>
-
-        <div class="card">
-          <h3>Band</h3>
-          <p>${student.band}</p>
-        </div>
-
-      </div>
-
-      <h2>Subject Wise Marks</h2>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Marks</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td>Physics</td>
-            <td>${student.ph}</td>
-          </tr>
-
-          <tr>
-            <td>Chemistry</td>
-            <td>${student.cy}</td>
-          </tr>
-
-          <tr>
-            <td>Mathematics</td>
-            <td>${student.ma}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <br>
-
-      <h2>Attempt Analysis</h2>
-
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Correct</th>
-            <th>Wrong</th>
-            <th>Not Attempted</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          <tr>
-            <td>Physics</td>
-            <td>${student.ph_correct}</td>
-            <td>${student.ph_wrong}</td>
-            <td>${student.ph_not_attempted}</td>
-          </tr>
-
-          <tr>
-            <td>Chemistry</td>
-            <td>${student.cy_correct}</td>
-            <td>${student.cy_wrong}</td>
-            <td>${student.cy_not_attempted}</td>
-          </tr>
-
-          <tr>
-            <td>Mathematics</td>
-            <td>${student.ma_correct}</td>
-            <td>${student.ma_wrong}</td>
-            <td>${student.ma_not_attempted}</td>
-          </tr>
-
-        </tbody>
-      </table>
-
-      <br>
-
-      <h2>Overall Statistics</h2>
-
-      <table class="table">
-        <tbody>
-
-          <tr>
-            <td>Total Correct</td>
-            <td>${student.correct}</td>
-          </tr>
-
-          <tr>
-            <td>Total Wrong</td>
-            <td>${student.wrong}</td>
-          </tr>
-
-          <tr>
-            <td>Not Attempted</td>
-            <td>${student.not_attempted}</td>
-          </tr>
-
-          <tr>
-            <td>Bonus Marks</td>
-            <td>${student.bonus}</td>
-          </tr>
-
-          <tr>
-            <td>Final Marks</td>
-            <td>${student.final_marks}</td>
-          </tr>
-
-        </tbody>
-      </table>
-    `;
-
-  } catch (err) {
-    console.error(err);
-  }
 }
 
 // Load PDF
+  let studentPdfs = [];  
 async function loadPdf() {
-  try {
 
-    const res = await fetch("drive_link.json");
-    const pdfs = await res.json();
+    try {
 
-    const pdf = pdfs.find(
-      p => String(p.std_id) === String(user.std_id)
+        const res = await fetch("drive_link.json");
+        const pdfs = await res.json();
+
+        studentPdfs = pdfs.filter(
+            p => String(p.std_id) === String(user.std_id)
+        );
+
+        if (!studentPdfs.length) {
+
+            document.getElementById("pdfButtons").innerHTML =
+                "<p>No PDFs Available</p>";
+
+            return;
+        }
+
+        let html = "";
+
+        studentPdfs.forEach(pdf => {
+
+            html += `
+                <button
+                    class="pdf-btn"
+                    onclick="showPdf('${pdf.exam_name}')">
+
+                    ${pdf.exam_name}
+
+                </button>
+            `;
+        });
+
+        document.getElementById("pdfButtons").innerHTML = html;
+
+    }
+    catch(err) {
+
+        console.error(err);
+
+    }
+
+}
+    function showPdf(examName) {
+
+    const pdf = studentPdfs.find(
+        p => p.exam_name === examName
     );
 
     if (!pdf) return;
 
     document.getElementById("pdfFrame").src =
-      pdf.pdf_url;
-
-    document.getElementById("downloadBtn").href =
-      pdf.pdf_url;
-
-  } catch (err) {
-    console.error(err);
-  }
+        pdf.pdf_url;
 }
-
 loadStudentResults();
 loadPdf();
 
