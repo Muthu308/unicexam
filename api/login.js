@@ -37,7 +37,7 @@ export default async function handler(req, res) {
               email_id
               mobile
               school_name
-              class
+              class_name
               std_id
               password
             }
