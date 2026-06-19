@@ -178,7 +178,17 @@ td.na-val{color:#94a3b8}
 .no-data{text-align:center;padding:36px;color:#94a3b8;font-size:13px}
 
 .mob-toggle{display:none;position:fixed;top:13px;left:13px;z-index:200;background:#0e1e4a;border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:20px;cursor:pointer;align-items:center;justify-content:center}
+#overlay{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.5);
+ display:none;
+ z-index:99;
+}
 
+#overlay.show{
+ display:block;
+}
 @media(max-width:768px){
   .mob-toggle{display:flex}
   .sidebar{transform:translateX(-100%)}
@@ -221,7 +231,7 @@ td.na-val{color:#94a3b8}
     <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:15px"></i> Logout</button>
   </div>
 </div>
-
+<div id="overlay"></div>
 <div class="main">
   <div class="topbar">
     <div>
@@ -384,6 +394,16 @@ td.na-val{color:#94a3b8}
 </div>
 
 <script>
+function toggleSidebar(){
+   document
+     .getElementById("sidebar")
+     .classList.toggle("open");
+
+   document
+     .getElementById("overlay")
+     .classList.toggle("show");
+}
+    
 const user = JSON.parse(localStorage.getItem("student"));
 if (!user) window.location.href = "studlogin.html";
 
@@ -456,7 +476,7 @@ async function loadStudentResults() {
     const res = await fetch("students.json");
     const data = await res.json();
     allResults = data.filter(item => String(item.s_id) === String(user.std_id));
-
+    console.log(allResults);
     if (!allResults.length) {
       document.getElementById("resultTable").innerHTML = `<tr><td colspan="11" class="no-data">No results found for your ID.</td></tr>`;
       document.getElementById("analysisTable").innerHTML = `<tr><td colspan="13" class="no-data">No data.</td></tr>`;
