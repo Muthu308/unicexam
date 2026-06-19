@@ -43,14 +43,14 @@ body{background:#f0f4fb;color:#1e293b}
 .page.active{display:block}
 
 /* Profile */
-.pc-wrap{padding:1.5rem 0;box-shadow:0 1px 5px rgba(0,0,0,.06);font-family:var(--font-sans)}
+.pc-wrap{padding:1.5rem 0;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);font-family:var(--font-sans)}
 .pc-hero{background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%);border-radius:var(--border-radius-lg);padding:1.5rem;display:flex;align-items:center;gap:1.25rem;margin-bottom:1rem}
 .pc-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pc-avatar i{font-size:30px;color:#fff}
 .pc-name{font-size:20px;font-weight:500;color:#fff;margin:0 0 2px}
 .pc-id{font-size:13px;color:rgba(255,255,255,0.8);margin:0;display:flex;align-items:center;gap:5px}
 .pc-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 10px;border-radius:20px;background:rgba(255,255,255,0.2);color:#fff;font-weight:500;margin-top:6px;border:0.5px solid rgba(255,255,255,0.35)}
-.pc-grid{display:grid;box-shadow:0 1px 5px rgba(0,0,0,.06);grid-template-columns:1fr 1fr;gap:1rem}
+.pc-grid{display:grid;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);grid-template-columns:1fr 1fr;gap:1rem}
 .pc-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);box-shadow:0 1px 5px rgba(0,0,0,.06);border-radius:var(--border-radius-lg);overflow:hidden}
 .pc-sec-hdr{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%)}
 .pc-sec-hdr i{font-size:16px;color:#fff}
@@ -684,12 +684,22 @@ async function loadPdf() {
     document.getElementById("pdfButtons").innerHTML = `<p class="no-data">Could not load PDFs.</p>`;
   }
 }
+ 
+function getEmbedUrl(url) {
+  // Handle both share link formats:
+  // https://drive.google.com/file/d/FILE_ID/view
+  // https://drive.google.com/open?id=FILE_ID
+  const match = url.match(/(?:\/d\/|id=)([\w-]+)/);
+  if (!match) return url;
+  return `https://drive.google.com/file/d/${match[1]}/preview`;
+}
+
 function showPdf(examName, btn) {
   const pdf = studentPdfs.find(p => p.exam_name === examName);
   if (!pdf) return;
   document.querySelectorAll(".pdf-btn").forEach(b => b.classList.remove("active-pdf"));
   if (btn) btn.classList.add("active-pdf");
-  document.getElementById("pdfFrame").src = pdf.pdf_url;
+  document.getElementById("pdfFrame").src = getEmbedUrl(pdf.pdf_url);
 }
 
 loadStudentResults();
