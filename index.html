@@ -66,8 +66,8 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 .ftr-links a:hover{color:#f0b800}
 .ftr-copy{width:100%;text-align:center;color:rgba(255,255,255,0.18);font-size:12px;padding-top:0.6rem;border-top:0.5px solid rgba(255,255,255,0.06)}
 
-  .wrap{font-family:var(--font-sans);color:var(--color-text-primary);padding:1.5rem 0}
- .profile-hero{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1rem}
+.wrap{font-family:var(--font-sans);color:var(--color-text-primary);padding:1.5rem 0}
+.profile-hero{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1rem}
 .avatar{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid #AFA9EC;flex-shrink:0}
 .hero-name{font-size:18px;font-weight:500;margin-bottom:2px}
 .hero-sub{font-size:12px;color:#534AB7;margin-bottom:6px}
@@ -113,6 +113,15 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 .achieve-title{font-size:13px;font-weight:500;color:#633806}
 .achieve-sub{font-size:11px;color:#854F0B;margin-top:2px}
 .obj-block{background:var(--color-background-secondary);border-left:3px solid #7F77DD;border-radius:0;padding:12px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.7} 
+  .pav-card{
+  max-width:720px;
+  margin:auto;
+  padding:12px;  
+  border-radius:20px;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.06),
+    0 20px 48px rgba(0,0,0,.08);
+}
 </style>
 
 <div class="site-header">
@@ -129,14 +138,14 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
     <div class="header-sub">Empowering Students for IIT-JEE, NEET &amp; Academic Excellence</div>
   </div>
   <div class="tab-bar">
-    <button class="tab-btn" onclick="showTab('about',this)">
+    <button class="tab-btn active" onclick="showTab('about',this)">
       <i class="ti ti-info-circle" aria-hidden="true"></i> About-Unic Academic
+    </button>    
+    <button class="tab-btn" onclick="showTab('login',this)">
+      <i class="ti ti-login" aria-hidden="true"></i> Login
     </button>
     <button class="tab-btn" onclick="showTab('register',this)">
       <i class="ti ti-user-plus" aria-hidden="true"></i> Register
-    </button>
-    <button class="tab-btn active" onclick="showTab('login',this)">
-      <i class="ti ti-login" aria-hidden="true"></i> Login
     </button>
     
   </div>
@@ -221,7 +230,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 </div>
 
 <!-- Login Panel -->
-<div class="panel active" id="panel-login">
+<div class="panel" id="panel-login">
   <div class="auth-card">
     <div class="auth-title">Welcome back</div>
     <div class="auth-sub">Login to your UNIC Academy account</div>
@@ -251,9 +260,9 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
   </div>
 </div>
 
-  <div class="panel" id="panel-about">
+  <div class="panel active" id="panel-about">
 
- 
+<div class="pav-card"> 
 <div class="wrap">
   <h2 style="position:absolute;width:1px;height:1px;overflow:hidden">ptabbed profile page — Arun Sundara Nayagam D, UNIC Academy</h2>
 
@@ -429,7 +438,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
   </div>
 
 </div>
- 
+ </div>
 
 </div>
 
@@ -449,6 +458,15 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 </footer>
 
 <script>
+  
+document.querySelectorAll('.ptab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.ptab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.ptab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.ptab).classList.add('active');
+  });
+});  
 function showTab(name, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
