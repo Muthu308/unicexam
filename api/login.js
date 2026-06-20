@@ -46,7 +46,7 @@ export default async function handler(req, res) {
           }
         `,
         variables: {
-          email_id,
+           value: email_id, // ✅ FIXED
         },
       }),
     });
