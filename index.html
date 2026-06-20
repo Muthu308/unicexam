@@ -25,7 +25,7 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 .panel{display:none}
 .panel.active{display:block}
 
-.auth-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.5rem;max-width:420px;margin:0 auto}
+.auth-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.5rem;max-width:520px;margin:0 auto}
 .auth-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.3rem}
 .auth-sub{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem}
 .form-row{margin-bottom:0.9rem}
@@ -65,6 +65,54 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 .ftr-links a{color:rgba(255,255,255,0.3);font-size:14px;text-decoration:none}
 .ftr-links a:hover{color:#f0b800}
 .ftr-copy{width:100%;text-align:center;color:rgba(255,255,255,0.18);font-size:12px;padding-top:0.6rem;border-top:0.5px solid rgba(255,255,255,0.06)}
+
+  .wrap{font-family:var(--font-sans);color:var(--color-text-primary);padding:1.5rem 0}
+ .profile-hero{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:1rem}
+.avatar{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid #AFA9EC;flex-shrink:0}
+.hero-name{font-size:18px;font-weight:500;margin-bottom:2px}
+.hero-sub{font-size:12px;color:#534AB7;margin-bottom:6px}
+.hero-contacts{display:flex;flex-wrap:wrap;gap:10px}
+.hero-contact{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--color-text-secondary)}
+.hero-contact i{font-size:14px;color:#7F77DD}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.stat-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center}
+.stat-n{font-size:20px;font-weight:500;color:#534AB7}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.ptab-bar{display:flex;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1.25rem;gap:0}
+.ptab-btn{padding:9px 16px;font-size:13px;font-weight:400;color:var(--color-text-secondary);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;margin-bottom:-0.5px}
+.ptab-btn i{font-size:15px}
+.ptab-btn.active{color:#534AB7;border-bottom-color:#534AB7;font-weight:500}
+.ptab-btn:hover:not(.active){color:var(--color-text-primary);background:var(--color-background-secondary)}
+.ptab-panel{display:none;flex-direction:column;gap:1rem}
+.ptab-panel.active{display:flex}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.sec-lbl{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sec-lbl::after{content:"";flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem}
+.edu-item{display:flex;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.edu-item:last-child{border-bottom:none;padding-bottom:0}
+.edu-dot{width:8px;height:8px;border-radius:50%;background:#7F77DD;flex-shrink:0;margin-top:5px}
+.edu-deg{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.edu-inst{font-size:12px;color:var(--color-text-secondary)}
+.badge-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.badge{font-size:11px;padding:3px 9px;border-radius:var(--border-radius-md);background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC}
+.badge.teal{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.badge.gold{background:#FAEEDA;color:#633806;border-color:#FAC775}
+.info-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.info-list li{display:flex;gap:7px;font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.info-list li::before{content:"";width:5px;height:5px;border-radius:50%;background:#1D9E75;flex-shrink:0;margin-top:5px}
+.success-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px 11px}
+.success-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.success-detail{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.yt-block{background:#EEEDFE;border-radius:var(--border-radius-md);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.yt-block i{font-size:22px;color:#534AB7;flex-shrink:0;margin-top:1px}
+.yt-text{font-size:13px;color:#3C3489;line-height:1.6}
+.achieve-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.achieve-card{background:#FAEEDA;border:0.5px solid #FAC775;border-radius:var(--border-radius-md);padding:10px 12px;display:flex;align-items:flex-start;gap:8px}
+.achieve-card i{font-size:18px;color:#633806;flex-shrink:0;margin-top:1px}
+.achieve-title{font-size:13px;font-weight:500;color:#633806}
+.achieve-sub{font-size:11px;color:#854F0B;margin-top:2px}
+.obj-block{background:var(--color-background-secondary);border-left:3px solid #7F77DD;border-radius:0;padding:12px 14px;font-size:13px;color:var(--color-text-secondary);line-height:1.7} 
 </style>
 
 <div class="site-header">
@@ -81,15 +129,16 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
     <div class="header-sub">Empowering Students for IIT-JEE, NEET &amp; Academic Excellence</div>
   </div>
   <div class="tab-bar">
+    <button class="tab-btn" onclick="showTab('about',this)">
+      <i class="ti ti-info-circle" aria-hidden="true"></i> About-Unic Academic
+    </button>
     <button class="tab-btn" onclick="showTab('register',this)">
       <i class="ti ti-user-plus" aria-hidden="true"></i> Register
     </button>
     <button class="tab-btn active" onclick="showTab('login',this)">
       <i class="ti ti-login" aria-hidden="true"></i> Login
     </button>
-    <button class="tab-btn" onclick="showTab('about',this)">
-      <i class="ti ti-info-circle" aria-hidden="true"></i> About
-    </button>
+    
   </div>
 </div>
 
@@ -204,155 +253,183 @@ body{font-family:var(--font-sans);background:var(--color-background-tertiary);mi
 
   <div class="panel" id="panel-about">
 
-  <!-- PROFILE CARD -->
-  <div class="about-card profile-card">
+ 
+<div class="wrap">
+  <h2 style="position:absolute;width:1px;height:1px;overflow:hidden">ptabbed profile page — Arun Sundara Nayagam D, UNIC Academy</h2>
 
-    <div class="profile-header">
-      <img src="https://yt3.googleusercontent.com/4zz5DZpTwnglUebmPAPF4jet3mYSqqBlfZ5ecE0MQH-StzY0cUziqxE8syW5Zz0TUVY1jOTE5A=s120-c-k-c0x00ffffff-no-rj"
-           alt="Arun Sundara Nayagam"
-           class="profile-photo">
+  <div class="profile-hero">
+    <img class="avatar" src="https://yt3.googleusercontent.com/4zz5DZpTwnglUebmPAPF4jet3mYSqqBlfZ5ecE0MQH-StzY0cUziqxE8syW5Zz0TUVY1jOTE5A=s120-c-k-c0x00ffffff-no-rj" alt="Arun Sundara Nayagam">
+    <div style="flex:1;min-width:0">
+      <div class="hero-name">Arun Sundara Nayagam D</div>
+      <div class="hero-sub">Ph.D. Scholar · IIT Madras &nbsp;|&nbsp; Founder · UNIC Academy &nbsp;|&nbsp; GATE AIR 12 (2022)</div>
+      <div class="hero-contacts">
+        <span class="hero-contact"><i class="ti ti-map-pin" aria-hidden="true"></i> Tirunelveli, Tamil Nadu</span>
+        <span class="hero-contact"><i class="ti ti-mail" aria-hidden="true"></i> davidarun112@gmail.com</span>
+        <span class="hero-contact"><i class="ti ti-phone" aria-hidden="true"></i> +91 90034 09796</span>
+        <span class="hero-contact"><i class="ti ti-brand-youtube" aria-hidden="true"></i> UNIC Academy & Arun's Idea</span>
+      </div>
+    </div>
+  </div>
 
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-n">1000+</div><div class="stat-l">Students benefited</div></div>
+    <div class="stat-box"><div class="stat-n">12+</div><div class="stat-l">Years of excellence</div></div>
+    <div class="stat-box"><div class="stat-n">900+</div><div class="stat-l">Educational videos</div></div>
+    <div class="stat-box"><div class="stat-n">2012</div><div class="stat-l">Founded UNIC Academy</div></div>
+  </div>
+
+  <div class="ptab-bar">
+    <button class="ptab-btn active" data-ptab="about"><i class="ti ti-user" aria-hidden="true"></i> About</button>
+    <button class="ptab-btn" data-ptab="academy"><i class="ti ti-school" aria-hidden="true"></i> UNIC Academy</button>
+    <button class="ptab-btn" data-ptab="achievements"><i class="ti ti-trophy" aria-hidden="true"></i> Achievements</button>
+    <button class="ptab-btn" data-ptab="youtube"><i class="ti ti-brand-youtube" aria-hidden="true"></i> YouTube</button>
+    <button class="ptab-btn" data-ptab="contact"><i class="ti ti-mail" aria-hidden="true"></i> Contact</button>
+  </div>
+
+  <div id="about" class="ptab-panel active">
+    <div class="obj-block">To lead the organization into excellence through dedicated hard work, innovative ideas, and continuous learning in a dynamic educational environment.</div>
+    <div class="two-col">
       <div>
-        <h2 class="about-name">Arun Sundara Nayagam D</h2>
-        <div class="about-role">
-          Founder, UNIC Academy<br>
-          Educationist • Lecturer • Researcher
+        <div class="sec-lbl">Education</div>
+        <div class="card">
+          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">Ph.D. – Ocean Engineering</div><div class="edu-inst">IIT Madras · Pursuing</div></div></div>
+          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">M.E. Engineering Design</div><div class="edu-inst">CEG, Anna University</div></div></div>
+          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">B.E. Mechanical Engineering</div><div class="edu-inst">Noorul Islam College</div></div></div>
+          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">Higher Secondary</div><div class="edu-inst">Cathedral HSS, Tirunelveli</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-lbl">Technical skills</div>
+        <div class="card">
+          <div class="badge-wrap">
+            <span class="badge">AutoCAD</span><span class="badge">ANSYS</span><span class="badge">Pro-E</span><span class="badge">Python</span><span class="badge">MATLAB</span><span class="badge">Fortran</span><span class="badge">LaTeX</span><span class="badge">MS Office</span>
+          </div>
         </div>
       </div>
     </div>
-
-    <p class="objective">
-      To lead the organization into excellence through dedicated hard work,
-      innovative ideas, and continuous learning in a dynamic educational environment.
-    </p>
-
-    <div class="contact-grid">
-      <div><i class="ti ti-map-pin"></i> Tirunelveli, Tamil Nadu, India</div>
-      <div><i class="ti ti-mail"></i> davidarun112@gmail.com</div>
-      <div><i class="ti ti-phone"></i> +91 90034 09796</div>
-      <div><i class="ti ti-brand-youtube"></i> Arun's Idea & UNIC Academy</div>
-    </div>
-
-    <hr class="divider">
-
-    <h3>Education</h3>
-    <ul class="info-list">
-      <li>Ph.D. – Ocean Engineering, IIT Madras (Pursuing)</li>
-      <li>M.E. Engineering Design – CEG, Anna University</li>
-      <li>B.E. Mechanical Engineering – Noorul Islam College</li>
-      <li>Higher Secondary – Cathedral HSS, Tirunelveli</li>
-    </ul>
-
-    <h3>Technical Skills</h3>
-    <div class="badge-list">
-      <span class="badge">AutoCAD</span>
-      <span class="badge">ANSYS</span>
-      <span class="badge">Pro-E</span>
-      <span class="badge">Python</span>
-      <span class="badge">MATLAB</span>
-      <span class="badge">Fortran</span>
-      <span class="badge">LaTeX</span>
-      <span class="badge">MS Office</span>
-    </div>
-
-    <h3>Major Achievements</h3>
-    <div class="badge-list">
-      <span class="badge gold">AIR 12 – GATE 2022</span>
-      <span class="badge gold">GATE Qualified (2011–2024)</span>
-      <span class="badge">IIT JAM Physics 2018 & 2019</span>
-      <span class="badge">MITx Certifications</span>
-    </div>
-
   </div>
 
-
-  <!-- STATS -->
-  <div class="stats-grid">
-    <div class="stat-box">
-      <div class="stat-num">1000+</div>
-      <div class="stat-lbl">Students Benefited</div>
+  <div id="academy" class="ptab-panel">
+    <div class="card">
+      <div class="sec-lbl">About UNIC Academy</div>
+      <p style="font-size:13px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:1rem">Started during Navarathiri 2012 with just 4 students in Tirunelveli. Today, UNIC Academy has guided more than 1000+ students in GATE, IIT JAM, JEE, NEET, Engineering and Science subjects.</p>
+      <div class="two-col">
+        <div>
+          <p style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Vision</p>
+          <p style="font-size:12px;color:var(--color-text-secondary);line-height:1.6">To impart world-class knowledge with strong moral values that empower students in their academic, professional and personal lives.</p>
+        </div>
+        <div>
+          <p style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px">Mission</p>
+          <ul class="info-list">
+            <li>Outcome-based education with employability focus</li>
+            <li>Build confidence through competitive exam training</li>
+            <li>Create lifelong learners adapptable to new technologies</li>
+          </ul>
+        </div>
+      </div>
     </div>
-
-    <div class="stat-box">
-      <div class="stat-num">12+</div>
-      <div class="stat-lbl">Years of Excellence</div>
+    <div>
+      <div class="sec-lbl">Programs offered</div>
+      <div class="badge-wrap">
+        <span class="badge teal">GATE</span><span class="badge teal">IIT JAM</span><span class="badge teal">JEE</span><span class="badge teal">NEET</span><span class="badge teal">Engineering subjects</span><span class="badge teal">Online classes</span><span class="badge teal">Offline classes</span>
+      </div>
     </div>
-
-    <div class="stat-box">
-      <div class="stat-num">900+</div>
-      <div class="stat-lbl">Educational Videos</div>
-    </div>
-
-    <div class="stat-box">
-      <div class="stat-num">2012</div>
-      <div class="stat-lbl">Founded UNIC Academy</div>
+    <div class="two-col">
+      <div>
+        <div class="sec-lbl">Why choose UNIC?</div>
+        <ul class="info-list">
+          <li>Faculty from IITs, NITs and reputed institutions</li>
+          <li>Personal mentorship and individual attention</li>
+          <li>Periodic evaluations and progress tracking</li>
+          <li>Complete coverage from basics to advanced level</li>
+          <li>PYQ practice and numerical shortcut techniques</li>
+          <li>Timely syllabus completion</li>
+        </ul>
+      </div>
+      <div>
+        <div class="sec-lbl">Student success stories</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="success-item"><div class="success-name">Kathir</div><div class="success-detail">M.Sc at NIT Trichy via IIT JAM</div></div>
+          <div class="success-item"><div class="success-name">Nandha Kumar</div><div class="success-detail">M.E at Anna University · TANCA Rank 1</div></div>
+          <div class="success-item"><div class="success-name">Gopinath</div><div class="success-detail">Ph.D at IIT Madras</div></div>
+          <div class="success-item"><div class="success-name">Madasamy</div><div class="success-detail">Government Polytechnic Lecturer (TRB)</div></div>
+        </div>
+      </div>
     </div>
   </div>
 
-
-  <!-- UNIC ACADEMY CARD -->
-  <div class="about-card academy-card">
-
-    <h2 class="section-title">UNIC Academy</h2>
-
-    <p class="journey-text">
-      Started during Navarathiri 2012 with just 4 students in Tirunelveli.
-      Today, UNIC Academy has guided more than 1000+ students in
-      GATE, IIT JAM, JEE, NEET, Engineering and Science subjects.
-    </p>
-
-    <h3>Vision</h3>
-    <p>
-      To impart world-class knowledge with strong moral values that empower
-      students in their academic, professional and personal lives.
-    </p>
-
-    <h3>Mission</h3>
-    <ul class="info-list">
-      <li>Outcome-based education with employability focus.</li>
-      <li>Build confidence through competitive exam training.</li>
-      <li>Create lifelong learners capable of adapting to new technologies.</li>
-    </ul>
-
-    <h3>Programs Offered</h3>
-    <div class="badge-list">
-      <span class="badge">GATE</span>
-      <span class="badge">IIT JAM</span>
-      <span class="badge">JEE</span>
-      <span class="badge">NEET</span>
-      <span class="badge">Engineering Subjects</span>
-      <span class="badge">Online Classes</span>
-      <span class="badge">Offline Classes</span>
+  <div id="achievements" class="ptab-panel">
+    <div class="sec-lbl">Major achievements</div>
+    <div class="achieve-grid">
+      <div class="achieve-card"><i class="ti ti-medal" aria-hidden="true"></i><div><div class="achieve-title">AIR 12 – GATE 2022</div><div class="achieve-sub">All India Rank 12 in GATE</div></div></div>
+      <div class="achieve-card"><i class="ti ti-award" aria-hidden="true"></i><div><div class="achieve-title">GATE Qualified 2011–2024</div><div class="achieve-sub">Consistent qualifier over 13 years</div></div></div>
+      <div class="achieve-card"><i class="ti ti-certificate" aria-hidden="true"></i><div><div class="achieve-title">IIT JAM Physics 2018 & 2019</div><div class="achieve-sub">Qualified both years</div></div></div>
+      <div class="achieve-card"><i class="ti ti-school" aria-hidden="true"></i><div><div class="achieve-title">MITx Certifications</div><div class="achieve-sub">Online certifications from MIT</div></div></div>
     </div>
+    <div class="sec-lbl" style="margin-top:0.5rem">Skills</div>
+    <div class="badge-wrap">
+      <span class="badge">AutoCAD</span><span class="badge">ANSYS</span><span class="badge">Pro-E</span><span class="badge">Python</span><span class="badge">MATLAB</span><span class="badge">Fortran</span><span class="badge">LaTeX</span><span class="badge">MS Office</span>
+    </div>
+  </div>
 
-    <h3>Why Choose UNIC Academy?</h3>
-    <ul class="info-list">
-      <li>Faculty from IITs, NITs and reputed institutions.</li>
-      <li>Personal mentorship and individual attention.</li>
-      <li>Periodic evaluations and progress tracking.</li>
-      <li>Complete coverage from basics to advanced level.</li>
-      <li>PYQ practice and numerical shortcut techniques.</li>
-      <li>Timely syllabus completion.</li>
-    </ul>
+  <div id="youtube" class="ptab-panel">
+    <div class="yt-block">
+      <i class="ti ti-brand-youtube" aria-hidden="true"></i>
+      <div class="yt-text">Providing free quality education through <strong style="color:#26215C">UNIC Academy</strong> and <strong style="color:#26215C">Arun's Idea</strong> YouTube channels — hundreds of videos in Tamil and English, reaching learners across the globe.</div>
+    </div>
+    <div class="two-col">
+      <div class="card" style="text-align:center">
+        <i class="ti ti-video" aria-hidden="true" style="font-size:28px;color:#534AB7;margin-bottom:8px;display:block"></i>
+        <div style="font-size:20px;font-weight:500;color:#534AB7">900+</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Educational videos published</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <i class="ti ti-world" aria-hidden="true" style="font-size:28px;color:#1D9E75;margin-bottom:8px;display:block"></i>
+        <div style="font-size:20px;font-weight:500;color:#1D9E75">Tamil & English</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Languages — reaching global learners</div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-lbl">Channels</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="card" style="display:flex;align-items:center;gap:12px">
+          <i class="ti ti-brand-youtube" aria-hidden="true" style="font-size:22px;color:#534AB7;flex-shrink:0"></i>
+          <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">UNIC Academy</div><div style="font-size:12px;color:var(--color-text-secondary)">Engineering & science coaching · GATE · IIT JAM · JEE · NEET</div></div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px">
+          <i class="ti ti-bulb" aria-hidden="true" style="font-size:22px;color:#534AB7;flex-shrink:0"></i>
+          <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Arun's Idea</div><div style="font-size:12px;color:var(--color-text-secondary)">Concepts, ideas and educational content in Tamil</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <h3>Student Success Stories</h3>
-    <ul class="info-list">
-      <li>Kathir – M.Sc at NIT Trichy through IIT JAM.</li>
-      <li>Nandha Kumar – M.E at Anna University (TANCA Rank 1).</li>
-      <li>Gopinath – Ph.D at IIT Madras.</li>
-      <li>Madasamy – Government Polytechnic Lecturer (TRB).</li>
-    </ul>
-
-    <h3>YouTube Mission</h3>
-    <p>
-      Providing free quality education through "UNIC Academy" and
-      "Arun's Idea" channels with hundreds of videos in Tamil and English,
-      aiming to reach learners across the globe.
-    </p>
-
+  <div id="contact" class="ptab-panel">
+    <div class="two-col">
+      <div class="card">
+        <div class="sec-lbl">Contact details</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px"><i class="ti ti-map-pin" aria-hidden="true" style="font-size:18px;color:#7F77DD;flex-shrink:0"></i><div><div style="font-size:11px;color:var(--color-text-secondary)">Location</div><div style="font-size:13px;color:var(--color-text-primary)">Tirunelveli, Tamil Nadu, India</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><i class="ti ti-mail" aria-hidden="true" style="font-size:18px;color:#7F77DD;flex-shrink:0"></i><div><div style="font-size:11px;color:var(--color-text-secondary)">Email</div><div style="font-size:13px;color:#534AB7">davidarun112@gmail.com</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><i class="ti ti-phone" aria-hidden="true" style="font-size:18px;color:#7F77DD;flex-shrink:0"></i><div><div style="font-size:11px;color:var(--color-text-secondary)">Phone</div><div style="font-size:13px;color:var(--color-text-primary)">+91 90034 09796</div></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><i class="ti ti-brand-youtube" aria-hidden="true" style="font-size:18px;color:#7F77DD;flex-shrink:0"></i><div><div style="font-size:11px;color:var(--color-text-secondary)">YouTube</div><div style="font-size:13px;color:#534AB7">UNIC Academy & Arun's Idea</div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="sec-lbl">About the founder</div>
+        <p style="font-size:12px;color:var(--color-text-secondary);line-height:1.7">Arun Sundara Nayagam D is a Ph.D. scholar at IIT Madras (Ocean Engineering), founder of UNIC Academy, and a dedicated educationist with 12+ years of teaching experience in Tirunelveli, Tamil Nadu.</p>
+        <div style="margin-top:12px">
+          <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px">Roles</div>
+          <div class="badge-wrap">
+            <span class="badge">Founder</span><span class="badge">Educationist</span><span class="badge">Lecturer</span><span class="badge">Researcher</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
+ 
 
 </div>
 
