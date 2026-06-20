@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     if (!email_id || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and Password are required",
+        message: "Email/Student ID and Password are required",
       });
     }
 
@@ -24,18 +24,20 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         query: `
-          query GetStudent($email_id: String!) {
+          query GetStudent($value: String!) {
             user_student(
               where: {
-                email_id: {
-                  _eq: $email_id
-                }
+                _or: [
+                { email_id: { _eq: $value } },
+                { std_id: { _eq: $value } }
+                ]
               }
             ) {
               user_id
               name
               email_id
               mobile
+              dob
               school_name
               class_name
               std_id
@@ -75,7 +77,7 @@ export default async function handler(req, res) {
     if (!student) {
       return res.status(401).json({
         success: false,
-        message: "Invalid Email",
+        message: "Invalid Email or Student ID",
       });
     }
 
