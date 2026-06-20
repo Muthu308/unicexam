@@ -43,16 +43,16 @@ body{background:#f0f4fb;color:#1e293b}
 .page.active{display:block}
 
 /* Profile */
-.pc-wrap{padding:1.5rem 0;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);font-family:var(--font-sans)}
+.pc-wrap{padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a;font-family:var(--font-sans)}
 .pc-hero{background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%);border-radius:var(--border-radius-lg);padding:1.5rem;display:flex;align-items:center;gap:1.25rem;margin-bottom:1rem}
 .pc-avatar{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pc-avatar i{font-size:30px;color:#fff}
 .pc-name{font-size:20px;font-weight:500;color:#fff;margin:0 0 2px}
 .pc-id{font-size:13px;color:rgba(255,255,255,0.8);margin:0;display:flex;align-items:center;gap:5px}
 .pc-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 10px;border-radius:20px;background:rgba(255,255,255,0.2);color:#fff;font-weight:500;margin-top:6px;border:0.5px solid rgba(255,255,255,0.35)}
-.pc-grid{display:grid;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);grid-template-columns:1fr 1fr;gap:1rem}
-.pc-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-radius:var(--border-radius-lg);overflow:hidden}
-.pc-sec-hdr{padding:12px 16px;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%)}
+.pc-grid{display:grid;padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a;grid-template-columns:1fr 1fr;gap:1rem}
+.pc-section{background:#0e1e4a;padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a;overflow:hidden}
+.pc-sec-hdr{padding:12px 16px;padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%)}
 .pc-sec-hdr i{font-size:16px;color:#fff}
 .pc-sec-hdr span{font-size:13px;font-weight:500;color:#fff;letter-spacing:.01em}
 .pc-row{display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:11px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
@@ -435,9 +435,17 @@ function getTrend(curr, prev) {
   if (!prev) return "";
   const diff = parseFloat(curr.percentage) - parseFloat(prev.percentage);
   const markDiff = parseFloat(curr.final_marks) - parseFloat(prev.final_marks);
+  const phDiff = (parseFloat(curr.ph) || 0) - (parseFloat(prev.ph) || 0);
+  const cyDiff = (parseFloat(curr.cy) || 0) - (parseFloat(prev.cy) || 0);
+  const maDiff = (parseFloat(curr.ma) || 0) - (parseFloat(prev.ma) || 0);
+  const trendMark = (val) => {
+    if (val > 0) return `<span class="up">▲ ${val}</span>`;
+    if (val < 0) return `<span class="dn">▼ ${Math.abs(val)}</span>`;
+    return `<span class="same">━ 0</span>`;  };
+ 
   const pStr = diff > 0 ? `<span class="up">▲ ${diff.toFixed(1)}%</span>` : diff < 0 ? `<span class="dn">▼ ${Math.abs(diff).toFixed(1)}%</span>` : `<span class="same">━ No change</span>`;
   const mStr = markDiff > 0 ? `<span class="up">+${markDiff} marks</span>` : markDiff < 0 ? `<span class="dn">${markDiff} marks</span>` : "";
-  return `${prev.exam_name} ➜ ${curr.exam_name} &nbsp;&nbsp;: ${pStr}${mStr ? " &nbsp;|&nbsp; " + mStr : ""}`;
+  return ` ${prev.exam_name} ➜ ${curr.exam_name} : ${pStr} &nbsp;|&nbsp; ${mStr} &nbsp;|&nbsp; Subject-wise changes [PH:&nbsp; ${trendMark(phDiff)}, &nbsp;CY:&nbsp; ${trendMark(cyDiff)}, &nbsp;MA:&nbsp; ${trendMark(maDiff)}]`;
 }
 
 let allResults = [];
@@ -447,7 +455,7 @@ async function loadStudentResults() {
     const res = await fetch("students.json");
     const data = await res.json();
     allResults = data.filter(item => String(item.s_id) === String(user.std_id));
-    console.log(allResults);
+    //console.log(allResults);
     if (!allResults.length) {
       document.getElementById("resultTable").innerHTML = `<tr><td colspan="11" class="no-data">No results found for your ID.</td></tr>`;
       document.getElementById("analysisTable").innerHTML = `<tr><td colspan="13" class="no-data">No data.</td></tr>`;
@@ -721,7 +729,8 @@ function showPdf(examName, btn) {
   console.log("Loading PDF:", pdf.pdf_url);
 
   // load into iframe
-  document.getElementById("pdfFrame").src = pdf.pdf_url;
+  //document.getElementById("pdfFrame").src = pdf.pdf_url;
+ window.open(pdf.pdf_url, "_blank", "noopener,noreferrer");
 }
 
 loadStudentResults();
