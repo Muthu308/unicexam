@@ -854,18 +854,19 @@ async function loadStudentResults() {
             <thead>
               <tr>
                 <th>Exam</th>
-                <th>PH</th><th>CY</th><th>MA</th>
-                <th>Total</th><th>%</th><th>Grade</th><th>Rank</th>
+                <th>PH</th><th>CY</th><th>MA</th><th>Bonus</th>
+                <th>Final Mark</th><th>%</th><th>Grade</th><th>Rank</th>
               </tr>
             </thead>
             <tbody>
               ${allResults.map(r => `
                 <tr>
                   <td>${r.exam_name}</td>
-                  <td>${r.ph} <label>(<span class="pos-marks">+${r.ph_correct * 4}</span> | <span class="neg-marks">${r.ph_wrong * -1}</span>)</label> </td>
-                  <td>${r.cy} <label>(<span class="pos-marks">+${r.cy_correct * 4}</span> | <span class="neg-marks">${r.cy_wrong * -1}</span>)</label> </td>
-                  <td>${r.ma} <label>(<span class="pos-marks">+${r.ma_correct * 4}</span> | <span class="neg-marks">${r.ma_wrong * -1}</span>)</label> </td>
-                  <td><strong>${r.final_marks}</strong></td>
+                  <td>${r.ph} <small>[<span class="pos-marks">+${r.ph_correct * 4}</span> | <span class="neg-marks">${r.ph_wrong * -1}</span>]</small> </td>
+                  <td>${r.cy} <small>[<span class="pos-marks">+${r.cy_correct * 4}</span> | <span class="neg-marks">${r.cy_wrong * -1}</span>]</small> </td>
+                  <td>${r.ma} <small>[<span class="pos-marks">+${r.ma_correct * 4}</span> | <span class="neg-marks">${r.ma_wrong * -1}</span>]</small> </td>
+                  <td><strong>${r.bonus}</strong></td>
+                  <td><strong>${r.final_marks}</strong> <small>[<span class="pos-marks">+${r.correct * 4}</span> | <span class="neg-marks">${r.wrong * -1}</span>]</small></td>
                   <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
                   <td class="${pctBClass(r.band)}">${r.band}%</td>
                   <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
