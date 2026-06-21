@@ -6,7 +6,11 @@
 <title>UNIC Academy – Student Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-<style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f0f4fb;color:#1e293b}
 
@@ -459,16 +463,16 @@ th.total-group{
   <div class="page" id="page-results">
        <div class="sec-box">
           <h2><i class="ti ti-notebook"></i> Important Notes:</h2>
-      <p style="font-size:10px; margin-top:5px;">
+      <p style="font-size:12px; margin-top:5px;">
     <b>Grade Scale: </b>
-    A+ : 85% - 100% (Outstanding), | A  : 70% - 84% (Excellent), | B  : 55% - 69% (Good), | C  : 40% - 54% (Average), | D  : Below 40% (Needs Improvement)
+    A+ : 85% - 100% (Outstanding), A  : 70% - 84% (Excellent), B  : 55% - 69% (Good), C  : 40% - 54% (Average), D  : Below 40% (Needs Improvement)
 </p>
 
-<p style="font-size:9px; line-height:1.1; margin-top:3px;">
+<p style="font-size:12px; line-height:1.1; margin-top:3px;">
     <b>Abbreviations: </b> C = Correct Answer, W = Wrong Answer, NA = Not Attempted, PH = Physics, CY = Chemistry, MA = Mathematics
 </p>
 
-<p style="font-size:9px; line-height:1.1; margin-top:3px;">
+<p style="font-size:12px; line-height:1.1; margin-top:3px;">
     There is no negative marking in any subject. Bonus marks may be awarded up to 5 marks each for Physics, Chemistry, Mathematics, and Overall performance. The maximum total bonus marks is 20.
 </p>
        </div>
@@ -941,7 +945,10 @@ async function loadStudentResults() {
   //document.getElementById("pdfFrame").src = pdf.pdf_url;
  window.open(pdf.pdf_url, "_blank", "noopener,noreferrer");
 }*/
-
+$(document).ready(function () {
+    $('#resultTable').DataTable();
+    $('#table2').DataTable();
+});
 loadStudentResults();
 //loadPdf();
 </script>
