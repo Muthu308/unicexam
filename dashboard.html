@@ -6,11 +6,7 @@
 <title>UNIC Academy – Student Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-    <style>
+<style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f0f4fb;color:#1e293b}
 
@@ -468,12 +464,12 @@ th.total-group{
     A+ : 85% - 100% (Outstanding), A  : 70% - 84% (Excellent), B  : 55% - 69% (Good), C  : 40% - 54% (Average), D  : Below 40% (Needs Improvement)
 </p>
 
-<p style="font-size:12px; line-height:1.1; margin-top:3px;">
+<p style="font-size:12px; line-height:1.1; margin-top:5px;">
     <b>Abbreviations: </b> C = Correct Answer, W = Wrong Answer, NA = Not Attempted, PH = Physics, CY = Chemistry, MA = Mathematics
 </p>
 
-<p style="font-size:12px; line-height:1.1; margin-top:3px;">
-    There is no negative marking in any subject. Bonus marks may be awarded up to 5 marks each for Physics, Chemistry, Mathematics, and Overall performance. The maximum total bonus marks is 20.
+<p style="font-size:12px; line-height:1.1; margin-top:5px;">
+   <b>>Bonus:</b There is no negative marking in any subject. Bonus marks may be awarded up to 5 marks each for Physics, Chemistry, Mathematics, and Overall performance. The maximum total bonus marks is 20.
 </p>
        </div>
            
@@ -866,9 +862,9 @@ async function loadStudentResults() {
               ${allResults.map(r => `
                 <tr>
                   <td>${r.exam_name}</td>
-                  <td>${r.ph} (<span class="pos-marks">+${r.ph_correct * 4}</span>,  <span class="neg-marks">${r.ph_wrong * -1}</span>) </td>
-                  <td>${r.cy} (<span class="pos-marks">+${r.cy_correct * 4}</span>,  <span class="neg-marks">${r.cy_wrong * -1}</span>)</td>
-                  <td>${r.ma} (<span class="pos-marks">+${r.ma_correct * 4}</span>,  <span class="neg-marks">${r.ma_wrong * -1}</span>)</td>
+                  <td>${r.ph} <label>(<span class="pos-marks">+${r.ph_correct * 4}</span> | <span class="neg-marks">${r.ph_wrong * -1}</span>)</label> </td>
+                  <td>${r.cy} <label>(<span class="pos-marks">+${r.cy_correct * 4}</span> | <span class="neg-marks">${r.cy_wrong * -1}</span>)</label> </td>
+                  <td>${r.ma} <label>(<span class="pos-marks">+${r.ma_correct * 4}</span> | <span class="neg-marks">${r.ma_wrong * -1}</span>)</label> </td>
                   <td><strong>${r.final_marks}</strong></td>
                   <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
                   <td class="${pctBClass(r.band)}">${r.band}%</td>
@@ -945,9 +941,7 @@ async function loadStudentResults() {
   //document.getElementById("pdfFrame").src = pdf.pdf_url;
  window.open(pdf.pdf_url, "_blank", "noopener,noreferrer");
 }*/
-$(document).ready(function () {
-    $('#resultsTable1').DataTable();
-});
+
 loadStudentResults();
 //loadPdf();
 </script>
