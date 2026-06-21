@@ -195,7 +195,30 @@ body{background:#f0f4fb;color:#1e293b}
     font-size:12px;
     font-weight:600;
 }
+.bandAPlus{
+    color:green;
+    font-weight:bold;
+}
 
+.bandA{
+    color:#0056b3;
+    font-weight:bold;
+}
+
+.bandB{
+    color:#b36b00;
+    font-weight:bold;
+}
+
+.bandC{
+    color:#8a2be2;
+    font-weight:bold;
+}
+
+.bandD{
+    color:red;
+    font-weight:bold;
+}
 @media (max-width:768px){
 
     .pc-grid{
@@ -358,9 +381,9 @@ th.total-group{
     <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
     <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
-    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Full Analysis</button>
+   <!-- <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Full Analysis</button>-->
     <div class="nav-label">Resources</div>
-    <button class="nav-item" onclick="showPage('pdf',this)"><i class="ti ti-file-type-pdf"></i> Result PDF</button>
+   <!-- <button class="nav-item" onclick="showPage('pdf',this)"><i class="ti ti-file-type-pdf"></i> Result PDF</button>-->
   </nav>
   <div class="sb-bottom">
     <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:15px"></i> Logout</button>
@@ -434,6 +457,22 @@ th.total-group{
  
   <!-- EXAM RESULTS -->
   <div class="page" id="page-results">
+       <div class="sec-box">
+          <h2><i class="ti ti-notebook"></i> Important Notes:</h2>
+      <p style="font-size:10px; margin-top:5px;">
+    <b>Grade Scale: </b>
+    A+ : 85% - 100% (Outstanding), | A  : 70% - 84% (Excellent), | B  : 55% - 69% (Good), | C  : 40% - 54% (Average), | D  : Below 40% (Needs Improvement)
+</p>
+
+<p style="font-size:9px; line-height:1.1; margin-top:3px;">
+    <b>Abbreviations: </b> C = Correct Answer, W = Wrong Answer, NA = Not Attempted, PH = Physics, CY = Chemistry, MA = Mathematics
+</p>
+
+<p style="font-size:9px; line-height:1.1; margin-top:3px;">
+    There is no negative marking in any subject. Bonus marks may be awarded up to 5 marks each for Physics, Chemistry, Mathematics, and Overall performance. The maximum total bonus marks is 20.
+</p>
+       </div>
+           
     <div class="sec-box">
       <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
       <div class="tbl-wrap">
@@ -445,11 +484,12 @@ th.total-group{
               <th>Physics</th>
               <th>Chemistry</th>
               <th>Maths</th>
-              <th>Positive<br><span style="font-size:10px;font-weight:400">Correct×4</span></th>
-              <th>Negative<br><span style="font-size:10px;font-weight:400">Wrong×(−1)</span></th>
+              <th>(+ Marks)<br><span style="font-size:10px;font-weight:400">C×4</span></th>
+              <th>(- Marks)<br><span style="font-size:10px;font-weight:400">W×(−1)</span></th>
               <th>Bonus</th>
-              <th>Total Marks</th>
+              <th>Final Marks</th>
               <th>%</th>
+              <th>Grade</th>
               <th>Comment</th>
             </tr>
           </thead>
@@ -468,11 +508,7 @@ th.total-group{
         <div class="sc"><h3>Loading</h3><p>—</p></div>
       </div>
     </div>
-  </div>
-
-  <!-- FULL ANALYSIS -->
-  <div class="page" id="page-analysis">
-    <div class="sec-box">
+      <div class="sec-box">
       <h2><i class="ti ti-clipboard-list"></i> Exam Analysis — Correct / Wrong / Not Attempted</h2>
       <div class="tbl-wrap">
         <table>
@@ -511,15 +547,20 @@ th.total-group{
     </div>
   </div>
 
+  <!-- FULL ANALYSIS -->
+<!--  <div class="page" id="page-analysis">
+    
+  </div>-->
+
   <!-- PDF -->
-  <div class="page" id="page-pdf">
+ <!-- <div class="page" id="page-pdf">
     <div class="sec-box">
       <h2><i class="ti ti-file-type-pdf"></i> Result PDF Viewer</h2>
       <div class="pdf-bar" id="pdfButtons"><p style="color:#94a3b8;font-size:12.5px">Loading PDFs…</p></div>
       <iframe class="pdf-frame" id="pdfFrame" title="Result PDF"></iframe>
     </div>
   </div>
-</div>
+</div>-->
 
 <script>
 function toggleSidebar(){
@@ -569,8 +610,15 @@ function pctClass(p) {
   if (p >= 40) return "pct-avg";
   return "pct-low";
 }
-
-// Compute strength comment per exam
+function pctBClass(p) {
+  p = parseFloat(p);
+  if (p === 'A+') return "bandAPlus";
+  if (p === 'A') return "bandA";
+  if (p === 'B') return "bandB";
+  if (p === 'C') return "bandC";
+  return "bandD";
+}
+    // Compute strength comment per exam
 function getComment(r) {
   const phPct = r.ph_correct / (r.ph_correct + r.ph_wrong + r.ph_not_attempted) * 100;
   const cyPct = r.cy_correct / (r.cy_correct + r.cy_wrong + r.cy_not_attempted) * 100;
@@ -639,6 +687,7 @@ async function loadStudentResults() {
           <td>${bonus > 0 ? '<span class="pos-marks">+' + bonus + '</span>' : '—'}</td>
           <td><strong>${r.final_marks}</strong></td>
           <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+          <td class="${pctBClass(r.band)}">${r.band}%</td>
           <td>${getComment(r)}</td>
         </tr>
         ${trend ? `<tr class="trend-row"><td></td><td colspan="10">${trend}</td></tr>` : ""}
@@ -686,7 +735,6 @@ async function loadStudentResults() {
     const maxV = arr => Math.max(...arr);
     const minV = arr => Math.min(...arr);
     const avgC = (key) => (allResults.reduce((s,r) => s + Number(r[key]), 0) / total).toFixed(1);
-
     const avgPh = avg(phMarks);
     const avgCy = avg(cyMarks);
     const avgMa = avg(maMarks);
@@ -807,16 +855,19 @@ async function loadStudentResults() {
               <tr>
                 <th>Exam</th>
                 <th>PH</th><th>CY</th><th>MA</th>
-                <th>Total</th><th>%</th><th>Rank</th>
+                <th>Total</th><th>%</th><th>Grade</th><th>Rank</th>
               </tr>
             </thead>
             <tbody>
               ${allResults.map(r => `
                 <tr>
                   <td>${r.exam_name}</td>
-                  <td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>
+                  <td>${r.ph} (<span class="pos-marks">+${r.ph_correct * 4}</span>,  <span class="neg-marks">${r.ph_wrong * -1}</span>) </td>
+                  <td>${r.cy} (<span class="pos-marks">+${r.cy_correct * 4}</span>,  <span class="neg-marks">${r.cy_wrong * -1}</span>)</td>
+                  <td>${r.ma} (<span class="pos-marks">+${r.ma_correct * 4}</span>,  <span class="neg-marks">${r.ma_wrong * -1}</span>)</td>
                   <td><strong>${r.final_marks}</strong></td>
                   <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+                  <td class="${pctBClass(r.band)}">${r.band}%</td>
                   <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
                 </tr>`).join("")}
             </tbody>
@@ -832,10 +883,10 @@ async function loadStudentResults() {
 }
 
 // PDF
-let studentPdfs = [];
+//let studentPdfs = [];
 
 /* Load PDFs from JSON */
-async function loadPdf() {
+/*async function loadPdf() {
   try {
     const res = await fetch("drive_link.json");
     const pdfs = await res.json();
@@ -866,9 +917,10 @@ async function loadPdf() {
       `<p class="no-data">Could not load PDFs.</p>`;
   }
 }
-
+*/
+    
 /* Show selected PDF */
-function showPdf(examName, btn) {
+/*function showPdf(examName, btn) {
   const pdf = studentPdfs.find(p => p.exam_name === examName);
 
   if (!pdf) {
@@ -888,10 +940,10 @@ function showPdf(examName, btn) {
   // load into iframe
   //document.getElementById("pdfFrame").src = pdf.pdf_url;
  window.open(pdf.pdf_url, "_blank", "noopener,noreferrer");
-}
+}*/
 
 loadStudentResults();
-loadPdf();
+//loadPdf();
 </script>
 </body>
 </html>
