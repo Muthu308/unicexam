@@ -480,7 +480,7 @@ th.total-group{
     <div class="sec-box">
       <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
       <div class="tbl-wrap">
-        <table>
+        <table id="resultsTable1">
           <thead>
             <tr>              
               <th>Exam</th>
@@ -946,8 +946,7 @@ async function loadStudentResults() {
  window.open(pdf.pdf_url, "_blank", "noopener,noreferrer");
 }*/
 $(document).ready(function () {
-    $('#resultTable').DataTable();
-    $('#table2').DataTable();
+    $('#resultsTable1').DataTable();
 });
 loadStudentResults();
 //loadPdf();
