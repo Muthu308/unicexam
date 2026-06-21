@@ -1,553 +1,638 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>UNIC Academy Exam</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIC Academy – Tirunelveli</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-  :root {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f7f6f3;
-    --text-primary: #1a1a18;
-    --text-secondary: #5f5e5a;
-    --border: rgba(0,0,0,0.12);
-    --border-md: rgba(0,0,0,0.22);
-    --purple-50: #EEEDFE;
-    --purple-200: #AFA9EC;
-    --purple-400: #7F77DD;
-    --purple-600: #534AB7;
-    --purple-800: #3C3489;
-    --purple-900: #26215C;
-    --teal-50: #E1F5EE;
-    --teal-600: #0F6E56;
-    --teal-800: #085041;
-    --teal-400: #5DCAA5;
-    --gold-50: #FAEEDA;
-    --gold-600: #854F0B;
-    --gold-800: #633806;
-    --gold-200: #FAC775;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-  }
-body{font-family:var(--font-sans);background:var(--color-background-tertiary);min-height:100vh}
-.site-header{background:linear-gradient(135deg,#1a2f6e 0%,#0e1e4a 100%);padding:0;position:relative;overflow:hidden}
-.header-glow{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,215,0,0.08);pointer-events:none}
-.header-inner{padding:2rem 1.5rem 1.5rem;position:relative;z-index:1}
-.brand-row{display:flex;align-items:center;gap:14px;margin-bottom:0.5rem}
-.brand-logo{width:52px;height:52px;background:#f0b800;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#1a2f6e;flex-shrink:0;letter-spacing:-0.5px}
-.brand-name{color:#fff;font-size:25px;font-weight:600;line-height:1.2}
-.brand-tagline{color:rgba(255,255,255,0.55);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
-.brand-since{color:#f0b800;font-size:12px;font-weight:500;margin-top:3px}
-.header-sub{color:rgba(255,255,255,0.7);font-size:12.5px;margin-top:0.6rem;line-height:1.5}
-.tab-bar{display:flex;background:#111e4a;border-bottom:1px solid rgba(255,255,255,0.08)}
-.tab-btn{flex:1;padding:0.85rem 0.5rem;font-size:14.5px;color:rgba(255,255,255,0.5);border:none;background:none;cursor:pointer;font-family:var(--font-sans);border-bottom:3px solid transparent;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.tab-btn.active{color:#f0b800;border-bottom-color:#f0b800}
-.tab-btn:hover:not(.active){color:rgba(255,255,255,0.8)}
-.main{padding:1.5rem}
+:root{
+  --navy:#0f1f5c;
+  --navy-dark:#091545;
+  --navy-mid:#1a2f6e;
+  --gold:#f0b800;
+  --gold-light:#fff8d6;
+  --gold-dark:#7a5500;
+  --purple:#534AB7;
+  --purple-light:#EEEDFE;
+  --purple-mid:#AFA9EC;
+  --teal:#0F6E56;
+  --teal-light:#E1F5EE;
+  --teal-mid:#5DCAA5;
+  --bg:#f4f5f9;
+  --surface:#ffffff;
+  --surface2:#f7f8fc;
+  --text:#1a1a2e;
+  --text2:#5a5a72;
+  --text3:#9898b0;
+  --border:rgba(0,0,0,0.09);
+  --border2:rgba(0,0,0,0.16);
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;
+  --shadow:0 2px 12px rgba(15,31,92,0.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+
+/* ───── HEADER ───── */
+.site-header{background:linear-gradient(150deg,var(--navy) 0%,var(--navy-dark) 100%);position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(9,21,69,0.35)}
+.header-top{display:flex;align-items:center;gap:12px;padding:10px 16px 0}
+.brand-logo{width:42px;height:42px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:var(--navy);flex-shrink:0;letter-spacing:-1px}
+.brand-info{flex:1;min-width:0}
+.brand-name{color:#fff;font-size:18px;font-weight:700;line-height:1.1;letter-spacing:-0.3px}
+.brand-meta{color:var(--gold);font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px}
+.header-tagline{color:rgba(255,255,255,0.5);font-size:10px;letter-spacing:.8px;text-transform:uppercase;padding:4px 16px 0}
+.tab-bar{display:flex;margin-top:6px;border-top:1px solid rgba(255,255,255,0.07);overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{flex:1;min-width:80px;padding:10px 8px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.45);border:none;background:none;cursor:pointer;font-family:inherit;border-bottom:2.5px solid transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+.tab-btn i{font-size:15px}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(240,184,0,0.06)}
+.tab-btn:hover:not(.active){color:rgba(255,255,255,0.75)}
+
+/* ───── MAIN ───── */
+main{flex:1;padding:14px 12px 24px}
 .panel{display:none}
 .panel.active{display:block}
 
-.auth-card{background:var(--color-background-primary);border:0.5px solid var(--purple-50);border-radius:var(--radius-lg);padding:1.5rem;max-width:520px;margin:0 auto}
-.auth-title{font-size:20px;font-weight:500;color:blue;margin-bottom:0.3rem}
-.auth-sub{font-size:14px;color:var(--text-secondary);margin-bottom:1.25rem}
-.form-row{margin-bottom:0.9rem}
-.form-label{display:block;font-size:14px;color:var(--color-text-secondary);margin-bottom:5px;font-weight:500}
-.form-row input,.form-row select{width:100%;padding:9px 12px;border:0.5px solid var(--bg-secondary);border-radius:var(--border-radius-md);font-size:16px;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);outline:none;transition:border 0.15s}
-.form-row input:focus,.form-row select:focus{border-color:#blue;box-shadow:0 0 0 3px rgba(26,47,110,0.08)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.9rem 1rem}
-.btn-primary{width:100%;padding:10px;background:#1a2f6e;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14.5px;font-weight:500;cursor:pointer;font-family:var(--font-sans);margin-top:0.5rem;transition:background 0.15s}
-.btn-primary:hover{background:#142558}
-.auth-link{text-align:center;margin-top:1rem;font-size:13px;color:var(--color-text-secondary)}
-.auth-link a{color:#1a2f6e;text-decoration:none;font-weight:500}
+/* ───── ABOUT PANEL ───── */
+.about-wrap{display:flex;flex-direction:column;gap:12px}
 
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem}
-.stat-box{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;text-align:center}
-.stat-num{font-size:22px;font-weight:600;color:#1a2f6e;line-height:1}
-.stat-lbl{font-size:11.5px;color:var(--color-text-secondary);margin-top:4px}
+/* Academy hero banner */
+.academy-banner{background:linear-gradient(135deg,var(--navy) 0%,#1e3a8a 100%);border-radius:var(--r16);padding:18px 16px;color:#fff;position:relative;overflow:hidden}
+.academy-banner::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:rgba(240,184,0,0.12);border-radius:50%}
+.academy-banner::after{content:'';position:absolute;bottom:-20px;left:-20px;width:80px;height:80px;background:rgba(255,255,255,0.04);border-radius:50%}
+.ab-title{font-size:22px;font-weight:800;letter-spacing:-0.5px;line-height:1.1;position:relative;z-index:1}
+.ab-title span{color:var(--gold)}
+.ab-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;letter-spacing:.5px;text-transform:uppercase;position:relative;z-index:1}
+.ab-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;position:relative;z-index:1}
+.ab-stat{background:rgba(255,255,255,0.09);border-radius:var(--r8);padding:8px 6px;text-align:center;border:0.5px solid rgba(255,255,255,0.12)}
+.ab-stat-n{font-size:16px;font-weight:700;color:var(--gold);line-height:1}
+.ab-stat-l{font-size:9px;color:rgba(255,255,255,0.55);margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
 
-.badge-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:0.75rem}
-.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;background:#e8edff;color:#1a2f6e}
-.badge.gold{background:#fff4cc;color:#7a5500}
+/* Profile hero */
+.profile-hero{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r16);padding:14px;box-shadow:var(--shadow)}
+.ph-row{display:flex;align-items:center;gap:12px}
+.avatar{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2.5px solid var(--purple-mid);flex-shrink:0}
+.ph-name{font-size:16px;font-weight:700;color:var(--text);line-height:1.2}
+.ph-sub{font-size:11px;color:var(--purple);margin-top:3px;font-weight:500}
+.ph-contacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ph-contact{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);background:var(--surface2);border:0.5px solid var(--border);border-radius:20px;padding:3px 9px}
+.ph-contact i{font-size:12px;color:var(--purple)}
 
-.journey-text{font-size:13.5px;color:var(--color-text-secondary);line-height:1.7}
+/* Inner tab bar (ptabs) */
+.ptab-wrap{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r12);padding:4px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;box-shadow:var(--shadow)}
+.ptab-wrap::-webkit-scrollbar{display:none}
+.ptab-btn{flex:1;min-width:60px;padding:7px 10px;font-size:11px;font-weight:500;color:var(--text2);background:none;border:none;border-radius:var(--r8);cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .18s;white-space:nowrap}
+.ptab-btn i{font-size:14px}
+.ptab-btn.active{background:var(--purple-light);color:var(--purple);font-weight:600}
+.ptab-btn:hover:not(.active){background:var(--surface2)}
+.ptab-panel{display:none;flex-direction:column;gap:10px}
+.ptab-panel.active{display:flex}
 
-.ftr{background:#0a1535;padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
-.ftr-left{display:flex;align-items:center;gap:8px}
-.ftr-ico{width:28px;height:28px;background:#f0b800;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0e1e4a}
-.ftr-name{color:rgba(255,255,255,0.6);font-size:14px}
-.ftr-links{display:flex;gap:1rem}
-.ftr-links a{color:rgba(255,255,255,0.3);font-size:14px;text-decoration:none}
-.ftr-links a:hover{color:#f0b800}
-.ftr-copy{width:100%;text-align:center;color:rgba(255,255,255,0.18);font-size:12px;padding-top:0.6rem;border-top:0.5px solid rgba(255,255,255,0.06)}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Cards */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r12);padding:14px;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.card-title::after{content:'';flex:1;height:0.5px;background:var(--border)}
 
-   .container { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+/* Two col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.two-col{grid-template-columns:1fr}}
 
-  /* Profile hero */
-  .profile-hero {
-    display: flex; align-items: center; gap: 1.25rem;
-    padding: 1.25rem 1.5rem;
-    background: var(--bg-primary);
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-  }
-  .avatar {
-    width: 72px; height: 72px; border-radius: 50%;
-    object-fit: cover; border: 2px solid var(--purple-200); flex-shrink: 0;
-  }
-  .hero-name { font-size: 18px; font-weight: 500; margin-bottom: 3px; }
-  .hero-sub { font-size: 12px; color: var(--purple-600); margin-bottom: 8px; }
-  .hero-contacts { display: flex; flex-wrap: wrap; gap: 10px; }
-  .hero-contact { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); }
-  .hero-contact i { font-size: 14px; color: var(--purple-400); }
+/* Objective */
+.obj-block{background:linear-gradient(90deg,var(--purple-light),#fff);border-left:3px solid var(--purple);border-radius:0 var(--r8) var(--r8) 0;padding:11px 13px;font-size:12.5px;color:var(--navy);line-height:1.7;font-style:italic}
 
-  /* Stats */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .stat-box { background: var(--bg-primary); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 12px; text-align: center; }
-  .stat-n { font-size: 22px; font-weight: 500; color: var(--purple-600); }
-  .stat-l { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+/* Education */
+.edu-item{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+.edu-item:last-child{border-bottom:none;padding-bottom:0}
+.edu-dot{width:7px;height:7px;border-radius:50%;background:var(--purple);flex-shrink:0;margin-top:5px}
+.edu-deg{font-size:12.5px;font-weight:600;color:var(--text)}
+.edu-inst{font-size:11px;color:var(--text2);margin-top:1px}
 
-  /* ptabs */
-  .ptab-bar {
-    display: flex; background: var(--bg-primary);
-    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
-    overflow: hidden; padding: 4px; gap: 2px;
-  }
-  .ptab-btn {
-    flex: 1; padding: 8px 10px; font-size: 12.5px; font-weight: 400;
-    color: var(--text-secondary); background: none;
-    border: none; border-radius: var(--radius-md);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    gap: 5px; transition: background .15s, color .15s; white-space: nowrap;
-  }
-  .ptab-btn i { font-size: 15px; }
-  .ptab-btn.active { background: var(--purple-50); color: var(--purple-800); font-weight: 500; }
-  .ptab-btn:hover:not(.active) { background: var(--bg-secondary); color: var(--text-primary); }
+/* Badges */
+.badge-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.badge{font-size:10.5px;padding:3px 9px;border-radius:20px;font-weight:500;background:var(--purple-light);color:var(--purple);border:0.5px solid var(--purple-mid)}
+.badge.teal{background:var(--teal-light);color:var(--teal);border-color:var(--teal-mid)}
+.badge.gold{background:var(--gold-light);color:var(--gold-dark);border-color:#e8c94a}
+.badge.navy{background:#e8edff;color:var(--navy-mid);border-color:#b5c4f0}
 
-  /* Panels */
-  .ptab-panel { display: none; flex-direction: column; gap: 1rem; }
-  .ptab-panel.active { display: flex; }
+/* Info list */
+.info-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.info-list li{display:flex;gap:7px;font-size:12px;color:var(--text2);line-height:1.5}
+.info-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--teal-mid);flex-shrink:0;margin-top:5px}
 
-  /* Cards */
-  .card {
-    background: var(--bg-primary); border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
-  }
-  .two-col { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 1rem; }
+/* Success items */
+.success-item{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--r8);padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.success-name{font-size:12.5px;font-weight:600}
+.success-detail{font-size:11px;color:var(--text2);text-align:left}
 
-  /* Section label */
-  .sec-lbl {
-    font-size: 11px; font-weight: 500; color: var(--text-secondary);
-    text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .sec-lbl::after { content: ""; flex: 1; height: 0.5px; background: var(--border); }
 
-  /* Education */
-  .edu-item { display: flex; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
-  .edu-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .edu-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple-400); flex-shrink: 0; margin-top: 5px; }
-  .edu-deg { font-size: 13px; font-weight: 500; }
-  .edu-inst { font-size: 12px; color: var(--text-secondary); }
+/* Achieve */
+.achieve-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:380px){.achieve-grid{grid-template-columns:1fr}}
+.achieve-card{background:var(--gold-light);border:0.5px solid #e8c94a;border-radius:var(--r8);padding:10px;display:flex;gap:8px;align-items:flex-start}
+.achieve-card i{font-size:18px;color:var(--gold-dark);flex-shrink:0;margin-top:1px}
+.achieve-title{font-size:12px;font-weight:600;color:var(--gold-dark)}
+.achieve-sub{font-size:10.5px;color:#8a6400;margin-top:2px}
 
-  /* Badges */
-  .badge-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
-  .badge { font-size: 11px; padding: 3px 9px; border-radius: var(--radius-md); background: var(--purple-50); color: var(--purple-800); border: 0.5px solid var(--purple-200); }
-  .badge.teal { background: var(--teal-50); color: var(--teal-800); border-color: var(--teal-400); }
-  .badge.gold { background: var(--gold-50); color: var(--gold-800); border-color: var(--gold-200); }
+/* YouTube */
+.yt-banner{background:var(--purple-light);border-radius:var(--r12);padding:14px;display:flex;gap:10px;align-items:flex-start;border:0.5px solid var(--purple-mid)}
+.yt-banner i{font-size:24px;color:var(--purple);flex-shrink:0;margin-top:2px}
+.yt-text{font-size:12.5px;color:var(--navy);line-height:1.65}
+.yt-channel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r12);padding:12px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.yt-ch-icon{width:40px;height:40px;border-radius:10px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.yt-ch-icon i{font-size:20px;color:var(--purple)}
+.yt-ch-name{font-size:13px;font-weight:600}
+.yt-ch-desc{font-size:11px;color:var(--text2);margin-top:1px}
+.yt-ch-link{font-size:10.5px;color:var(--purple);margin-top:3px}
 
-  /* Info list */
-  .info-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-  .info-list li { display: flex; gap: 7px; font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-  .info-list li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; margin-top: 5px; }
+/* Contact */
+.contact-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.contact-row:last-child{border-bottom:none}
+.contact-icon{width:34px;height:34px;border-radius:9px;background:var(--purple-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-icon i{font-size:16px;color:var(--purple)}
+.contact-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.contact-val{font-size:12.5px;color:var(--text);font-weight:500;margin-top:1px}
+.contact-val.link{color:var(--purple)}
 
-  /* Success items */
-  .success-item { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 9px 11px; }
-  .success-name { font-size: 13px; font-weight: 500; }
-  .success-detail { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+/* Team */
+.team-section-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin:4px 0 6px;display:flex;align-items:center;gap:6px}
+.team-section-label::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-bottom:10px}
+.team-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r12);padding:12px 10px;text-align:center;box-shadow:var(--shadow)}
+.team-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin:0 auto 8px;flex-shrink:0}
+.team-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+.team-role{font-size:10.5px;color:var(--text2);margin-top:3px;line-height:1.4}
+.team-tag{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:20px;margin-top:5px;font-weight:600}
 
-  /* Achievement cards */
-  .achieve-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
-  .achieve-card { background: var(--gold-50); border: 0.5px solid var(--gold-200); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px; }
-  .achieve-card i { font-size: 18px; color: var(--gold-800); flex-shrink: 0; margin-top: 1px; }
-  .achieve-title { font-size: 13px; font-weight: 500; color: var(--gold-800); }
-  .achieve-sub { font-size: 11px; color: var(--gold-600); margin-top: 2px; }
+/* ───── AUTH PANELS ───── */
+.auth-wrap{max-width:480px;margin:0 auto}
+.auth-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r16);padding:20px 18px;box-shadow:var(--shadow)}
+.auth-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.auth-head-icon{width:40px;height:40px;background:var(--navy);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.auth-head-icon i{font-size:20px;color:var(--gold)}
+.auth-title{font-size:18px;font-weight:700;color:var(--navy)}
+.auth-sub{font-size:12px;color:var(--text2);margin-top:1px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.form-grid{grid-template-columns:1fr}}
+.form-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.form-row:last-of-type{margin-bottom:0}
+.form-label{font-size:11.5px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em}
+.form-row input,.form-row select{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--r8);font-size:13.5px;background:var(--surface);color:var(--text);font-family:inherit;outline:none;transition:border .15s,box-shadow .15s;-webkit-appearance:none}
+.form-row input:focus,.form-row select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(15,31,92,0.09)}
+.form-row input::placeholder{color:var(--text3)}
+.btn-primary{width:100%;padding:11px;background:var(--navy);color:#fff;border:none;border-radius:var(--r8);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:14px;transition:background .15s,transform .1s;letter-spacing:.2px}
+.btn-primary:hover{background:var(--navy-dark)}
+.btn-primary:active{transform:scale(0.98)}
+.auth-divider{text-align:center;color:var(--text3);font-size:12px;margin:12px 0}
+.auth-link-row{text-align:center;font-size:12.5px;color:var(--text2);margin-top:12px}
+.auth-link-row a{color:var(--navy);font-weight:600;text-decoration:none}
+.auth-link-row a:hover{text-decoration:underline}
 
-  /* Objective block */
-  .obj-block { background: var(--bg-secondary); border-left: 3px solid var(--purple-400); padding: 12px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.7; border-radius: 0; }
+/* ───── FOOTER ───── */
+footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
+.footer-inner{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}
+.footer-brand{display:flex;align-items:center;gap:8px}
+.footer-logo{width:28px;height:28px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--navy)}
+.footer-name{color:rgba(255,255,255,0.55);font-size:12.5px}
+.footer-links{display:flex;flex-wrap:wrap;gap:10px}
+.footer-links a{color:rgba(255,255,255,0.3);font-size:12px;text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--gold)}
+.footer-copy{width:100%;text-align:center;color:rgba(255,255,255,0.18);font-size:11px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.06);margin-top:4px}
 
-  /* YouTube block */
-  .yt-block { background: var(--purple-50); border-radius: var(--radius-md); padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
-  .yt-block i { font-size: 22px; color: var(--purple-600); flex-shrink: 0; margin-top: 1px; }
-  .yt-text { font-size: 13px; color: var(--purple-800); line-height: 1.6; }
-
-  /* Contact detail rows */
-  .contact-detail { display: flex; align-items: center; gap: 10px; }
-  .contact-detail i { font-size: 18px; color: var(--purple-400); flex-shrink: 0; }
-  .contact-label { font-size: 11px; color: var(--text-secondary); }
-  .contact-value { font-size: 13px; color: var(--text-primary); }
-  .contact-value.link { color: var(--purple-600); }
-
-  @media (max-width: 560px) {
-    .stats-row { grid-template-columns: repeat(2,1fr); }
-    .two-col { grid-template-columns: 1fr; }
-    .ptab-btn span { display: none; }
-    .profile-hero { flex-direction: column; text-align: center; }
-    .hero-contacts { justify-content: center; }
-  }
-  .pav-card{
-  max-width:800px;
-  margin:auto;
-  padding:12px;  
-  border-radius:20px;
-  box-shadow:
-    0 8px 24px rgba(0,0,0,.06),
-    0 20px 48px rgba(0,0,0,.08);
-}
+/* ── Notification toast ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(15,31,92,0.35)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{background:#0F6E56}
+.toast.error{background:#b91c1c}
 </style>
+</head>
+<body>
 
-<div class="site-header">
-  <div class="header-glow"></div>
-  <div class="header-inner">
-    <div class="brand-row">
-      <div class="brand-logo">U</div>
-      <div>
-        <div class="brand-name">UNIC Academy</div>
-        <div class="brand-since">Since 2013</div>
-        <div class="brand-tagline">Clarity • Confidence • Results</div>
-      </div>
+<!-- ═══ HEADER ═══ -->
+<header class="site-header">
+  <div class="header-top">
+    <div class="brand-logo">U</div>
+    <div class="brand-info">
+      <div class="brand-name">UNIC Academy</div>
+      <div class="brand-meta">Since 2012 &nbsp;·&nbsp; Tirunelveli, Chennai</div>
     </div>
-    <div class="header-sub">Empowering Students for IIT-JEE, NEET &amp; Academic Excellence</div>
   </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="showTab('about',this)">
-      <i class="ti ti-info-circle" aria-hidden="true"></i> About-Unic Academic
-    </button>    
-    <button class="tab-btn" onclick="showTab('login',this)">
+  <div class="header-tagline">Clarity &nbsp;·&nbsp; Confidence &nbsp;·&nbsp; Results</div>
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" onclick="showTab('about',this)" role="tab" aria-selected="true">
+      <i class="ti ti-school" aria-hidden="true"></i> About
+    </button>
+    <button class="tab-btn" onclick="showTab('login',this)" role="tab">
       <i class="ti ti-login" aria-hidden="true"></i> Login
     </button>
-    <button class="tab-btn" onclick="showTab('register',this)">
+    <button class="tab-btn" onclick="showTab('register',this)" role="tab">
       <i class="ti ti-user-plus" aria-hidden="true"></i> Register
     </button>
-    
-  </div>
-</div>
+  </nav>
+</header>
 
-<div class="main">
+<!-- ═══ MAIN ═══ -->
+<main>
 
-  <!-- Register Panel -->
-<div class="panel" id="panel-register">
-  <div class="auth-card">
-    <div class="auth-title">Create your account</div>
-    <div class="auth-sub">Start your journey with UNIC Academy</div>
-
-    <form id="registerForm">
-      <div class="form-grid">
-
-        <div class="form-row">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="name" placeholder="Your name" required>
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">Email</label>
-          <input type="email" id="email_id" placeholder="email@example.com" required>
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">Mobile</label>
-          <input type="tel" id="mobile" placeholder="+91 XXXXX XXXXX" required>
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">Date of Birth</label>
-          <input type="date" id="dob">
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">Class</label>
-          <select id="class_name" required>
-            <option value="">Select class</option>
-            <option>Class 9</option>
-            <option>Class 10</option>
-            <option>Class 11</option>
-            <option>Class 12</option>
-            <option>Dropper</option>
-            <option>Engineering</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">Student ID</label>
-          <input type="text" id="std_id" placeholder="Assigned ID">
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">School Name</label>
-          <input type="text" id="school_name" placeholder="Your school" required>
-        </div>
-
-        <div class="form-row">
-          <label class="form-label">School Venue</label>
-          <input type="text" id="school_venue" placeholder="Branch / center">
-        </div>
-
-      </div>
-
-      <div class="form-row" style="margin-top:0.1rem">
-        <label class="form-label">Password</label>
-        <input type="password" id="password" placeholder="Create a password" required>
-      </div>
-
-      <button type="submit" class="btn-primary">
-        Register →
-      </button>
-    </form>
-
-    <div class="auth-link">
-      Already have an account?
-      <a href="#" onclick="switchTab('login')">Login here</a>
-    </div>
-  </div>
-</div>
-
-<!-- Login Panel -->
-<div class="panel" id="panel-login">
-  <div class="auth-card">
-    <div class="auth-title">Welcome back</div>
-    <div class="auth-sub">Login to your UNIC Academy account</div>
-
-    <form id="loginForm">
-
-      <div class="form-row">
-        <label class="form-label">Email/Student ID</label>
-        <input type="text" id="login_email_id" placeholder="email@example.com" required>
-      </div>
-
-      <div class="form-row">
-        <label class="form-label">Password</label>
-        <input type="password" id="login_password" placeholder="Your password" required>
-      </div>
-
-      <button type="submit" class="btn-primary">
-        Login →
-      </button>
-
-    </form>
-
-    <div class="auth-link">
-      New student?
-      <a href="#" onclick="switchTab('register')">Register here</a>
-    </div>
-  </div>
-</div>
-
+  <!-- ── ABOUT PANEL ── -->
   <div class="panel active" id="panel-about">
+    <div class="about-wrap">
 
-<div class="pav-card"> 
-
-<div class="container">
-
-  <!-- Profile hero -->
-  <div class="profile-hero">
-    <img class="avatar" src="https://yt3.googleusercontent.com/4zz5DZpTwnglUebmPAPF4jet3mYSqqBlfZ5ecE0MQH-StzY0cUziqxE8syW5Zz0TUVY1jOTE5A=s120-c-k-c0x00ffffff-no-rj" alt="Arun Sundara Nayagam">
-    <div style="flex:1;min-width:0">
-      <div class="hero-name">Arun Sundara Nayagam D</div>
-      <div class="hero-sub">Ph.D. Scholar · IIT Madras &nbsp;|&nbsp; Founder · UNIC Academy &nbsp;|&nbsp; GATE AIR 12 (2022)</div>
-      <div class="hero-contacts">
-        <span class="hero-contact"><i class="ti ti-map-pin"></i> Tirunelveli, Tamil Nadu</span>
-        <span class="hero-contact"><i class="ti ti-mail"></i> davidarun112@gmail.com</span>
-        <span class="hero-contact"><i class="ti ti-phone"></i> +91 90034 09796</span>
-        <span class="hero-contact"><i class="ti ti-brand-youtube"></i> UNIC Academy & Arun's Idea</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats -->
-  <div class="stats-row">
-    <div class="stat-box"><div class="stat-n">1000+</div><div class="stat-l">Students benefited</div></div>
-    <div class="stat-box"><div class="stat-n">12+</div><div class="stat-l">Years of excellence</div></div>
-    <div class="stat-box"><div class="stat-n">1100+</div><div class="stat-l">Educational videos</div></div>
-    <div class="stat-box"><div class="stat-n">2012</div><div class="stat-l">Founded UNIC Academy</div></div>
-  </div>
-
-  <!-- ptabs -->
-  <div class="ptab-bar">
-    <button class="ptab-btn active" data-ptab="about"><i class="ti ti-user"></i><span> About</span></button>
-    <button class="ptab-btn" data-ptab="academy"><i class="ti ti-school"></i><span> UNIC Academy</span></button>
-    <button class="ptab-btn" data-ptab="achievements"><i class="ti ti-trophy"></i><span> Achievements</span></button>
-    <button class="ptab-btn" data-ptab="youtube"><i class="ti ti-brand-youtube"></i><span> YouTube</span></button>
-    <button class="ptab-btn" data-ptab="contact"><i class="ti ti-mail"></i><span> Contact</span></button>
-  </div>
-
-  <!-- About -->
-  <div id="about" class="ptab-panel active">
-    <div class="obj-block">To lead the organization into excellence through dedicated hard work, innovative ideas, and continuous learning in a dynamic educational environment.</div>
-    <div class="two-col">
-      <div>
-        <div class="sec-lbl">Education</div>
-        <div class="card">
-          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">Ph.D. – Ocean Engineering</div><div class="edu-inst">IIT Madras · Pursuing</div></div></div>
-          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">M.E. Engineering Design</div><div class="edu-inst">CEG, Anna University</div></div></div>
-          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">B.E. Mechanical Engineering</div><div class="edu-inst">Noorul Islam College</div></div></div>
-          <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">Higher Secondary</div><div class="edu-inst">Cathedral HSS, Tirunelveli</div></div></div>
+      <!-- Academy banner -->
+      <div class="academy-banner">
+        <div class="ab-title">UNIC <span>Academy</span></div>
+        <div class="ab-sub">Empowering students · GATE · IIT JAM · JEE · NEET</div>
+        <div class="ab-stats">
+          <div class="ab-stat"><div class="ab-stat-n">1000+</div><div class="ab-stat-l">Students</div></div>
+          <div class="ab-stat"><div class="ab-stat-n">12+</div><div class="ab-stat-l">Years</div></div>
+          <div class="ab-stat"><div class="ab-stat-n">1100+</div><div class="ab-stat-l">Videos</div></div>
+          <div class="ab-stat"><div class="ab-stat-n">2012</div><div class="ab-stat-l">Founded</div></div>
         </div>
       </div>
-      <div>
-        <div class="sec-lbl">Technical skills</div>
+      
+
+      <!-- Inner tabs -->
+      <div class="ptab-wrap" role="tablist">
+        <button class="ptab-btn active" data-ptab="p-academy"><i class="ti ti-school"></i><span>Academy</span></button>
+        <button class="ptab-btn" data-ptab="p-founder"><i class="ti ti-user"></i><span>Founder</span></button>
+        <button class="ptab-btn" data-ptab="p-team"><i class="ti ti-users"></i><span>Team</span></button>        
+       <!--<button class="ptab-btn" data-ptab="p-achieve"><i class="ti ti-trophy"></i><span>Awards</span></button>--> 
+        <button class="ptab-btn" data-ptab="p-youtube"><i class="ti ti-brand-youtube"></i><span>YouTube</span></button>
+        <button class="ptab-btn" data-ptab="p-contact"><i class="ti ti-mail"></i><span>Contact</span></button>
+      </div>
+
+      <!-- ─ Sub-panel: Academy ─ -->
+      <div id="p-academy" class="ptab-panel active">
+        <div class="two-col">
         <div class="card">
+          <div class="card-title"><i class="ti ti-info-circle" aria-hidden="true"></i>About UNIC Academy</div>
+          <p style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-bottom:12px">Started during Navarathiri 2012 with just 4 students in Tirunelveli. Today, UNIC Academy has guided 1000+ students in GATE, IIT JAM, JEE, NEET, Engineering and Science subjects.</p>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Vision</p>
+              <p style="font-size:12px;color:var(--text2);line-height:1.6">World-class knowledge with strong moral values that empower students in academic, professional and personal lives.</p>
+              <p style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-top: 6px; margin-bottom:6px">Mission</p>
+              <ul class="info-list">
+                <li>Outcome-based education with employability focus</li>
+                <li>Build confidence through competitive exam training</li>
+                <li>Create lifelong learners adaptable to new technologies</li>
+              </ul>
+            </div>
+            </div>
+           <div class="card">
+            <div class="card-title"><i class="ti ti-star" aria-hidden="true"></i>Why UNIC?</div>
+            <ul class="info-list">
+              <li>Faculty from IITs, NITs and reputed institutions</li>
+              <li>Personal mentorship and individual attention</li>
+              <li>Periodic evaluations and progress tracking</li>
+              <li>Basics to advanced level coverage</li>
+              <li>PYQ practice and shortcut techniques</li>
+              <li>Timely syllabus completion</li>
+            </ul>
+          </div>
+          </div>
+
+        <div class="card">
+          <div class="card-title"><i class="ti ti-book" aria-hidden="true"></i>Programs offered</div>
           <div class="badge-wrap">
-            <span class="badge">AutoCAD</span><span class="badge">ANSYS</span><span class="badge">Pro-E</span><span class="badge">Python</span><span class="badge">MATLAB</span><span class="badge">Fortran</span><span class="badge">LaTeX</span><span class="badge">MS Office</span>
+            <span class="badge teal">GATE</span><span class="badge teal">IIT JAM</span><span class="badge teal">JEE</span><span class="badge teal">NEET</span><span class="badge teal">Engineering subjects</span><span class="badge teal">Online classes</span><span class="badge teal">Offline classes</span>
+          </div>
+        </div>
+                 
+          <div class="card">
+            <div class="card-title"><i class="ti ti-confetti" aria-hidden="true"></i>Student Success stories</div>
+            <div class="two-col">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div class="success-item"><div class="success-name">Kathir</div><div class="success-detail">M.Sc · NIT Trichy, IIT JAM</div></div>              
+              <div class="success-item"><div class="success-name">Gopinath</div><div class="success-detail">Ph.D · IIT Madras</div></div>
+            
+            </div>
+             <div style="display:flex;flex-direction:column;gap:6px">              
+              <div class="success-item"><div class="success-name">Nandha Kumar</div><div class="success-detail">M.E · Anna Univ, TANCA Rank 1</div></div>             
+              <div class="success-item"><div class="success-name">Madasamy</div><div class="success-detail">Govt Poly Lecturer,TRB</div></div>
+            </div>
+            </div>
+          </div>
+        </div>
+  
+        
+
+      <!-- ─ Sub-panel: Team ─ -->
+      <div id="p-team" class="ptab-panel">
+        <div id="team-render"></div>
+      </div>
+
+      <!-- ─ Sub-panel: Founder ─ -->
+      <div id="p-founder" class="ptab-panel">
+
+        <!-- Founder hero -->
+      <div class="profile-hero">
+        <div class="ph-row">
+          <img class="avatar" src="https://yt3.googleusercontent.com/4zz5DZpTwnglUebmPAPF4jet3mYSqqBlfZ5ecE0MQH-StzY0cUziqxE8syW5Zz0TUVY1jOTE5A=s120-c-k-c0x00ffffff-no-rj" alt="Arun Sundara Nayagam D">
+          <div>
+            <div class="ph-name">Arun Sundara Nayagam D</div>
+            <div class="ph-sub">Ph.D. Scholar · IIT Madras &nbsp;|&nbsp; Founder · UNIC Academy &nbsp;|&nbsp; GATE AIR 12 (2022)</div>
+          </div>
+        </div>
+        <div class="ph-contacts">
+          <span class="ph-contact"><i class="ti ti-map-pin"></i> Tirunelveli, TN</span>
+          <span class="ph-contact"><i class="ti ti-mail"></i> davidarun112@gmail.com</span>
+          <span class="ph-contact"><i class="ti ti-phone"></i> +91 90034 09796</span>
+          <span class="ph-contact"><i class="ti ti-brand-youtube"></i> UNIC Academy</span>
+        </div>
+      </div>
+
+        <div class="obj-block">"To lead the organization into excellence through dedicated hard work, innovative ideas, and continuous learning in a dynamic educational environment."</div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-school" aria-hidden="true"></i>Education</div>
+            <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">Ph.D. – Ocean Engineering</div><div class="edu-inst">IIT Madras · Pursuing</div></div></div>
+            <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">M.E. Engineering Design</div><div class="edu-inst">CEG, Anna University</div></div></div>
+            <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">B.E. Mechanical Engineering</div><div class="edu-inst">Noorul Islam College</div></div></div>
+            <div class="edu-item"><div class="edu-dot"></div><div><div class="edu-deg">Higher Secondary</div><div class="edu-inst">Cathedral HSS, Tirunelveli</div></div></div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:10px">
+              <div class="card-title"><i class="ti ti-code" aria-hidden="true"></i>Technical skills</div>
+              <div class="badge-wrap">
+                <span class="badge">AutoCAD</span><span class="badge">ANSYS</span><span class="badge">Pro-E</span><span class="badge">Python</span><span class="badge">MATLAB</span><span class="badge">Fortran</span><span class="badge">LaTeX</span><span class="badge">MS Office</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title"><i class="ti ti-id-badge" aria-hidden="true"></i>Roles</div>
+              <div class="badge-wrap">
+                <span class="badge navy">Founder</span><span class="badge navy">Educationist</span><span class="badge navy">Lecturer</span><span class="badge navy">Researcher</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-trophy" aria-hidden="true"></i>Major achievements</div>
+          <div class="achieve-grid">
+            <div class="achieve-card"><i class="ti ti-medal"></i><div><div class="achieve-title">AIR 12 – GATE 2022</div><div class="achieve-sub">All India Rank 12 in GATE</div></div></div>
+            <div class="achieve-card"><i class="ti ti-award"></i><div><div class="achieve-title">GATE 2011–2024</div><div class="achieve-sub">Consistent qualifier · 13 years</div></div></div>
+            <div class="achieve-card"><i class="ti ti-certificate"></i><div><div class="achieve-title">IIT JAM Physics</div><div class="achieve-sub">Qualified 2018 & 2019</div></div></div>
+            <div class="achieve-card"><i class="ti ti-building-community"></i><div><div class="achieve-title">MITx Certifications</div><div class="achieve-sub">Online certifications from MIT</div></div></div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- UNIC Academy -->
-  <div id="academy" class="ptab-panel">
-    <div class="card">
-      <div class="sec-lbl">About UNIC Academy</div>
-      <p style="font-size:13px;color:#5f5e5a;line-height:1.7;margin-bottom:1rem">Started during Navarathiri 2012 with just 4 students in Tirunelveli. Today, UNIC Academy has guided more than 1000+ students in GATE, IIT JAM, JEE, NEET, Engineering and Science subjects.</p>
-      <div class="two-col">
-        <div>
-          <p style="font-size:12px;font-weight:500;margin-bottom:6px">Vision</p>
-          <p style="font-size:12px;color:#5f5e5a;line-height:1.6">To impart world-class knowledge with strong moral values that empower students in their academic, professional and personal lives.</p>
-        </div>
-        <div>
-          <p style="font-size:12px;font-weight:500;margin-bottom:6px">Mission</p>
-          <ul class="info-list">
-            <li>Outcome-based education with employability focus</li>
-            <li>Build confidence through competitive exam training</li>
-            <li>Create lifelong learners adapptable to new technologies</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="sec-lbl">Programs offered</div>
-      <div class="badge-wrap">
-        <span class="badge teal">GATE</span><span class="badge teal">IIT JAM</span><span class="badge teal">JEE</span><span class="badge teal">NEET</span><span class="badge teal">Engineering subjects</span><span class="badge teal">Online classes</span><span class="badge teal">Offline classes</span>
-      </div>
-    </div>
-    <div class="two-col">
-      <div>
-        <div class="sec-lbl">Why choose UNIC?</div>
-        <ul class="info-list">
-          <li>Faculty from IITs, NITs and reputed institutions</li>
-          <li>Personal mentorship and individual attention</li>
-          <li>Periodic evaluations and progress tracking</li>
-          <li>Complete coverage from basics to advanced level</li>
-          <li>PYQ practice and numerical shortcut techniques</li>
-          <li>Timely syllabus completion</li>
-        </ul>
-      </div>
-      <div>
-        <div class="sec-lbl">Student success stories</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div class="success-item"><div class="success-name">Kathir</div><div class="success-detail">M.Sc at NIT Trichy via IIT JAM</div></div>
-          <div class="success-item"><div class="success-name">Nandha Kumar</div><div class="success-detail">M.E at Anna University · TANCA Rank 1</div></div>
-          <div class="success-item"><div class="success-name">Gopinath</div><div class="success-detail">Ph.D at IIT Madras</div></div>
-          <div class="success-item"><div class="success-name">Madasamy</div><div class="success-detail">Government Polytechnic Lecturer (TRB)</div></div>
-        </div>
-      </div>
-    </div>
-  </div>
+      <!-- ─ Sub-panel: Achievements ─ 
+      <div id="p-achieve" class="ptab-panel">
+        
+      </div>-->
 
-  <!-- Achievements -->
-  <div id="achievements" class="ptab-panel">
-    <div class="sec-lbl">Major achievements</div>
-    <div class="achieve-grid">
-      <div class="achieve-card"><i class="ti ti-medal"></i><div><div class="achieve-title">AIR 12 – GATE 2022</div><div class="achieve-sub">All India Rank 12 in GATE</div></div></div>
-      <div class="achieve-card"><i class="ti ti-award"></i><div><div class="achieve-title">GATE Qualified 2011–2024</div><div class="achieve-sub">Consistent qualifier over 13 years</div></div></div>
-      <div class="achieve-card"><i class="ti ti-certificate"></i><div><div class="achieve-title">IIT JAM Physics 2018 & 2019</div><div class="achieve-sub">Qualified both years</div></div></div>
-      <div class="achieve-card"><i class="ti ti-school"></i><div><div class="achieve-title">MITx Certifications</div><div class="achieve-sub">Online certifications from MIT</div></div></div>
-    </div>
-    <div class="sec-lbl" style="margin-top:0.5rem">Technical skills</div>
-    <div class="badge-wrap">
-      <span class="badge">AutoCAD</span><span class="badge">ANSYS</span><span class="badge">Pro-E</span><span class="badge">Python</span><span class="badge">MATLAB</span><span class="badge">Fortran</span><span class="badge">LaTeX</span><span class="badge">MS Office</span>
-    </div>
-  </div>
-
-  <!-- YouTube -->
-  <div id="youtube" class="ptab-panel">
-    <div class="yt-block">
-      <i class="ti ti-brand-youtube"></i>
-      <div class="yt-text">Providing free quality education through <strong>UNIC Academy</strong> and <strong>Arun's Idea</strong> YouTube channels — hundreds of videos in Tamil and English, reaching learners across the globe.</div>
-    </div>
-    <div class="two-col">
-      <div class="card" style="text-align:center">
-        <i class="ti ti-video" style="font-size:28px;color:#534AB7;margin-bottom:8px;display:block"></i>
-        <div style="font-size:22px;font-weight:500;color:#534AB7">1000+</div>
-        <div style="font-size:12px;color:#5f5e5a;margin-top:3px">Educational videos published</div>
-      </div>
-      <div class="card" style="text-align:center">
-        <i class="ti ti-world" style="font-size:28px;color:#1D9E75;margin-bottom:8px;display:block"></i>
-        <div style="font-size:22px;font-weight:500;color:#1D9E75">Tamil & English</div>
-        <div style="font-size:12px;color:#5f5e5a;margin-top:3px">Languages for global learners</div>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div class="card" style="display:flex;align-items:center;gap:12px">
-         <a href="https://www.youtube.com/@unicacademy1173" target="_blank"><i class="ti ti-brand-youtube" style="font-size:22px;color:#534AB7;flex-shrink:0"></i></a>
-        <div><div style="font-size:13px;font-weight:500">UNIC Academy <a href="https://www.youtube.com/@unicacademy1173" target="_blank">https://www.youtube.com/@unicacademy1173</a></div><div style="font-size:12px;color:#5f5e5a">Engineering & science coaching · GATE · IIT JAM · JEE · NEET</div></div>
-      </div>
-      <div class="card" style="display:flex;align-items:center;gap:12px">
-        <a href="https://www.youtube.com/@arunsidea6897" target="_blank"><i class="ti ti-bulb" style="font-size:22px;color:#534AB7;flex-shrink:0"></i></a>
-        <div><div style="font-size:13px;font-weight:500">Arun's Idea  <a href="https://www.youtube.com/@arunsidea6897" target="_blank">https://www.youtube.com/@arunsidea6897</a></div><div style="font-size:12px;color:#5f5e5a">Concepts, ideas and educational content in Tamil</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contact -->
-  <div id="contact" class="ptab-panel">
-    <div class="two-col">
-      <div class="card">
-        <div class="sec-lbl">Contact details</div>
-        <div style="display:flex;flex-direction:column;gap:14px">
-          <div class="contact-detail"><i class="ti ti-map-pin"></i><div><div class="contact-label">Location</div><div class="contact-value">Tirunelveli, Tamil Nadu, India</div></div></div>
-          <div class="contact-detail"><i class="ti ti-mail"></i><div><div class="contact-label">Email</div><div class="contact-value link">davidarun112@gmail.com</div></div></div>
-          <div class="contact-detail"><i class="ti ti-phone"></i><div><div class="contact-label">Phone</div><div class="contact-value">+91 90034 09796</div></div></div>
-          <div class="contact-detail"><i class="ti ti-brand-youtube"></i><div><div class="contact-label">YouTube</div><div class="contact-value link">UNIC Academy & Arun's Idea</div></div></div>
+      <!-- ─ Sub-panel: YouTube ─ -->
+      <div id="p-youtube" class="ptab-panel">
+        <div class="yt-banner">
+          <i class="ti ti-brand-youtube"></i>
+          <div class="yt-text">Free quality education through <strong>UNIC Academy</strong> and <strong>Arun's Idea</strong> — 1100+ videos in Tamil and English, reaching learners across the globe.</div>
         </div>
-      </div>
-      <div class="card">
-        <div class="sec-lbl">About the founder</div>
-        <p style="font-size:12px;color:#5f5e5a;line-height:1.7">Arun Sundara Nayagam D is a Ph.D. scholar at IIT Madras (Ocean Engineering), founder of UNIC Academy, and a dedicated educationist with 12+ years of teaching experience in Tirunelveli, Tamil Nadu.</p>
-        <div style="margin-top:12px">
-          <div style="font-size:11px;color:#5f5e5a;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;font-weight:500">Roles</div>
-          <div class="badge-wrap">
-            <span class="badge">Founder</span><span class="badge">Educationist</span><span class="badge">Lecturer</span><span class="badge">Researcher</span>
+        <div class="two-col">
+          <div class="card" style="text-align:center">
+            <i class="ti ti-video" style="font-size:26px;color:var(--purple);display:block;margin-bottom:6px"></i>
+            <div style="font-size:20px;font-weight:700;color:var(--purple)">1100+</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">Videos published</div>
+          </div>
+          <div class="card" style="text-align:center">
+            <i class="ti ti-world" style="font-size:26px;color:var(--teal);display:block;margin-bottom:6px"></i>
+            <div style="font-size:14px;font-weight:700;color:var(--teal)">Tamil & English</div>
+            <div style="font-size:11px;color:var(--text2);margin-top:2px">Global learners</div>
+          </div>
+        </div>
+        <div class="yt-channel">
+          <div class="yt-ch-icon"><i class="ti ti-brand-youtube"></i></div>
+          <div>
+            <div class="yt-ch-name">UNIC Academy</div>
+            <div class="yt-ch-desc">GATE · IIT JAM · JEE · NEET · Engineering</div>
+            <div class="yt-ch-link"><a href="https://www.youtube.com/@unicacademy1173" target="_blank">youtube.com/@unicacademy1173</a></div>
+          </div>
+        </div>
+        <div class="yt-channel">
+          <div class="yt-ch-icon"><i class="ti ti-bulb"></i></div>
+          <div>
+            <div class="yt-ch-name">Arun's Idea</div>
+            <div class="yt-ch-desc">Concepts, ideas and education in Tamil</div>
+            <div class="yt-ch-link"><a href="https://www.youtube.com/@arunsidea6897" target="_blank">youtube.com/@arunsidea6897</a></div>
           </div>
         </div>
       </div>
+
+      <!-- ─ Sub-panel: Contact ─ -->
+      <div id="p-contact" class="ptab-panel">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title"><i class="ti ti-address-book" aria-hidden="true"></i>Contact details</div>
+            <div class="contact-row"><div class="contact-icon"><i class="ti ti-map-pin"></i></div><div><div class="contact-lbl">Location</div><div class="contact-val">Tirunelveli, Tamil Nadu</div></div></div>
+            <div class="contact-row"><div class="contact-icon"><i class="ti ti-mail"></i></div><div><div class="contact-lbl">Email</div><div class="contact-val link">davidarun112@gmail.com</div></div></div>
+            <div class="contact-row"><div class="contact-icon"><i class="ti ti-phone"></i></div><div><div class="contact-lbl">Phone</div><div class="contact-val">+91 90034 09796</div></div></div>
+            <div class="contact-row"><div class="contact-icon"><i class="ti ti-brand-youtube"></i></div><div><div class="contact-lbl">YouTube</div><div class="contact-val link">UNIC Academy & Arun's Idea</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="ti ti-user-circle" aria-hidden="true"></i>About founder</div>
+            <p style="font-size:12px;color:var(--text2);line-height:1.7">Arun Sundara Nayagam D is a Ph.D. scholar at IIT Madras (Ocean Engineering), founder of UNIC Academy, and a dedicated educationist with 12+ years of teaching experience.</p>
+            <div style="margin-top:10px">
+              <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Roles</div>
+              <div class="badge-wrap">
+                <span class="badge">Founder</span><span class="badge">Educationist</span><span class="badge">Lecturer</span><span class="badge">Researcher</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /about-wrap -->
+  </div><!-- /panel-about -->
+
+  <!-- ── LOGIN PANEL ── -->
+  <div class="panel" id="panel-login">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-head">
+          <div class="auth-head-icon"><i class="ti ti-login"></i></div>
+          <div>
+            <div class="auth-title">Welcome back</div>
+            <div class="auth-sub">Login to your UNIC Academy account</div>
+          </div>
+        </div>
+        <form id="loginForm" autocomplete="on">
+          <div class="form-row">
+            <label class="form-label">Email / Student ID</label>
+            <input type="text" id="login_email_id" placeholder="email@example.com or student ID" required autocomplete="username">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Password</label>
+            <input type="password" id="login_password" placeholder="Your password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="btn-primary">Login →</button>
+        </form>
+        <div class="auth-link-row">New student? <a href="#" onclick="switchToTab('register')">Register here</a></div>
+      </div>
     </div>
   </div>
 
-</div>
- </div>
-
-</div>
-
-<footer class="ftr">
-  <div class="ftr-left">
-    <div class="ftr-ico">U</div>
-    <div class="ftr-name">UNIC Academy &nbsp;·&nbsp; Tirunelveli, Tamil Nadu</div>
+  <!-- ── REGISTER PANEL ── -->
+  <div class="panel" id="panel-register">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-head">
+          <div class="auth-head-icon"><i class="ti ti-user-plus"></i></div>
+          <div>
+            <div class="auth-title">Create account</div>
+            <div class="auth-sub">Start your journey with UNIC Academy</div>
+          </div>
+        </div>
+        <form id="registerForm" autocomplete="on">
+          <div class="form-grid">
+            <div class="form-row">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="reg_name" placeholder="Your full name" required>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Email</label>
+              <input type="email" id="reg_email" placeholder="email@example.com" required autocomplete="email">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Mobile</label>
+              <input type="tel" id="reg_mobile" placeholder="+91 XXXXX XXXXX" required>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" id="reg_dob">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Class</label>
+              <select id="reg_class" required>
+                <option value="">Select class</option>
+                <option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option><option>Dropper</option><option>Engineering</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Student ID</label>
+              <input type="text" id="reg_std_id" placeholder="Assigned ID">
+            </div>
+            <div class="form-row">
+              <label class="form-label">School / College</label>
+              <input type="text" id="reg_school" placeholder="Your school name" required>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Branch / Venue</label>
+              <input type="text" id="reg_venue" placeholder="Center or branch">
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:4px">
+            <label class="form-label">Password</label>
+            <input type="password" id="reg_password" placeholder="Create a password" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn-primary">Register →</button>
+        </form>
+        <div class="auth-link-row">Already registered? <a href="#" onclick="switchToTab('login')">Login here</a></div>
+      </div>
+    </div>
   </div>
-  <div class="ftr-links">
-    <a href="#">Home</a>
-    <a href="#">Courses</a>
-    <a href="#">Results</a>
-    <a href="#">Contact</a>
-    <a href="#">Privacy</a>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">U</div>
+      <div class="footer-name">UNIC Academy &nbsp;·&nbsp; Tirunelveli, Tamil Nadu</div>
+    </div>
+    <nav class="footer-links">
+      <a href="#">Home</a><a href="#">Courses</a><a href="#">Results</a><a href="#">Contact</a><a href="#">Privacy</a>
+    </nav>
   </div>
-  <div class="ftr-copy">© 2025 UNIC Academy · All rights reserved · Clarity · Confidence · Results</div>
+  <div class="footer-copy">© 2025 UNIC Academy · All rights reserved · Clarity · Confidence · Results</div>
 </footer>
 
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
 <script>
-  
+/* ── Team Data ── */
+const TEAM = [
+  {
+    label:"Founder & Director",
+    members:[
+      {name:"Arun Sundara Nayagam D",role:"Founder & Director\nPh.D. Scholar – IIT Madras",tag:"GATE AIR 12",bg:"#1a2f6e",text:"#fff",tagBg:"#fff8d6",tagColor:"#7a5500"}
+    ]
+  },
+  {
+    label:"Senior Faculty",
+    members:[
+      //{name:"Dr. Ramesh Kumar",role:"Mathematics\nIIT Madras alumnus",tag:"GATE · JEE",bg:"#E1F5EE",text:"#0F6E56",tagBg:"#0F6E56",tagColor:"#fff"},
+      {name:"Mr. Arun Sundara Nayagam D",role:"Physics",tag:"NEET | JEE | GATE (ME, AE) | IIT JAM",bg:"#E1F5EE",text:"#0F6E56",tagBg:"#0F6E56",tagColor:"#fff"},
+     // {name:"Mr. Karthikeyan M",role:"Mechanical Engg\nGATE Expert",tag:"GATE ME",bg:"#E1F5EE",text:"#0F6E56",tagBg:"#0F6E56",tagColor:"#fff"}, \nNEET & JEE specialist
+      {name:"Dr. Tamil Selvi ",role:"Chemistry\nIIT Madras alumnus",tag:"NEET | JEE",bg:"#E1F5EE",text:"#0F6E56",tagBg:"#0F6E56",tagColor:"#fff"}
+    ]
+  },
+  {
+    label:"Subject Experts",
+    members:[
+      {name:"Mr. Kathir",role:"Physics\nNIT Trichy alumnus",tag:"JEE (PH), JAM (PH)",bg:"#e8edff",text:"#1a2f6e",tagBg:"#1a2f6e",tagColor:"#fff"},
+    //  {name:"Ms. Anitha Devi",role:"Biology\nNEET specialist",tag:"NEET",bg:"#e8edff",text:"#1a2f6e",tagBg:"#1a2f6e",tagColor:"#fff"},
+   //   {name:"Mr. Murugan P",role:"Electrical Engg\nGATE EE",tag:"GATE EE",bg:"#e8edff",text:"#1a2f6e",tagBg:"#1a2f6e",tagColor:"#fff"},
+   //   {name:"Ms. Kavitha R",role:"Computer Science\nGATE CS",tag:"GATE CS",bg:"#e8edff",text:"#1a2f6e",tagBg:"#1a2f6e",tagColor:"#fff"},
+    //  {name:"Mr. Vijay Anand",role:"Engineering Maths\nGATE & JAM",tag:"GATE · JAM",bg:"#e8edff",text:"#1a2f6e",tagBg:"#1a2f6e",tagColor:"#fff"}
+    ]
+  },
+  {
+    label:"Operations & Support",
+    members:[
+      {name:"Mr. Muthu Raj",role:"IT Team",tag:"Full Stack Developer | Data Analyst",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"},
+      {name:"Mr. Muthuramalingam",role:"Academic Coordinator",tag:"Admin",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"},
+      
+      //{name:"Ms. Revathi S",role:"Content & Video Team",tag:"YouTube",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"}
+    ]
+  }
+];
+
+function initials(name) {
+  return name
+    .replace(/^(Mr|Mrs|Ms|Dr)\.\s*/i, '') // remove title at start
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0])
+    .join('')
+    .toUpperCase();
+}
+
+function renderTeam(){
+  const container=document.getElementById('team-render');
+  let html='';
+  TEAM.forEach(section=>{
+    html+=`<div class="team-section-label">${section.label}</div><div class="team-grid">`;
+    section.members.forEach(m=>{
+      const lines=m.role.split('\n');
+      html+=`<div class="team-card">
+        <div class="team-avatar" style="background:${m.bg};color:${m.text}">${initials(m.name)}</div>
+        <div class="team-name">${m.name}</div>
+        <div class="team-role">${lines[0]}${lines[1]?`<br><span style="color:var(--text3)">${lines[1]}</span>`:''}</div>
+        <span class="team-tag" style="background:${m.tagBg};color:${m.tagColor}">${m.tag}</span>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+renderTeam();
+
+/* ── Tabs ── */
+function showTab(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+function switchToTab(name){
+  const map={about:0,login:1,register:2};
+  const btns=document.querySelectorAll('.tab-btn');
+  if(map[name]!==undefined) showTab(name,btns[map[name]]);
+}
+
+/* ── Inner ptabs ── */
 document.querySelectorAll('.ptab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.ptab-btn').forEach(b=>b.classList.remove('active'));
@@ -555,182 +640,67 @@ document.querySelectorAll('.ptab-btn').forEach(btn=>{
     btn.classList.add('active');
     document.getElementById(btn.dataset.ptab).classList.add('active');
   });
-});  
-function showTab(name, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-function switchTab(name) {
-  const btn = document.querySelectorAll('.tab-btn');
-  const tabs = ['register','login','about'];
-  const idx = tabs.indexOf(name);
-  if(idx >= 0) showTab(name, btn[idx]);
+});
+
+/* ── Toast ── */
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+(type||'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-document
-.getElementById('loginForm')
-.addEventListener(
-    'submit',
-    async function(e){
-
-        e.preventDefault();
-
-        const email_id =
-            document.getElementById(
-                'login_email_id'
-            ).value;
-
-        const password =
-            document.getElementById(
-                'login_password'
-            ).value;
-
-        try{
-
-            const response =
-                await fetch(
-                    '/api/login',
-                    {
-                        method:'POST',
-
-                        headers:{
-                            'Content-Type':
-                                'application/json'
-                        },
-
-                        body:JSON.stringify({
-
-                            email_id,
-                            password
-
-                        })
-                    }
-                );
-
-            const result =
-                await response.json();
-
-            if(result.success){
-
-                localStorage.setItem(
-                    'student',
-                    JSON.stringify(
-                        result.user
-                    )
-                );
-
-                window.location =
-                    '/dashboard.html';
-
-            }else{
-
-                alert(
-                    result.message
-                );
-            }
-
-        }catch(error){
-
-            console.log(error);
-
-            alert(
-                'Login Failed'
-            );
-        }
+/* ── Login ── */
+document.getElementById('loginForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  const email_id=document.getElementById('login_email_id').value;
+  const password=document.getElementById('login_password').value;
+  try{
+    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email_id,password})});
+    const result=await res.json();
+    if(result.success){
+      localStorage.setItem('student',JSON.stringify(result.user));
+      showToast('Login successful!','success');
+      setTimeout(()=>window.location='/dashboard.html',800);
+    }else{
+      showToast(result.message||'Login failed','error');
     }
-);
+  }catch(err){
+    console.error(err);
+    showToast('Connection error. Try again.','error');
+  }
+});
 
-
-document
-.getElementById('registerForm')
-.addEventListener(
-    'submit',
-    async function(e){
-
-        e.preventDefault();
-
-        const payload = {
-
-            name:
-                document.getElementById('name').value,
-
-            email_id:
-                document.getElementById('email_id').value,
-
-            mobile:
-                document.getElementById('mobile').value,
-
-            class_name:
-                document.getElementById('class_name').value,
-
-            school_name:
-                document.getElementById('school_name').value,
-
-            school_venue:
-                document.getElementById('school_venue').value,
-
-            std_id:
-                document.getElementById('std_id').value,
-
-            dob:
-                document.getElementById('dob').value,
-
-            password:
-                document.getElementById('password').value
-
-        };
-
-        try{
-
-            const response =
-                await fetch(
-                    '/api/register',
-                    {
-                        method:'POST',
-
-                        headers:{
-                            'Content-Type':
-                                'application/json'
-                        },
-
-                        body:
-                            JSON.stringify(payload)
-                    }
-                );
-
-            const result =
-                await response.json();
-console.log(result);
-            if(result.success){
-
-                alert(
-                    'Registration Successful'
-                );
-
-                switchTab('login');
-
-            }else{
-
-                alert(
-                    result.message ||
-                    'Registration Failed'
-                );
-            }
-
-        }catch(error){
-
-            console.error(error);
-
-            alert(
-                'Server Error'
-            );
-        }
+/* ── Register ── */
+document.getElementById('registerForm').addEventListener('submit',async function(e){
+  e.preventDefault();
+  const payload={
+    name:document.getElementById('reg_name').value,
+    email_id:document.getElementById('reg_email').value,
+    mobile:document.getElementById('reg_mobile').value,
+    class_name:document.getElementById('reg_class').value,
+    school_name:document.getElementById('reg_school').value,
+    school_venue:document.getElementById('reg_venue').value,
+    std_id:document.getElementById('reg_std_id').value,
+    dob:document.getElementById('reg_dob').value,
+    password:document.getElementById('reg_password').value
+  };
+  try{
+    const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const result=await res.json();
+    if(result.success){
+      showToast('Registration successful!','success');
+      document.getElementById('registerForm').reset();
+      setTimeout(()=>switchToTab('login'),900);
+    }else{
+      showToast(result.message||'Registration failed','error');
     }
-);
+  }catch(err){
+    console.error(err);
+    showToast('Server error. Try again.','error');
+  }
+});
 </script>
-
-
 </body>
 </html>
