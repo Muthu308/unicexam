@@ -888,18 +888,56 @@ function generateQwPdf(){
   }
 
   // ── Remarks helper
-  function buildRemarks(){
-    const lines=[];
-    Object.keys(d.secMap).forEach(sec=>{
-      const s=d.secMap[sec];
-      const total=s.c+s.w+s.na;
-      const pct=total?((s.c/total)*100).toFixed(1):0;
-      if(pct>=60)lines.push(`${sec}: Good performance (${pct}% accuracy).`);
-      else if(pct>=35)lines.push(`${sec}: Average performance (${pct}% accuracy). More practice needed.`);
-      else lines.push(`${sec}: Needs significant improvement (${pct}% accuracy). Focus on fundamentals.`);
+  function buildRemarks(d, res) {
+    const output = [];
+    const lines = [];
+
+    Object.keys(d.secMap).forEach(sec => {
+        const s = d.secMap[sec];
+
+        const total = s.c + s.w + s.na;
+        const pct = total ? ((s.c / total) * 100).toFixed(1) : 0;
+
+        // visited questions
+        const visited = res.find(r => r.name === sec)?.ans || [];
+
+        // all questions in section
+        const allQuestions = s.allQuestions || [];
+
+        // not visited = NV
+        const nv = allQuestions.filter(q => !visited.includes(q));
+
+        // performance remark
+        let remark = "";
+
+        if (pct >= 60)
+            remark = `${sec}: Good performance (${pct}% accuracy).`;
+        else if (pct >= 35)
+            remark = `${sec}: Average performance (${pct}% accuracy). More practice needed.`;
+        else
+            remark = `${sec}: Needs significant improvement (${pct}% accuracy). Focus on fundamentals.`;
+
+        // add NV info
+        if (nv.length > 0) {
+            remark += ` NV: ${nv.length} questions not visited. (${nv.join(", ")})`;
+        }
+
+        lines.push(remark);
+
+        // optional subject-wise NV output
+        output.push(`${nv.length} (${sec}): ${nv.join(", ")}`);
     });
-    return lines.join(" ");
-  }
+
+    const totalNV = output.reduce((acc, o) => acc + parseInt(o), 0);
+
+    const remarks =
+        `${totalNV} Question${totalNV > 1 ? "s" : ""} Not Visited: Subject Wise → ${output.join(" | ")}`;
+
+    return {
+        remarks: lines.join(" "),
+        nvSummary: remarks
+    };
+}
 
   // ── Build per-question detail rows (blue header + image row pattern)
   let questionImageHTML="";
@@ -1036,7 +1074,7 @@ function generateQwPdf(){
 <table border="1" cellspacing="0" cellpadding="5" width="100%" style="text-align:center;vertical-align:middle;">
   <thead><tr>
     <th>Section</th><th>Range</th><th>Correct</th><th>Wrong</th><th>Not Attempted</th>
-    <th>(+) Marks</th><th>(-) Marks</th><th>Marks</th><th>Bonus</th>
+    <th>(+) Marks</th><th>(-) Marks</th><th>Total Marks</th><th>Bonus</th>
   </tr></thead>
   <tbody>${sectionRows}</tbody>
 </table>
