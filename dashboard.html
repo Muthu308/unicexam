@@ -1009,21 +1009,21 @@ function generateQwPdf(){
 <style>
   body{font-family:'Segoe UI',Arial,sans-serif;margin:16px;background:#fff;color:#1e293b;font-size:12px;}
   @media print{body{margin:8px;} .no-print{display:none;}}
-  .header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:14px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-  .header-bar h2{margin:0;font-size:16px;}
+  .header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .header-bar h2{margin:0;font-size:14px;}
   .header-bar p{margin:2px 0;font-size:11px;opacity:.85;}
   .info-bar{background:#eff6ff;border:1px solid #dbeafe;border-radius:6px;padding:8px 14px;font-size:11px;display:flex;flex-wrap:wrap;gap:16px;margin-bottom:10px;}
   .info-bar span b{color:#0e1e4a;}
   table{width:100%;border-collapse:collapse;margin-bottom:10px;}
   th{background:#0e1e4a;color:#fff;padding:7px 8px;font-size:11px;font-weight:500;text-align:center;}
-  td{padding:6px 8px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
+  td{padding:5px 7px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
   tr:nth-child(even) td{background:#f8fafc;}
   h5{font-size:12px;margin:10px 0 4px;color:#0e1e4a;}
 </style></head>
 <body>
 <div class="header-bar">
   <div><h2>UNIC Academy — Question-wise Result</h2><p>Exam: <b>${d.exam}</b> &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString()}</p></div>
-  <div style="text-align:right;"><p><b>${student.name}</b></p><p>ID: ${student.std_id} &nbsp;|&nbsp; Class: ${student.class_name||"—"}</p><p>${student.school_name||"—"}</p></div>
+  <div style="text-align:right;"><p><b>${student.name}</b></p><p>ID: ${student.std_id}</div>
 </div>
 <div class="info-bar">
   <span><b>Total Questions:</b> ${d.totalQ}</span>
@@ -1038,8 +1038,8 @@ function generateQwPdf(){
 <h5>Question-wise Summary</h5>
 <table style="text-align:center;vertical-align:middle;">
   <thead><tr>
-    <th>Qn.</th><th>Stud. Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
-    <th>Qn.</th><th>Stud. Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
+    <th>Qn.</th><th>Your Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
+    <th>Qn.</th><th>Your Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
   </tr></thead>
   <tbody>${summaryRows}</tbody>
 </table>
