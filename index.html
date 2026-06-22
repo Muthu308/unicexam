@@ -204,7 +204,7 @@ footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, 80px);
+    transform: translate(-50%, -50%);
     background: var(--navy);
     color: #fff;
     padding: 10px 20px;
@@ -212,14 +212,14 @@ footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
     font-size: 13px;
     font-weight: 500;
     z-index: 999;
-    transition: transform .3s ease;
+    opacity: 0;
+    transition: opacity .3s ease;
     pointer-events: none;
     white-space: nowrap;
     box-shadow: 0 4px 20px rgba(15,31,92,0.35);
 }
 
 .toast.show{
-    transform: translate(-50%, -50%);
     opacity: 1;
 }
 
