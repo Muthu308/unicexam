@@ -200,8 +200,8 @@ footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
 .footer-copy{width:100%;text-align:center;color:rgba(255,255,255,0.18);font-size:11px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.06);margin-top:4px}
 
 /* ── Notification toast ── */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(15,31,92,0.35)}
-.toast.show{transform:translateX(-50%) translateY(0)}
+.toast{position:fixed;bottom:20px;left:50%;top: 50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(15,31,92,0.35)}
+.toast.show{transform:translateX(-50%) translateY(-50%)}
 .toast.success{background:#0F6E56}
 .toast.error{background:#b91c1c}
 </style>
@@ -654,14 +654,17 @@ function showToast(msg,type=''){
 /* ── Login ── */
 document.getElementById('loginForm').addEventListener('submit',async function(e){
   e.preventDefault();
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
   const email_id=document.getElementById('login_email_id').value;
   const password=document.getElementById('login_password').value;
+  showToast('Logging in...','info');
   try{
     const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email_id,password})});
     const result=await res.json();
     if(result.success){
       localStorage.setItem('student',JSON.stringify(result.user));
-      showToast('Login successful!','success');
+      showToast('Login successful! Redirecting...!','success');
       setTimeout(()=>window.location='/dashboard.html',800);
     }else{
       showToast(result.message||'Login failed','error');
@@ -669,12 +672,16 @@ document.getElementById('loginForm').addEventListener('submit',async function(e)
   }catch(err){
     console.error(err);
     showToast('Connection error. Try again.','error');
+  } finally {
+    submitBtn.disabled = false;
   }
 });
 
 /* ── Register ── */
 document.getElementById('registerForm').addEventListener('submit',async function(e){
   e.preventDefault();
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  submitBtn.disabled = true;
   const payload={
     name:document.getElementById('reg_name').value,
     email_id:document.getElementById('reg_email').value,
@@ -686,11 +693,12 @@ document.getElementById('registerForm').addEventListener('submit',async function
     dob:document.getElementById('reg_dob').value,
     password:document.getElementById('reg_password').value
   };
+  showToast('Creating account...','info');
   try{
     const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const result=await res.json();
     if(result.success){
-      showToast('Registration successful!','success');
+      showToast('Registration successful! Please login','success');
       document.getElementById('registerForm').reset();
       setTimeout(()=>switchToTab('login'),900);
     }else{
@@ -699,6 +707,8 @@ document.getElementById('registerForm').addEventListener('submit',async function
   }catch(err){
     console.error(err);
     showToast('Server error. Try again.','error');
+  } finally {
+    submitBtn.disabled = false;
   }
 });
 </script>
