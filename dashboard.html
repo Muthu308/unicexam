@@ -821,7 +821,7 @@ async function loadQuestionWise(){
     if(ans === "NV")nvcount++;
     if(st==="correct")totC++; else if(st==="wrong")totW++; else totNA++;
     totMarks+=mk;
-    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,nv:0;bonus:0,range:[]};
+    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,nv:0,bonus:0,range:[]};
     secMap[sec].range.push(i+1);
     
     if(st==="correct"){secMap[sec].c++;secMap[sec].pos+=mk;}
