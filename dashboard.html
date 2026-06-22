@@ -890,7 +890,7 @@ function generateQwPdf(){
   // ── Grade helper
   function getGrade(pct){
     pct=parseFloat(pct);
-    if(pct>=85)return"A+";if(pct>=70)return"A";if(pct>=55)return"B";if(pct>=40)return"C";return"D";
+    if(pct>=85)return"A+ (Outstanding)";if(pct>=70)return"A (Excellent)";if(pct>=55)return"B (Good)";if(pct>=40)return"C (Average)";return"D (Needs Improvement)";
   }
 
   // ── Remarks helper
@@ -916,7 +916,7 @@ function generateQwPdf(){
   let questionImageHTML="";
   d.res.forEach((ans,i)=>{
     const status=d.resStatus[i]||"not_attempted";
-    const displayAns =  ans === "NV" ? `<span style="color:blue;">Not Visited this QP</span>` : (ans || "—");
+    const displayAns = ans === "NV" ? `<span style="color:blue;">Not Visited this QP</span>` : (ans || "—");
     const marks=d.qpMarks[i];
     const cAns=d.correctAns[i]||"—";
     const qLabel=d.qpData&&d.qpData[i]&&d.qpData[i].question?d.qpData[i].question:`Question ${i+1}`;
@@ -992,7 +992,7 @@ function generateQwPdf(){
     <td>Total</td><td>Q1–Q${d.totalQ}</td>
     <td style="color:#15803d;">+${d.totC}</td>
     <td style="color:#b91c1c;">${d.totW}</td>
-    <td>${d.totNA} ${Number(d.nvcount) !== 0 ? `<span style="color:blue;">(${d.nvcount})</span>` : ''}</td>
+    <td>${d.totNA}</td>
     <td style="color:#15803d;">+${totalPos}</td>
     <td style="color:#b91c1c;">${totalNeg}</td>
     <td>${d.totMarks}</td>
