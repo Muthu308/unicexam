@@ -431,14 +431,15 @@ td.chg-na{color:#94a3b8;font-style:italic;font-size:11px}
             <tr>
               <th style="text-align:left;width:50px">#</th>
               <th style="text-align:left">Subject</th>
-              <th>Student Answer</th>
+              <th>Your Answer</th>
+              <th>Correct Answer</th>
               <th>Status</th>
-              <th>Marks</th>
-              <th>Question Image</th>
+              <th>Marks Obtained</th>
+              <th>View Question</th>
             </tr>
           </thead>
           <tbody id="qwTableBody">
-            <tr><td colspan="6" class="no-data" style="text-align:center;padding:40px;color:#94a3b8">Select an exam and click "Load Results" to view question-wise data.</td></tr>
+            <tr><td colspan="7" class="no-data" style="text-align:center;padding:40px;color:#94a3b8">Select an exam and click "Load Results" to view question-wise data.</td></tr>
           </tbody>
         </table>
       </div>
@@ -864,7 +865,7 @@ async function loadQuestionWise(){
     rows+=`<tr>
       <td><strong>Q${i+1}</strong><br><small style="color:#94a3b8;font-size:10px;">${qLabel}</small></td>
       <td><span class="subj-tag ${secCls}">${sec}</span></td>
-      <td>${ans||'—'} ${remarkQp}</td>
+      <td>${ans||'—'}  ${remarkQp && remarkQp.trim() ? `<span "color:blue;font-size:10px;">${remarkQp}</span>` : ''}</td>
       <td>${cAns}</td>
       <td>${statusBadge}</td>
       <td>${marksCell}</td>
@@ -915,7 +916,7 @@ function generateQwPdf(){
   let questionImageHTML="";
   d.res.forEach((ans,i)=>{
     const status=d.resStatus[i]||"not_attempted";
-    const displayAns =  ans === "NV" ? `<span class="q-badge q-na">Not Visited this QP</span>` : (ans || "—");
+    const displayAns =  ans === "NV" ? `<span style="color:blue;">Not Visited this QP</span>` : (ans || "—");
     const marks=d.qpMarks[i];
     const cAns=d.correctAns[i]||"—";
     const qLabel=d.qpData&&d.qpData[i]&&d.qpData[i].question?d.qpData[i].question:`Question ${i+1}`;
@@ -933,13 +934,13 @@ function generateQwPdf(){
       <tr>
         <td style="background:#007bff;color:white;font-weight:bold;width:120px;padding:8px;">${qLabel.toUpperCase()}</td>
         <td style="padding:8px;">
-          <b>Your Ans:</b> ${displayAns ||'—'}
+          <b>Your Answer:</b> ${displayAns ||'—'}
           &nbsp;&nbsp;|&nbsp;
-          <b>Ans Key:</b> ${cAns}
+          <b>Correct Answer:</b> ${cAns}
           &nbsp;&nbsp;|&nbsp;
           <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${statusTxt}</span>
           &nbsp;&nbsp;|&nbsp;
-          <b>Marks:</b> <span style="color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</span>
+          <b>Marks Obtained:</b> <span style="color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</span>
         </td>
       </tr>
       <tr>
@@ -977,7 +978,7 @@ function generateQwPdf(){
       <td>${rangeStr}</td>
       <td style="color:#15803d;font-weight:600;">${s.c}</td>
       <td style="color:#b91c1c;font-weight:600;">${s.w}</td>
-      <td style="color:#64748b;">${s.na}</td>
+      <td style="color:#64748b;">${s.na} ${Number(s.nv) !== 0 ? `<span style="color:blue;">(${s.nv})</span>` : ''}</td>
       <td style="color:#15803d;font-weight:600;">+${s.pos}</td>
       <td style="color:#b91c1c;font-weight:600;">${s.neg}</td>
       <td style="font-weight:600;">${s.marks}</td>
@@ -991,7 +992,7 @@ function generateQwPdf(){
     <td>Total</td><td>Q1–Q${d.totalQ}</td>
     <td style="color:#15803d;">+${d.totC}</td>
     <td style="color:#b91c1c;">${d.totW}</td>
-    <td>${d.totNA}</td>
+    <td>${d.totNA} ${Number(d.nvcount) !== 0 ? `<span style="color:blue;">(${d.nvcount})</span>` : ''}</td>
     <td style="color:#15803d;">+${totalPos}</td>
     <td style="color:#b91c1c;">${totalNeg}</td>
     <td>${d.totMarks}</td>
