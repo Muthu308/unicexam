@@ -237,7 +237,7 @@ td.chg-na{color:#94a3b8;font-style:italic;font-size:11px}
     <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
     <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>
-    <button class="nav-item" onclick="showPage('changes',this)"><i class="ti ti-arrows-diff"></i> Change Analysis</button>
+   <!-- <button class="nav-item" onclick="showPage('changes',this)"><i class="ti ti-arrows-diff"></i> Change Analysis</button>-->
     <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Result</button>
   </nav>
   <div class="sb-bottom">
@@ -668,7 +668,7 @@ async function loadStudentResults(){
                 <td>${r.cy} <small>[<span class="pos-marks">+${r.cy_correct*4}</span>|<span class="neg-marks">${r.cy_wrong*-1}</span>]</small></td>
                 <td>${r.ma} <small>[<span class="pos-marks">+${r.ma_correct*4}</span>|<span class="neg-marks">${r.ma_wrong*-1}</span>]</small></td>
                 <td><strong>${r.bonus}</strong></td>
-                <td><strong>${r.final_marks}</strong></td>
+                <td><strong>${r.final_marks} <small>[<span class="pos-marks">+${r.correct*4}</span>|<span class="neg-marks">${r.wrong*-1}</span>]</small></strong></td>
                 <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
                 <td class="${pctBClass(r.band)}">${r.band}</td>
                 <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
@@ -679,7 +679,7 @@ async function loadStudentResults(){
       </div>`;
 
     /* ══ BUILD CHANGE ANALYSIS TABLES ══ */
-    buildChangeTables();
+   // buildChangeTables();
 
     /* ══ POPULATE EXAM SELECT FOR Q-WISE ══ */
     populateQwExamSelect();
@@ -737,6 +737,7 @@ function buildChangeTables(){
   $("cwnaChangeBody").innerHTML=cwnaRows||`<tr><td colspan="13" class="no-data">No data.</td></tr>`;
 }
 
+
 /* ══════════════════════════════════════════════
    QUESTION-WISE RESULT
 ══════════════════════════════════════════════ */
@@ -757,7 +758,7 @@ function populateQwExamSelect(){
   });
 }
 
-let currentQwData=null; // {exam, results, qp}
+let currentQwData=null;
 
 async function loadQuestionWise(){
   const sel=$("qwExamSelect");
@@ -767,189 +768,307 @@ async function loadQuestionWise(){
   const examResult=allResults.find(r=>r.exam_name===examName);
   if(!examResult){alert("Exam data not found.");return;}
 
-  // Get Q-level arrays from students.json result object
-  const res=examResult.res; // e.g. ["1","2","3",...]
-  const qpMarks=examResult.qp_marks; // e.g. [4,4,-1,1,...]
-  const resStatus=examResult.res_status; // e.g. ["correct","wrong","not_attempted",...]
-  const qpFile=examResult.exam_qp_image_file; // e.g. "pcm01.json"
+  const res=examResult.res;           // student answers ["1","2","3",...]
+  const qpMarks=examResult.qp_marks;  // [4,4,-1,0,...]
+  const resStatus=examResult.res_status; // ["correct","wrong","not_attempted",...]
+  const correctAns=examResult.correct_answers||[]; // optional correct answer array
+  const qpFile=examResult.exam_qp_image_file;
 
   if(!res||!qpMarks||!resStatus){
     $("qwTableBody").innerHTML=`<tr><td colspan="6" class="no-data" style="text-align:center;padding:30px">Question-wise data not available for this exam.</td></tr>`;
     return;
   }
 
-  // Try to load QP image file
+  // Load QP file — keys: question, type, section, image_base64
   let qpData=null;
   if(qpFile){
     try{
       const qpRes=await fetch(qpFile);
       qpData=await qpRes.json();
-    }catch(e){
-      console.warn("Could not load QP file:", qpFile, e);
-    }
+    }catch(e){ console.warn("QP file load failed:", e); }
   }
 
-  // Determine per-question subject based on total questions split equally into 3
   const totalQ=res.length;
-  const perSubject=Math.floor(totalQ/3);
-  function getSubject(idx){
-    if(idx<perSubject)return{name:"PH",label:"⚡ Physics",cls:"subj-ph"};
-    if(idx<perSubject*2)return{name:"CY",label:"🧪 Chemistry",cls:"subj-cy"};
-    return{name:"MA",label:"∫ Maths",cls:"subj-ma"};
+
+  // Build subject sections from qpData.section OR fallback equal-split
+  function getSection(idx){
+    if(qpData&&qpData[idx]&&qpData[idx].section) return qpData[idx].section;
+    const p=Math.floor(totalQ/3);
+    if(idx<p) return "Physics";
+    if(idx<p*2) return "Chemistry";
+    return "Mathematics";
   }
 
-  // Build summary
-  let totCorrect=0,totWrong=0,totNA=0,totMarks=0;
-  resStatus.forEach((s,i)=>{
-    if(s==="correct")totCorrect++;
-    else if(s==="wrong")totWrong++;
-    else totNA++;
-    totMarks+=Number(qpMarks[i]||0);
+  // Summaries
+  let totC=0,totW=0,totNA=0,totMarks=0;
+  // Per-section aggregates
+  const secMap={};
+  res.forEach((ans,i)=>{
+    const st=resStatus[i]||"not_attempted";
+    const mk=Number(qpMarks[i]||0);
+    const sec=getSection(i);
+    if(st==="correct")totC++; else if(st==="wrong")totW++; else totNA++;
+    totMarks+=mk;
+    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,bonus:0,range:[]};
+    secMap[sec].range.push(i+1);
+    if(st==="correct"){secMap[sec].c++;secMap[sec].pos+=mk;}
+    else if(st==="wrong"){secMap[sec].w++;secMap[sec].neg+=mk;}
+    else secMap[sec].na++;
+    secMap[sec].marks+=mk;
   });
 
   $("qwSummaryBar").style.display="grid";
   $("qwSummaryBar").innerHTML=`
     <div class="q-sumcard q-sum-total"><h4>Total Questions</h4><p>${totalQ}</p></div>
-    <div class="q-sumcard q-sum-correct"><h4>Correct</h4><p>${totCorrect}</p></div>
-    <div class="q-sumcard q-sum-wrong"><h4>Wrong</h4><p>${totWrong}</p></div>
+    <div class="q-sumcard q-sum-correct"><h4>Correct</h4><p>${totC}</p></div>
+    <div class="q-sumcard q-sum-wrong"><h4>Wrong</h4><p>${totW}</p></div>
     <div class="q-sumcard q-sum-na"><h4>Not Attempted</h4><p>${totNA}</p></div>
     <div class="q-sumcard q-sum-marks"><h4>Total Marks</h4><p>${totMarks}</p></div>
   `;
 
-  // Build table
+  // Dashboard table (compact)
   let rows="";
   res.forEach((ans,i)=>{
     const status=resStatus[i]||"not_attempted";
     const marks=qpMarks[i];
-    const subj=getSubject(i);
+    const sec=getSection(i);
+    const secCls=sec==="Physics"?"subj-ph":sec==="Chemistry"?"subj-cy":"subj-ma";
     const statusBadge=status==="correct"
       ?`<span class="q-badge q-correct">✓ Correct</span>`
       :status==="wrong"
         ?`<span class="q-badge q-wrong">✗ Wrong</span>`
-        :`<span class="q-badge q-na">— Not Attempted</span>`;
-    const marksCell=marks>0
-      ?`<span class="pos-marks">+${marks}</span>`
-      :marks<0
-        ?`<span class="neg-marks">${marks}</span>`
-        :`<span style="color:#94a3b8">0</span>`;
-
-    // QP image
+        :`<span class="q-badge q-na">— Not Att.</span>`;
+    const marksCell=marks>0?`<span class="pos-marks">+${marks}</span>`:marks<0?`<span class="neg-marks">${marks}</span>`:`<span style="color:#94a3b8">0</span>`;
     let imgCell=`<span class="q-no-img">No image</span>`;
-    if(qpData){
-      const qEntry=qpData.find(q=>String(q.question_number)===String(i+1));
-      if(qEntry&&qEntry.qp_image){
-        imgCell=`<img class="q-img-thumb" src="data:image/png;base64,${qEntry.qp_image}" alt="Q${i+1}" onclick="openLightbox(this.src,'Q${i+1}')">`;
-      }
+    if(qpData&&qpData[i]&&qpData[i].image_base64){
+      imgCell=`<img class="q-img-thumb" src="data:image/jpeg;base64,${qpData[i].image_base64}" alt="Q${i+1}" onclick="openLightbox(this.src,'Q${i+1}')">`;
     }
-
+    const qLabel=qpData&&qpData[i]&&qpData[i].question?qpData[i].question:`Question ${i+1}`;
+    const cAns=correctAns[i]||"—";
     rows+=`<tr>
-      <td><strong>Q${i+1}</strong></td>
-      <td><span class="subj-tag ${subj.cls}">${subj.label}</span></td>
+      <td><strong>Q${i+1}</strong><br><small style="color:#94a3b8;font-size:10px;">${qLabel}</small></td>
+      <td><span class="subj-tag ${secCls}">${sec}</span></td>
       <td>${ans||'—'}</td>
+      <td>${cAns}</td>
       <td>${statusBadge}</td>
       <td>${marksCell}</td>
       <td>${imgCell}</td>
     </tr>`;
   });
-
   $("qwTableBody").innerHTML=rows;
-  currentQwData={exam:examName,examResult,res,qpMarks,resStatus,qpData,totalQ,perSubject,totCorrect,totWrong,totNA,totMarks};
+
+  currentQwData={exam:examName,examResult,res,qpMarks,resStatus,correctAns,qpData,totalQ,totC,totW,totNA,totMarks,secMap,getSection};
   $("qwPdfBtn").disabled=false;
 }
 
 /* ══════════════════════════════════════════════
-   GENERATE PDF (Question-wise)
+   GENERATE PDF — exact layout match
 ══════════════════════════════════════════════ */
 function generateQwPdf(){
   if(!currentQwData){alert("Please load results first.");return;}
   const d=currentQwData;
   const student=user;
+  const examResult=d.examResult;
 
-  function getSubject(idx){
-    if(idx<d.perSubject)return"⚡ Physics";
-    if(idx<d.perSubject*2)return"🧪 Chemistry";
-    return"∫ Maths";
+  // ── Grade helper
+  function getGrade(pct){
+    pct=parseFloat(pct);
+    if(pct>=85)return"A+";if(pct>=70)return"A";if(pct>=55)return"B";if(pct>=40)return"C";return"D";
   }
 
-  let qRows="";
+  // ── Remarks helper
+  function buildRemarks(){
+    const lines=[];
+    Object.keys(d.secMap).forEach(sec=>{
+      const s=d.secMap[sec];
+      const total=s.c+s.w+s.na;
+      const pct=total?((s.c/total)*100).toFixed(1):0;
+      if(pct>=60)lines.push(`${sec}: Good performance (${pct}% accuracy).`);
+      else if(pct>=35)lines.push(`${sec}: Average performance (${pct}% accuracy). More practice needed.`);
+      else lines.push(`${sec}: Needs significant improvement (${pct}% accuracy). Focus on fundamentals.`);
+    });
+    return lines.join(" ");
+  }
+
+  // ── Build per-question detail rows (blue header + image row pattern)
+  let questionImageHTML="";
   d.res.forEach((ans,i)=>{
     const status=d.resStatus[i]||"not_attempted";
     const marks=d.qpMarks[i];
-    const subj=getSubject(i);
-    const statusText=status==="correct"?"✓ Correct":status==="wrong"?"✗ Wrong":"— Not Att.";
+    const cAns=d.correctAns[i]||"—";
+    const qLabel=d.qpData&&d.qpData[i]&&d.qpData[i].question?d.qpData[i].question:`Question ${i+1}`;
+    const qType=d.qpData&&d.qpData[i]&&d.qpData[i].type?d.qpData[i].type:"MCQ";
+    const statusTxt=status==="correct"?"✓ Correct":status==="wrong"?"✗ Wrong":"— Not Attempted";
     const statusColor=status==="correct"?"#15803d":status==="wrong"?"#b91c1c":"#64748b";
     const marksColor=marks>0?"#15803d":marks<0?"#b91c1c":"#64748b";
-
-    // QP image
-    let imgHtml="—";
-    if(d.qpData){
-      const qEntry=d.qpData.find(q=>String(q.question_number)===String(i+1));
-      if(qEntry&&qEntry.qp_image){
-        imgHtml=`<img src="data:image/png;base64,${qEntry.qp_image}" style="max-width:120px;max-height:70px;object-fit:contain;border-radius:4px;border:1px solid #e2e8f0;">`;
-      }
+    let imageHTML="<em style='color:#aaa;font-size:11px;'>No image available</em>";
+    if(d.qpData&&d.qpData[i]&&d.qpData[i].image_base64){
+      imageHTML=`<img src="data:image/jpeg;base64,${d.qpData[i].image_base64}" style="max-width:100%;max-height:300px;display:block;margin:6px auto;border:1px solid #ddd;border-radius:6px;">`;
     }
 
-    qRows+=`<tr>
-      <td style="text-align:center;font-weight:700;color:#0e1e4a;">Q${i+1}</td>
-      <td style="font-size:11px;">${subj}</td>
-      <td style="text-align:center;">${ans||'—'}</td>
-      <td style="text-align:center;color:${statusColor};font-weight:600;">${statusText}</td>
-      <td style="text-align:center;color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</td>
-      <td style="text-align:center;">${imgHtml}</td>
+    questionImageHTML+=`
+    <table border="1" cellspacing="0" cellpadding="6" width="100%" style="margin-bottom:6px;border-collapse:collapse;font-size:12px;">
+      <tr>
+        <td style="background:#007bff;color:white;font-weight:bold;width:120px;padding:8px;">${qLabel.toUpperCase()}</td>
+        <td style="padding:8px;">
+          <b>Your Ans:</b> ${ans||'—'}
+          &nbsp;&nbsp;|&nbsp;
+          <b>Correct:</b> ${cAns}
+          &nbsp;&nbsp;|&nbsp;
+          <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${statusTxt}</span>
+          &nbsp;&nbsp;|&nbsp;
+          <b>Marks:</b> <span style="color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding:8px;text-align:center;">${imageHTML}</td>
+      </tr>
+    </table>`;
+  });
+
+  // ── Compact summary table (2 questions per row)
+  let summaryRows="";
+  for(let i=0;i<d.totalQ;i+=2){
+    const buildCell=(idx)=>{
+      if(idx>=d.totalQ)return"<td colspan='5'></td>";
+      const st=d.resStatus[idx]||"not_attempted";
+      const mk=d.qpMarks[idx];
+      const cA=d.correctAns[idx]||"—";
+      const stColor=st==="correct"?"#15803d":st==="wrong"?"#b91c1c":"#64748b";
+      const mkColor=mk>0?"#15803d":mk<0?"#b91c1c":"#64748b";
+      return`<td style="font-weight:700;color:#0e1e4a;">Q${idx+1}</td>
+             <td>${d.res[idx]||'—'}</td>
+             <td>${cA}</td>
+             <td style="color:${stColor};font-weight:600;">${st==="correct"?"✓ Correct":st==="wrong"?"✗ Wrong":"— NA"}</td>
+             <td style="color:${mkColor};font-weight:600;">${mk>0?"+":""}${mk}</td>`;
+    };
+    summaryRows+=`<tr>${buildCell(i)}${buildCell(i+1)}</tr>`;
+  }
+
+  // ── Section rows
+  let sectionRows="";
+  Object.keys(d.secMap).forEach(sec=>{
+    const s=d.secMap[sec];
+    const rangeStr=s.range.length>0?`Q${s.range[0]}–Q${s.range[s.range.length-1]}`:"—";
+    sectionRows+=`<tr>
+      <td>${sec}</td>
+      <td>${rangeStr}</td>
+      <td style="color:#15803d;font-weight:600;">${s.c}</td>
+      <td style="color:#b91c1c;font-weight:600;">${s.w}</td>
+      <td style="color:#64748b;">${s.na}</td>
+      <td style="color:#15803d;font-weight:600;">+${s.pos}</td>
+      <td style="color:#b91c1c;font-weight:600;">${s.neg}</td>
+      <td style="font-weight:600;">${s.marks}</td>
+      <td>${s.bonus||0}</td>
     </tr>`;
   });
+  // Total row
+  const totalPos=d.res.reduce((acc,_,i)=>acc+(d.qpMarks[i]>0?d.qpMarks[i]:0),0);
+  const totalNeg=d.res.reduce((acc,_,i)=>acc+(d.qpMarks[i]<0?d.qpMarks[i]:0),0);
+  sectionRows+=`<tr style="background:#f0f4fb;font-weight:700;">
+    <td>Total</td><td>Q1–Q${d.totalQ}</td>
+    <td style="color:#15803d;">+${d.totC*4||d.totC}</td>
+    <td style="color:#b91c1c;">${d.totW}</td>
+    <td>${d.totNA}</td>
+    <td style="color:#15803d;">+${totalPos}</td>
+    <td style="color:#b91c1c;">${totalNeg}</td>
+    <td>${d.totMarks}</td>
+    <td>${examResult.bonus||0}</td>
+  </tr>`;
+
+  const finalTotal=examResult.final_marks||d.totMarks;
+  const percentage=examResult.percentage||((d.totMarks/d.totalQ*4)*100/100).toFixed(2);
+  const grade=examResult.band||getGrade(percentage);
+  const remarks=buildRemarks();
 
   const htmlContent=`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>Question-wise Result — ${d.exam}</title>
 <style>
-  body{font-family:'Segoe UI',Arial,sans-serif;margin:0;padding:0;background:#fff;color:#1e293b;font-size:12px;}
-  .header{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:20px 28px;display:flex;justify-content:space-between;align-items:center;}
-  .header h1{font-size:20px;margin:0;}
-  .header p{margin:4px 0 0;opacity:.8;font-size:12px;}
-  .header .right{text-align:right;}
-  .summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:16px 28px;background:#f8fafc;border-bottom:1px solid #e2e8f0;}
-  .sc{border-radius:8px;padding:10px 12px;text-align:center;}
-  .sc h4{font-size:9px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;opacity:.7;}
-  .sc p{font-size:18px;font-weight:700;margin:0;}
-  .info{padding:10px 28px;background:#eff6ff;border-bottom:1px solid #dbeafe;font-size:11px;display:flex;gap:24px;}
-  .info span b{color:#0e1e4a;}
-  table{width:100%;border-collapse:collapse;margin:0;}
-  thead th{background:#0e1e4a;color:#fff;padding:9px 10px;font-size:11px;font-weight:500;}
-  tbody td{padding:8px 10px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
-  tbody tr:nth-child(even){background:#fafbfe;}
-  .footer{text-align:center;padding:14px;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;margin-top:8px;}
-</style></head><body>
-<div class="header">
-  <div><h1>UNIC Academy</h1><p>Question-wise Result Report</p></div>
-  <div class="right"><p><b>${student.name}</b></p><p>ID: ${student.std_id}</p><p>Exam: ${d.exam}</p></div>
+  body{font-family:'Segoe UI',Arial,sans-serif;margin:16px;background:#fff;color:#1e293b;font-size:12px;}
+  @media print{body{margin:8px;} .no-print{display:none;}}
+  .header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:14px 20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .header-bar h2{margin:0;font-size:16px;}
+  .header-bar p{margin:2px 0;font-size:11px;opacity:.85;}
+  .info-bar{background:#eff6ff;border:1px solid #dbeafe;border-radius:6px;padding:8px 14px;font-size:11px;display:flex;flex-wrap:wrap;gap:16px;margin-bottom:10px;}
+  .info-bar span b{color:#0e1e4a;}
+  table{width:100%;border-collapse:collapse;margin-bottom:10px;}
+  th{background:#0e1e4a;color:#fff;padding:7px 8px;font-size:11px;font-weight:500;text-align:center;}
+  td{padding:6px 8px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
+  tr:nth-child(even) td{background:#f8fafc;}
+  h5{font-size:12px;margin:10px 0 4px;color:#0e1e4a;}
+</style></head>
+<body>
+<div class="header-bar">
+  <div><h2>UNIC Academy — Question-wise Result</h2><p>Exam: <b>${d.exam}</b> &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString()}</p></div>
+  <div style="text-align:right;"><p><b>${student.name}</b></p><p>ID: ${student.std_id} &nbsp;|&nbsp; Class: ${student.class_name||"—"}</p><p>${student.school_name||"—"}</p></div>
 </div>
-<div class="info">
-  <span><b>Student:</b> ${student.name}</span>
-  <span><b>ID:</b> ${student.std_id}</span>
-  <span><b>Class:</b> ${student.class_name||"—"}</span>
-  <span><b>School:</b> ${student.school_name||"—"}</span>
-  <span><b>Exam:</b> ${d.exam}</span>
-  <span><b>Generated:</b> ${new Date().toLocaleDateString()}</span>
+<div class="info-bar">
+  <span><b>Total Questions:</b> ${d.totalQ}</span>
+  <span><b>Correct:</b> <span style="color:#15803d;">${d.totC}</span></span>
+  <span><b>Wrong:</b> <span style="color:#b91c1c;">${d.totW}</span></span>
+  <span><b>Not Attempted:</b> ${d.totNA}</span>
+  <span><b>Marks Obtained:</b> ${d.totMarks}</span>
+  <span><b>Bonus:</b> ${examResult.bonus||0}</span>
+  <span><b>Final Score:</b> <b>${finalTotal}</b></span>
 </div>
-<div class="summary">
-  <div class="sc" style="background:#eff6ff;color:#1d4ed8"><h4>Total</h4><p>${d.totalQ}</p></div>
-  <div class="sc" style="background:#dcfce7;color:#15803d"><h4>Correct</h4><p>${d.totCorrect}</p></div>
-  <div class="sc" style="background:#fee2e2;color:#b91c1c"><h4>Wrong</h4><p>${d.totWrong}</p></div>
-  <div class="sc" style="background:#f1f5f9;color:#475569"><h4>Not Att.</h4><p>${d.totNA}</p></div>
-  <div class="sc" style="background:#fef3c7;color:#92400e"><h4>Total Marks</h4><p>${d.totMarks}</p></div>
-</div>
-<table>
-  <thead><tr><th>#</th><th>Subject</th><th>Answer</th><th>Status</th><th>Marks</th><th>Question Image</th></tr></thead>
-  <tbody>${qRows}</tbody>
+
+<h5>Question-wise Summary</h5>
+<table style="text-align:center;vertical-align:middle;">
+  <thead><tr>
+    <th>Qn.</th><th>Stud. Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
+    <th>Qn.</th><th>Stud. Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
+  </tr></thead>
+  <tbody>${summaryRows}</tbody>
 </table>
-<div class="footer">Generated by UNIC Academy Student Portal &mdash; Confidential</div>
+
+<h5>Subject / Section wise Performance</h5>
+<table border="1" cellspacing="0" cellpadding="5" width="100%" style="text-align:center;vertical-align:middle;">
+  <thead><tr>
+    <th>Section</th><th>Range</th><th>Correct</th><th>Wrong</th><th>Not Attempted</th>
+    <th>(+) Marks</th><th>(-) Marks</th><th>Marks</th><th>Bonus</th>
+  </tr></thead>
+  <tbody>${sectionRows}</tbody>
+</table>
+
+<div style="margin-top:16px;padding:10px;border:2px solid #333;background:#f8f9fa;text-align:center;border-radius:6px;">
+  <h3 style="margin:0 0 8px 0;">Final Result Summary:</h3>
+  <span style="font-size:15px;">
+    <b>Final Score:</b> ${finalTotal}
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <b>Percentage:</b> ${percentage}%
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <b>Grade:</b> ${grade}
+  </span>
+</div>
+
+<p style="font-size:10px;margin-top:6px;">
+  <b>Grade Scale:</b>
+  85%–100% = A+ (Outstanding),
+  70%–84% = A (Excellent),
+  55%–69% = B (Good),
+  40%–54% = C (Average),
+  Below 40% = D (Needs Improvement)
+</p>
+
+<div style="min-height:50px;border:1px solid black;padding:6px;margin-top:6px;border-radius:4px;">
+  <p><b>Remarks:</b></p>
+  <span style="font-style:italic;font-size:11px;color:#555;line-height:1.5;">${remarks}</span>
+</div>
+
+<br>
+<h5 style="font-size:13px;border-bottom:2px solid #0e1e4a;padding-bottom:4px;margin-bottom:8px;">Question Images &amp; Details</h5>
+${questionImageHTML}
+
+<div style="text-align:center;margin-top:12px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;">
+  Generated by UNIC Academy Student Portal &mdash; Confidential
+</div>
 </body></html>`;
 
   const win=window.open("","_blank");
   if(!win){alert("Please allow popups to generate PDF.");return;}
   win.document.write(htmlContent);
   win.document.close();
-  win.onload=()=>{ setTimeout(()=>win.print(),300); };
+  win.onload=()=>{ setTimeout(()=>win.print(),400); };
 }
 
 /* Lightbox */
@@ -962,6 +1081,7 @@ function closeLightbox(){
   $("lbImg").src="";
 }
 $("imgLightbox").addEventListener("click",e=>{if(e.target===$("imgLightbox"))closeLightbox();});
+
 
 /* ── Bootstrap ── */
 const user = JSON.parse(localStorage.getItem("student"));
