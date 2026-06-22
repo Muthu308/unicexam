@@ -1117,12 +1117,12 @@
         "percentage": -1.5,
         "band": "D",
         "rank": 11
-    },
-    [
-    {
+    },   
+       {
         "name": "SANTHOSH KUMAR S ",
         "s_id": "1226JYS007",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": 38,
         "cy": 38,
         "ma": 21,
@@ -1290,6 +1290,7 @@
         "name": "M.NIDHIlAN",
         "s_id": "1226JYS005",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": 8,
         "cy": 8,
         "ma": 12,
@@ -1457,6 +1458,7 @@
         "name": "S ABINESH",
         "s_id": "1226JYS003",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": 11,
         "cy": 0,
         "ma": 5,
@@ -1624,6 +1626,7 @@
         "name": "VISHNU VEL V",
         "s_id": "1226JYS011",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": -5,
         "cy": 10,
         "ma": 4,
@@ -1791,6 +1794,7 @@
         "name": "K.ANISH",
         "s_id": "1226JYS004",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": -5,
         "cy": -4,
         "ma": 10,
@@ -1958,6 +1962,7 @@
         "name": "GOKUL SAI B",
         "s_id": "1226JYS001",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": -6,
         "cy": 1,
         "ma": 2,
@@ -2125,6 +2130,7 @@
         "name": "JOYAL SUNDAR PANDIAN S",
         "s_id": "1226JYS008",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": 3,
         "cy": -8,
         "ma": 2,
@@ -2292,6 +2298,7 @@
         "name": "KARTHIKEYAN M",
         "s_id": "1226JYS006",
         "exam_module": "PCM-05",
+"exam_name": "PCM-05",
         "ph": -6,
         "cy": 5,
         "ma": -3,
@@ -2455,5 +2462,5 @@
         "exam_qp_image_file": "unic_text_21-06-2026.json",
         "rank": 8
     }
-]
+   
 ]
