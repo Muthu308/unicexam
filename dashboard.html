@@ -771,7 +771,7 @@ async function loadQuestionWise(){
   const res=examResult.res;           // student answers ["1","2","3",...]
   const qpMarks=examResult.qp_marks;  // [4,4,-1,0,...]
   const resStatus=examResult.res_status; // ["correct","wrong","not_attempted",...]
-  const correctAns=examResult.correct_answers||[]; // optional correct answer array
+  const correctAnsload=examResult.exam_name; // optional correct answer array
   const qpFile=examResult.exam_qp_image_file;
 
   if(!res||!qpMarks||!resStatus){
@@ -786,6 +786,17 @@ async function loadQuestionWise(){
       const qpRes=await fetch(qpFile);
       qpData=await qpRes.json();
     }catch(e){ console.warn("QP file load failed:", e); }
+  }
+
+  let correctAns = [];
+  if(correctAnsload){
+  try {
+    const coAnRes = await fetch("answerKeys.json");
+    const allAnswers = await coAnRes.json();  
+    correctAns = allAnswers[correctAnsload] || [];
+  } catch (e) {
+    console.warn("Answer key load failed:", e);
+  }
   }
 
   const totalQ=res.length;
@@ -967,7 +978,7 @@ function generateQwPdf(){
   const totalNeg=d.res.reduce((acc,_,i)=>acc+(d.qpMarks[i]<0?d.qpMarks[i]:0),0);
   sectionRows+=`<tr style="background:#f0f4fb;font-weight:700;">
     <td>Total</td><td>Q1–Q${d.totalQ}</td>
-    <td style="color:#15803d;">+${d.totC*4||d.totC}</td>
+    <td style="color:#15803d;">+${d.totC}</td>
     <td style="color:#b91c1c;">${d.totW}</td>
     <td>${d.totNA}</td>
     <td style="color:#15803d;">+${totalPos}</td>
