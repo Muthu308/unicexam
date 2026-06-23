@@ -341,10 +341,10 @@ fetch("/exam_config.json")
   });
 
 // Load answer key once (answer_key.json contains { "MODULE1": { "q1":"A","q2":"B",... }, ... })
-fetch("/answer_key.json")
+fetch("/answerKeys.json")
   .then(r=>r.json())
   .then(data=>{ answerKey=data; })
-  .catch(()=>{ console.warn("answer_key.json not found — results will not be scored."); });
+  .catch(()=>{ console.warn("answerKeys.json not found — results will not be scored."); });
 
 /* ════════════════════════════════════════
    START EXAM
@@ -589,7 +589,11 @@ function showResult(responses){
   document.getElementById("resultPage").style.display="block";
   document.getElementById("timer").textContent="Done";
 
-  const key=answerKey[exam_module]||{};
+  const formattedModule = exam_module
+  .replace(/^UNIC_TEST_/, '')      // PCM05
+  .replace(/([A-Z]+)(\d+)$/, '$1-$2'); // PCM-05
+
+  const key = answerKey[formattedModule] || {};
   // Scoring config (default: +4 correct, -1 wrong, 0 skipped)
   const posMarks=selectedExam.positive_marks||4;
   const negMarks=selectedExam.negative_marks||1;
