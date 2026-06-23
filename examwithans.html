@@ -593,9 +593,9 @@ function showResult(responses){
   .replace(/^UNIC_TEST_/, '')      // PCM05
   .replace(/([A-Z]+)(\d+)$/, '$1-$2'); // PCM-05
 
-  console.log(formattedModule);
+  //console.log(formattedModule);
   const key = answerKey[formattedModule] || {};
-   console.log(key);
+   //console.log(key);
   
   // Scoring config (default: +4 correct, -1 wrong, 0 skipped)
   const posMarks=selectedExam.positive_marks||4;
