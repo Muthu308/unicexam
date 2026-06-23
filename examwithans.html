@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIC Academy — Exam Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d1b2a;--blue:#1a73e8;--blue-lt:#e8f0fe;
+  --green:#1e8e3e;--green-lt:#e6f4ea;
+  --red:#d93025;--red-lt:#fce8e6;
+  --amber:#f9ab00;--amber-lt:#fef3cd;
+  --gray-50:#f8f9fa;--gray-100:#f1f3f4;--gray-200:#e8eaed;
+  --gray-400:#9aa0a6;--gray-600:#5f6368;--gray-800:#3c4043;--gray-900:#202124;
+  --r:6px;--rl:12px;
+  --shadow:0 2px 8px rgba(0,0,0,.1),0 1px 4px rgba(0,0,0,.06);
+  --font:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-900);font-size:15px;line-height:1.6}
+
+/* HEADER */
+.hdr{background:var(--navy);color:#fff;padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.brand{font-size:16px;font-weight:600}.tagline{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px}
+.hdr-r{display:flex;align-items:center;gap:14px}
+.cand-badge{font-size:13px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.1);padding:4px 10px;border-radius:20px;display:none}
+.timer{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);padding:5px 14px;border-radius:20px;font-size:14px;font-weight:500;min-width:70px;text-align:center;letter-spacing:.5px}
+.timer.warn{background:rgba(249,171,0,.15);border-color:rgba(249,171,0,.4);color:#ffd740}
+.timer.danger{background:rgba(217,48,37,.2);border-color:rgba(217,48,37,.4);color:#ff8a80;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* LOGIN */
+#loginPage{max-width:900px;margin:40px auto;padding:0 20px 60px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:26px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.hero p{font-size:14px;color:var(--gray-600)}
+.card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--rl);box-shadow:var(--shadow);padding:28px 32px;margin-bottom:20px}
+.field-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.field{flex:1;min-width:180px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.field input{width:100%;padding:10px 13px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-size:14px;font-family:var(--font);outline:none;transition:.15s}
+.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+.info-banner{background:var(--blue-lt);border:1px solid rgba(26,115,232,.2);border-radius:var(--r);padding:9px 13px;font-size:13px;color:#174ea6;display:flex;align-items:center;gap:7px;margin-bottom:18px}
+
+/* EXAM TABLE */
+.tbl-wrap{width:100%;overflow-x:auto;border:1px solid var(--gray-200);border-radius:var(--r)}
+.etbl{width:100%;border-collapse:collapse;font-size:14px}
+.etbl thead tr{background:var(--gray-50);border-bottom:1.5px solid var(--gray-200)}
+.etbl th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.etbl tbody tr{border-bottom:1px solid var(--gray-100);transition:background .1s}
+.etbl tbody tr:last-child{border-bottom:none}
+.etbl tbody tr:hover{background:#f5f8ff}
+.etbl tbody tr.sel{background:var(--blue-lt)}
+.etbl td{padding:11px 14px;vertical-align:middle}
+.enam{font-weight:500;color:var(--gray-900)}
+.emeta{font-size:13px;color:var(--gray-600)}
+.spill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.spill.on{background:var(--green-lt);color:var(--green)}
+.spill.off{background:var(--red-lt);color:var(--red)}
+.sdot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.rbtn{padding:6px 14px;font-size:13px;font-weight:500;font-family:var(--font);background:var(--blue);color:#fff;border:none;border-radius:var(--r);cursor:pointer;transition:.15s;white-space:nowrap}
+.rbtn:hover{background:#1557b0}
+.rbtn:disabled{background:var(--gray-200);color:var(--gray-400);cursor:not-allowed}
+
+/* EXAM INFO BOX */
+#examInfo{background:#fff;border:1px solid var(--gray-200);border-left:4px solid var(--blue);border-radius:var(--r);padding:18px 22px;margin-top:16px;display:none}
+#examInfo h3{font-size:15px;font-weight:600;margin-bottom:10px}
+#examInfo ul{padding-left:18px}
+#examInfo li{font-size:13px;color:var(--gray-600);margin-bottom:4px}
+
+/* EXAM PAGE */
+#examPage{display:none;height:calc(100vh - 56px)}
+.exam-wrap{display:flex;height:100%}
+.qpanel{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
+.qpanel::-webkit-scrollbar{width:4px}
+.qpanel::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:3px}
+
+/* SECTION BAR */
+.secbar{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r);padding:7px 14px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.secbar .sname{font-weight:600;color:var(--gray-900)}
+.pill{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--gray-100);color:var(--gray-600)}
+
+/* QUESTION CARD */
+.qcard{background:#fff;border:1px solid var(--gray-200);border-radius:var(--rl);overflow:hidden}
+.qchead{padding:11px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:9px}
+.qnum{font-size:12px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.4px}
+.qtbadge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
+.qt-MCQ{background:#e8f0fe;color:#174ea6}.qt-MSQ{background:var(--green-lt);color:#137333}
+.qt-NAT{background:var(--amber-lt);color:#7a4100}.qt-SA{background:var(--red-lt);color:#a50e0e}
+.qcbody{padding:14px 16px}
+.qtext{font-size:15px;line-height:1.7;margin-bottom:12px}
+.qimg{max-width:100%;border-radius:var(--r);border:1px solid var(--gray-200);display:block;margin-bottom:12px}
+
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:center;gap:11px;padding:10px 13px;border:1.5px solid var(--gray-200);border-radius:var(--r);cursor:pointer;transition:.12s;font-size:14px;user-select:none}
+.opt:hover{border-color:var(--blue);background:var(--blue-lt)}
+.opt input{accent-color:var(--blue);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.opt.checked{border-color:var(--blue);background:var(--blue-lt)}
+
+/* RESULT OPTION STATES */
+.opt.correct{border-color:var(--green)!important;background:var(--green-lt)!important}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-lt)!important}
+.opt.missed{border-color:var(--green)!important;background:#f0fff4!important;border-style:dashed!important}
+
+/* NAT */
+.nat-wrap{max-width:260px}
+.nat-disp{width:100%;padding:9px 13px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-size:20px;font-weight:600;text-align:right;background:var(--gray-50);margin-bottom:8px;font-family:monospace}
+.nat-kp{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.nk{height:42px;border:1.5px solid var(--gray-200);border-radius:var(--r);background:#fff;font-size:17px;font-weight:500;cursor:pointer;transition:.1s;font-family:var(--font)}
+.nk:hover{background:var(--gray-100)}
+.nk.wide{grid-column:1/-1;font-size:12px;font-weight:500;color:var(--gray-600)}
+.sa-ta{width:100%;min-height:110px;padding:11px 13px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-size:14px;font-family:var(--font);resize:vertical;outline:none;transition:.15s}
+.sa-ta:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,232,.1)}
+
+/* NAVBTNS */
+.navbtns{display:flex;gap:8px;flex-wrap:wrap}
+.nb{padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;font-family:var(--font);cursor:pointer;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-800);transition:.12s}
+.nb:hover{border-color:var(--gray-400);background:var(--gray-100)}
+.nb.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.nb.pri:hover{background:#1557b0}
+.nb.rev{background:var(--amber-lt);color:#7a4100;border-color:var(--amber)}
+
+/* SIDEBAR */
+.sidebar{width:276px;flex-shrink:0;background:#fff;border-left:1px solid var(--gray-200);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:14px}
+.sidebar::-webkit-scrollbar{width:3px}
+.sh4{font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+
+/* PALETTE */
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.pb{height:33px;border:none;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;transition:.1s;color:#fff}
+.pb:hover{opacity:.8;transform:scale(1.05)}
+.pb.ans{background:var(--green)}.pb.no{background:var(--red)}
+.pb.cur{background:var(--blue);box-shadow:0 0 0 2px rgba(26,115,232,.3)}
+.pb.rev{background:var(--amber)}.pb.unv{background:var(--gray-200);color:var(--gray-600)}
+
+/* LEGEND */
+.leg{display:flex;flex-direction:column;gap:5px}
+.li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray-700)}
+.ld{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+
+/* SUBMIT */
+.sub-btn{width:100%;padding:11px;background:#fff;color:var(--blue);border:2px solid var(--blue);border-radius:var(--r);font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:.15s}
+.sub-btn:hover{background:var(--blue);color:#fff}
+
+/* ── RESULT PAGE ─────────────────────── */
+#resultPage{display:none;max-width:960px;margin:0 auto;padding:24px 20px 60px}
+.score-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px}
+.sc{background:#fff;border:1px solid var(--gray-200);border-radius:var(--rl);padding:16px;text-align:center}
+.sc .sv{font-size:26px;font-weight:600;margin-bottom:2px}
+.sc .sl{font-size:11px;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px}
+.sc.tot .sv{color:var(--blue)}
+.sc.cor .sv{color:var(--green)}
+.sc.wro .sv{color:var(--red)}
+.sc.ski .sv{color:var(--gray-600)}
+
+/* REVIEW QUESTION */
+.rq{background:#fff;border:1px solid var(--gray-200);border-radius:var(--rl);overflow:hidden;margin-bottom:14px}
+.rq-head{padding:10px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.rq-left{display:flex;align-items:center;gap:8px}
+.verdict{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.v-correct{background:var(--green-lt);color:var(--green)}
+.v-wrong{background:var(--red-lt);color:var(--red)}
+.v-skipped{background:var(--gray-100);color:var(--gray-600)}
+.v-nv{background:var(--gray-100);color:var(--gray-400)}
+.marks-chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.mc-pos{background:#e6f4ea;color:#137333}.mc-neg{background:var(--red-lt);color:var(--red)}.mc-zero{background:var(--gray-100);color:var(--gray-600)}
+.rq-body{padding:14px 16px}
+.expl-box{margin-top:12px;background:var(--blue-lt);border-left:4px solid var(--blue);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;font-size:13px;color:#174ea6;line-height:1.6}
+.expl-box .expl-label{font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;opacity:.7}
+
+/* RESULT FILTER TABS */
+.filter-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ftab{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--gray-200);background:#fff;color:var(--gray-700);transition:.12s}
+.ftab:hover{border-color:var(--blue);color:var(--blue)}
+.ftab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* SECTION SCORE TABLE */
+.sec-score-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+.sec-score-tbl th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;border-bottom:1.5px solid var(--gray-200)}
+.sec-score-tbl td{padding:9px 12px;border-bottom:1px solid var(--gray-100)}
+.sec-score-tbl tr:last-child td{border-bottom:none}
+.sbar-fill{height:6px;border-radius:3px;background:var(--blue)}
+.sbar-bg{height:6px;border-radius:3px;background:var(--gray-200);overflow:hidden;width:80px;display:inline-block;vertical-align:middle}
+
+/* MOBILE */
+@media(max-width:768px){
+  .exam-wrap{flex-direction:column;height:auto}
+  .sidebar{width:100%;border-left:none;border-top:1px solid var(--gray-200)}
+  #examPage{height:auto}
+  .field-row{flex-direction:column}
+  .pgrid{grid-template-columns:repeat(6,1fr)}
+  .score-cards{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="brand">UNIC Academy</div>
+    <div class="tagline">since 2013 · Clarity · Confidence · Results</div>
+  </div>
+  <div class="hdr-r">
+    <div class="cand-badge" id="candidate"></div>
+    <div class="timer" id="timer">—</div>
+  </div>
+</div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="loginPage">
+  <div class="hero">
+    <h1>Exam Portal</h1>
+    <p>Enter your details, select an exam, and begin.</p>
+  </div>
+  <div class="card">
+    <div class="field-row">
+      <div class="field"><label>Full Name</label><input id="name" placeholder="e.g. Arjun Sharma"></div>
+      <div class="field"><label>Student ID / Roll No.</label><input id="sid" placeholder="e.g. STU-2024-001"></div>
+    </div>
+    <div class="info-banner">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      Select an exam row below and click <strong style="margin:0 3px">Start Exam</strong>.
+    </div>
+    <div class="tbl-wrap">
+      <table class="etbl">
+        <thead><tr>
+          <th>#</th><th>Exam Name</th>
+          <th>⏱ Duration</th><th>📅 Scheduled</th>
+          <th>Status</th><th>Action</th>
+        </tr></thead>
+        <tbody id="examList"></tbody>
+      </table>
+    </div>
+    <div id="examInfo"></div>
+  </div>
+</div>
+
+<!-- ═══ EXAM PAGE ═══ -->
+<div id="examPage">
+  <div class="exam-wrap">
+    <div class="qpanel">
+      <div class="secbar" id="secbar"><span class="sname">—</span></div>
+      <div id="qArea"></div>
+      <div class="navbtns" id="navbtns" style="display:none">
+        <button class="nb" onclick="prevQ()">← Prev</button>
+        <button class="nb" onclick="clearResp()">Clear</button>
+        <button class="nb rev" onclick="markRev()">Mark Review</button>
+        <button class="nb pri" onclick="nextQ()">Next →</button>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div><button class="nb" style="width:100%" onclick="showPreview()">👁 Preview Answers</button></div>
+      <div>
+        <div class="sh4">Questions</div>
+        <div class="pgrid" id="palette"></div>
+      </div>
+      <div>
+        <div class="sh4">Legend</div>
+        <div class="leg">
+          <div class="li"><div class="ld" style="background:var(--green)"></div>Answered</div>
+          <div class="li"><div class="ld" style="background:var(--red)"></div>Not answered</div>
+          <div class="li"><div class="ld" style="background:var(--blue)"></div>Current</div>
+          <div class="li"><div class="ld" style="background:var(--amber)"></div>Marked review</div>
+          <div class="li"><div class="ld" style="background:var(--gray-200)"></div>Not visited</div>
+        </div>
+      </div>
+      <div><button class="sub-btn" onclick="submitExam()">🚀 Submit Exam</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESULT PAGE ═══ -->
+<div id="resultPage">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2 style="font-size:20px;font-weight:600;color:var(--navy)" id="resultTitle">Result</h2>
+      <p style="font-size:13px;color:var(--gray-600)" id="resultSub"></p>
+    </div>
+    <button class="nb pri" onclick="location.reload()">← Back to Portal</button>
+  </div>
+  <div class="score-cards" id="scoreCards"></div>
+
+  <!-- per-section breakdown -->
+  <div class="card" style="margin-bottom:20px" id="secBreak">
+    <div class="sh4" style="margin-bottom:12px">Section Breakdown</div>
+    <table class="sec-score-tbl" id="secTable"></table>
+  </div>
+
+  <!-- filter -->
+  <div class="filter-tabs">
+    <button class="ftab active" onclick="filterReview('all',this)">All</button>
+    <button class="ftab" onclick="filterReview('correct',this)">✅ Correct</button>
+    <button class="ftab" onclick="filterReview('wrong',this)">❌ Wrong</button>
+    <button class="ftab" onclick="filterReview('skipped',this)">— Skipped</button>
+  </div>
+  <div id="reviewArea"></div>
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+let questions=[], current=0;
+let answers={}, review={}, visited={}, timeSpent={};
+let start_time=new Date().toISOString();
+let startTime=Date.now(), hiddenStart=null;
+let student_id="", exam_module="", timeLeft=0;
+let allExams=[], selectedExam=null;
+let isSubmitted=false, timerInterval;
+let cursorPosition=0;
+let answerKey={};   // loaded from answer_key.json → keyed by exam_module
+
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){hiddenStart=Date.now();}
+  else if(hiddenStart){startTime+=Date.now()-hiddenStart;hiddenStart=null;}
+});
+
+/* ════════════════════════════════════════
+   LOAD CONFIGS
+════════════════════════════════════════ */
+// Load exam list
+fetch("/exam_config.json")
+  .then(r=>r.json())
+  .then(data=>{
+    allExams=data;
+    let html="";
+    data.forEach((e,i)=>{
+      const on=e.status==="yes";
+      html+=`<tr id="er${i}">
+        <td style="color:var(--gray-400);font-size:12px">${i+1}</td>
+        <td class="enam">${e.exam_name}</td>
+        <td class="emeta">${Math.floor(e.duration/60)} min</td>
+        <td class="emeta">${e.start_time||"—"}</td>
+        <td><span class="spill ${on?'on':'off'}"><span class="sdot"></span>${on?"Active":"Closed"}</span></td>
+        <td><button class="rbtn" onclick="startExam(${i})" ${on?"":"disabled"}>${on?"Start Exam →":"Unavailable"}</button></td>
+      </tr>`;
+    });
+    document.getElementById("examList").innerHTML=html;
+  });
+
+// Load answer key once (answer_key.json contains { "MODULE1": { "q1":"A","q2":"B",... }, ... })
+fetch("/answer_key.json")
+  .then(r=>r.json())
+  .then(data=>{ answerKey=data; })
+  .catch(()=>{ console.warn("answer_key.json not found — results will not be scored."); });
+
+/* ════════════════════════════════════════
+   START EXAM
+════════════════════════════════════════ */
+function startExam(idx){
+  const e=allExams[idx];
+  if(!e||e.status!=="yes")return;
+  student_id=document.getElementById("sid").value.trim();
+  if(!student_id){alert("Please enter your Student ID first");return;}
+  selectedExam=e; exam_module=e.exam_module; timeLeft=e.duration;
+
+  document.querySelectorAll(".etbl tbody tr").forEach((r,i)=>r.classList.toggle("sel",i===idx));
+  let ih=`<h3>${e.exam_name}</h3><ul>`;
+  (e.instructions||[]).forEach(x=>ih+=`<li>${x}</li>`);
+  ih+=`</ul>`;
+  const info=document.getElementById("examInfo");
+  info.innerHTML=ih; info.style.display="block";
+
+  const nm=document.getElementById("name").value.trim();
+  const cb=document.getElementById("candidate");
+  cb.textContent=(nm||student_id)+" · "+student_id; cb.style.display="block";
+
+  loadSavedData();
+
+  fetch(e.question_file)
+    .then(r=>r.json())
+    .then(qd=>{
+      questions=qd; createPalette();
+      document.getElementById("loginPage").style.display="none";
+      document.getElementById("examPage").style.display="block";
+      document.getElementById("navbtns").style.display="flex";
+      showQuestion(0); startTimer();
+    })
+    .catch(err=>{console.error(err);alert("Failed to load question paper ❌");});
+}
+
+/* ════════════════════════════════════════
+   TIMER
+════════════════════════════════════════ */
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    let m=Math.floor(timeLeft/60),s=timeLeft%60;
+    const chip=document.getElementById("timer");
+    chip.textContent=m+":"+(s<10?"0":"")+s;
+    chip.className="timer"+(timeLeft<=300&&timeLeft>60?" warn":timeLeft<=60?" danger":"");
+    timeLeft--;
+    localStorage.setItem(student_id+"_time",timeLeft);
+    if(timeLeft<=0){clearInterval(timerInterval);alert("⏰ Time's up! Submitting…");submitExam();}
+  },1000);
+}
+
+/* ════════════════════════════════════════
+   SAVE / LOAD
+════════════════════════════════════════ */
+function saveData(){
+  localStorage.setItem(student_id+"_"+exam_module,JSON.stringify({answers,review,visited,timeSpent,current,start_time}));
+}
+function loadSavedData(){
+  let s=JSON.parse(localStorage.getItem(student_id+"_"+exam_module)||"null");
+  if(s){answers=s.answers||{};review=s.review||{};visited=s.visited||{};timeSpent=s.timeSpent||{};current=s.current||0;start_time=s.start_time||start_time;}
+  let t=localStorage.getItem(student_id+"_time");
+  if(t)timeLeft=parseInt(t);
+}
+
+/* ════════════════════════════════════════
+   PALETTE
+════════════════════════════════════════ */
+function createPalette(){
+  const p=document.getElementById("palette"); p.innerHTML="";
+  questions.forEach((q,i)=>{
+    let b=document.createElement("button");
+    b.className="pb unv"; b.textContent=i+1; b.id="p"+i;
+    b.onclick=()=>showQuestion(i); p.appendChild(b);
+  });
+}
+function updatePalette(){
+  questions.forEach((_,i)=>{
+    const b=document.getElementById("p"+i),key="q"+(i+1);
+    b.className="pb";
+    if(i===current)b.classList.add("cur");
+    else if(review[i])b.classList.add("rev");
+    else if(answers[key])b.classList.add("ans");
+    else if(visited[i])b.classList.add("no");
+    else b.classList.add("unv");
+  });
+}
+
+/* ════════════════════════════════════════
+   SECTION BAR
+════════════════════════════════════════ */
+function updateSecBar(){
+  const q=questions[current],sec=q?.section||"General";
+  const secQs=questions.filter(qq=>(qq.section||"General")===sec);
+  const att=secQs.filter(qq=>answers["q"+(questions.indexOf(qq)+1)]).length;
+  document.getElementById("secbar").innerHTML=
+    `<span class="sname">${sec}</span><span class="pill">${att}/${secQs.length} answered</span>`;
+}
+
+/* ════════════════════════════════════════
+   SHOW QUESTION
+════════════════════════════════════════ */
+function showQuestion(i){
+  saveTime(); current=i; visited[i]=true;
+  const q=questions[i],key="q"+(i+1);
+  const labels={MCQ:"Multiple choice",MSQ:"Multi-select",NAT:"Numerical",SA:"Short answer"};
+  let h=`<div class="qcard"><div class="qchead">
+    <span class="qnum">Q ${i+1} of ${questions.length}</span>
+    <span class="qtbadge qt-${q.type}">${labels[q.type]||q.type}</span>
+  </div><div class="qcbody">`;
+
+  if(q.image_base64) h+=`<img class="qimg" src="data:image/jpeg;base64,${q.image_base64}" alt="">`;
+  if(q.question_text) h+=`<div class="qtext">${q.question_text}</div>`;
+
+  if(q.type==="MCQ"){
+    h+=`<div class="opts">`;
+    q.options.forEach(opt=>{
+      const chk=answers[key]===opt?"checked":"";
+      h+=`<label class="opt${chk?" checked":""}">
+        <input type="radio" name="q${i}" ${chk} onchange="saveAns('${esc(opt)}')"> ${opt}
+      </label>`;
+    });
+    h+=`</div>`;
+  }
+  if(q.type==="MSQ"){
+    h+=`<div class="opts">`;
+    q.options.forEach(opt=>{
+      const chk=answers[key]?.split(";").includes(opt)?"checked":"";
+      h+=`<label class="opt${chk?" checked":""}">
+        <input type="checkbox" ${chk} onchange="saveMSQ('${esc(opt)}',this.checked)"> ${opt}
+      </label>`;
+    });
+    h+=`</div>`;
+  }
+  if(q.type==="NAT"){
+    h+=`<div class="nat-wrap">
+      <input type="text" id="natD" class="nat-disp" value="${answers[key]||''}" readonly>
+      <button class="nk wide" onclick="delNAT()">⌫ Backspace</button>
+      <div class="nat-kp">
+        ${[7,8,9,4,5,6,1,2,3].map(n=>`<button class="nk" onclick="addNAT('${n}')">${n}</button>`).join('')}
+        <button class="nk" onclick="addNAT('0')">0</button>
+        <button class="nk" onclick="addNAT('.')">.</button>
+        <button class="nk" onclick="addNAT('-')">±</button>
+      </div>
+      <button class="nk wide" style="margin-top:6px" onclick="clrNAT()">Clear all</button>
+    </div>`;
+  }
+  if(q.type==="SA"){
+    h+=`<textarea class="sa-ta" onchange="saveAns(this.value)" placeholder="Write your answer here…">${answers[key]||""}</textarea>`;
+  }
+  h+=`</div></div>`;
+  document.getElementById("qArea").innerHTML=h;
+  cursorPosition=(answers[key]||"").toString().length;
+  updatePalette(); updateSecBar(); startTime=Date.now();
+}
+
+function esc(s){return s.replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+
+/* ════════════════════════════════════════
+   INPUT HANDLERS
+════════════════════════════════════════ */
+function addNAT(v){
+  const d=document.getElementById("natD"); let c=d.value;
+  if(v==='.'&&c.includes('.'))return;
+  if(v==='-'){if(c.includes('-'))return;c='-'+c;d.value=c;cursorPosition=c.length;saveNAT(c);return;}
+  d.value=c.slice(0,cursorPosition)+v+c.slice(cursorPosition); cursorPosition++; saveNAT(d.value);
+}
+function delNAT(){const d=document.getElementById("natD");let c=d.value;if(cursorPosition<=0)return;d.value=c.slice(0,cursorPosition-1)+c.slice(cursorPosition);cursorPosition--;saveNAT(d.value);}
+function clrNAT(){const d=document.getElementById("natD");d.value="";cursorPosition=0;saveNAT("");}
+
+function saveAns(v){answers["q"+(current+1)]=v;saveData();updatePalette();updateSecBar();}
+function saveMSQ(v,chk){
+  const key="q"+(current+1);let arr=answers[key]?answers[key].split(";"):[];
+  if(chk){if(!arr.includes(v))arr.push(v);}else arr=arr.filter(x=>x!==v);
+  if(arr.length===0)delete answers[key];else answers[key]=arr.join(";");
+  saveData();updatePalette();updateSecBar();
+}
+function saveNAT(v){const key="q"+(current+1);if(v===""||v===null)delete answers[key];else answers[key]=v;saveData();updatePalette();updateSecBar();}
+function saveTime(){let s=Math.floor((Date.now()-startTime)/1000);timeSpent[current]=(timeSpent[current]||0)+s;}
+
+/* ════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════ */
+function nextQ(){saveTime();saveData();if(current<questions.length-1)showQuestion(current+1);}
+function prevQ(){if(current>0)showQuestion(current-1);}
+function markRev(){review[current]=true;saveData();updatePalette();nextQ();}
+function clearResp(){delete answers["q"+(current+1)];saveData();showQuestion(current);}
+
+/* PREVIEW */
+function showPreview(){
+  let h=`<div class="qcard"><div class="qchead"><span class="qnum">Answer Preview</span></div><div class="qcbody" style="padding:10px 16px">`;
+  questions.forEach((q,i)=>{
+    const key="q"+(i+1),ans=answers[key]||"—",sec=q.section||"General";
+    h+=`<div style="padding:6px 0;border-bottom:1px solid var(--gray-100);font-size:13px">
+      <strong>Q${i+1}</strong> <span style="color:var(--gray-400);font-size:11px">(${sec})</span>
+      <span style="margin-left:8px;color:${answers[key]?'var(--gray-900)':'var(--gray-400)'}">${answers[key]?ans:"Not answered"}</span>
+    </div>`;
+  });
+  h+=`</div></div>`;
+  document.getElementById("qArea").innerHTML=h;
+}
+
+/* ════════════════════════════════════════
+   SUBMIT + SCORE
+════════════════════════════════════════ */
+function submitExam(){
+  if(isSubmitted)return;
+  if(!confirm("Submit exam? This cannot be undone."))return;
+  saveTime(); isSubmitted=true; clearInterval(timerInterval);
+
+  const end_time=new Date().toISOString();
+  const responses={};
+  questions.forEach((_,i)=>{
+    const key="q"+(i+1);
+    if(!visited[i])responses[key]="NV";
+    else if(answers[key]===undefined||answers[key]==="")responses[key]="N";
+    else responses[key]=answers[key];
+  });
+
+  // POST to backend
+  const variables={
+    correct:JSON.stringify(timeSpent),
+    marks:end_time+start_time,
+    responses:JSON.stringify(responses),
+    email:student_id,s_id:student_id,
+    exam_module:exam_module,
+    name:document.getElementById("name").value
+  };
+  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({variables})})
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.errors){alert("❌ Submission error. Please contact admin.");isSubmitted=false;}
+      else{localStorage.clear();showResult(responses);}
+    })
+    .catch(()=>{alert("❌ Submission failed. Please try again.");isSubmitted=false;});
+}
+
+/* ════════════════════════════════════════
+   RESULT / REVIEW
+════════════════════════════════════════ */
+function showResult(responses){
+  document.getElementById("examPage").style.display="none";
+  document.getElementById("resultPage").style.display="block";
+  document.getElementById("timer").textContent="Done";
+
+  const key=answerKey[exam_module]||{};
+  // Scoring config (default: +4 correct, -1 wrong, 0 skipped)
+  const posMarks=selectedExam.positive_marks||4;
+  const negMarks=selectedExam.negative_marks||1;
+
+  let total=0,correct=0,wrong=0,skipped=0,notVisited=0;
+  const secStats={};
+
+  questions.forEach((q,i)=>{
+    const qkey="q"+(i+1);
+    const sec=q.section||"General";
+    if(!secStats[sec])secStats[sec]={total:0,correct:0,wrong:0,skipped:0,marks:0};
+    secStats[sec].total++;
+
+    const given=responses[qkey];
+    const correct_ans=key[qkey];
+
+    let verdict="skipped",marksEarned=0;
+    if(given==="NV"){verdict="nv";notVisited++;}
+    else if(given==="N"||given===undefined||given===""){verdict="skipped";skipped++;}
+    else{
+      if(correct_ans!==undefined){
+        if(String(given)===String(correct_ans)){verdict="correct";correct++;marksEarned=posMarks;total+=posMarks;}
+        else{verdict="wrong";wrong++;marksEarned=-negMarks;total-=negMarks;}
+      } else {
+        // No answer key for this question — count as answered, no marks deducted
+        verdict="answered";
+      }
+    }
+    secStats[sec][verdict==="correct"?"correct":verdict==="wrong"?"wrong":"skipped"]++;
+    secStats[sec].marks+=marksEarned;
+  });
+
+  // Score cards
+  document.getElementById("resultTitle").textContent="Result — "+selectedExam.exam_name;
+  document.getElementById("resultSub").textContent=document.getElementById("name").value+" · "+student_id;
+  document.getElementById("scoreCards").innerHTML=`
+    <div class="sc tot"><div class="sv">${total}</div><div class="sl">Total Score</div></div>
+    <div class="sc cor"><div class="sv">${correct}</div><div class="sl">Correct (+${posMarks})</div></div>
+    <div class="sc wro"><div class="sv">${wrong}</div><div class="sl">Wrong (−${negMarks})</div></div>
+    <div class="sc ski"><div class="sv">${skipped+notVisited}</div><div class="sl">Skipped/NV</div></div>
+    <div class="sc"><div class="sv">${questions.length>0?Math.round(correct/questions.length*100):0}%</div><div class="sl">Accuracy</div></div>
+  `;
+
+  // Section table
+  let sth=`<tr><th>Section</th><th>Correct</th><th>Wrong</th><th>Skipped</th><th>Marks</th><th>Progress</th></tr>`;
+  Object.entries(secStats).forEach(([s,st])=>{
+    const pct=st.total>0?Math.round(st.correct/st.total*100):0;
+    sth+=`<tr>
+      <td style="font-weight:500">${s}</td>
+      <td style="color:var(--green)">${st.correct}</td>
+      <td style="color:var(--red)">${st.wrong}</td>
+      <td style="color:var(--gray-600)">${st.skipped}</td>
+      <td style="font-weight:600">${st.marks}</td>
+      <td><div class="sbar-bg"><div class="sbar-fill" style="width:${pct}%"></div></div> <span style="font-size:11px;color:var(--gray-600)">${pct}%</span></td>
+    </tr>`;
+  });
+  document.getElementById("secTable").innerHTML=sth;
+
+  // Build review items (store globally for filter)
+  window._reviewData={responses,key:key,posMarks,negMarks};
+  renderReview("all");
+}
+
+function renderReview(filter){
+  const {responses,key,posMarks,negMarks}=window._reviewData;
+  let h="";
+  questions.forEach((q,i)=>{
+    const qkey="q"+(i+1);
+    const given=responses[qkey];
+    const correct_ans=key[qkey];
+    let verdict="skipped";
+    if(given==="NV")verdict="nv";
+    else if(given==="N"||given===undefined||given==="")verdict="skipped";
+    else if(correct_ans!==undefined){
+      if(String(given)===String(correct_ans))verdict="correct";
+      else verdict="wrong";
+    } else verdict="answered";
+
+    if(filter!=="all"&&verdict!==filter)return;
+
+    const vLabel={correct:"✅ Correct",wrong:"❌ Wrong",skipped:"— Skipped",nv:"◌ Not Visited",answered:"✓ Answered"}[verdict];
+    const vClass={correct:"v-correct",wrong:"v-wrong",skipped:"v-skipped",nv:"v-nv",answered:"v-skipped"}[verdict];
+    let marksEarned=0;
+    if(verdict==="correct")marksEarned=posMarks;
+    else if(verdict==="wrong")marksEarned=-negMarks;
+    const mcClass=marksEarned>0?"mc-pos":marksEarned<0?"mc-neg":"mc-zero";
+    const marksText=marksEarned>0?`+${marksEarned}`:marksEarned<0?`${marksEarned}`:"0";
+
+    h+=`<div class="rq" data-verdict="${verdict}">
+      <div class="rq-head">
+        <div class="rq-left">
+          <span class="qnum">Q${i+1}</span>
+          <span class="qtbadge qt-${q.type}">${q.type}</span>
+          <span class="verdict ${vClass}">${vLabel}</span>
+        </div>
+        <span class="marks-chip ${mcClass}">${marksText} marks</span>
+      </div>
+      <div class="rq-body">`;
+
+    if(q.image_base64) h+=`<img class="qimg" src="data:image/jpeg;base64,${q.image_base64}" alt="">`;
+    if(q.question_text) h+=`<div class="qtext" style="margin-bottom:12px">${q.question_text}</div>`;
+
+    if(q.type==="MCQ"||q.type==="MSQ"){
+      h+=`<div class="opts">`;
+      (q.options||[]).forEach(opt=>{
+        const isGiven=verdict!=="skipped"&&verdict!=="nv"&&(given===opt||given?.split(";").includes(opt));
+        const isCorrect=correct_ans===opt||correct_ans?.split(";").includes(opt);
+        let cls="opt";
+        if(isGiven&&isCorrect)cls+=" correct";
+        else if(isGiven&&!isCorrect)cls+=" wrong";
+        else if(!isGiven&&isCorrect)cls+=" missed";
+        h+=`<div class="${cls}">${opt}${isCorrect?" ✓":""}</div>`;
+      });
+      h+=`</div>`;
+    }
+    if(q.type==="NAT"||q.type==="SA"){
+      h+=`<div style="font-size:13px;margin-top:8px">
+        <span style="color:var(--gray-600)">Your answer: </span>
+        <strong>${(given&&given!=="N"&&given!=="NV")?given:"—"}</strong>`;
+      if(correct_ans!==undefined)
+        h+=` &nbsp;|&nbsp; <span style="color:var(--gray-600)">Correct: </span><strong style="color:var(--green)">${correct_ans}</strong>`;
+      h+=`</div>`;
+    }
+
+    // Explanation
+    if(q.explanation){
+      h+=`<div class="expl-box">
+        <div class="expl-label">Explanation</div>
+        ${q.explanation}
+      </div>`;
+    }
+
+    h+=`</div></div>`;
+  });
+  if(!h) h=`<div style="text-align:center;padding:40px;color:var(--gray-400)">No questions in this category.</div>`;
+  document.getElementById("reviewArea").innerHTML=h;
+}
+
+function filterReview(f,btn){
+  document.querySelectorAll(".ftab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  renderReview(f);
+}
+</script>
+</body>
+</html>
