@@ -1012,11 +1012,11 @@ function generateQwPdf(){
   .header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
   .header-bar h2{margin:0;font-size:14px;}
   .header-bar p{margin:2px 0;font-size:11px;opacity:.85;}
-  .info-bar{background:#eff6ff;border:1px solid #dbeafe;border-radius:6px;padding:8px 14px;font-size:11px;display:flex;flex-wrap:wrap;gap:16px;margin-bottom:10px;}
+  .info-bar{background:#eff6ff;border:1px solid #dbeafe;border-radius:6px;padding:8px 14px;font-size:11px;display:flex;flex-wrap:wrap;gap:16px;margin-bottom:8px;}
   .info-bar span b{color:#0e1e4a;}
-  table{width:100%;border-collapse:collapse;margin-bottom:10px;}
-  th{background:#0e1e4a;color:#fff;padding:7px 8px;font-size:11px;font-weight:500;text-align:center;}
-  td{padding:5px 7px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
+  table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+  th{background:#0e1e4a;color:#fff;padding:6px 7px;font-size:11px;font-weight:500;text-align:center;}
+  td{padding:4px 5px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
   tr:nth-child(even) td{background:#f8fafc;}
   h5{font-size:12px;margin:10px 0 4px;color:#0e1e4a;}
 </style></head>
@@ -1045,7 +1045,7 @@ function generateQwPdf(){
 </table>
 
 <h5>Subject / Section wise Performance</h5>
-<table border="1" cellspacing="0" cellpadding="5" width="100%" style="text-align:center;vertical-align:middle;">
+<table border="1" cellspacing="0" cellpadding="4" width="100%" style="text-align:center;vertical-align:middle;">
   <thead><tr>
     <th>Section</th><th>Range</th><th>Correct</th><th>Wrong</th><th>Not Attempted</th>
     <th>(+) Marks</th><th>(-) Marks</th><th>Total Marks</th><th>Bonus</th>
@@ -1053,7 +1053,7 @@ function generateQwPdf(){
   <tbody>${sectionRows}</tbody>
 </table>
 
-<div style="margin-top:16px;padding:10px;border:2px solid #333;background:#f8f9fa;text-align:center;border-radius:6px;">
+<div style="margin-top:12px;padding:6px;border:2px solid #333;background:#f8f9fa;text-align:center;border-radius:6px;">
   <h3 style="margin:0 0 8px 0;">Final Result Summary:</h3>
   <span style="font-size:15px;">
     <b>Final Score:</b> ${finalTotal}
@@ -1073,7 +1073,7 @@ function generateQwPdf(){
   Below 40% = D (Needs Improvement)
 </p>
 
-<div style="min-height:50px;border:1px solid black;padding:6px;margin-top:6px;border-radius:4px;">
+<div style="min-height:50px;border:1px solid black;padding:3px;margin-top:5px;border-radius:4px;">
   <p><b>Remarks:</b></p>
   <span style="font-style:italic;font-size:11px;color:#555;line-height:1.5;">${remarks}</span>
 </div>
