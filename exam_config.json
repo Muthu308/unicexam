@@ -7,7 +7,7 @@
   "question_file": "/unic_text_24-06-2026.json",
   "start_time": "2026-06-25 7:30 AM",
   "instructions": [
-    "Instructions for Monthly Test Physics - 01",
+    "Instructions for Monthly Test Physics - 02",
     "Enter your NAME in CAPITAL LETTERS and correct Student ID.",
     "The exam timer will start after login.",
     "You may change answers any time before final submission.",
@@ -15,12 +15,12 @@
     "Do not refresh the page during the exam.",
     "Click Submit button at the end of the exam.",
     "Total duration: 60 minutes.",
-    "SECTION A: Single Correct MCQ - Each question has 4 options (A, B, C, D). Only one correct answer.",
+    "SECTION A (Q1 to Q4): Single Correct MCQ - Each question has 4 options (A, B, C, D). Only one correct answer.",
     "SECTION A Marking: +3 correct, 0 unanswered, -1 wrong",
-    "SECTION B: Multiple Correct MCQ - One or more options may be correct. Select all correct options.",
+    "SECTION B (Q5 to Q8): Multiple Correct MCQ - One or more options may be correct. Select all correct options.",
     "SECTION B Marking: +4 all correct, +3 special case (3/4 correct when all are correct), +2 partial correct (≥2 correct chosen), +1 single correct, 0 unanswered, -1 wrong combination",
-    "SECTION C: Numerical Answer Type - Enter numerical value only. Round/truncate to 2 decimal places if needed.",    "SECTION C Marking: +4 correct, 0 wrong",
-    "SECTION D: Matching Type - Match List-I (P, Q, R, S) with List-II (1, 2, 3, 4, 5). Only one correct combination.",
+    "SECTION C (Q9 to Q12): Numerical Answer Type - Enter numerical value only. Round/truncate to 2 decimal places if needed.",    "SECTION C Marking: +4 correct, 0 wrong",
+    "SECTION D (Q12 to Q16): Matching Type - Match List-I (P, Q, R, S) with List-II (1, 2, 3, 4, 5). Only one correct combination.",
     "SECTION D Marking: +4 correct, 0 unanswered, -1 wrong",
     "Unic Academy – Clarity • Confidence • Results"
   ]
