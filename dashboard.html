@@ -296,7 +296,7 @@ td.chg-na{color:#94a3b8;font-style:italic;font-size:11px}
     <div class="sec-box">
       <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
       <div class="tbl-wrap">
-        <table>
+        <table id="examResultsTable">
           <thead>
             <tr>
               <th>Exam</th><th>Rank</th><th>Physics</th><th>Chemistry</th><th>Maths</th>
@@ -1123,6 +1123,68 @@ setText("p_dob",user.dob);
 setText("p_id",user.std_id);
 
 loadStudentResults();
+// =====================
+// COLUMN SORT FUNCTION
+// =====================
+const table = document.getElementById("examResultsTable");
+const headers = table.querySelectorAll("th");
+
+headers.forEach((th, index) => {
+
+    let asc = true;
+
+    th.style.cursor = "pointer";
+
+    th.addEventListener("click", () => {
+
+        const tbody = document.getElementById("resultTable");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+
+        rows.sort((a, b) => {
+
+            let aText = a.cells[index]?.innerText.trim() || "";
+            let bText = b.cells[index]?.innerText.trim() || "";
+
+            // Try numeric sort first
+            let aNum = parseFloat(aText.replace(/[^\d.-]/g, ""));
+            let bNum = parseFloat(bText.replace(/[^\d.-]/g, ""));
+
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return asc ? aNum - bNum : bNum - aNum;
+            }
+
+            // Text sort fallback
+            return asc
+                ? aText.localeCompare(bText)
+                : bText.localeCompare(aText);
+
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+
+        asc = !asc;
+    });
+});
+
+
+// =====================
+// DEFAULT SORT (Rank column)
+// =====================
+window.addEventListener("load", () => {
+
+    const tbody = document.getElementById("resultTable");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    const rankIndex = 1; // Rank column
+
+    rows.sort((a, b) => {
+        return parseInt(a.cells[rankIndex].innerText) -
+               parseInt(b.cells[rankIndex].innerText);
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+});
+  
 </script>
 </body>
 </html>
