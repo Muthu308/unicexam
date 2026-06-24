@@ -42,6 +42,10 @@ export default async function handler(req, res) {
               class_name
               std_id
               password
+              user_role
+              active_status
+              school_id
+              school_venue
             }
           }
         `,
