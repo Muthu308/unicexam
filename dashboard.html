@@ -1008,7 +1008,38 @@ function generateQwPdf(){
 <title>Question-wise Result — ${d.exam}</title>
 <style>
   body{font-family:'Segoe UI',Arial,sans-serif;margin:16px;background:#fff;color:#1e293b;font-size:12px;}
-  @media print{body{margin:8px;} .no-print{display:none;}}
+  @media print{
+  body{
+    margin:10px;
+  }
+
+  .no-print{
+    display:none;
+  }
+
+  /* Force table rows not to break awkwardly */
+  table, tr, td, th{
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force section/page break */
+  .page-break{
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Avoid header splitting */
+  .header-bar{
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h5{
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  }
   .header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
   .header-bar h2{margin:0;font-size:14px;}
   .header-bar p{margin:2px 0;font-size:11px;opacity:.85;}
