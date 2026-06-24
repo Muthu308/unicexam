@@ -712,10 +712,15 @@ async function editUser(
     user.school_id || "";
 
   document.getElementById(
+    "f-dob"
+  ).value =
+    user.dob || "";
+  
+ document.getElementById(
     "f-class"
   ).value =
     user.class_name || "";
-
+  
   document.getElementById(
     "f-status"
   ).checked =
