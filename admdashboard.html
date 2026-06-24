@@ -274,8 +274,83 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="api/adminuserman.js"></script>
+
 <script>
+const API = {
+
+  async request(action, payload = {}) {
+
+    const response = await fetch(
+      "/api/adminuserman",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action,
+          payload
+        })
+      }
+    );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        "Server Error"
+      );
+    }
+
+    return data;
+  },
+
+  async getUsers() {
+    return this.request("list");
+  },
+
+  async getUser(user_id) {
+    return this.request(
+      "get",
+      { user_id }
+    );
+  },
+
+  async createUser(fields) {
+    return this.request(
+      "create",
+      fields
+    );
+  },
+
+  async updateUser(
+    user_id,
+    set
+  ) {
+    return this.request(
+      "update",
+      {
+        user_id,
+        set
+      }
+    );
+  },
+
+  async deleteUser(
+    user_id
+  ) {
+    return this.request(
+      "delete",
+      { user_id }
+    );
+  }
+
+};
+
+
+  
 let USERS = [];
 
 let CURRENT_ID = null;
