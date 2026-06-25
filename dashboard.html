@@ -10,6 +10,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f0f4fb;color:#1e293b}
 
+/* Sidebar */
 .sidebar{width:240px;position:fixed;top:0;left:0;height:100vh;background:#0e1e4a;display:flex;flex-direction:column;z-index:100;transition:transform .3s;overflow:hidden}
 .sb-brand{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
 .sb-logo{width:36px;height:36px;background:#f0b800;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0e1e4a;flex-shrink:0}
@@ -28,7 +29,9 @@ body{background:#f0f4fb;color:#1e293b}
 .sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.07)}
 .logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;border-radius:8px;background:rgba(239,68,68,.1);border:none;color:#fca5a5;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s}
 .logout-btn:hover{background:rgba(239,68,68,.2)}
-
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;background:#dcfce7;color:#15803d;font-size:11.5px;font-weight:500}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#16a34a}
+.inst-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;background:#e8edff;color:#1d4ed8;font-size:11.5px;font-weight:500}
 .main{margin-left:240px;min-height:100vh;padding:20px;background:#f0f4fb}
 .topbar{background:#fff;border-radius:12px;padding:14px 20px;box-shadow:0 1px 5px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .topbar h1{font-size:17px;font-weight:600;color:#0e1e4a}
@@ -63,13 +66,19 @@ body{background:#f0f4fb;color:#1e293b}
 .bandC{color:#8a2be2;font-weight:bold}
 .bandD{color:red;font-weight:bold}
 
+/* Stat cards row */
 .cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
 .sc{background:#fff;border-radius:12px;padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a}
-.sc.g{border-left-color:#16a34a}.sc.a{border-left-color:#f0b800}.sc.r{border-left-color:#dc2626}.sc.b{border-left-color:#2563eb}.sc.p{border-left-color:#7c3aed}
+.sc.g{border-left-color:#16a34a}
+.sc.a{border-left-color:#f0b800}
+.sc.r{border-left-color:#dc2626}
+.sc.b{border-left-color:#2563eb}
+.sc.p{border-left-color:#7c3aed}
 .sc h3{font-size:10px;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
 .sc p{font-size:20px;font-weight:700;color:#0e1e4a;line-height:1}
 .sc span{font-size:10.5px;color:#64748b}
 
+/* Subject summary cards */
 .subj-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
 .subj-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 5px rgba(0,0,0,.06)}
 .subj-card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #f1f5f9}
@@ -84,10 +93,12 @@ body{background:#f0f4fb;color:#1e293b}
 .subj-stat-row.wrong strong{color:#dc2626}
 .subj-stat-row.na strong{color:#94a3b8}
 
+/* Section box */
 .sec-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
 .sec-box h2{font-size:14px;font-weight:600;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 .sec-box h2 i{font-size:17px;color:#f0b800}
 
+/* Tables */
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 thead tr{background:#0e1e4a}
@@ -112,6 +123,8 @@ tbody tr.trend-row td span.same{color:#94a3b8}
 .comment-strong{background:#dcfce7;color:#15803d;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
 .comment-weak{background:#fee2e2;color:#b91c1c;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
 .comment-avg{background:#fef9c3;color:#92400e;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+.grp-hdr{background:#1a3060 !important}
+.grp-hdr th{color:rgba(255,255,255,.75) !important;font-size:10.5px !important;padding:5px 12px !important}
 td.correct-val{color:#16a34a;font-weight:600}
 td.wrong-val{color:#dc2626;font-weight:600}
 td.na-val{color:#94a3b8}
@@ -120,34 +133,65 @@ th.cy-group{background:#16a34a !important}
 th.ma-group{background:#d97706 !important}
 th.total-group{background:#7c3aed !important}
 
-/* ══ Question-Wise Split Layout ══ */
-.qw-split{display:grid;grid-template-columns:220px 1fr;gap:0;height:calc(100vh - 160px);background:#fff;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);overflow:hidden}
-.qw-exam-sidebar{background:#0e1e4a;overflow-y:auto;padding:12px 0}
-.qw-exam-sidebar h3{color:rgba(255,255,255,.4);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;padding:8px 14px 6px}
-.qw-exam-item{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;transition:.18s;border-left:3px solid transparent}
-.qw-exam-item:hover{background:rgba(255,255,255,.07)}
-.qw-exam-item.active{background:rgba(240,184,0,.12);border-left-color:#f0b800}
-.qw-exam-item .exam-label{color:rgba(255,255,255,.75);font-size:12px;font-weight:500;line-height:1.3}
-.qw-exam-item .exam-sub{color:rgba(255,255,255,.35);font-size:10px;margin-top:1px}
-.qw-exam-item.active .exam-label{color:#f0b800}
-.qw-exam-item .pattern-badge{font-size:9px;padding:1px 6px;border-radius:4px;font-weight:600;flex-shrink:0}
-.pb-pcm{background:rgba(37,99,235,.25);color:#93c5fd}
-.pb-ph{background:rgba(37,99,235,.2);color:#93c5fd}
-.pb-cy{background:rgba(22,163,74,.2);color:#86efac}
-.pb-ma{background:rgba(220,38,38,.2);color:#fca5a5}
-.pb-mt{background:rgba(240,184,0,.2);color:#f0b800}
+/* ── Change % Tables ── */
+.change-section{margin-bottom:18px}
+.change-section-title{font-size:13px;font-weight:600;color:#0e1e4a;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.change-section-title i{font-size:16px;color:#f0b800}
+td.chg-up{color:#16a34a;font-weight:600}
+td.chg-dn{color:#dc2626;font-weight:600}
+td.chg-same{color:#94a3b8;font-weight:500}
+td.chg-na{color:#94a3b8;font-style:italic;font-size:11px}
+.chg-arrow-up::before{content:"▲ "}
+.chg-arrow-dn::before{content:"▼ "}
+.chg-arrow-same::before{content:"━ "}
 
-.qw-frame-area{background:#f0f4fb;display:flex;flex-direction:column;overflow:hidden}
-.qw-frame-topbar{background:#fff;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.qw-frame-topbar h4{font-size:13px;font-weight:600;color:#0e1e4a}
-.qw-frame-topbar p{font-size:11px;color:#94a3b8}
-.qw-pdf-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:#dc2626;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;transition:.2s;font-family:'Poppins',sans-serif}
-.qw-pdf-btn:hover{background:#b91c1c}
-.qw-pdf-btn:disabled{background:#94a3b8;cursor:not-allowed}
-.qw-iframe{flex:1;border:none;width:100%}
-.qw-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#94a3b8;gap:10px}
-.qw-placeholder i{font-size:48px;color:#dde3f0}
-.qw-placeholder p{font-size:13px}
+/* ── Question-Wise Tab ── */
+.qw-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.qw-select{padding:8px 14px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;color:#1e293b;background:#fff;cursor:pointer;outline:none}
+.qw-select:focus{border-color:#0e1e4a}
+.qw-btn{padding:8px 18px;background:#0e1e4a;color:#fff;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.qw-btn:hover{background:#1a3060}
+.qw-btn.pdf-action{background:#dc2626}
+.qw-btn.pdf-action:hover{background:#b91c1c}
+.qw-btn:disabled{background:#94a3b8;cursor:not-allowed}
+
+/* Q table */
+.q-tbl-wrap{overflow-x:auto}
+.q-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.q-tbl thead tr{background:#0e1e4a}
+.q-tbl thead th{color:#fff;padding:10px 12px;font-weight:500;text-align:center;font-size:11.5px;white-space:nowrap}
+.q-tbl thead th:first-child,.q-tbl thead th:nth-child(2){text-align:left}
+.q-tbl tbody td{padding:10px 12px;text-align:center;border-bottom:1px solid #f1f5f9;color:#374151}
+.q-tbl tbody td:first-child,.q-tbl tbody td:nth-child(2){text-align:left}
+.q-tbl tbody tr:hover{background:#f8fafc}
+.q-tbl tbody tr:last-child td{border-bottom:none}
+.q-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.q-correct{background:#dcfce7;color:#15803d}
+.q-wrong{background:#fee2e2;color:#b91c1c}
+.q-na{background:#f1f5f9;color:#64748b}
+.q-img-thumb{width:60px;height:40px;object-fit:contain;border-radius:5px;border:1px solid #e2e8f0;cursor:pointer;transition:.2s}
+.q-img-thumb:hover{transform:scale(1.08)}
+.q-no-img{color:#94a3b8;font-size:11px}
+.subj-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.4px}
+.subj-ph{background:#eff6ff;color:#1d4ed8}
+.subj-cy{background:#dcfce7;color:#15803d}
+.subj-ma{background:#fef3c7;color:#92400e}
+.q-summary-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:14px}
+.q-sumcard{border-radius:10px;padding:12px 14px;text-align:center}
+.q-sumcard h4{font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;opacity:.8}
+.q-sumcard p{font-size:20px;font-weight:700;line-height:1}
+.q-sum-correct{background:#dcfce7;color:#15803d}
+.q-sum-wrong{background:#fee2e2;color:#b91c1c}
+.q-sum-na{background:#f1f5f9;color:#475569}
+.q-sum-marks{background:#fef3c7;color:#92400e}
+.q-sum-total{background:#eff6ff;color:#1d4ed8}
+
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lightbox-inner{background:#fff;border-radius:14px;padding:16px;max-width:90vw;max-height:90vh;overflow:auto;position:relative}
+.lightbox-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#475569}
+.lightbox img{max-width:80vw;max-height:75vh;display:block;border-radius:8px}
 
 .mob-toggle{display:none;position:fixed;top:13px;left:13px;z-index:200;background:#0e1e4a;border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:20px;cursor:pointer;align-items:center;justify-content:center}
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:99}
@@ -165,9 +209,6 @@ th.total-group{background:#7c3aed !important}
   .pc-id{justify-content:center}
   .pc-row{grid-template-columns:1fr;gap:6px}
   .pc-val{text-align:left}
-  .qw-split{grid-template-columns:1fr;height:auto}
-  .qw-exam-sidebar{height:180px}
-  .qw-iframe{height:600px}
 }
 </style>
 </head>
@@ -196,6 +237,7 @@ th.total-group{background:#7c3aed !important}
     <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
     <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>
+   <!-- <button class="nav-item" onclick="showPage('changes',this)"><i class="ti ti-arrows-diff"></i> Change Analysis</button>-->
     <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Result</button>
   </nav>
   <div class="sb-bottom">
@@ -250,18 +292,20 @@ th.total-group{background:#7c3aed !important}
       <p style="font-size:12px;margin-top:5px;"><b>Grade Scale: </b>A+ : 85%-100% (Outstanding), A : 70%-84% (Excellent), B : 55%-69% (Good), C : 40%-54% (Average), D : Below 40% (Needs Improvement)</p>
       <p style="font-size:12px;line-height:1.1;margin-top:5px;"><b>Abbreviations: </b>C = Correct, W = Wrong, NA = Not Attempted, PH = Physics, CY = Chemistry, MA = Mathematics</p>
       <p style="font-size:12px;line-height:1.1;margin-top:5px;"><b>Bonus:</b> No negative marking. Bonus up to 5 marks each for PH/CY/MA/Overall. Max total bonus: 20.</p>
-      <p style="font-size:12px;line-height:1.1;margin-top:5px;"><b>Exam Patterns: </b><span style="background:#eff6ff;color:#1d4ed8;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;">PCM</span> = Physics + Chemistry + Maths &nbsp;|&nbsp; <span style="background:rgba(240,184,0,.2);color:#92400e;padding:1px 7px;border-radius:4px;font-size:11px;font-weight:600;">MT</span> = Mini Test (single subject)</p>
     </div>
     <div class="sec-box">
       <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
       <div class="tbl-wrap">
         <table id="examResultsTable">
           <thead>
-            <tr id="resultsTableHead">
-              <!-- built dynamically -->
+            <tr>
+              <th>Exam</th><th>Rank</th><th>Physics</th><th>Chemistry</th><th>Maths</th>
+              <th>(+ Marks)<br><span style="font-size:10px;font-weight:400">C×4</span></th>
+              <th>(- Marks)<br><span style="font-size:10px;font-weight:400">W×(−1)</span></th>
+              <th>Bonus</th><th>Final Marks</th><th>%</th><th>Grade</th><th>Comment</th>
             </tr>
           </thead>
-          <tbody id="resultTable"><tr><td colspan="12" style="text-align:center;padding:20px;color:#94a3b8">Loading results…</td></tr></tbody>
+          <tbody id="resultTable"><tr><td colspan="12" class="no-data">Loading results…</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -278,155 +322,178 @@ th.total-group{background:#7c3aed !important}
       <h2><i class="ti ti-clipboard-list"></i> Exam Analysis — Correct / Wrong / Not Attempted</h2>
       <div class="tbl-wrap">
         <table>
-          <thead id="analysisHead">
-            <!-- built dynamically -->
+          <thead>
+            <tr>
+              <th rowspan="2">Exam</th>
+              <th colspan="3" class="ph-group">⚡ Physics</th>
+              <th colspan="3" class="cy-group">🧪 Chemistry</th>
+              <th colspan="3" class="ma-group">∫ Mathematics</th>
+              <th colspan="3" class="total-group">📊 Total</th>
+            </tr>
+            <tr class="sub-hdr">
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+            </tr>
           </thead>
-          <tbody id="analysisTable"><tr><td colspan="13" style="text-align:center;padding:20px;color:#94a3b8">Loading…</td></tr></tbody>
+          <tbody id="analysisTable"><tr><td colspan="13" class="no-data">Loading…</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- QUESTION-WISE RESULT — Sidebar + iframe split -->
+  <!-- ═══ CHANGE ANALYSIS (NEW) ═══ -->
+  <div class="page" id="page-changes">
+
+    <!-- Marks Change % Table -->
+    <div class="sec-box">
+      <h2><i class="ti ti-arrows-diff"></i> Marks Change % (Exam-to-Exam)</h2>
+      <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Shows how marks changed between consecutive exams. <span style="color:#16a34a;font-weight:600">▲ Green = improved</span>, <span style="color:#dc2626;font-weight:600">▼ Red = declined</span>, <span style="color:#94a3b8">━ Gray = same</span>. First exam has no prior reference.</p>
+      <div class="tbl-wrap">
+        <table id="marksChangeTable">
+          <thead>
+            <tr>
+              <th>Exam</th>
+              <th colspan="2" class="ph-group">⚡ Physics Marks</th>
+              <th colspan="2" class="cy-group">🧪 Chemistry Marks</th>
+              <th colspan="2" class="ma-group">∫ Maths Marks</th>
+              <th colspan="2" class="total-group">📊 Final Marks</th>
+              <th colspan="2" style="background:#0e1e4a">% Score</th>
+            </tr>
+            <tr class="sub-hdr">
+              <th></th>
+              <th>Marks</th><th>Δ Change %</th>
+              <th>Marks</th><th>Δ Change %</th>
+              <th>Marks</th><th>Δ Change %</th>
+              <th>Marks</th><th>Δ Change %</th>
+              <th>%</th><th>Δ Change %</th>
+            </tr>
+          </thead>
+          <tbody id="marksChangeBody"><tr><td colspan="11" class="no-data">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- C/W/NA Change % Table -->
+    <div class="sec-box">
+      <h2><i class="ti ti-arrows-diff"></i> Correct / Wrong / NA Change % (Exam-to-Exam)</h2>
+      <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Shows how C/W/NA counts shifted between consecutive exams for each subject and overall.</p>
+      <div class="tbl-wrap">
+        <table id="cwnaChangeTable">
+          <thead>
+            <tr>
+              <th rowspan="2">Exam</th>
+              <th colspan="3" class="ph-group">⚡ Physics</th>
+              <th colspan="3" class="cy-group">🧪 Chemistry</th>
+              <th colspan="3" class="ma-group">∫ Mathematics</th>
+              <th colspan="3" class="total-group">📊 Total</th>
+            </tr>
+            <tr class="sub-hdr">
+              <th>✓C Δ%</th><th>✗W Δ%</th><th>NA Δ%</th>
+              <th>✓C Δ%</th><th>✗W Δ%</th><th>NA Δ%</th>
+              <th>✓C Δ%</th><th>✗W Δ%</th><th>NA Δ%</th>
+              <th>✓C Δ%</th><th>✗W Δ%</th><th>NA Δ%</th>
+            </tr>
+          </thead>
+          <tbody id="cwnaChangeBody"><tr><td colspan="13" class="no-data">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ QUESTION-WISE RESULT (NEW) ═══ -->
   <div class="page" id="page-questionwise">
-    <div class="sec-box" style="padding:0;overflow:hidden">
-      <div class="qw-split" id="qwSplit">
-        <!-- LEFT: exam list sidebar -->
-        <div class="qw-exam-sidebar" id="qwExamList">
-          <h3>Select Exam</h3>
-          <div id="qwExamItems" style="color:rgba(255,255,255,.4);font-size:12px;padding:10px 14px">Loading…</div>
-        </div>
-        <!-- RIGHT: topbar + iframe -->
-        <div class="qw-frame-area" id="qwFrameArea">
-          <div class="qw-frame-topbar">
-            <div>
-              <h4 id="qwFrameTitle">Question-wise Result</h4>
-              <p id="qwFrameSub">Select an exam from the left panel</p>
-            </div>
-            <button class="qw-pdf-btn" id="qwPdfBtn" disabled onclick="triggerPdf()">
-              <i class="ti ti-file-type-pdf"></i> Generate PDF
-            </button>
-          </div>
-          <!-- placeholder shown before any exam selected -->
-          <div class="qw-placeholder" id="qwPlaceholder">
-            <i class="ti ti-list-numbers"></i>
-            <p>Select an exam to view question-wise breakdown</p>
-          </div>
-          <!-- iframe (hidden until exam selected) -->
-          <iframe class="qw-iframe" id="qwIframe" style="display:none" title="Question-wise result"></iframe>
-        </div>
+    <div class="sec-box">
+      <h2><i class="ti ti-list-numbers"></i> Question-wise Result</h2>
+      <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Select an exam to view question-by-question breakdown with marks, status, and question images. Generate a PDF report for download.</p>
+
+      <div class="qw-controls">
+        <select id="qwExamSelect" class="qw-select">
+          <option value="">— Select Exam —</option>
+        </select>
+        <button class="qw-btn" onclick="loadQuestionWise()" id="qwLoadBtn" disabled>
+          <i class="ti ti-search"></i> Load Results
+        </button>
+        <button class="qw-btn pdf-action" onclick="generateQwPdf()" id="qwPdfBtn" disabled>
+          <i class="ti ti-file-type-pdf"></i> Generate PDF
+        </button>
+      </div>
+
+      <!-- Summary bar (hidden until loaded) -->
+      <div class="q-summary-bar" id="qwSummaryBar" style="display:none"></div>
+
+      <!-- Question table -->
+      <div class="q-tbl-wrap">
+        <table class="q-tbl" id="qwTable">
+          <thead>
+            <tr>
+              <th style="text-align:left;width:50px">#</th>
+              <th style="text-align:left">Subject</th>
+              <th>Your Answer</th>
+              <th>Correct Answer</th>
+              <th>Status</th>
+              <th>Marks Obtained</th>
+              <th>View Question</th>
+            </tr>
+          </thead>
+          <tbody id="qwTableBody">
+            <tr><td colspan="7" class="no-data" style="text-align:center;padding:40px;color:#94a3b8">Select an exam and click "Load Results" to view question-wise data.</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
 </div><!-- /main -->
 
+<!-- Lightbox for question images -->
+<div class="lightbox" id="imgLightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lbImg" src="" alt="Question">
+  </div>
+</div>
+
 <script>
 /* ── Helpers ── */
-const setText=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val||"—";};
-const $=id=>document.getElementById(id);
+const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || "—"; };
+const $ = id => document.getElementById(id);
 
-function toggleSidebar(){$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show");}
-function showPage(name,btn){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(b=>b.classList.remove("active"));
-  $("page-"+name).classList.add("active");
-  if(btn)btn.classList.add("active");
-  if(window.innerWidth<=768)$("sidebar").classList.remove("open");
+function toggleSidebar(){
+  $("sidebar").classList.toggle("open");
+  $("overlay").classList.toggle("show");
+}
+function showPage(name, btn){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+  $("page-" + name).classList.add("active");
+  if(btn) btn.classList.add("active");
+  if(window.innerWidth <= 768) $("sidebar").classList.remove("open");
 }
 function logout(){
   if(confirm("Are you sure you want to logout?")){
     localStorage.removeItem("student");
-    window.location.href="index.html";
+    window.location.href = "index.html";
   }
 }
-function pctClass(p){p=parseFloat(p);return p>=70?"pct-good":p>=40?"pct-avg":"pct-low";}
-function pctBClass(b){if(b==='A+')return"bandAPlus";if(b==='A')return"bandA";if(b==='B')return"bandB";if(b==='C')return"bandC";return"bandD";}
-
-/* ══════════════════════════════════════════════
-   EXAM PATTERN DETECTION
-   PCM* → 3 subjects (PH + CY + MA)
-   MT*  → single subject, detect from exam_name
-          e.g. "MT-PH-01" → Physics only
-               "MT-CY-01" → Chemistry only
-               "MT-MA-01" → Maths only
-               "MT-01"    → check which subject fields are non-zero
-══════════════════════════════════════════════ */
-function detectPattern(r){
-  const name=(r.exam_name||"").toUpperCase();
-  if(name.startsWith("PCM")) return "PCM";
-  if(name.startsWith("MT")){
-    if(name.includes("-PH")||name.includes("PH")) return "MT-PH";
-    if(name.includes("-CY")||name.includes("CY")) return "MT-CY";
-    if(name.includes("-MA")||name.includes("MA")) return "MT-MA";
-    // fallback: check which subject has questions
-    const ph=Number(r.ph_correct||0)+Number(r.ph_wrong||0)+Number(r.ph_not_attempted||0);
-    const cy=Number(r.cy_correct||0)+Number(r.cy_wrong||0)+Number(r.cy_not_attempted||0);
-    const ma=Number(r.ma_correct||0)+Number(r.ma_wrong||0)+Number(r.ma_not_attempted||0);
-    if(ph>0&&cy===0&&ma===0)return"MT-PH";
-    if(cy>0&&ph===0&&ma===0)return"MT-CY";
-    if(ma>0&&ph===0&&cy===0)return"MT-MA";
-    return"MT"; // mixed or unknown
-  }
-  // default: assume PCM
-  return"PCM";
-}
-
-function patternLabel(pat){
-  if(pat==="PCM")return"PCM";
-  if(pat==="MT-PH")return"MT · PH";
-  if(pat==="MT-CY")return"MT · CY";
-  if(pat==="MT-MA")return"MT · MA";
-  return"MT";
-}
-
-function patternBadgeClass(pat){
-  if(pat==="PCM")return"pb-pcm";
-  if(pat==="MT-PH")return"pb-ph";
-  if(pat==="MT-CY")return"pb-cy";
-  if(pat==="MT-MA")return"pb-ma";
-  return"pb-mt";
-}
-
-/* Subject columns for result table based on pattern */
-function subjectCols(r,pat){
-  if(pat==="PCM"||pat==="MT"){
-    return`<td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>`;
-  }
-  if(pat==="MT-PH") return`<td>${r.ph}</td><td style="color:#94a3b8;font-size:11px">—</td><td style="color:#94a3b8;font-size:11px">—</td>`;
-  if(pat==="MT-CY") return`<td style="color:#94a3b8;font-size:11px">—</td><td>${r.cy}</td><td style="color:#94a3b8;font-size:11px">—</td>`;
-  if(pat==="MT-MA") return`<td style="color:#94a3b8;font-size:11px">—</td><td style="color:#94a3b8;font-size:11px">—</td><td>${r.ma}</td>`;
-  return`<td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>`;
-}
-
-function analysisSubjectCols(r,pat){
-  const dash=`<td class="na-val">—</td>`;
-  if(pat==="MT-PH")return`<td class="correct-val">${r.ph_correct}</td><td class="wrong-val">${r.ph_wrong}</td><td class="na-val">${r.ph_not_attempted}</td>${dash}${dash}${dash}${dash}${dash}${dash}`;
-  if(pat==="MT-CY")return`${dash}${dash}${dash}<td class="correct-val">${r.cy_correct}</td><td class="wrong-val">${r.cy_wrong}</td><td class="na-val">${r.cy_not_attempted}</td>${dash}${dash}${dash}`;
-  if(pat==="MT-MA")return`${dash}${dash}${dash}${dash}${dash}${dash}<td class="correct-val">${r.ma_correct}</td><td class="wrong-val">${r.ma_wrong}</td><td class="na-val">${r.ma_not_attempted}</td>`;
-  return`<td class="correct-val">${r.ph_correct}</td><td class="wrong-val">${r.ph_wrong}</td><td class="na-val">${r.ph_not_attempted}</td>`+
-        `<td class="correct-val">${r.cy_correct}</td><td class="wrong-val">${r.cy_wrong}</td><td class="na-val">${r.cy_not_attempted}</td>`+
-        `<td class="correct-val">${r.ma_correct}</td><td class="wrong-val">${r.ma_wrong}</td><td class="na-val">${r.ma_not_attempted}</td>`;
-}
-
+function pctClass(p){ p=parseFloat(p); return p>=70?"pct-good":p>=40?"pct-avg":"pct-low"; }
+function pctBClass(b){ if(b==='A+')return"bandAPlus"; if(b==='A')return"bandA"; if(b==='B')return"bandB"; if(b==='C')return"bandC"; return"bandD"; }
 function getComment(r){
-  const total_ph=r.ph_correct+r.ph_wrong+r.ph_not_attempted;
-  const total_cy=r.cy_correct+r.cy_wrong+r.cy_not_attempted;
-  const total_ma=r.ma_correct+r.ma_wrong+r.ma_not_attempted;
-  const phPct=total_ph>0?(r.ph_correct/total_ph*100):null;
-  const cyPct=total_cy>0?(r.cy_correct/total_cy*100):null;
-  const maPct=total_ma>0?(r.ma_correct/total_ma*100):null;
+  const phPct = r.ph_correct/(r.ph_correct+r.ph_wrong+r.ph_not_attempted)*100;
+  const cyPct = r.cy_correct/(r.cy_correct+r.cy_wrong+r.cy_not_attempted)*100;
+  const maPct = r.ma_correct/(r.ma_correct+r.ma_wrong+r.ma_not_attempted)*100;
   const strong=[],weak=[];
-  if(phPct!==null){if(phPct>=60)strong.push("PH");else if(phPct<35)weak.push("PH");}
-  if(cyPct!==null){if(cyPct>=60)strong.push("CY");else if(cyPct<35)weak.push("CY");}
-  if(maPct!==null){if(maPct>=60)strong.push("MA");else if(maPct<35)weak.push("MA");}
+  if(phPct>=60)strong.push("PH"); else if(phPct<35)weak.push("PH");
+  if(cyPct>=60)strong.push("CY"); else if(cyPct<35)weak.push("CY");
+  if(maPct>=60)strong.push("MA"); else if(maPct<35)weak.push("MA");
   let html="";
   if(strong.length)html+=`<span class="comment-strong">Strong: ${strong.join(", ")}</span> `;
   if(weak.length)html+=`<span class="comment-weak">Focus: ${weak.join(", ")}</span>`;
   if(!html)html=`<span class="comment-avg">Balanced</span>`;
   return html;
 }
-
 function getTrend(curr,prev){
   if(!prev)return"";
   const diff=parseFloat(curr.percentage)-parseFloat(prev.percentage);
@@ -437,62 +504,57 @@ function getTrend(curr,prev){
   const tM=v=>v>0?`<span class="up">▲ ${v}</span>`:v<0?`<span class="dn">▼ ${Math.abs(v)}</span>`:`<span class="same">━ 0</span>`;
   const pStr=diff>0?`<span class="up">▲ ${diff.toFixed(1)}%</span>`:diff<0?`<span class="dn">▼ ${Math.abs(diff).toFixed(1)}%</span>`:`<span class="same">━ No change</span>`;
   const mStr=markDiff>0?`<span class="up">+${markDiff} marks</span>`:markDiff<0?`<span class="dn">${markDiff} marks</span>`:"";
-  const patCurr=detectPattern(curr),patPrev=detectPattern(prev);
-  const subParts=[];
-  if(patCurr==="PCM"&&patPrev==="PCM"){subParts.push(`PH: ${tM(phDiff)}`,`CY: ${tM(cyDiff)}`,`MA: ${tM(maDiff)}`);}
-  else if(patCurr==="MT-PH"||patPrev==="MT-PH") subParts.push(`PH: ${tM(phDiff)}`);
-  else if(patCurr==="MT-CY"||patPrev==="MT-CY") subParts.push(`CY: ${tM(cyDiff)}`);
-  else if(patCurr==="MT-MA"||patPrev==="MT-MA") subParts.push(`MA: ${tM(maDiff)}`);
-  const subStr=subParts.length?` &nbsp;|&nbsp; ${subParts.join(", ")}` : "";
-  return ` ${prev.exam_name} ➜ ${curr.exam_name} : ${pStr} &nbsp;|&nbsp; ${mStr}${subStr}`;
+  return ` ${prev.exam_name} ➜ ${curr.exam_name} : ${pStr} &nbsp;|&nbsp; ${mStr} &nbsp;|&nbsp; PH:&nbsp;${tM(phDiff)}, CY:&nbsp;${tM(cyDiff)}, MA:&nbsp;${tM(maDiff)}`;
 }
 
-let allResults=[];
-let currentQwData=null;
-let currentQwExamResult=null;
+/* ── Change % helper ── */
+function chgPct(curr,prev){
+  if(prev===null||prev===undefined) return null;
+  if(prev===0) return curr===0?0:null; // div by zero guard
+  return ((curr-prev)/Math.abs(prev)*100).toFixed(1);
+}
+
+function chgCell(curr,prev,isWrong=false){
+  const v=chgPct(curr,prev);
+  if(v===null) return `<td class="chg-na">—</td>`;
+  const num=parseFloat(v);
+  // For wrong/NA, improvement = decrease (flip colour if isWrong)
+  let cls,arrow;
+  if(num>0){ cls=isWrong?"chg-dn":"chg-up"; arrow=isWrong?"▼":"▲";}
+  else if(num<0){ cls=isWrong?"chg-up":"chg-dn"; arrow=isWrong?"▲":"▼";}
+  else{ cls="chg-same"; arrow="━";}
+  return `<td class="${cls}">${arrow} ${Math.abs(v)}%</td>`;
+}
+
+let allResults = [];
 
 /* ══════════════════════════════════════════════
    LOAD STUDENT RESULTS
 ══════════════════════════════════════════════ */
 async function loadStudentResults(){
   try{
-    const res=await fetch("students.json");
-    const data=await res.json();
-    allResults=data.filter(item=>String(item.s_id)===String(user.std_id));
+    const res = await fetch("students.json");
+    const data = await res.json();
+    allResults = data.filter(item=>String(item.s_id)===String(user.std_id));
     if(!allResults.length){
-      $("resultTable").innerHTML=`<tr><td colspan="12" style="text-align:center;padding:20px;color:#94a3b8">No results found for your ID.</td></tr>`;
-      $("analysisTable").innerHTML=`<tr><td colspan="13" style="text-align:center;padding:20px;color:#94a3b8">No data.</td></tr>`;
+      $("resultTable").innerHTML=`<tr><td colspan="12" class="no-data">No results found for your ID.</td></tr>`;
+      $("analysisTable").innerHTML=`<tr><td colspan="13" class="no-data">No data.</td></tr>`;
       return;
     }
-
-    /* ── Detect if any PCM exam exists to decide column headers ── */
-    const hasPCM=allResults.some(r=>detectPattern(r)==="PCM");
-
-    /* ── Results table header ── */
-    $("resultsTableHead").innerHTML=`
-      <th>Exam</th><th>Pattern</th><th>Rank</th>
-      <th>Physics</th><th>Chemistry</th><th>Maths</th>
-      <th>(+ Marks)<br><span style="font-size:10px;font-weight:400">C×4</span></th>
-      <th>(- Marks)<br><span style="font-size:10px;font-weight:400">W×(−1)</span></th>
-      <th>Bonus</th><th>Final Marks</th><th>%</th><th>Grade</th><th>Comment</th>
-    `;
 
     /* ── Exam Results Table ── */
     let resultRows="";
     allResults.forEach((r,i)=>{
-      const pat=detectPattern(r);
       const posMarks=r.correct*4;
       const negMarks=r.wrong*1;
       const bonus=Number(r.bonus)||0;
       const rankCls=Number(r.rank)===1?"rank-badge rank-first":"rank-badge";
       const trend=getTrend(r,allResults[i-1]);
-      const patBadge=`<span class="pattern-badge ${patternBadgeClass(pat)}" style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600">${patternLabel(pat)}</span>`;
       resultRows+=`
         <tr>
           <td>${r.exam_name}</td>
-          <td style="text-align:center">${patBadge}</td>
           <td><span class="${rankCls}">${r.rank}</span></td>
-          ${subjectCols(r,pat)}
+          <td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>
           <td class="pos-marks">+${posMarks}</td>
           <td class="neg-marks">−${negMarks}</td>
           <td>${bonus>0?`<span class="pos-marks">+${bonus}</span>`:'—'}</td>
@@ -501,258 +563,287 @@ async function loadStudentResults(){
           <td class="${pctBClass(r.band)}">${r.band}</td>
           <td>${getComment(r)}</td>
         </tr>
-        ${trend?`<tr class="trend-row"><td></td><td></td><td colspan="11">${trend}</td></tr>`:""}
+        ${trend?`<tr class="trend-row"><td></td><td colspan="11">${trend}</td></tr>`:""}
       `;
     });
     $("resultTable").innerHTML=resultRows;
 
     /* ── Analysis Table ── */
-    $("analysisHead").innerHTML=`
+    $("analysisTable").innerHTML=allResults.map(r=>`
       <tr>
-        <th rowspan="2">Exam</th>
-        <th rowspan="2">Pattern</th>
-        <th colspan="3" class="ph-group">⚡ Physics</th>
-        <th colspan="3" class="cy-group">🧪 Chemistry</th>
-        <th colspan="3" class="ma-group">∫ Mathematics</th>
-        <th colspan="3" class="total-group">📊 Total</th>
-      </tr>
-      <tr class="sub-hdr">
-        <th>✓ C</th><th>✗ W</th><th>— NA</th>
-        <th>✓ C</th><th>✗ W</th><th>— NA</th>
-        <th>✓ C</th><th>✗ W</th><th>— NA</th>
-        <th>✓ C</th><th>✗ W</th><th>— NA</th>
-      </tr>
-    `;
-    $("analysisTable").innerHTML=allResults.map(r=>{
-      const pat=detectPattern(r);
-      const patBadge=`<span class="pattern-badge ${patternBadgeClass(pat)}" style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600">${patternLabel(pat)}</span>`;
-      return`<tr>
         <td>${r.exam_name}</td>
-        <td style="text-align:center">${patBadge}</td>
-        ${analysisSubjectCols(r,pat)}
+        <td class="correct-val">${r.ph_correct}</td><td class="wrong-val">${r.ph_wrong}</td><td class="na-val">${r.ph_not_attempted}</td>
+        <td class="correct-val">${r.cy_correct}</td><td class="wrong-val">${r.cy_wrong}</td><td class="na-val">${r.cy_not_attempted}</td>
+        <td class="correct-val">${r.ma_correct}</td><td class="wrong-val">${r.ma_wrong}</td><td class="na-val">${r.ma_not_attempted}</td>
         <td class="correct-val">${r.correct}</td><td class="wrong-val">${r.wrong}</td><td class="na-val">${r.not_attempted}</td>
-      </tr>`;
-    }).join("");
+      </tr>`).join("");
 
     /* ── Performance Summary ── */
-    buildSummary();
+    const total=allResults.length;
+    const avgMarks=(allResults.reduce((s,r)=>s+Number(r.final_marks),0)/total).toFixed(1);
+    const avgPct=(allResults.reduce((s,r)=>s+Number(r.percentage),0)/total).toFixed(1);
+    const avgCorrect=(allResults.reduce((s,r)=>s+Number(r.correct),0)/total).toFixed(2);
+    const avgWrong=(allResults.reduce((s,r)=>s+Number(r.wrong),0)/total).toFixed(2);
+    const avgNA=(allResults.reduce((s,r)=>s+Number(r.not_attempted),0)/total).toFixed(2);
+    const best=allResults.reduce((b,r)=>Number(r.percentage)>Number(b.percentage)?r:b,allResults[0]);
+    const worst=allResults.reduce((b,r)=>Number(r.percentage)<Number(b.percentage)?r:b,allResults[0]);
+    const phMarks=allResults.map(r=>Number(r.ph));
+    const cyMarks=allResults.map(r=>Number(r.cy));
+    const maMarks=allResults.map(r=>Number(r.ma));
+    const avg=arr=>(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+    const maxV=arr=>Math.max(...arr);
+    const minV=arr=>Math.min(...arr);
+    const avgC=key=>(allResults.reduce((s,r)=>s+Number(r[key]),0)/total).toFixed(1);
+    const subjects=[{name:'Physics',avg:Number(avg(phMarks))},{name:'Chemistry',avg:Number(avg(cyMarks))},{name:'Mathematics',avg:Number(avg(maMarks))}];
+    const sorted=[...subjects].sort((a,b)=>b.avg-a.avg);
+    const strongest=sorted[0],stable=sorted[1],improvement=sorted[2];
+    const subjectCards=`
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+        <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;"><i class="ti ti-trophy" style="font-size:16px;color:#3B6D11;"></i></div><span style="font-size:14px;font-weight:500;color:#3B6D11;">Strongest subject</span></div>
+          <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${strongest.name}</div>
+          <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${strongest.avg}%;background:#639922;border-radius:4px;"></div></div>
+          <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${strongest.avg}%</span></div>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;"><i class="ti ti-chart-line" style="font-size:16px;color:#185FA5;"></i></div><span style="font-size:14px;font-weight:500;color:#185FA5;">Stable subject</span></div>
+          <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${stable.name}</div>
+          <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${stable.avg}%;background:#378ADD;border-radius:4px;"></div></div>
+          <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${stable.avg}%</span></div>
+        </div>
+        <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#FCEBEB;display:flex;align-items:center;justify-content:center;"><i class="ti ti-target" style="font-size:16px;color:#A32D2D;"></i></div><span style="font-size:14px;font-weight:500;color:#A32D2D;">Needs improvement</span></div>
+          <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${improvement.name}</div>
+          <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${improvement.avg}%;background:#E24B4A;border-radius:4px;"></div></div>
+          <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${improvement.avg}%</span></div>
+        </div>
+      </div>`;
 
-    /* ── Populate Q-wise exam list ── */
-    populateQwExamList();
+    $("summaryContent").innerHTML=`
+      <div class="cards-row">
+        <div class="sc b"><h3>Total Exams</h3><p>${total}</p></div>
+        <div class="sc a"><h3>Avg Marks</h3><p>${avgMarks}</p></div>
+        <div class="sc a"><h3>Avg %</h3><p>${avgPct}%</p></div>
+        <div class="sc g"><h3>Best Exam</h3><p style="font-size:13px;margin-top:3px">${best.exam_name}</p><span>${best.percentage}%</span></div>
+        <div class="sc r"><h3>Needs Work</h3><p style="font-size:13px;margin-top:3px">${worst.exam_name}</p><span>${worst.percentage}%</span></div>
+        <div class="sc g"><h3>Avg Correct</h3><p>${avgCorrect}</p></div>
+        <div class="sc r"><h3>Avg Wrong</h3><p>${avgWrong}</p></div>
+        <div class="sc"><h3>Avg Not Att.</h3><p>${avgNA}</p></div>
+      </div>
+      ${subjectCards}
+      <div class="subj-cards" style="margin-top:12px;">
+        <div class="subj-card"><div class="subj-card-title ph">⚡ Physics</div>
+          <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(phMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(phMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(phMarks)}</strong></div>
+          <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ph_correct")}</strong></div>
+          <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ph_wrong")}</strong></div>
+          <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ph_not_attempted")}</strong></div>
+        </div>
+        <div class="subj-card"><div class="subj-card-title cy">🧪 Chemistry</div>
+          <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(cyMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(cyMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(cyMarks)}</strong></div>
+          <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("cy_correct")}</strong></div>
+          <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("cy_wrong")}</strong></div>
+          <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("cy_not_attempted")}</strong></div>
+        </div>
+        <div class="subj-card"><div class="subj-card-title ma">∫ Mathematics</div>
+          <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(maMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(maMarks)}</strong></div>
+          <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(maMarks)}</strong></div>
+          <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ma_correct")}</strong></div>
+          <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ma_wrong")}</strong></div>
+          <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ma_not_attempted")}</strong></div>
+        </div>
+      </div>
+      <div class="sec-box" style="margin-bottom:0">
+        <h2><i class="ti ti-table"></i> All Exams Overview</h2>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Exam</th><th>PH</th><th>CY</th><th>MA</th><th>Bonus</th><th>Final Marks</th><th>%</th><th>Grade</th><th>Rank</th></tr></thead>
+            <tbody>${allResults.map(r=>`
+              <tr>
+                <td>${r.exam_name}</td>
+                <td>${r.ph} <small>[<span class="pos-marks">+${r.ph_correct*4}</span>|<span class="neg-marks">${r.ph_wrong*-1}</span>]</small></td>
+                <td>${r.cy} <small>[<span class="pos-marks">+${r.cy_correct*4}</span>|<span class="neg-marks">${r.cy_wrong*-1}</span>]</small></td>
+                <td>${r.ma} <small>[<span class="pos-marks">+${r.ma_correct*4}</span>|<span class="neg-marks">${r.ma_wrong*-1}</span>]</small></td>
+                <td><strong>${r.bonus}</strong></td>
+                <td><strong>${r.final_marks} <small>[<span class="pos-marks">+${r.correct*4}</span>|<span class="neg-marks">${r.wrong*-1}</span>]</small></strong></td>
+                <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+                <td class="${pctBClass(r.band)}">${r.band}</td>
+                <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
+              </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+
+    /* ══ BUILD CHANGE ANALYSIS TABLES ══ */
+   // buildChangeTables();
+
+    /* ══ POPULATE EXAM SELECT FOR Q-WISE ══ */
+    populateQwExamSelect();
 
   }catch(err){
     console.error(err);
-    $("resultTable").innerHTML=`<tr><td colspan="12" style="text-align:center;padding:20px;color:#dc2626">Error loading results.</td></tr>`;
+    $("resultTable").innerHTML=`<tr><td colspan="12" class="no-data">Error loading results.</td></tr>`;
   }
 }
 
-function buildSummary(){
-  const total=allResults.length;
-  const avgMarks=(allResults.reduce((s,r)=>s+Number(r.final_marks),0)/total).toFixed(1);
-  const avgPct=(allResults.reduce((s,r)=>s+Number(r.percentage),0)/total).toFixed(1);
-  const avgCorrect=(allResults.reduce((s,r)=>s+Number(r.correct),0)/total).toFixed(2);
-  const avgWrong=(allResults.reduce((s,r)=>s+Number(r.wrong),0)/total).toFixed(2);
-  const avgNA=(allResults.reduce((s,r)=>s+Number(r.not_attempted),0)/total).toFixed(2);
-  const best=allResults.reduce((b,r)=>Number(r.percentage)>Number(b.percentage)?r:b,allResults[0]);
-  const worst=allResults.reduce((b,r)=>Number(r.percentage)<Number(b.percentage)?r:b,allResults[0]);
-  const phMarks=allResults.map(r=>Number(r.ph));
-  const cyMarks=allResults.map(r=>Number(r.cy));
-  const maMarks=allResults.map(r=>Number(r.ma));
-  const avg=arr=>(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
-  const maxV=arr=>Math.max(...arr);
-  const minV=arr=>Math.min(...arr);
-  const avgC=key=>(allResults.reduce((s,r)=>s+Number(r[key]),0)/total).toFixed(1);
-  const subjects=[{name:'Physics',avg:Number(avg(phMarks))},{name:'Chemistry',avg:Number(avg(cyMarks))},{name:'Mathematics',avg:Number(avg(maMarks))}];
-  const sorted=[...subjects].sort((a,b)=>b.avg-a.avg);
-  const strongest=sorted[0],stable=sorted[1],improvement=sorted[2];
-  const subjectCards=`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
-      <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;"><i class="ti ti-trophy" style="font-size:16px;color:#3B6D11;"></i></div><span style="font-size:14px;font-weight:500;color:#3B6D11;">Strongest subject</span></div>
-        <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${strongest.name}</div>
-        <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${strongest.avg}%;background:#639922;border-radius:4px;"></div></div>
-        <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${strongest.avg}%</span></div>
-      </div>
-      <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;"><i class="ti ti-chart-line" style="font-size:16px;color:#185FA5;"></i></div><span style="font-size:14px;font-weight:500;color:#185FA5;">Stable subject</span></div>
-        <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${stable.name}</div>
-        <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${stable.avg}%;background:#378ADD;border-radius:4px;"></div></div>
-        <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${stable.avg}%</span></div>
-      </div>
-      <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#FCEBEB;display:flex;align-items:center;justify-content:center;"><i class="ti ti-target" style="font-size:16px;color:#A32D2D;"></i></div><span style="font-size:14px;font-weight:500;color:#A32D2D;">Needs improvement</span></div>
-        <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${improvement.name}</div>
-        <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${improvement.avg}%;background:#E24B4A;border-radius:4px;"></div></div>
-        <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${improvement.avg}%</span></div>
-      </div>
-    </div>`;
+/* ══════════════════════════════════════════════
+   CHANGE ANALYSIS TABLES
+══════════════════════════════════════════════ */
+function buildChangeTables(){
+  /* Marks change % */
+  let marksRows="";
+  allResults.forEach((r,i)=>{
+    const prev=allResults[i-1]||null;
+    const isFirst=!prev;
+    const naCell=`<td class="chg-na">—</td>`;
 
-  $("summaryContent").innerHTML=`
-    <div class="cards-row">
-      <div class="sc b"><h3>Total Exams</h3><p>${total}</p></div>
-      <div class="sc a"><h3>Avg Marks</h3><p>${avgMarks}</p></div>
-      <div class="sc a"><h3>Avg %</h3><p>${avgPct}%</p></div>
-      <div class="sc g"><h3>Best Exam</h3><p style="font-size:13px;margin-top:3px">${best.exam_name}</p><span>${best.percentage}%</span></div>
-      <div class="sc r"><h3>Needs Work</h3><p style="font-size:13px;margin-top:3px">${worst.exam_name}</p><span>${worst.percentage}%</span></div>
-      <div class="sc g"><h3>Avg Correct</h3><p>${avgCorrect}</p></div>
-      <div class="sc r"><h3>Avg Wrong</h3><p>${avgWrong}</p></div>
-      <div class="sc"><h3>Avg Not Att.</h3><p>${avgNA}</p></div>
-    </div>
-    ${subjectCards}
-    <div class="subj-cards" style="margin-top:12px;">
-      <div class="subj-card"><div class="subj-card-title ph">⚡ Physics</div>
-        <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(phMarks)}</strong></div>
-        <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(phMarks)}</strong></div>
-        <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(phMarks)}</strong></div>
-        <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ph_correct")}</strong></div>
-        <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ph_wrong")}</strong></div>
-        <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ph_not_attempted")}</strong></div>
-      </div>
-      <div class="subj-card"><div class="subj-card-title cy">🧪 Chemistry</div>
-        <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(cyMarks)}</strong></div>
-        <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(cyMarks)}</strong></div>
-        <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(cyMarks)}</strong></div>
-        <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("cy_correct")}</strong></div>
-        <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("cy_wrong")}</strong></div>
-        <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("cy_not_attempted")}</strong></div>
-      </div>
-      <div class="subj-card"><div class="subj-card-title ma">∫ Mathematics</div>
-        <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(maMarks)}</strong></div>
-        <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(maMarks)}</strong></div>
-        <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(maMarks)}</strong></div>
-        <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ma_correct")}</strong></div>
-        <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ma_wrong")}</strong></div>
-        <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ma_not_attempted")}</strong></div>
-      </div>
-    </div>
-    <div class="sec-box" style="margin-bottom:0">
-      <h2><i class="ti ti-table"></i> All Exams Overview</h2>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>Exam</th><th>Pattern</th><th>PH</th><th>CY</th><th>MA</th><th>Bonus</th><th>Final Marks</th><th>%</th><th>Grade</th><th>Rank</th></tr></thead>
-          <tbody>${allResults.map(r=>{
-            const pat=detectPattern(r);
-            const patBadge=`<span class="pattern-badge ${patternBadgeClass(pat)}" style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600">${patternLabel(pat)}</span>`;
-            const phStr=pat==="MT-CY"||pat==="MT-MA"?`<span style="color:#94a3b8">—</span>`:r.ph+` <small>[<span class="pos-marks">+${r.ph_correct*4}</span>|<span class="neg-marks">${r.ph_wrong*-1}</span>]</small>`;
-            const cyStr=pat==="MT-PH"||pat==="MT-MA"?`<span style="color:#94a3b8">—</span>`:r.cy+` <small>[<span class="pos-marks">+${r.cy_correct*4}</span>|<span class="neg-marks">${r.cy_wrong*-1}</span>]</small>`;
-            const maStr=pat==="MT-PH"||pat==="MT-CY"?`<span style="color:#94a3b8">—</span>`:r.ma+` <small>[<span class="pos-marks">+${r.ma_correct*4}</span>|<span class="neg-marks">${r.ma_wrong*-1}</span>]</small>`;
-            return`<tr>
-              <td>${r.exam_name}</td>
-              <td style="text-align:center">${patBadge}</td>
-              <td>${phStr}</td><td>${cyStr}</td><td>${maStr}</td>
-              <td><strong>${r.bonus}</strong></td>
-              <td><strong>${r.final_marks} <small>[<span class="pos-marks">+${r.correct*4}</span>|<span class="neg-marks">${r.wrong*-1}</span>]</small></strong></td>
-              <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
-              <td class="${pctBClass(r.band)}">${r.band}</td>
-              <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
-            </tr>`;
-          }).join("")}
-          </tbody>
-        </table>
-      </div>
-    </div>`;
+    const markChg=(curr,p)=>isFirst?naCell:chgCell(Number(curr),Number(p));
+    const pctChg=(curr,p)=>{
+      if(isFirst)return naCell;
+      return chgCell(Number(curr),Number(p));
+    };
+
+    marksRows+=`<tr>
+      <td>${r.exam_name}</td>
+      <td>${r.ph}</td>${markChg(r.ph,prev?.ph)}
+      <td>${r.cy}</td>${markChg(r.cy,prev?.cy)}
+      <td>${r.ma}</td>${markChg(r.ma,prev?.ma)}
+      <td><strong>${r.final_marks}</strong></td>${markChg(r.final_marks,prev?.final_marks)}
+      <td class="${pctClass(r.percentage)}">${r.percentage}%</td>${pctChg(r.percentage,prev?.percentage)}
+    </tr>`;
+  });
+  $("marksChangeBody").innerHTML=marksRows||`<tr><td colspan="11" class="no-data">No data.</td></tr>`;
+
+  /* C/W/NA change % */
+  let cwnaRows="";
+  allResults.forEach((r,i)=>{
+    const prev=allResults[i-1]||null;
+    const isFirst=!prev;
+    const naCell=`<td class="chg-na">—</td>`;
+    const cCell=(curr,p,isW=false)=>isFirst?naCell:chgCell(Number(curr),Number(p),isW);
+
+    cwnaRows+=`<tr>
+      <td>${r.exam_name}</td>
+      ${cCell(r.ph_correct,prev?.ph_correct)}${cCell(r.ph_wrong,prev?.ph_wrong,true)}${cCell(r.ph_not_attempted,prev?.ph_not_attempted,true)}
+      ${cCell(r.cy_correct,prev?.cy_correct)}${cCell(r.cy_wrong,prev?.cy_wrong,true)}${cCell(r.cy_not_attempted,prev?.cy_not_attempted,true)}
+      ${cCell(r.ma_correct,prev?.ma_correct)}${cCell(r.ma_wrong,prev?.ma_wrong,true)}${cCell(r.ma_not_attempted,prev?.ma_not_attempted,true)}
+      ${cCell(r.correct,prev?.correct)}${cCell(r.wrong,prev?.wrong,true)}${cCell(r.not_attempted,prev?.not_attempted,true)}
+    </tr>`;
+  });
+  $("cwnaChangeBody").innerHTML=cwnaRows||`<tr><td colspan="13" class="no-data">No data.</td></tr>`;
 }
 
+
 /* ══════════════════════════════════════════════
-   QUESTION-WISE: SIDEBAR LIST
+   QUESTION-WISE RESULT
 ══════════════════════════════════════════════ */
-function populateQwExamList(){
-  const container=$("qwExamItems");
-  if(!allResults.length){container.innerHTML=`<span style="color:rgba(255,255,255,.3);font-size:11px">No exams found</span>`;return;}
-  container.innerHTML="";
-  allResults.forEach((r,i)=>{
-    const pat=detectPattern(r);
-    const div=document.createElement("div");
-    div.className="qw-exam-item";
-    div.dataset.examName=r.exam_name;
-    div.innerHTML=`
-      <div style="flex:1;min-width:0">
-        <div class="exam-label">${r.exam_name}</div>
-        <div class="exam-sub">${r.final_marks} marks · ${r.percentage}%</div>
-      </div>
-      <span class="pattern-badge ${patternBadgeClass(pat)}">${patternLabel(pat)}</span>
-    `;
-    div.onclick=()=>selectQwExam(r.exam_name,div);
-    container.appendChild(div);
+function populateQwExamSelect(){
+  const sel=$("qwExamSelect");
+  allResults.forEach(r=>{
+    const opt=document.createElement("option");
+    opt.value=r.exam_name;
+    opt.dataset.qpFile=r.exam_qp_image_file||"";
+    opt.textContent=r.exam_name;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change",()=>{
+    $("qwLoadBtn").disabled=!sel.value;
+    $("qwPdfBtn").disabled=true;
+    $("qwTableBody").innerHTML=`<tr><td colspan="6" class="no-data" style="text-align:center;padding:30px;color:#94a3b8">Click "Load Results" to view question-wise data.</td></tr>`;
+    $("qwSummaryBar").style.display="none";
   });
 }
 
-function selectQwExam(examName, el){
-  // Update active state
-  document.querySelectorAll(".qw-exam-item").forEach(d=>d.classList.remove("active"));
-  el.classList.add("active");
+let currentQwData=null;
+
+async function loadQuestionWise(){
+  const sel=$("qwExamSelect");
+  const examName=sel.value;
+  if(!examName)return;
 
   const examResult=allResults.find(r=>r.exam_name===examName);
-  if(!examResult)return;
+  if(!examResult){alert("Exam data not found.");return;}
 
-  $("qwFrameTitle").textContent=examName;
-  $("qwFrameSub").textContent=`Pattern: ${patternLabel(detectPattern(examResult))} · ${examResult.final_marks} marks · ${examResult.percentage}%`;
-  $("qwPdfBtn").disabled=true;
-
-  // Show loading state
-  $("qwPlaceholder").style.display="none";
-  $("qwIframe").style.display="block";
-  $("qwIframe").srcdoc=buildQwHTML(examResult);
-
-  // Store for PDF trigger
-  currentQwExamResult=examResult;
-  // Enable PDF after a short delay (let iframe content build)
-  setTimeout(()=>{ $("qwPdfBtn").disabled=false; },600);
-}
-
-/* ══════════════════════════════════════════════
-   BUILD Q-WISE HTML (rendered into iframe srcdoc)
-══════════════════════════════════════════════ */
-function buildQwHTML(examResult){
-  const res=examResult.res;
-  const qpMarks=examResult.qp_marks;
-  const resStatus=examResult.res_status;
+  const res=examResult.res;           // student answers ["1","2","3",...]
+  const qpMarks=examResult.qp_marks;  // [4,4,-1,0,...]
+  const resStatus=examResult.res_status; // ["correct","wrong","not_attempted",...]
+  const correctAnsload=examResult.exam_name; // optional correct answer array
   const qpFile=examResult.exam_qp_image_file;
-  const pat=detectPattern(examResult);
 
   if(!res||!qpMarks||!resStatus){
-    return`<!DOCTYPE html><html><body style="font-family:Poppins,sans-serif;padding:40px;text-align:center;color:#94a3b8">
-      <p style="font-size:14px">Question-wise data is not available for this exam.</p>
-    </body></html>`;
+    $("qwTableBody").innerHTML=`<tr><td colspan="6" class="no-data" style="text-align:center;padding:30px">Question-wise data not available for this exam.</td></tr>`;
+    return;
   }
 
-  // We'll load QP and answer key asynchronously inside the iframe via postMessage
-  // For now, build a loading page that triggers the parent to inject data
+  // Load QP file — keys: question, type, section, image_base64
+  let qpData=null;
+  if(qpFile){
+    try{
+      const qpRes=await fetch(qpFile);
+      qpData=await qpRes.json();
+    }catch(e){ console.warn("QP file load failed:", e); }
+  }
+
+  let correctAns = [];
+  if(correctAnsload){
+  try {
+    const coAnRes = await fetch("answerKeys.json");
+    const allAnswers = await coAnRes.json();  
+    correctAns = allAnswers[correctAnsload] || [];
+  } catch (e) {
+    console.warn("Answer key load failed:", e);
+  }
+  }
+
   const totalQ=res.length;
 
-  /* Section detection based on pattern */
+  // Build subject sections from qpData.section OR fallback equal-split
   function getSection(idx){
-    if(pat==="MT-PH")return"Physics";
-    if(pat==="MT-CY")return"Chemistry";
-    if(pat==="MT-MA")return"Mathematics";
-    // PCM: equal thirds
+    if(qpData&&qpData[idx]&&qpData[idx].section) return qpData[idx].section;
     const p=Math.floor(totalQ/3);
-    if(idx<p)return"Physics";
-    if(idx<p*2)return"Chemistry";
-    return"Mathematics";
+    if(idx<p) return "Physics";
+    if(idx<p*2) return "Chemistry";
+    return "Mathematics";
   }
 
-  // Build summary counts (without QP data first, will inject images after)
-  let totC=0,totW=0,totNA=0,totMarks=0,nvcount=0;
+  // Summaries
+  let totC=0,totW=0,totNA=0,totMarks=0,nvcount = 0;
+  // Per-section aggregates
   const secMap={};
   res.forEach((ans,i)=>{
     const st=resStatus[i]||"not_attempted";
     const mk=Number(qpMarks[i]||0);
     const sec=getSection(i);
-    if(ans==="NV")nvcount++;
-    if(st==="correct")totC++;else if(st==="wrong")totW++;else totNA++;
+    if(ans === "NV")nvcount++;
+    if(st==="correct")totC++; else if(st==="wrong")totW++; else totNA++;
     totMarks+=mk;
-    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,nv:0,pos:0,neg:0,marks:0,range:[]};
+    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,nv:0,bonus:0,range:[]};
     secMap[sec].range.push(i+1);
+    
     if(st==="correct"){secMap[sec].c++;secMap[sec].pos+=mk;}
     else if(st==="wrong"){secMap[sec].w++;secMap[sec].neg+=mk;}
     else secMap[sec].na++;
-    if(ans==="NV")secMap[sec].nv++;
+    if(ans === "NV"){secMap[sec].nv++;}
     secMap[sec].marks+=mk;
   });
 
-  /* rows placeholder - images will be null until QP loaded */
-  let tableRows="";
+  $("qwSummaryBar").style.display="grid";
+  $("qwSummaryBar").innerHTML=`
+    <div class="q-sumcard q-sum-total"><h4>Total Questions</h4><p>${totalQ}</p></div>
+    <div class="q-sumcard q-sum-correct"><h4>Correct</h4><p>${totC}</p></div>
+    <div class="q-sumcard q-sum-wrong"><h4>Wrong</h4><p>${totW}</p></div>
+    <div class="q-sumcard q-sum-na"><h4>Not Attempted</h4><p>${totNA}</p></div>
+    <div class="q-sumcard q-sum-wrong"><h4>Not Visited</h4><p>${nvcount}</p></div> 
+    <div class="q-sumcard q-sum-marks"><h4>Total Marks</h4><p>${totMarks}</p></div>
+  `;
+
+  // Dashboard table (compact)
+  let rows="";
   res.forEach((ans,i)=>{
     const status=resStatus[i]||"not_attempted";
     const marks=qpMarks[i];
@@ -760,416 +851,295 @@ function buildQwHTML(examResult){
     const secCls=sec==="Physics"?"subj-ph":sec==="Chemistry"?"subj-cy":"subj-ma";
     const statusBadge=status==="correct"
       ?`<span class="q-badge q-correct">✓ Correct</span>`
-      :status==="wrong"?`<span class="q-badge q-wrong">✗ Wrong</span>`
-      :`<span class="q-badge q-na">— Not Att.</span>`;
+      :status==="wrong"
+        ?`<span class="q-badge q-wrong">✗ Wrong</span>`
+        :`<span class="q-badge q-na">— Not Att.</span>`;
     const marksCell=marks>0?`<span class="pos-marks">+${marks}</span>`:marks<0?`<span class="neg-marks">${marks}</span>`:`<span style="color:#94a3b8">0</span>`;
-    const nvNote=ans==="NV"?`<span style="color:#2563eb;font-size:10px;"> (Not Visited)</span>`:"";
-    tableRows+=`<tr id="qrow_${i}">
-      <td><strong>Q${i+1}</strong></td>
+    let imgCell=`<span class="q-no-img">No image</span>`;
+    if(qpData&&qpData[i]&&qpData[i].image_base64){
+      imgCell=`<img class="q-img-thumb" src="data:image/jpeg;base64,${qpData[i].image_base64}" alt="Q${i+1}" onclick="openLightbox(this.src,'Q${i+1}')">`;
+    }
+    const qLabel=qpData&&qpData[i]&&qpData[i].question?qpData[i].question:`Question ${i+1}`;
+    const cAns=correctAns[i]||"—";
+    const remarkQp = ans === "NV" ? `QP Not Visited` : "";
+    rows+=`<tr>
+      <td><strong>Q${i+1}</strong><br><small style="color:#94a3b8;font-size:10px;">${qLabel}</small></td>
       <td><span class="subj-tag ${secCls}">${sec}</span></td>
-      <td>${ans||'—'}${nvNote}</td>
-      <td id="cans_${i}">—</td>
+      <td>${ans||'—'}  ${remarkQp && remarkQp.trim() ? `<span "color:blue;font-size:10px;">${remarkQp}</span>` : ''}</td>
+      <td>${cAns}</td>
       <td>${statusBadge}</td>
       <td>${marksCell}</td>
-      <td id="qimg_${i}"><span style="color:#94a3b8;font-size:11px">Loading…</span></td>
+      <td>${imgCell}</td>
     </tr>`;
   });
+  $("qwTableBody").innerHTML=rows;
 
-  let secRows="";
-  Object.keys(secMap).forEach(sec=>{
-    const s=secMap[sec];
-    const rangeStr=s.range.length?`Q${s.range[0]}–Q${s.range[s.range.length-1]}`:"—";
-    secRows+=`<tr>
-      <td>${sec}</td><td>${rangeStr}</td>
-      <td style="color:#16a34a;font-weight:600">${s.c}</td>
-      <td style="color:#dc2626;font-weight:600">${s.w}</td>
-      <td style="color:#64748b">${s.na}${s.nv>0?` <span style="color:#2563eb;font-size:10px">(${s.nv} NV)</span>`:""}</td>
-      <td style="color:#16a34a;font-weight:600">+${s.pos}</td>
-      <td style="color:#dc2626;font-weight:600">${s.neg}</td>
-      <td style="font-weight:600">${s.marks}</td>
-    </tr>`;
-  });
-  const totalPos=qpMarks.reduce((a,v)=>a+(Number(v)>0?Number(v):0),0);
-  const totalNeg=qpMarks.reduce((a,v)=>a+(Number(v)<0?Number(v):0),0);
-  secRows+=`<tr style="background:#f0f4fb;font-weight:700">
-    <td>Total</td><td>Q1–Q${totalQ}</td>
-    <td style="color:#16a34a">+${totC}</td><td style="color:#dc2626">${totW}</td>
-    <td>${totNA}${nvcount>0?` <span style="color:#2563eb;font-size:10px">(${nvcount} NV)</span>`:""}</td>
-    <td style="color:#16a34a">+${totalPos}</td><td style="color:#dc2626">${totalNeg}</td>
-    <td>${totMarks}</td>
-  </tr>`;
-
-  const finalTotal=examResult.final_marks||totMarks;
-  const percentage=examResult.percentage;
-  const grade=examResult.band;
-  const examName=examResult.exam_name;
-
-  return`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Q-wise: ${examName}</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{background:#f0f4fb;padding:14px;font-size:13px;color:#1e293b}
-.sum-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px}
-.sum-card{border-radius:10px;padding:10px 12px;text-align:center}
-.sum-card h4{font-size:9px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;opacity:.8}
-.sum-card p{font-size:18px;font-weight:700;line-height:1}
-.sc-correct{background:#dcfce7;color:#15803d}.sc-wrong{background:#fee2e2;color:#b91c1c}
-.sc-na{background:#f1f5f9;color:#475569}.sc-marks{background:#fef3c7;color:#92400e}
-.sc-total{background:#eff6ff;color:#1d4ed8}
-.sec-box{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:14px}
-.sec-box h3{font-size:13px;font-weight:600;color:#0e1e4a;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-table{width:100%;border-collapse:collapse;font-size:12px}
-thead tr{background:#0e1e4a}
-thead th{color:#fff;padding:8px 10px;font-weight:500;text-align:center;font-size:11px;white-space:nowrap}
-thead th:first-child,thead th:nth-child(2){text-align:left}
-tbody td{padding:8px 10px;text-align:center;border-bottom:1px solid #f1f5f9;color:#374151;vertical-align:middle}
-tbody td:first-child,tbody td:nth-child(2){text-align:left}
-tbody tr:hover{background:#f8fafc}
-.q-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.q-correct{background:#dcfce7;color:#15803d}
-.q-wrong{background:#fee2e2;color:#b91c1c}
-.q-na{background:#f1f5f9;color:#64748b}
-.subj-tag{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600}
-.subj-ph{background:#eff6ff;color:#1d4ed8}
-.subj-cy{background:#dcfce7;color:#15803d}
-.subj-ma{background:#fef3c7;color:#92400e}
-.pos-marks{color:#16a34a;font-weight:600}
-.neg-marks{color:#dc2626;font-weight:600}
-.q-img-thumb{width:60px;height:40px;object-fit:contain;border-radius:5px;border:1px solid #e2e8f0;cursor:pointer}
-.q-img-thumb:hover{transform:scale(1.06)}
-.result-box{text-align:center;padding:14px;border:2px solid #0e1e4a;border-radius:10px;background:#f8fafc;margin-bottom:14px}
-.result-box .final{font-size:20px;font-weight:700;color:#0e1e4a}
-.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center}
-.lightbox.open{display:flex}
-.lbinner{background:#fff;border-radius:12px;padding:14px;max-width:90vw;max-height:90vh;overflow:auto;position:relative}
-.lbclose{position:absolute;top:8px;right:10px;background:none;border:none;font-size:20px;cursor:pointer;color:#475569}
-.lbinner img{max-width:80vw;max-height:75vh;display:block;border-radius:6px}
-</style>
-</head>
-<body>
-
-<!-- Summary bar -->
-<div class="sum-bar">
-  <div class="sum-card sc-total"><h4>Questions</h4><p>${totalQ}</p></div>
-  <div class="sum-card sc-correct"><h4>Correct</h4><p>${totC}</p></div>
-  <div class="sum-card sc-wrong"><h4>Wrong</h4><p>${totW}</p></div>
-  <div class="sum-card sc-na"><h4>Not Att.</h4><p>${totNA}</p></div>
-  ${nvcount>0?`<div class="sum-card" style="background:#eff6ff;color:#1d4ed8"><h4>Not Visited</h4><p>${nvcount}</p></div>`:""}
-  <div class="sum-card sc-marks"><h4>Marks</h4><p>${totMarks}</p></div>
-  <div class="sum-card sc-marks"><h4>Bonus</h4><p>${examResult.bonus||0}</p></div>
-  <div class="sum-card sc-total"><h4>Final</h4><p>${finalTotal}</p></div>
-</div>
-
-<!-- Result box -->
-<div class="result-box">
-  <span class="final">${finalTotal} marks &nbsp;·&nbsp; ${percentage}% &nbsp;·&nbsp; Grade: ${grade}</span>
-</div>
-
-<!-- Section summary -->
-<div class="sec-box">
-  <h3>📊 Section-wise Performance</h3>
-  <div style="overflow-x:auto">
-  <table>
-    <thead><tr>
-      <th style="text-align:left">Section</th><th>Range</th>
-      <th>✓ C</th><th>✗ W</th><th>— NA</th>
-      <th>+ Marks</th><th>− Marks</th><th>Total</th>
-    </tr></thead>
-    <tbody>${secRows}</tbody>
-  </table>
-  </div>
-</div>
-
-<!-- Q-wise table -->
-<div class="sec-box">
-  <h3>📋 Question-wise Breakdown</h3>
-  <div style="overflow-x:auto">
-  <table>
-    <thead><tr>
-      <th style="text-align:left">#</th>
-      <th style="text-align:left">Subject</th>
-      <th>Your Ans.</th>
-      <th>Correct Ans.</th>
-      <th>Status</th>
-      <th>Marks</th>
-      <th>Question Image</th>
-    </tr></thead>
-    <tbody id="qwTbody">${tableRows}</tbody>
-  </table>
-  </div>
-</div>
-
-<!-- Lightbox -->
-<div class="lightbox" id="lb">
-  <div class="lbinner">
-    <button class="lbclose" onclick="document.getElementById('lb').classList.remove('open')">✕</button>
-    <img id="lbImg" src="" alt="Question">
-  </div>
-</div>
-
-<script>
-function openLb(src){
-  document.getElementById('lbImg').src=src;
-  document.getElementById('lb').classList.add('open');
-}
-document.getElementById('lb').addEventListener('click',e=>{if(e.target===document.getElementById('lb'))document.getElementById('lb').classList.remove('open')});
-
-/* Receive QP + answerKey data injected from parent */
-window.addEventListener('message',e=>{
-  if(!e.data||e.data.type!=='QW_DATA')return;
-  const{qpData,correctAns}=e.data;
-  const totalQ=${totalQ};
-  for(let i=0;i<totalQ;i++){
-    // Correct answer
-    const cansEl=document.getElementById('cans_'+i);
-    if(cansEl)cansEl.textContent=(correctAns&&correctAns[i])||'—';
-    // Image
-    const imgEl=document.getElementById('qimg_'+i);
-    if(imgEl){
-      if(qpData&&qpData[i]&&qpData[i].image_base64){
-        imgEl.innerHTML='<img class="q-img-thumb" src="data:image/jpeg;base64,'+qpData[i].image_base64+'" alt="Q'+(i+1)+'" onclick="openLb(this.src)">';
-      }else{
-        imgEl.innerHTML='<span style="color:#94a3b8;font-size:11px">No image</span>';
-      }
-    }
-  }
-  // Signal PDF ready
-  window.parent.postMessage({type:'QW_READY'},'*');
-});
-<\/script>
-</body>
-</html>`;
+  currentQwData={exam:examName,examResult,res,qpMarks,resStatus,correctAns,qpData,totalQ,totC,totW,totNA,totMarks,secMap,getSection};
+  $("qwPdfBtn").disabled=false;
 }
 
 /* ══════════════════════════════════════════════
-   INJECT QP + ANSWER KEY INTO IFRAME
+   GENERATE PDF — exact layout match
 ══════════════════════════════════════════════ */
-$("qwIframe").addEventListener("load",async ()=>{
-  if(!currentQwExamResult)return;
-  const examResult=currentQwExamResult;
-  const qpFile=examResult.exam_qp_image_file;
-  const examName=examResult.exam_name;
+function generateQwPdf(){
+  if(!currentQwData){alert("Please load results first.");return;}
+  const d=currentQwData;
+  const student=user;
+  const examResult=d.examResult;
 
-  let qpData=null,correctAns=[];
-  const loads=[];
-  if(qpFile){
-    loads.push(fetch(qpFile).then(r=>r.json()).then(d=>{qpData=d;}).catch(()=>{}));
-  }
-  loads.push(
-    fetch("answerKeys.json").then(r=>r.json()).then(d=>{correctAns=d[examName]||[];}).catch(()=>{})
-  );
-  await Promise.all(loads);
-
-  try{
-    $("qwIframe").contentWindow.postMessage({type:"QW_DATA",qpData,correctAns},"*");
-  }catch(e){console.warn("postMessage to iframe failed",e);}
-});
-
-/* Listen for iframe ready signal */
-window.addEventListener("message",e=>{
-  if(e.data&&e.data.type==="QW_READY") $("qwPdfBtn").disabled=false;
-});
-
-/* ══════════════════════════════════════════════
-   TRIGGER PDF FROM PARENT (calls into iframe)
-══════════════════════════════════════════════ */
-function triggerPdf(){
-  if(!currentQwExamResult)return;
-  // Build PDF HTML same as original generateQwPdf but use stored data
-  const examResult=currentQwExamResult;
-  generateQwPdfDirect(examResult);
-}
-
-async function generateQwPdfDirect(examResult){
-  const d_res=examResult.res;
-  const d_qpMarks=examResult.qp_marks;
-  const d_resStatus=examResult.res_status;
-  const examName=examResult.exam_name;
-  const qpFile=examResult.exam_qp_image_file;
-  const pat=detectPattern(examResult);
-
-  if(!d_res||!d_qpMarks||!d_resStatus){alert("No Q-wise data for this exam.");return;}
-
-  let qpData=null,correctAns=[];
-  const loads=[];
-  if(qpFile)loads.push(fetch(qpFile).then(r=>r.json()).then(d=>{qpData=d;}).catch(()=>{}));
-  loads.push(fetch("answerKeys.json").then(r=>r.json()).then(d=>{correctAns=d[examName]||[];}).catch(()=>{}));
-  await Promise.all(loads);
-
-  const totalQ=d_res.length;
-  function getSection(idx){
-    if(pat==="MT-PH")return"Physics";
-    if(pat==="MT-CY")return"Chemistry";
-    if(pat==="MT-MA")return"Mathematics";
-    const p=Math.floor(totalQ/3);
-    if(idx<p)return"Physics";if(idx<p*2)return"Chemistry";return"Mathematics";
+  // ── Grade helper
+  function getGrade(pct){
+    pct=parseFloat(pct);
+    if(pct>=85)return"A+ (Outstanding)";if(pct>=70)return"A (Excellent)";if(pct>=55)return"B (Good)";if(pct>=40)return"C (Average)";return"D (Needs Improvement)";
   }
 
-  let totC=0,totW=0,totNA=0,totMarks=0,nvcount=0;
-  const secMap={};
-  d_res.forEach((ans,i)=>{
-    const st=d_resStatus[i]||"not_attempted";const mk=Number(d_qpMarks[i]||0);const sec=getSection(i);
-    if(ans==="NV")nvcount++;
-    if(st==="correct")totC++;else if(st==="wrong")totW++;else totNA++;
-    totMarks+=mk;
-    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,nv:0,pos:0,neg:0,marks:0,bonus:0,range:[]};
-    secMap[sec].range.push(i+1);
-    if(st==="correct"){secMap[sec].c++;secMap[sec].pos+=mk;}
-    else if(st==="wrong"){secMap[sec].w++;secMap[sec].neg+=mk;}
-    else secMap[sec].na++;
-    if(ans==="NV")secMap[sec].nv++;
-    secMap[sec].marks+=mk;
-  });
-
-  function buildRemarks(){
+  // ── Remarks helper
+   function buildRemarks(){
     const lines=[];
-    Object.keys(secMap).forEach(sec=>{
-      const s=secMap[sec];const total=s.c+s.w+s.na;const pct=total?((s.c/total)*100).toFixed(1):0;
+    Object.keys(d.secMap).forEach(sec=>{
+      const s=d.secMap[sec];
+      const total=s.c+s.w+s.na;
+      const pct=total?((s.c/total)*100).toFixed(1):0;
+      let remark = "";
       if(pct>=60)lines.push(`${sec}: Good performance (${pct}% accuracy).`);
       else if(pct>=35)lines.push(`${sec}: Average performance (${pct}% accuracy). More practice needed.`);
       else lines.push(`${sec}: Needs significant improvement (${pct}% accuracy). Focus on fundamentals.`);
-      if(s.nv>0)lines.push(`${s.nv} question${s.nv>1?"s":""} not visited.`);
+      if (s.nv > 0) {
+      remark += ` ${s.nv} question${s.nv > 1 ? "s" : ""} not visited.`;
+      }
+     lines.push(remark);
     });
     return lines.join(" ");
   }
 
+  // ── Build per-question detail rows (blue header + image row pattern)
   let questionImageHTML="";
-  d_res.forEach((ans,i)=>{
-    const status=d_resStatus[i]||"not_attempted";
-    const displayAns=ans==="NV"?`<span style="color:blue;">Not Visited this QP</span>`:(ans||"—");
-    const marks=d_qpMarks[i];const cAns=correctAns[i]||"—";
-    const qLabel=qpData&&qpData[i]&&qpData[i].question?qpData[i].question:`Question ${i+1}`;
+  d.res.forEach((ans,i)=>{
+    const status=d.resStatus[i]||"not_attempted";
+    const displayAns = ans === "NV" ? `<span style="color:blue;">Not Visited this QP</span>` : (ans || "—");
+    const marks=d.qpMarks[i];
+    const cAns=d.correctAns[i]||"—";
+    const qLabel=d.qpData&&d.qpData[i]&&d.qpData[i].question?d.qpData[i].question:`Question ${i+1}`;
+    const qType=d.qpData&&d.qpData[i]&&d.qpData[i].type?d.qpData[i].type:"MCQ";
     const statusTxt=status==="correct"?"✓ Correct":status==="wrong"?"✗ Wrong":"— Not Attempted";
     const statusColor=status==="correct"?"#15803d":status==="wrong"?"#b91c1c":"#64748b";
     const marksColor=marks>0?"#15803d":marks<0?"#b91c1c":"#64748b";
     let imageHTML="<em style='color:#aaa;font-size:11px;'>No image available</em>";
-    if(qpData&&qpData[i]&&qpData[i].image_base64)imageHTML=`<img src="data:image/jpeg;base64,${qpData[i].image_base64}" style="max-width:100%;max-height:300px;display:block;margin:6px auto;border:1px solid #ddd;border-radius:6px;">`;
-    questionImageHTML+=`<table border="1" cellspacing="0" cellpadding="6" width="100%" style="margin-bottom:6px;border-collapse:collapse;font-size:12px;">
-      <tr><td style="background:#007bff;color:white;font-weight:bold;width:120px;padding:8px;">${qLabel.toUpperCase()}</td>
-      <td style="padding:8px;"><b>Your Answer:</b> ${displayAns} &nbsp;|&nbsp; <b>Correct Answer:</b> ${cAns} &nbsp;|&nbsp; <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${statusTxt}</span> &nbsp;|&nbsp; <b>Marks:</b> <span style="color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</span></td></tr>
-      <tr><td colspan="2" style="padding:8px;text-align:center;">${imageHTML}</td></tr>
+    if(d.qpData&&d.qpData[i]&&d.qpData[i].image_base64){
+      imageHTML=`<img src="data:image/jpeg;base64,${d.qpData[i].image_base64}" style="max-width:100%;max-height:300px;display:block;margin:6px auto;border:1px solid #ddd;border-radius:6px;">`;
+    }
+
+    questionImageHTML+=`
+    <table border="1" cellspacing="0" cellpadding="6" width="100%" style="margin-bottom:6px;border-collapse:collapse;font-size:12px;">
+      <tr>
+        <td style="background:#007bff;color:white;font-weight:bold;width:120px;padding:8px;">${qLabel.toUpperCase()}</td>
+        <td style="padding:8px;">
+          <b>Your Answer:</b> ${displayAns ||'—'}
+          &nbsp;&nbsp;|&nbsp;
+          <b>Correct Answer:</b> ${cAns}
+          &nbsp;&nbsp;|&nbsp;
+          <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${statusTxt}</span>
+          &nbsp;&nbsp;|&nbsp;
+          <b>Marks Obtained:</b> <span style="color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" style="padding:8px;text-align:center;">${imageHTML}</td>
+      </tr>
     </table>`;
   });
 
+  // ── Compact summary table (2 questions per row)
   let summaryRows="";
-  for(let i=0;i<totalQ;i+=2){
+  for(let i=0;i<d.totalQ;i+=2){
     const buildCell=(idx)=>{
-      if(idx>=totalQ)return"<td colspan='5'></td>";
-      const st=d_resStatus[idx]||"not_attempted";const mk=d_qpMarks[idx];const cA=correctAns[idx]||"—";
+      if(idx>=d.totalQ)return"<td colspan='5'></td>";
+      const st=d.resStatus[idx]||"not_attempted";
+      const mk=d.qpMarks[idx];
+      const cA=d.correctAns[idx]||"—";
       const stColor=st==="correct"?"#15803d":st==="wrong"?"#b91c1c":"#64748b";
       const mkColor=mk>0?"#15803d":mk<0?"#b91c1c":"#64748b";
-      return`<td style="font-weight:700;color:#0e1e4a;">Q${idx+1}</td><td>${d_res[idx]||'—'}</td><td>${cA}</td><td style="color:${stColor};font-weight:600;">${st==="correct"?"✓ C":st==="wrong"?"✗ W":"— NA"}</td><td style="color:${mkColor};font-weight:600;">${mk>0?"+":""}${mk}</td>`;
+      return`<td style="font-weight:700;color:#0e1e4a;">Q${idx+1}</td>
+             <td>${d.res[idx]||'—'}</td>
+             <td>${cA}</td>
+             <td style="color:${stColor};font-weight:600;">${st==="correct"?"✓ Correct":st==="wrong"?"✗ Wrong":"— NA"}</td>
+             <td style="color:${mkColor};font-weight:600;">${mk>0?"+":""}${mk}</td>`;
     };
     summaryRows+=`<tr>${buildCell(i)}${buildCell(i+1)}</tr>`;
   }
 
+  // ── Section rows
   let sectionRows="";
-  Object.keys(secMap).forEach(sec=>{
-    const s=secMap[sec];const rangeStr=s.range.length?`Q${s.range[0]}–Q${s.range[s.range.length-1]}`:"—";
-    sectionRows+=`<tr><td>${sec}</td><td>${rangeStr}</td><td style="color:#15803d;font-weight:600;">${s.c}</td><td style="color:#b91c1c;font-weight:600;">${s.w}</td><td style="color:#64748b;">${s.na}${s.nv>0?` (${s.nv} NV)`:""}</td><td style="color:#15803d;font-weight:600;">+${s.pos}</td><td style="color:#b91c1c;font-weight:600;">${s.neg}</td><td style="font-weight:600;">${s.marks}</td><td>${s.bonus||0}</td></tr>`;
+  Object.keys(d.secMap).forEach(sec=>{
+    const s=d.secMap[sec];
+    const rangeStr=s.range.length>0?`Q${s.range[0]}–Q${s.range[s.range.length-1]}`:"—";
+    sectionRows+=`<tr>
+      <td>${sec}</td>
+      <td>${rangeStr}</td>
+      <td style="color:#15803d;font-weight:600;">${s.c}</td>
+      <td style="color:#b91c1c;font-weight:600;">${s.w}</td>
+      <td style="color:#64748b;">${s.na} ${Number(s.nv) !== 0 ? `<span style="color:blue;">(${s.nv})</span>` : ''}</td>
+      <td style="color:#15803d;font-weight:600;">+${s.pos}</td>
+      <td style="color:#b91c1c;font-weight:600;">${s.neg}</td>
+      <td style="font-weight:600;">${s.marks}</td>
+      <td>${s.bonus||0}</td>
+    </tr>`;
   });
-  const totalPos=d_res.reduce((acc,_,i)=>acc+(d_qpMarks[i]>0?Number(d_qpMarks[i]):0),0);
-  const totalNeg=d_res.reduce((acc,_,i)=>acc+(d_qpMarks[i]<0?Number(d_qpMarks[i]):0),0);
-  sectionRows+=`<tr style="background:#f0f4fb;font-weight:700;"><td>Total</td><td>Q1–Q${totalQ}</td><td style="color:#15803d;">+${totC}</td><td style="color:#b91c1c;">${totW}</td><td>${totNA}${nvcount>0?` (${nvcount} NV)`:""}</td><td style="color:#15803d;">+${totalPos}</td><td style="color:#b91c1c;">${totalNeg}</td><td>${totMarks}</td><td>${examResult.bonus||0}</td></tr>`;
+  // Total row
+  const totalPos=d.res.reduce((acc,_,i)=>acc+(d.qpMarks[i]>0?d.qpMarks[i]:0),0);
+  const totalNeg=d.res.reduce((acc,_,i)=>acc+(d.qpMarks[i]<0?d.qpMarks[i]:0),0);
+  sectionRows+=`<tr style="background:#f0f4fb;font-weight:700;">
+    <td>Total</td><td>Q1–Q${d.totalQ}</td>
+    <td style="color:#15803d;">+${d.totC}</td>
+    <td style="color:#b91c1c;">${d.totW}</td>
+    <td>${d.totNA}</td>
+    <td style="color:#15803d;">+${totalPos}</td>
+    <td style="color:#b91c1c;">${totalNeg}</td>
+    <td>${d.totMarks}</td>
+    <td>${examResult.bonus||0}</td>
+  </tr>`;
 
-  const finalTotal=examResult.final_marks||totMarks;
-  const percentage=examResult.percentage;
-  const grade=examResult.band;
-  const patLabel=patternLabel(pat);
+  const finalTotal=examResult.final_marks||d.totMarks;
+  const percentage=examResult.percentage||((d.totMarks/d.totalQ*4)*100/100).toFixed(2);
+  const grade=examResult.band||getGrade(percentage);
+  const remarks=buildRemarks();
 
-  const htmlContent=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Question-wise Result — ${examName}</title>
+  const htmlContent=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Question-wise Result — ${d.exam}</title>
 <style>
-body{font-family:'Segoe UI',Arial,sans-serif;margin:16px;background:#fff;color:#1e293b;font-size:12px;}
-@media print{body{margin:8px;}.no-print{display:none;}table,tr,td,th{page-break-inside:avoid !important;break-inside:avoid !important;}.page-break{page-break-before:always;break-before:page;}.header-bar{page-break-after:avoid;break-after:avoid;}h5{page-break-after:avoid;break-after:avoid;}}
-.header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.header-bar h2{margin:0;font-size:14px;}.header-bar p{margin:2px 0;font-size:11px;opacity:.85;}
-.info-bar{background:#eff6ff;border:1px solid #dbeafe;border-radius:6px;padding:8px 14px;font-size:11px;display:flex;flex-wrap:wrap;gap:16px;margin-bottom:8px;}
-.info-bar span b{color:#0e1e4a;}
-table{width:100%;border-collapse:collapse;margin-bottom:8px;}
-th{background:#0e1e4a;color:#fff;padding:6px 7px;font-size:11px;font-weight:500;text-align:center;}
-td{padding:4px 5px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
-tr:nth-child(even) td{background:#f8fafc;}
-h5{font-size:12px;margin:10px 0 4px;color:#0e1e4a;}
+  body{font-family:'Segoe UI',Arial,sans-serif;margin:16px;background:#fff;color:#1e293b;font-size:12px;}
+  @media print{
+  body{
+    margin:8px;
+  }
+
+  .no-print{
+    display:none;
+  }
+
+  /* Force table rows not to break awkwardly */
+  table, tr, td, th{
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force section/page break */
+  .page-break{
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Avoid header splitting */
+  .header-bar{
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h5{
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  }
+  .header-bar{background:linear-gradient(135deg,#0e1e4a,#185FA5);color:#fff;padding:12px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .header-bar h2{margin:0;font-size:14px;}
+  .header-bar p{margin:2px 0;font-size:11px;opacity:.85;}
+  .info-bar{background:#eff6ff;border:1px solid #dbeafe;border-radius:6px;padding:8px 14px;font-size:11px;display:flex;flex-wrap:wrap;gap:16px;margin-bottom:8px;}
+  .info-bar span b{color:#0e1e4a;}
+  table{width:100%;border-collapse:collapse;margin-bottom:8px;}
+  th{background:#0e1e4a;color:#fff;padding:6px 7px;font-size:11px;font-weight:500;text-align:center;}
+  td{padding:4px 5px;border:1px solid #e2e8f0;font-size:11px;vertical-align:middle;}
+  tr:nth-child(even) td{background:#f8fafc;}
+  h5{font-size:12px;margin:10px 0 4px;color:#0e1e4a;}
 </style></head>
 <body>
 <div class="header-bar">
-  <div><h2>UNIC Academy — Question-wise Result</h2><p>Exam: <b>${examName}</b> &nbsp;|&nbsp; Pattern: <b>${patLabel}</b> &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString()}</p></div>
-  <div style="text-align:right;"><p><b>${user.name}</b></p><p>ID: ${user.std_id}</p></div>
+  <div><h2>UNIC Academy — Question-wise Result</h2><p>Exam: <b>${d.exam}</b> &nbsp;|&nbsp; Generated: ${new Date().toLocaleDateString()}</p></div>
+  <div style="text-align:right;"><p><b>${student.name}</b></p><p>ID: ${student.std_id}</div>
 </div>
 <div class="info-bar">
-  <span><b>Total Questions:</b> ${totalQ}</span>
-  <span><b>Correct:</b> <span style="color:#15803d;">${totC}</span></span>
-  <span><b>Wrong:</b> <span style="color:#b91c1c;">${totW}</span></span>
-  <span><b>Not Attempted:</b> ${totNA}</span>
-  ${nvcount>0?`<span><b>Not Visited:</b> <span style="color:#2563eb;">${nvcount}</span></span>`:""}
-  <span><b>Marks:</b> ${totMarks}</span>
+  <span><b>Total Questions:</b> ${d.totalQ}</span>
+  <span><b>Correct:</b> <span style="color:#15803d;">${d.totC}</span></span>
+  <span><b>Wrong:</b> <span style="color:#b91c1c;">${d.totW}</span></span>
+  <span><b>Not Attempted:</b> ${d.totNA}</span>
+  <span><b>Marks Obtained:</b> ${d.totMarks}</span>
   <span><b>Bonus:</b> ${examResult.bonus||0}</span>
   <span><b>Final Score:</b> <b>${finalTotal}</b></span>
 </div>
+
 <h5>Question-wise Summary</h5>
 <table style="text-align:center;vertical-align:middle;">
-  <thead><tr><th>Qn.</th><th>Your Ans.</th><th>Correct</th><th>Status</th><th>Marks</th><th>Qn.</th><th>Your Ans.</th><th>Correct</th><th>Status</th><th>Marks</th></tr></thead>
+  <thead><tr>
+    <th>Qn.</th><th>Your Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
+    <th>Qn.</th><th>Your Ans.</th><th>Correct Ans.</th><th>Status</th><th>Marks</th>
+  </tr></thead>
   <tbody>${summaryRows}</tbody>
 </table>
-<h5>Section-wise Performance</h5>
+
+<h5>Subject / Section wise Performance</h5>
 <table border="1" cellspacing="0" cellpadding="4" width="100%" style="text-align:center;vertical-align:middle;">
-  <thead><tr><th>Section</th><th>Range</th><th>Correct</th><th>Wrong</th><th>Not Attempted</th><th>(+) Marks</th><th>(-) Marks</th><th>Total Marks</th><th>Bonus</th></tr></thead>
+  <thead><tr>
+    <th>Section</th><th>Range</th><th>Correct</th><th>Wrong</th><th>Not Attempted</th>
+    <th>(+) Marks</th><th>(-) Marks</th><th>Total Marks</th><th>Bonus</th>
+  </tr></thead>
   <tbody>${sectionRows}</tbody>
 </table>
+
 <div style="margin-top:12px;padding:6px;border:2px solid #333;background:#f8f9fa;text-align:center;border-radius:6px;">
   <h3 style="margin:0 0 8px 0;">Final Result Summary:</h3>
-  <span style="font-size:15px;"><b>Final Score:</b> ${finalTotal} &nbsp;|&nbsp; <b>Percentage:</b> ${percentage}% &nbsp;|&nbsp; <b>Grade:</b> ${grade}</span>
+  <span style="font-size:15px;">
+    <b>Final Score:</b> ${finalTotal}
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <b>Percentage:</b> ${percentage}%
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <b>Grade:</b> ${grade}
+  </span>
 </div>
-<p style="font-size:10px;margin-top:6px;"><b>Grade Scale:</b> 85%–100% = A+ (Outstanding), 70%–84% = A (Excellent), 55%–69% = B (Good), 40%–54% = C (Average), Below 40% = D (Needs Improvement)</p>
+
+<p style="font-size:10px;margin-top:6px;">
+  <b>Grade Scale:</b>
+  85%–100% = A+ (Outstanding),
+  70%–84% = A (Excellent),
+  55%–69% = B (Good),
+  40%–54% = C (Average),
+  Below 40% = D (Needs Improvement)
+</p>
+
 <div style="min-height:50px;border:1px solid black;padding:3px;margin-top:5px;border-radius:4px;">
   <p><b>Remarks:</b></p>
-  <span style="font-style:italic;font-size:11px;color:#555;line-height:1.5;">${buildRemarks()}</span>
+  <span style="font-style:italic;font-size:11px;color:#555;line-height:1.5;">${remarks}</span>
 </div>
+
 <br>
 <h5 style="font-size:13px;border-bottom:2px solid #0e1e4a;padding-bottom:4px;margin-bottom:8px;">Question Images &amp; Details</h5>
 ${questionImageHTML}
-<div style="text-align:center;margin-top:12px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;">Generated by UNIC Academy Student Portal — Confidential</div>
+
+<div style="text-align:center;margin-top:12px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;">
+  Generated by UNIC Academy Student Portal &mdash; Confidential
+</div>
 </body></html>`;
 
   const win=window.open("","_blank");
   if(!win){alert("Please allow popups to generate PDF.");return;}
   win.document.write(htmlContent);
   win.document.close();
-  win.onload=()=>{setTimeout(()=>win.print(),400);};
+  win.onload=()=>{ setTimeout(()=>win.print(),400); };
 }
 
-/* ── Column sort on results table ── */
-const table=document.getElementById("examResultsTable");
-if(table){
-  const headers=table.querySelectorAll("th");
-  headers.forEach((th,index)=>{
-    let asc=true;
-    th.style.cursor="pointer";
-    th.addEventListener("click",()=>{
-      const tbody=$("resultTable");
-      const rows=Array.from(tbody.querySelectorAll("tr"));
-      rows.sort((a,b)=>{
-        let aText=a.cells[index]?.innerText.trim()||"";
-        let bText=b.cells[index]?.innerText.trim()||"";
-        const aNum=parseFloat(aText.replace(/[^\d.-]/g,""));
-        const bNum=parseFloat(bText.replace(/[^\d.-]/g,""));
-        if(!isNaN(aNum)&&!isNaN(bNum))return asc?aNum-bNum:bNum-aNum;
-        return asc?aText.localeCompare(bText):bText.localeCompare(aText);
-      });
-      rows.forEach(row=>tbody.appendChild(row));
-      asc=!asc;
-    });
-  });
+/* Lightbox */
+function openLightbox(src,title){
+  $("lbImg").src=src;
+  $("imgLightbox").classList.add("open");
 }
+function closeLightbox(){
+  $("imgLightbox").classList.remove("open");
+  $("lbImg").src="";
+}
+$("imgLightbox").addEventListener("click",e=>{if(e.target===$("imgLightbox"))closeLightbox();});
+
 
 /* ── Bootstrap ── */
-const user=JSON.parse(localStorage.getItem("student"));
-if(!user)window.location.href="index.html";
+const user = JSON.parse(localStorage.getItem("student"));
+if(!user) window.location.href="index.html";
 
 setText("sb_name",user.name);
 setText("sb_sid","ID: "+(user.std_id||"—"));
@@ -1184,6 +1154,68 @@ setText("p_dob",user.dob);
 setText("p_id",user.std_id);
 
 loadStudentResults();
+// =====================
+// COLUMN SORT FUNCTION
+// =====================
+const table = document.getElementById("examResultsTable");
+const headers = table.querySelectorAll("th");
+
+headers.forEach((th, index) => {
+
+    let asc = true;
+
+    th.style.cursor = "pointer";
+
+    th.addEventListener("click", () => {
+
+        const tbody = document.getElementById("resultTable");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+
+        rows.sort((a, b) => {
+
+            let aText = a.cells[index]?.innerText.trim() || "";
+            let bText = b.cells[index]?.innerText.trim() || "";
+
+            // Try numeric sort first
+            let aNum = parseFloat(aText.replace(/[^\d.-]/g, ""));
+            let bNum = parseFloat(bText.replace(/[^\d.-]/g, ""));
+
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return asc ? aNum - bNum : bNum - aNum;
+            }
+
+            // Text sort fallback
+            return asc
+                ? aText.localeCompare(bText)
+                : bText.localeCompare(aText);
+
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+
+        asc = !asc;
+    });
+});
+
+
+// =====================
+// DEFAULT SORT (Rank column)
+// =====================
+window.addEventListener("load", () => {
+
+    const tbody = document.getElementById("resultTable");
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    const rankIndex = 1; // Rank column
+
+    rows.sort((a, b) => {
+        return parseInt(a.cells[rankIndex].innerText) -
+               parseInt(b.cells[rankIndex].innerText);
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+});
+  
 </script>
 </body>
 </html>
