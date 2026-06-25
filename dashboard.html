@@ -1157,12 +1157,12 @@ tbody tr:nth-child(even) td{background:#fafbfe}
   </div>
 
   <div class="info-bar">
-    <span><b>Total Questions:</b> ${totalQ}</span>
-    <span style="color:#15803d"><b>✓ Correct:</b> ${totC}</span>
-    <span style="color:#b91c1c"><b>✗ Wrong:</b> ${totW}</span>
-    <span><b>— Not Att.:</b> ${totNA}</span>
+    <span><b>Total QP:</b> ${totalQ}</span>
+    <span style="color:#15803d"><b>✓ C QP:</b> ${totC}</span>
+    <span style="color:#b91c1c"><b>✗ W QP:</b> ${totW}</span>
+    <span><b>— NA QP:</b> ${totNA}</span>
     ${nvcount?`<span style="color:#3b82f6"><b>Not Visited:</b> ${nvcount}</span>`:""}
-    <span><b>Bonus Mark:</b>{examResult.bonus}</span>
+    <span><b>Bonus Mark:</b> ${examResult.bonus}</span>
      <span><b>Final Score:</b> <b style="color:#0e1e4a">${finalTotal}  (${pctVal}%)</b></span>    
     <span><b>Grade:</b> <b>${grade}</b></span>
   </div>
