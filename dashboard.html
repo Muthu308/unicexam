@@ -548,9 +548,13 @@ async function loadStudentResults(){
     allResults.forEach((r,i)=>{
       //const posMarks=r.correct*4;
       //const negMarks=r.wrong*1;
-      const posMarks=r.qpMarks.filter(v => v > 0).reduce((a, b) => a + b, 0);
-      const negMarks=r.qpMarks.filter(v => v < 0).reduce((a, b) => a + Math.abs(b), 0);
-      const totalMark = posMarks + negMarks;
+    //  const posMarks=r.qpMarks.filter(v => v > 0).reduce((a, b) => a + b, 0);
+     // const negMarks=r.qpMarks.filter(v => v < 0).reduce((a, b) => a + Math.abs(b), 0);
+    //  const totalMark = posMarks + negMarks;
+      const marks = Array.isArray(r.qpMarks) ? r.qpMarks : [];
+      const posMarks = marks.reduce((acc, val) => acc + (val > 0 ? val : 0), 0);
+      const negMarks = marks.reduce((acc, val) => acc + (val < 0 ? Math.abs(val) : 0), 0);
+      const totalMark = posMarks - negMarks;
       const bonus=Number(r.bonus)||0;
       const rankCls=Number(r.rank)===1?"rank-badge rank-first":"rank-badge";
       const trend = r.exam_name?.startsWith("PCM") ? getTrend(r, allResults[i - 1]): "";
