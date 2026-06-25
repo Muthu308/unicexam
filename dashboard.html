@@ -548,8 +548,8 @@ async function loadStudentResults(){
     allResults.forEach((r,i)=>{
       //const posMarks=r.correct*4;
       //const negMarks=r.wrong*1;
-      const posMarks=r.reduce((acc,_,i)=>acc+(r.qpMarks[i]>0?r.qpMarks[i]:0),0);
-      const negMarks=r.reduce((acc,_,i)=>acc+(r.qpMarks[i]<0?r.qpMarks[i]:0),0);
+      const posMarks=r.qpMarks.filter(v => v > 0).reduce((a, b) => a + b, 0);
+      const negMarks=r.qpMarks.filter(v => v < 0).reduce((a, b) => a + Math.abs(b), 0);
       const totalMark = posMarks + negMarks;
       const bonus=Number(r.bonus)||0;
       const rankCls=Number(r.rank)===1?"rank-badge rank-first":"rank-badge";
