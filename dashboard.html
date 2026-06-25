@@ -338,9 +338,9 @@ th.total-group{background:#7c3aed !important}
     <div class="nav-label">Main</div>
     <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
     <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
+    <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
-    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>
-    <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Result</button>
+    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>    
   </nav>
   <div class="sb-bottom">
     <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:15px"></i> Logout</button>
@@ -1116,32 +1116,32 @@ body{background:#fff;color:#1e293b;font-size:13px;padding:0}
 .rpt-rank{background:rgba(240,184,0,.2);border:1.5px solid rgba(240,184,0,.4);border-radius:30px;padding:6px 16px;text-align:center}
 .rpt-rank .rn{color:#f0b800;font-size:22px;font-weight:800;line-height:1}
 .rpt-rank .rl{color:rgba(255,255,255,.6);font-size:9px;text-transform:uppercase;letter-spacing:.8px}
-.info-bar{display:flex;flex-wrap:wrap;gap:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11.5px}
+.info-bar{display:flex;flex-wrap:wrap;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;margin-bottom:14px;font-size:11.5px}
 .info-bar span b{color:#0e1e4a}
 .sec-title{font-size:13px;font-weight:600;color:#0e1e4a;margin:14px 0 8px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #f1f5f9;padding-bottom:6px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 thead th{background:#0e1e4a;color:#fff;padding:8px 10px;font-weight:500;text-align:center;font-size:11px}
 thead th:first-child{text-align:left}
-tbody td{padding:8px 10px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:middle}
+tbody td{padding:6px 8px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:middle}
 tbody td:first-child{text-align:left}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:nth-child(even) td{background:#fafbfe}
-.result-box{border:2px solid #0e1e4a;border-radius:8px;padding:12px 20px;text-align:center;background:#f8fafc;margin-top:14px}
+.result-box{border:2px solid #0e1e4a;border-radius:8px;padding:12px 20px;text-align:center;background:#f8fafc;margin-top:12px}
 .result-box h3{font-size:13px;margin-bottom:6px;color:#0e1e4a}
 .result-box .final-line{font-size:15px;font-weight:700}
-.remarks-box{border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;background:#fffbeb;margin-top:10px;font-size:11.5px;color:#78350f;line-height:1.7}
+.remarks-box{border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;background:#fffbeb;margin-top:8px;font-size:11.5px;color:#78350f;line-height:1.7}
 .footer{text-align:center;margin-top:14px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px}
 @media print{
   .print-bar{display:none}
   .report-body{padding:0}
-  body{padding:10px}
+  body{padding:8px}
   table,tr,td,th{page-break-inside:avoid}
   .page-break{page-break-before:always}
 }
 </style></head>
 <body>
 <div class="print-bar">
-  <h4>📋 Question-wise Result — ${qwSelectedExam}</h4>
+  <h4>Question-wise Result — ${qwSelectedExam}</h4>
   <div class="print-bar-btns">
     <button class="pb-btn pdf" onclick="window.print()">🖨️ Print / Save PDF</button>
   </div>
@@ -1162,11 +1162,12 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     <span style="color:#b91c1c"><b>✗ Wrong:</b> ${totW}</span>
     <span><b>— Not Att.:</b> ${totNA}</span>
     ${nvcount?`<span style="color:#3b82f6"><b>Not Visited:</b> ${nvcount}</span>`:""}
+    <span><b>Bonus Mark:</b>{examResult.bonus}</span>
      <span><b>Final Score:</b> <b style="color:#0e1e4a">${finalTotal}  (${pctVal}%)</b></span>    
     <span><b>Grade:</b> <b>${grade}</b></span>
   </div>
 
-  <div class="sec-title">📊 Question-wise Result Summary (2QP per row)</div>
+  <div class="sec-title">Question-wise Result Summary (2QP per row)</div>
   <table>
     <thead><tr>
       <th style="text-align:left">Q#</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
@@ -1175,7 +1176,7 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     <tbody>${summaryRows}</tbody>
   </table>
 
-  <div class="sec-title">📚 Subject / Section-wise Performance</div>
+  <div class="sec-title">Subject / Section-wise Performance</div>
   <table>
     <thead><tr>
       <th style="text-align:left">Section</th><th>Range</th><th>✓ Correct</th><th>✗ Wrong</th><th>Not Att.</th>
@@ -1203,7 +1204,7 @@ tbody tr:nth-child(even) td{background:#fafbfe}
 
 
 
-  <div class="sec-title page-break">🖼️ Question Paper with Result Details</div>
+  <div class="sec-title page-break">Question Paper with Result Details</div>
   ${questionImageHTML}
 
   <div class="footer">Generated by UNIC Academy Student Portal — Confidential</div>
