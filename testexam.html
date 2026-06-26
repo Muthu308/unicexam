@@ -661,10 +661,6 @@ function openInstruction(index){
         alert("Enter your Roll Number/ID"); return;
     }
 
-    if(!selectedExam){
-        alert("Select exam first"); return;
-    }
-
     if(selectedExam.status !== "yes"){
         alert("Exam not active"); return;
     }
