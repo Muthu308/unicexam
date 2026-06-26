@@ -653,7 +653,21 @@ fetch("/exam_config.json")
     document.getElementById("examBody").innerHTML = html;
 });
 
-    function openInstruction(index){
+function openInstruction(index){
+
+    student_id = document.getElementById("id").value;
+
+    if(!student_id){
+        alert("Enter your Roll Number/ID"); return;
+    }
+
+    if(!selectedExam){
+        alert("Select exam first"); return;
+    }
+
+    if(selectedExam.status !== "yes"){
+        alert("Exam not active"); return;
+    }
 
     selectedExam = allExams[index];
 
@@ -696,9 +710,17 @@ document.getElementById("agreeCheck").addEventListener("change",function(){
 //});
 
 // LOGIN
+ 
 function beginExam(){
-   document.getElementById("instructionModal").style.display="none";
+
+    document.getElementById("instructionModal").style.display="none";
+
     startExam();
+}
+
+    
+function startExam(){  
+
     student_id = document.getElementById("id").value;
 
     if(!student_id){
