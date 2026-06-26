@@ -619,7 +619,7 @@ async function loadQwAnalysis(){
     if(qpData&&qpData[i]&&qpData[i].section) return qpData[i].section;
     const p=Math.floor(totalQ/3); if(i<p)return'Physics'; if(i<p*2)return'Chemistry'; return'Mathematics';
   }
-  function getType(i){ return(qpData&&qpData[i]&&qpData[i].question_type)||'MCQ'; }
+  function getType(i){ return(qpData&&qpData[i]&&qpData[i].type)||'MCQ'; }
   function getLabel(i){ return(qpData&&qpData[i]&&qpData[i].question)||`Q${i+1}`; }
 
   // Build per-question stats
