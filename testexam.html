@@ -468,13 +468,42 @@ th {
         ℹ️ Please select an exam below and click <b>Start Exam</b>
     </div>
 
-    <div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
+    <table id="examTable">
+    <thead>
+        <tr>
+            <th>Exam Name</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody id="examBody"></tbody>
+    </table>
+
+    <div id="instructionModal" class="modal">
+    <div class="modal-content">
+        <h2>Exam Instructions</h2>
+        <div id="instructionList"></div>
+        <br>
+        <label>
+            <input type="checkbox" id="agreeCheck">
+            I have read all instructions.
+        </label>
+        <br><br>
+        <button id="continueBtn" disabled onclick="beginExam()">
+            Start Exam
+        </button>
+    </div>
+
+</div>
+    <!--<div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
 
     <div id="examInfo"></div>
 
     <button id="startBtn" onclick="startExam()" disabled>
         Start Exam
-    </button>
+    </button>-->
 
 </div>
 
@@ -534,6 +563,8 @@ th {
         <button onclick="nextQ()">Next ➡</button>
     </div>-->
 </div>
+
+    
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -592,29 +623,37 @@ fetch("/exam_config.json")
         let statusText = exam.status === "yes" ? "🟢 Active" : "🔴 Closed";
 
         html += `
-        <div class="exam-card" onclick="selectExam(${index})">
+         <tr>
 
-            <div class="exam-title">${exam.exam_name}</div>
+            <td>${exam.exam_name}</td>
 
-            <div class="exam-info">
-                ⏱ Duration: ${Math.floor(exam.duration/60)} mins
-            </div>
+            <td>${Math.floor(exam.duration/60)} mins</td>
 
-            <div class="exam-info">
-                📅 Start: ${exam.start_time || "Not Scheduled"}
-            </div>
+            <td>
+                ${
+                    exam.status=="yes"
+                    ? "<span style='color:green'>Active</span>"
+                    : "<span style='color:red'>Closed</span>"
+                }
+            </td>
 
-            <div class="exam-status ${statusClass}">
-                ${statusText}
-            </div>
+            <td>
+                <button
+                    class="start-exam-btn"
+                    onclick="openInstruction(${index})"
+                    ${exam.status!="yes" ? "disabled":""}
+                >
+                    Start Exam
+                </button>
+            </td>
 
-        </div>`;
+        </tr>`;
     });
 
-    document.getElementById("examList").innerHTML = html;
+    document.getElementById("examBody").innerHTML = html;
 });
 
-    function selectExam(index){
+    function openInstruction(index){
 
     selectedExam = allExams[index];
 
@@ -634,10 +673,19 @@ fetch("/exam_config.json")
 
     html += `</ul>`;
 
-    document.getElementById("examInfo").innerHTML = html;
+     document.getElementById("instructionList").innerHTML = html;
 
-    document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
+    document.getElementById("agreeCheck").checked = false;
+
+    document.getElementById("continueBtn").disabled = true;
+
+    document.getElementById("instructionModal").style.display="flex";
 }
+
+document.getElementById("agreeCheck").addEventListener("change",function(){
+    document.getElementById("continueBtn").disabled=!this.checked;
+
+});
 
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
@@ -648,8 +696,9 @@ fetch("/exam_config.json")
 //});
 
 // LOGIN
-function startExam(){
-
+function beginExam(){
+   document.getElementById("instructionModal").style.display="none";
+    startExam();
     student_id = document.getElementById("id").value;
 
     if(!student_id){
