@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIC Academy — Analytics Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --ink:#0C1A35;
+  --ink2:#1E3A5F;
+  --ink3:#2D5291;
+  --sky:#3B82F6;
+  --sky-lt:#EFF6FF;
+  --gold:#F59E0B;
+  --gold-lt:#FFFBEB;
+  --emerald:#059669;
+  --em-lt:#ECFDF5;
+  --rose:#E11D48;
+  --rose-lt:#FFF1F2;
+  --amber:#D97706;
+  --violet:#7C3AED;
+  --slate:#64748B;
+  --slate-lt:#94A3B8;
+  --border:#E2E8F0;
+  --bg:#F0F5FB;
+  --surface:#FFFFFF;
+  --font:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:12px;
+  --sh:0 1px 4px rgba(12,26,53,.06),0 4px 16px rgba(12,26,53,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1600px;margin:0 auto;padding:20px 18px}
+
+/* ── HEADER ── */
+.dash-header{
+  background:linear-gradient(135deg,#0C1A35 0%,#1E3A5F 50%,#2D6FBF 100%);
+  border-radius:16px;
+  padding:22px 24px;
+  margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  position:relative;overflow:hidden;
+}
+.dash-header::after{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,rgba(59,130,246,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hdr-brand h1{color:#fff;font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.hdr-brand p{color:rgba(255,255,255,.55);font-size:12px;margin-top:4px;font-weight:400}
+.hdr-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.hdr-select{
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
+  color:#fff;border-radius:8px;padding:8px 12px;font-family:var(--font);font-size:12px;
+  outline:none;cursor:pointer;min-width:150px;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,.6)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;
+}
+.hdr-select option{background:#1E3A5F;color:#fff}
+.hdr-select:focus{border-color:rgba(255,255,255,.4)}
+.hdr-search-wrap{position:relative}
+.hdr-search{
+  background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);
+  color:#fff;border-radius:8px;padding:8px 12px 8px 34px;
+  font-family:var(--font);font-size:12px;outline:none;min-width:180px;
+}
+.hdr-search::placeholder{color:rgba(255,255,255,.4)}
+.hdr-search:focus{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.15)}
+.hdr-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.5;font-size:14px;color:#fff;pointer-events:none}
+.hdr-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);
+  color:var(--gold);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;
+}
+
+/* ── KPI CARDS ── */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi{
+  background:var(--surface);border-radius:var(--r);padding:16px;
+  box-shadow:var(--sh);border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden;
+}
+.kpi::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.kpi.k-blue::before{background:var(--sky)}
+.kpi.k-green::before{background:var(--emerald)}
+.kpi.k-gold::before{background:var(--gold)}
+.kpi.k-rose::before{background:var(--rose)}
+.kpi.k-violet::before{background:var(--violet)}
+.kpi.k-slate::before{background:var(--slate)}
+.kpi-label{font-size:10px;color:var(--slate-lt);text-transform:uppercase;letter-spacing:.6px;font-weight:500}
+.kpi-val{font-size:28px;font-weight:800;color:var(--ink);line-height:1;font-family:var(--mono)}
+.kpi-sub{font-size:10.5px;color:var(--slate)}
+
+/* ── SECTION CARD ── */
+.card{
+  background:var(--surface);border-radius:var(--r);
+  padding:20px 22px;box-shadow:var(--sh);
+  margin-bottom:18px;border:1px solid var(--border);
+}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.card-title{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px}
+.card-title span{font-size:17px}
+.card-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.cb-blue{background:var(--sky-lt);color:#1D4ED8}
+.cb-green{background:var(--em-lt);color:#065F46}
+.cb-gold{background:var(--gold-lt);color:#92400E}
+.cb-rose{background:var(--rose-lt);color:#9F1239}
+.cb-slate{background:#F1F5F9;color:#475569}
+
+/* ── TABLE CORE ── */
+.tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:5}
+thead th{
+  background:var(--ink);color:rgba(255,255,255,.85);
+  padding:9px 12px;font-weight:500;font-size:11px;
+  white-space:nowrap;user-select:none;
+  cursor:pointer;transition:background .15s;
+  text-align:center;
+}
+thead th:first-child{text-align:left;cursor:default}
+thead th[data-sort]:hover{background:var(--ink2)}
+thead th[data-sort].asc::after{content:' ▲';opacity:.9;font-size:9px}
+thead th[data-sort].desc::after{content:' ▼';opacity:.9;font-size:9px}
+thead th[data-sort]:not(.asc):not(.desc)::after{content:' ⇅';opacity:.3;font-size:9px}
+tbody td{
+  padding:9px 12px;border-bottom:1px solid var(--bg);
+  color:#374151;vertical-align:middle;white-space:nowrap;text-align:center;
+}
+tbody td:first-child{text-align:left}
+tbody tr:hover td{background:#F7FAFF}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.topper td{background:#F0FDF4}
+.scrollable-body{max-height:520px;overflow-y:auto}
+
+/* ── TABLE CELL ELEMENTS ── */
+.sid-chip{
+  display:inline-block;font-family:var(--mono);font-size:10.5px;
+  background:#F1F5F9;color:#475569;
+  padding:2px 7px;border-radius:5px;font-weight:500;
+}
+.rank-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:26px;border-radius:50%;
+  font-weight:700;font-size:12px;font-family:var(--mono);
+}
+.rk-1{background:#FEF3C7;color:#92400E}
+.rk-2{background:#F1F5F9;color:#475569}
+.rk-3{background:#FEE2E2;color:#B45309}
+.rk-n{background:#EFF6FF;color:#1D4ED8}
+.band-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:700}
+.bAP{background:#DCFCE7;color:#15803D}
+.bA{background:#DBEAFE;color:#1D4ED8}
+.bB{background:#FEF9C3;color:#92400E}
+.bC{background:#FCE7F3;color:#9D174D}
+.bD{background:#FEE2E2;color:#B91C1C}
+.risk-low{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:#DCFCE7;color:#15803D}
+.risk-med{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:#FEF9C3;color:#92400E}
+.risk-hi{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:#FEE2E2;color:#B91C1C}
+.pos{color:#059669;font-weight:600}
+.neg{color:#E11D48;font-weight:600}
+.na-v{color:#94A3B8}
+.acc-good{color:#059669;font-weight:700}
+.acc-avg{color:#D97706;font-weight:600}
+.acc-low{color:#E11D48;font-weight:600}
+.pct-bar-wrap{width:56px;height:5px;background:#E2E8F0;border-radius:3px;display:inline-block;vertical-align:middle;margin-right:5px}
+.pct-bar{height:100%;border-radius:3px}
+
+/* ── TOPPER CARDS ── */
+.topper-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.topper-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:var(--sh)}
+.topper-box-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+.tb-physics .topper-box-title{border-color:#2563EB;color:#1D4ED8}
+.tb-chemistry .topper-box-title{border-color:#059669;color:#065F46}
+.tb-maths .topper-box-title{border-color:#D97706;color:#92400E}
+.tb-overall .topper-box-title{border-color:var(--gold);color:var(--ink)}
+.top-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #F8FAFC}
+.top-item:last-child{border-bottom:none}
+.top-medal{font-size:18px;flex-shrink:0;line-height:1}
+.top-name{font-size:12.5px;font-weight:600;color:var(--ink)}
+.top-id{font-size:10px;color:var(--slate-lt);font-family:var(--mono)}
+.top-score{margin-left:auto;font-size:16px;font-weight:800;font-family:var(--mono)}
+.tb-physics .top-score{color:#1D4ED8}
+.tb-chemistry .top-score{color:#059669}
+.tb-maths .top-score{color:#D97706}
+.tb-overall .top-score{color:var(--ink)}
+
+/* ── INSIGHT CARDS ── */
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+.insight-card{
+  background:#F8FAFC;border:1px solid var(--border);border-radius:8px;
+  padding:12px;text-align:center;
+}
+.insight-card h6{font-size:10px;color:var(--slate-lt);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:500}
+.insight-card .big{font-size:22px;font-weight:800;font-family:var(--mono);color:var(--ink);line-height:1}
+.insight-card small{font-size:10.5px;color:var(--slate);display:block;margin-top:4px}
+
+/* ── SUBJECT STAT CARDS ── */
+.subj-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.subj-stat{border-radius:8px;padding:14px 16px;border:1px solid var(--border)}
+.subj-stat.ph{background:#EFF6FF;border-color:#BFDBFE}
+.subj-stat.cy{background:#F0FDF4;border-color:#BBF7D0}
+.subj-stat.ma{background:#FFFBEB;border-color:#FDE68A}
+.subj-stat .ss-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.subj-stat.ph .ss-label{color:#1D4ED8}
+.subj-stat.cy .ss-label{color:#15803D}
+.subj-stat.ma .ss-label{color:#92400E}
+.subj-stat .ss-avg{font-size:28px;font-weight:800;font-family:var(--mono)}
+.subj-stat.ph .ss-avg{color:#1D4ED8}
+.subj-stat.cy .ss-avg{color:#15803D}
+.subj-stat.ma .ss-avg{color:#92400E}
+.ss-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.ss-row:last-child{border-bottom:none}
+.ss-row label{color:var(--slate)}
+
+/* ── GROWTH TABLE DIFF ── */
+.diff-pos{color:#059669;font-weight:700}
+.diff-neg{color:#E11D48;font-weight:700}
+.diff-neu{color:#94A3B8;font-weight:500}
+
+/* ── CHART ── */
+.chart-wrap{position:relative;height:280px}
+
+/* ── EXAM TAB PILLS ── */
+.exam-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.exam-tab{
+  padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);
+  background:var(--surface);font-size:11.5px;font-weight:500;color:var(--slate);
+  cursor:pointer;transition:.15s;
+}
+.exam-tab:hover{border-color:var(--sky);color:var(--sky)}
+.exam-tab.active{border-color:var(--ink);background:var(--ink);color:#fff}
+
+/* ── CONTROLS ROW ── */
+.ctrl-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ctrl-btn{
+  padding:6px 14px;border-radius:7px;background:var(--ink);
+  color:#fff;border:none;font-family:var(--font);font-size:12px;
+  font-weight:500;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:5px;
+}
+.ctrl-btn:hover{background:var(--ink2)}
+.ctrl-select-sm{
+  padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;
+  font-family:var(--font);font-size:12px;color:var(--ink);
+  background:var(--surface);outline:none;cursor:pointer;
+}
+.ctrl-select-sm:focus{border-color:var(--sky)}
+.results-count{font-size:11.5px;color:var(--slate);margin-left:auto}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .topper-grid{grid-template-columns:1fr 1fr}
+  .subj-stat-row{grid-template-columns:1fr}
+  .hdr-filters{gap:6px}
+  .hdr-select,.hdr-search{min-width:130px;font-size:11px}
+  .dash-header{padding:16px}
+}
+
+/* ── PRINT ── */
+@media print{
+  body{background:#fff}
+  .dash-header{background:#1E3A5F!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .hdr-filters{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ══ HEADER ══ -->
+<div class="dash-header">
+  <div class="hdr-brand">
+    <h1>UNIC Academy</h1>
+    <p id="dashTitle">Analytics Dashboard — All Exams</p>
+  </div>
+  <div class="hdr-filters">
+    <select class="hdr-select" id="examFilter" onchange="applyFilters()">
+      <option value="">All Exams</option>
+    </select>
+    <select class="hdr-select" id="moduleFilter" onchange="applyFilters()">
+      <option value="">All Modules</option>
+    </select>
+    <div class="hdr-search-wrap">
+      <span class="hdr-search-icon">⌕</span>
+      <input type="text" class="hdr-search" id="searchInput" placeholder="Search name or ID…" oninput="applyFilters()">
+    </div>
+    <span class="hdr-tag" id="liveCount">— records</span>
+  </div>
+</div>
+
+<!-- ══ KPI CARDS ══ -->
+<div class="kpi-row">
+  <div class="kpi k-blue"><div class="kpi-label">Total Students</div><div class="kpi-val" id="kpiStudents">—</div><div class="kpi-sub">unique IDs</div></div>
+  <div class="kpi k-green"><div class="kpi-label">Avg Score</div><div class="kpi-val" id="kpiAvg">—</div><div class="kpi-sub">final marks</div></div>
+  <div class="kpi k-gold"><div class="kpi-label">Highest Score</div><div class="kpi-val" id="kpiHigh">—</div><div class="kpi-sub">best final</div></div>
+  <div class="kpi k-rose"><div class="kpi-label">Pass Rate</div><div class="kpi-val" id="kpiPass">—</div><div class="kpi-sub">≥ 40%</div></div>
+  <div class="kpi k-violet"><div class="kpi-label">A+ Students</div><div class="kpi-val" id="kpiAplus">—</div><div class="kpi-sub">≥ 85%</div></div>
+  <div class="kpi k-slate"><div class="kpi-label">Avg Accuracy</div><div class="kpi-val" id="kpiAcc">—</div><div class="kpi-sub">correct / attempted</div></div>
+</div>
+
+<!-- ══ EXAM TOP 3 ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>🏆</span>Top 3 — by Exam &amp; Subject</div>
+  </div>
+  <div id="topperSection"></div>
+</div>
+
+<!-- ══ SUBJECT TOPPERS (overall) ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>📊</span>Overall Subject-wise Toppers &amp; Averages</div>
+  </div>
+  <div id="subjectTopperSection"></div>
+</div>
+
+<!-- ══ CHART ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>📈</span>Exam Average Comparison</div>
+    <select class="ctrl-select-sm" id="chartType" onchange="renderChart(lastFiltered)">
+      <option value="bar">Bar</option>
+      <option value="line">Line</option>
+    </select>
+  </div>
+  <div class="chart-wrap"><canvas id="examChart"></canvas></div>
+</div>
+
+<!-- ══ DETAILED RESULTS TABLE ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>📋</span>Detailed Results</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <select class="ctrl-select-sm" id="colBand" onchange="applyFilters()">
+        <option value="">All Grades</option>
+        <option>A+</option><option>A</option><option>B</option><option>C</option><option>D</option>
+      </select>
+      <select class="ctrl-select-sm" id="colRisk" onchange="applyFilters()">
+        <option value="">All Risk</option>
+        <option value="Low">Low Risk</option>
+        <option value="Medium">Medium Risk</option>
+        <option value="High">High Risk</option>
+      </select>
+      <span class="results-count" id="resultCount">0 results</span>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <div class="scrollable-body">
+      <table id="resultTable">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th data-sort="name">Student</th>
+            <th data-sort="s_id">Student ID</th>
+            <th data-sort="exam_name">Exam</th>
+            <th data-sort="ph">Physics</th>
+            <th data-sort="cy">Chemistry</th>
+            <th data-sort="ma">Maths</th>
+            <th data-sort="total">Total</th>
+            <th data-sort="correct">Correct</th>
+            <th data-sort="wrong">Wrong</th>
+            <th data-sort="not_attempted">Not Att.</th>
+            <th data-sort="bonus">Bonus</th>
+            <th data-sort="percentage">%</th>
+            <th data-sort="band">Grade</th>
+            <th data-sort="attemptPct">Att.%</th>
+            <th data-sort="accuracy">Accuracy</th>
+            <th>Risk</th>
+            <th>Remark</th>
+          </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EXAM-WISE COMPARISON TABLE ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>⚖️</span>Exam-wise Student Comparison</div>
+  </div>
+  <div class="tbl-wrap">
+    <table id="compTable">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>ID</th>
+          <th data-sort="examCount">Exams</th>
+          <th data-sort="minScore">Total (Min/Avg/Max)</th>
+          <th>Physics (Min/Avg/Max)</th>
+          <th>Chemistry (Min/Avg/Max)</th>
+          <th>Maths (Min/Avg/Max)</th>
+          <th>Remark</th>
+          <th data-sort="improvement">Growth</th>
+        </tr>
+      </thead>
+      <tbody id="comparisonBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ GROWTH ANALYSIS ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>📉</span>Student Growth (Previous → Latest Exam)</div>
+  </div>
+  <div class="tbl-wrap">
+    <table id="growthTable">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>ID</th>
+          <th>First Exam</th>
+          <th>Latest Exam</th>
+          <th data-sort="phGrowth">Physics Δ</th>
+          <th data-sort="cyGrowth">Chemistry Δ</th>
+          <th data-sort="maGrowth">Maths Δ</th>
+          <th data-sort="totalGrowth">Total Δ</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="growthBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ PERFORMANCE INSIGHTS ══ -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="card-title"><span>💡</span>Performance Insights</div>
+  </div>
+  <div id="insightSection"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ════════════════════════════════
+   DATA + STATE
+════════════════════════════════ */
+let allData = [];
+let lastFiltered = [];
+let examChartInst = null;
+let sortState = {}; // tableId -> {col, dir}
+
+const TOTAL_QP = 45;
+
+async function fetchStudents(){
+  try{
+    const r = await fetch('students.json');
+    allData = await r.json();
+    allData.forEach(normalizeRow);
+    buildFilters();
+    applyFilters();
+  }catch(e){
+    console.error(e);
+    document.querySelector('.wrap').innerHTML += `<div style="color:red;padding:20px">⚠️ Could not load students.json</div>`;
+  }
+}
+
+function normalizeRow(s){
+  s.total       = Number(s.final_marks || 0);
+  s.percentage  = Number(s.percentage  || 0);
+  s.rank        = Number(s.rank        || 0);
+  s.correct     = Number(s.correct     || 0);
+  s.wrong       = Number(s.wrong       || 0);
+  s.not_attempted = Number(s.not_attempted || 0);
+  s.bonus       = Number(s.bonus       || 0);
+  s.ph = Number(s.ph || 0); s.cy = Number(s.cy || 0); s.ma = Number(s.ma || 0);
+  s.ph_correct = Number(s.ph_correct || 0); s.ph_wrong = Number(s.ph_wrong || 0); s.ph_not_attempted = Number(s.ph_not_attempted || 0);
+  s.cy_correct = Number(s.cy_correct || 0); s.cy_wrong = Number(s.cy_wrong || 0); s.cy_not_attempted = Number(s.cy_not_attempted || 0);
+  s.ma_correct = Number(s.ma_correct || 0); s.ma_wrong = Number(s.ma_wrong || 0); s.ma_not_attempted = Number(s.ma_not_attempted || 0);
+  s.attempted   = s.correct + s.wrong;
+  s.accuracy    = s.attempted > 0 ? (s.correct / s.attempted) * 100 : 0;
+  s.attemptPct  = (s.attempted / TOTAL_QP * 100);
+  const risk    = s.attempted > 0 ? (s.wrong / s.attempted * 100) : 0;
+  s.riskScore   = risk;
+  s.riskLabel   = risk < 15 ? 'Low' : risk < 30 ? 'Medium' : 'High';
+  s._id         = String(s.s_id || s.id || '');
+  s._nameNorm   = String(s.name || '').toUpperCase().replace(/\./g,'').replace(/\s+/g,' ').trim();
+}
+
+/* ════════════════════════════════
+   FILTERS
+════════════════════════════════ */
+function buildFilters(){
+  const ef = document.getElementById('examFilter');
+  const mf = document.getElementById('moduleFilter');
+  [...new Set(allData.map(s=>s.exam_name))].forEach(e=>{
+    ef.innerHTML += `<option value="${e}">${e}</option>`;
+  });
+  [...new Set(allData.map(s=>s.exam_module).filter(Boolean))].forEach(m=>{
+    mf.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+}
+
+function applyFilters(){
+  const exam   = document.getElementById('examFilter').value;
+  const mod    = document.getElementById('moduleFilter').value;
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const band   = document.getElementById('colBand').value;
+  const risk   = document.getElementById('colRisk').value;
+  let d = [...allData];
+  if(exam)   d = d.filter(s=>s.exam_name===exam);
+  if(mod)    d = d.filter(s=>s.exam_module===mod);
+  if(search) d = d.filter(s=>s.name.toLowerCase().includes(search) || s._id.toLowerCase().includes(search));
+  if(band)   d = d.filter(s=>s.band===band);
+  if(risk)   d = d.filter(s=>s.riskLabel===risk);
+  lastFiltered = d;
+  document.getElementById('liveCount').textContent = d.length + ' records';
+  updateKPIs(d);
+  renderToppers(d);
+  renderSubjectToppers(d);
+  renderChart(d);
+  renderResultTable(d);
+  renderComparison(d);
+  renderGrowth(d);
+  renderInsights(d);
+  updateTitle();
+}
+
+/* ════════════════════════════════
+   KPIs
+════════════════════════════════ */
+function updateKPIs(d){
+  const ids = new Set(d.map(s=>s._id));
+  document.getElementById('kpiStudents').textContent = ids.size;
+  const avgS = d.length ? (d.reduce((a,s)=>a+s.total,0)/d.length).toFixed(1) : '—';
+  document.getElementById('kpiAvg').textContent = avgS;
+  document.getElementById('kpiHigh').textContent = d.length ? Math.max(...d.map(s=>s.total)) : '—';
+  const pass = d.filter(s=>s.percentage>=40).length;
+  document.getElementById('kpiPass').textContent = d.length ? (pass/d.length*100).toFixed(1)+'%' : '—';
+  document.getElementById('kpiAplus').textContent = d.filter(s=>s.band==='A+').length;
+  const totC = d.reduce((a,s)=>a+s.correct,0);
+  const totA = d.reduce((a,s)=>a+s.attempted,0);
+  document.getElementById('kpiAcc').textContent = totA ? (totC/totA*100).toFixed(1)+'%' : '—';
+}
+
+/* ════════════════════════════════
+   TOP 3 PER EXAM
+════════════════════════════════ */
+function renderToppers(d){
+  const byExam = groupBy(d,'exam_name');
+  let html = '';
+  Object.keys(byExam).forEach(exam=>{
+    const es = byExam[exam];
+    const overall  = [...es].sort((a,b)=>b.total-a.total).slice(0,3);
+    const physics  = [...es].sort((a,b)=>b.ph-a.ph).slice(0,3);
+    const chem     = [...es].sort((a,b)=>b.cy-a.cy).slice(0,3);
+    const maths    = [...es].sort((a,b)=>b.ma-a.ma).slice(0,3);
+    html += `
+    <div style="margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:700;color:var(--ink)">${exam}</div>
+        <span class="card-badge cb-blue">${es.length} students</span>
+      </div>
+      <div class="topper-grid">
+        ${topBox('Overall','tb-overall','total',overall)}
+        ${topBox('Physics','tb-physics','ph',physics)}
+        ${topBox('Chemistry','tb-chemistry','cy',chem)}
+        ${topBox('Maths','tb-maths','ma',maths)}
+      </div>
+    </div>`;
+  });
+  document.getElementById('topperSection').innerHTML = html || '<p style="color:var(--slate-lt);padding:20px">No data</p>';
+}
+
+function topBox(title,cls,key,arr){
+  const medals = ['🥇','🥈','🥉'];
+  const rows = arr.map((s,i)=>`
+    <div class="top-item">
+      <div class="top-medal">${medals[i]}</div>
+      <div>
+        <div class="top-name">${esc(s.name)}</div>
+        <div class="top-id">${esc(s._id)}</div>
+      </div>
+      <div class="top-score">${s[key]}</div>
+    </div>`).join('');
+  return `<div class="topper-box ${cls}">
+    <div class="topper-box-title">${title}</div>
+    ${rows}
+  </div>`;
+}
+
+/* ════════════════════════════════
+   SUBJECT TOPPERS (overall avg)
+════════════════════════════════ */
+function renderSubjectToppers(d){
+  const stuMap = {};
+  d.forEach(r=>{
+    const id = r._id || r._nameNorm;
+    if(!stuMap[id]) stuMap[id]={name:r.name,id:r._id,tests:0,totSum:0,phSum:0,cySum:0,maSum:0};
+    const s = stuMap[id];
+    s.tests++; s.totSum+=r.total; s.phSum+=r.ph; s.cySum+=r.cy; s.maSum+=r.ma;
+  });
+  const students = Object.values(stuMap).map(s=>({
+    ...s,
+    avgTot:s.totSum/s.tests, avgPh:s.phSum/s.tests,
+    avgCy:s.cySum/s.tests,   avgMa:s.maSum/s.tests
+  }));
+  if(!students.length){ document.getElementById('subjectTopperSection').innerHTML=''; return; }
+  const medals = ['🥇','🥈','🥉'];
+  function subjCard(title,cls,field,avgVal){
+    const top3 = [...students].sort((a,b)=>b[field]-a[field]).slice(0,3);
+    const rows = top3.map((s,i)=>`
+      <div class="top-item">
+        <div class="top-medal">${medals[i]}</div>
+        <div>
+          <div class="top-name">${esc(s.name)}</div>
+          <div class="top-id">${esc(s.id)}</div>
+        </div>
+        <div class="top-score ${cls==='ph'?'acc-good':cls==='cy'?'acc-good':''}" style="font-size:14px">${s[field].toFixed(1)}</div>
+      </div>`).join('');
+    return `<div class="topper-box ${cls==='ph'?'tb-physics':cls==='cy'?'tb-chemistry':cls==='ma'?'tb-maths':'tb-overall'}">
+      <div class="topper-box-title">${title}</div>
+      <div style="font-size:11px;color:var(--slate);margin-bottom:8px">Avg of all attempts</div>
+      ${rows}
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--slate)">
+        Class avg: <strong>${avgVal}</strong>
+      </div>
+    </div>`;
+  }
+  const classAvgTot = (students.reduce((a,s)=>a+s.avgTot,0)/students.length).toFixed(1);
+  const classAvgPh  = (students.reduce((a,s)=>a+s.avgPh,0)/students.length).toFixed(1);
+  const classAvgCy  = (students.reduce((a,s)=>a+s.avgCy,0)/students.length).toFixed(1);
+  const classAvgMa  = (students.reduce((a,s)=>a+s.avgMa,0)/students.length).toFixed(1);
+  document.getElementById('subjectTopperSection').innerHTML = `<div class="topper-grid">
+    ${subjCard('🏆 Overall','ov','avgTot',classAvgTot)}
+    ${subjCard('⚡ Physics','ph','avgPh',classAvgPh)}
+    ${subjCard('🧪 Chemistry','cy','avgCy',classAvgCy)}
+    ${subjCard('∫ Maths','ma','avgMa',classAvgMa)}
+  </div>`;
+}
+
+/* ════════════════════════════════
+   CHART
+════════════════════════════════ */
+function renderChart(d){
+  const byExam = groupBy(d,'exam_name');
+  const labels = Object.keys(byExam);
+  const avgs   = labels.map(e=>(byExam[e].reduce((a,s)=>a+s.total,0)/byExam[e].length).toFixed(1));
+  const avgPh  = labels.map(e=>(byExam[e].reduce((a,s)=>a+s.ph,0)/byExam[e].length).toFixed(1));
+  const avgCy  = labels.map(e=>(byExam[e].reduce((a,s)=>a+s.cy,0)/byExam[e].length).toFixed(1));
+  const avgMa  = labels.map(e=>(byExam[e].reduce((a,s)=>a+s.ma,0)/byExam[e].length).toFixed(1));
+  const ctx = document.getElementById('examChart');
+  if(examChartInst) examChartInst.destroy();
+  const type = document.getElementById('chartType').value;
+  examChartInst = new Chart(ctx,{
+    type,
+    data:{labels,datasets:[
+      {label:'Total',data:avgs,backgroundColor:'rgba(14,30,74,.7)',borderColor:'#0C1A35',borderWidth:2,tension:.4},
+      {label:'Physics',data:avgPh,backgroundColor:'rgba(37,99,235,.55)',borderColor:'#2563EB',borderWidth:2,tension:.4},
+      {label:'Chemistry',data:avgCy,backgroundColor:'rgba(5,150,105,.55)',borderColor:'#059669',borderWidth:2,tension:.4},
+      {label:'Maths',data:avgMa,backgroundColor:'rgba(217,119,6,.55)',borderColor:'#D97706',borderWidth:2,tension:.4},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:12}}},
+      scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}
+    }
+  });
+}
+
+/* ════════════════════════════════
+   RESULT TABLE
+════════════════════════════════ */
+function renderResultTable(d){
+  document.getElementById('resultCount').textContent = d.length + ' results';
+  const rows = d.map(s=>{
+    const rk = s.rank===1?'rk-1':s.rank===2?'rk-2':s.rank===3?'rk-3':'rk-n';
+    const bc = s.band==='A+'?'bAP':s.band==='A'?'bA':s.band==='B'?'bB':s.band==='C'?'bC':'bD';
+    const riskEl = s.riskLabel==='Low'?`<span class="risk-low">Low</span>`:s.riskLabel==='Medium'?`<span class="risk-med">Med</span>`:`<span class="risk-hi">High</span>`;
+    const accCls = s.accuracy>=80?'acc-good':s.accuracy>=60?'acc-avg':'acc-low';
+    const pctBar = `<div class="pct-bar-wrap"><div class="pct-bar" style="width:${Math.min(s.percentage,100)}%;background:${s.percentage>=70?'#059669':s.percentage>=40?'#D97706':'#E11D48'}"></div></div>`;
+    const remark = buildRemark(s);
+    return `<tr class="${s.rank===1?'topper':''}">
+      <td><span class="rank-num ${rk}">${s.rank}</span></td>
+      <td><div style="font-weight:600;font-size:12.5px">${esc(s.name)}</div></td>
+      <td><span class="sid-chip">${esc(s._id)}</span></td>
+      <td>${esc(s.exam_name)}</td>
+      <td class="${s.ph<0?'neg':''}">${s.ph}</td>
+      <td class="${s.cy<0?'neg':''}">${s.cy}</td>
+      <td class="${s.ma<0?'neg':''}">${s.ma}</td>
+      <td><strong>${s.total}</strong></td>
+      <td class="pos">${s.correct}</td>
+      <td class="neg">${s.wrong}</td>
+      <td class="na-v">${s.not_attempted}</td>
+      <td>${s.bonus>0?`<span class="pos">+${s.bonus}</span>`:'—'}</td>
+      <td>${pctBar}${s.percentage.toFixed(1)}%</td>
+      <td><span class="band-badge ${bc}">${s.band}</span></td>
+      <td>${s.attemptPct.toFixed(1)}%</td>
+      <td class="${accCls}">${s.accuracy.toFixed(1)}%</td>
+      <td>${riskEl}</td>
+      <td style="font-size:11px;max-width:200px;white-space:normal;min-width:160px">${remark}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('resultBody').innerHTML = rows || emptyRow(18);
+}
+
+function buildRemark(s){
+  if(s.accuracy>=85&&s.attemptPct>=75) return '🏆 Excellent balance';
+  if(s.accuracy>=80&&s.attemptPct<60)  return '🎯 Very accurate — attempt more';
+  if(s.wrong>=12)                       return `⚠️ −${s.wrong} marks lost to negatives`;
+  if(s.not_attempted>=20)               return '📚 Many skipped — build confidence';
+  if(s.accuracy<60)                     return '❌ Too many wrong — be selective';
+  return '✅ Balanced';
+}
+
+/* ════════════════════════════════
+   COMPARISON TABLE
+════════════════════════════════ */
+function renderComparison(d){
+  const grouped = groupByNormName(d);
+  const rows = Object.values(grouped).map(exams=>{
+    const s0 = exams[0];
+    const scores = exams.map(e=>e.total);
+    const phS = exams.map(e=>e.ph), cyS = exams.map(e=>e.cy), maS = exams.map(e=>e.ma);
+    const minMax = arr=>[Math.min(...arr),(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1),Math.max(...arr)];
+    const [mn,av,mx] = minMax(scores);
+    const [pmn,pav,pmx] = minMax(phS);
+    const [cmn,cav,cmx] = minMax(cyS);
+    const [mmn,mav,mmx] = minMax(maS);
+    const trend = exams.map(e=>`<span style="font-size:10px;font-family:var(--mono)">${(e.exam_module||e.exam_name).slice(-3)}:${e.total}</span>`).join(' → ');
+    const sorted = [{k:'PH',v:Number(pav)},{k:'CY',v:Number(cav)},{k:'MA',v:Number(mav)}].sort((a,b)=>b.v-a.v);
+    const remark = `<span style="color:#059669;font-weight:600">Strong: ${sorted[0].k}</span><br><span style="color:#94A3B8">Stable: ${sorted[1].k}</span><br><span style="color:#E11D48;font-weight:600">Focus: ${sorted[2].k}</span>`;
+    const growth = scores.length>1?scores[scores.length-1]-scores[0]:0;
+    const gwCls  = growth>0?'diff-pos':growth<0?'diff-neg':'diff-neu';
+    return `<tr>
+      <td><div style="font-weight:600">${esc(s0.name)}</div></td>
+      <td><span class="sid-chip">${esc(s0._id)}</span></td>
+      <td style="text-align:center">${scores.length}</td>
+      <td><strong>${mn}</strong> / ${av} / <strong>${mx}</strong><br><div style="margin-top:4px;display:flex;gap:3px;flex-wrap:wrap">${trend}</div></td>
+      <td style="color:#1D4ED8"><strong>${pmn}</strong> / ${pav} / <strong>${pmx}</strong></td>
+      <td style="color:#059669"><strong>${cmn}</strong> / ${cav} / <strong>${cmx}</strong></td>
+      <td style="color:#D97706"><strong>${mmn}</strong> / ${mav} / <strong>${mmx}</strong></td>
+      <td style="font-size:11.5px">${remark}</td>
+      <td class="${gwCls}">${growth>0?'+':''}${growth}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('comparisonBody').innerHTML = rows || emptyRow(9);
+}
+
+/* ════════════════════════════════
+   GROWTH TABLE
+════════════════════════════════ */
+function renderGrowth(d){
+  const grouped = groupByNormName(d);
+  const rows = Object.values(grouped).filter(exams=>exams.length>=2).map(exams=>{
+    const first  = exams[exams.length-2];
+    const latest = exams[exams.length-1];
+    const dc = (a,b)=>{ const g=b-a; const c=g>0?'diff-pos':g<0?'diff-neg':'diff-neu'; return `<span class="${c}">${g>0?'+':''}${g}</span><br><small style="color:var(--slate-lt)">${a}→${b}</small>`; };
+    const totalG = latest.total-first.total;
+    const statusCls = totalG>0?'diff-pos':totalG<0?'diff-neg':'diff-neu';
+    const statusTxt = totalG>0?'📈 Improved':totalG<0?'📉 Declined':'➡️ Stable';
+    return `<tr>
+      <td><div style="font-weight:600">${esc(latest.name)}</div></td>
+      <td><span class="sid-chip">${esc(latest._id)}</span></td>
+      <td>${esc(first.exam_name)}<br><small style="font-family:var(--mono)">${first.total}</small></td>
+      <td>${esc(latest.exam_name)}<br><small style="font-family:var(--mono)">${latest.total}</small></td>
+      <td>${dc(first.ph,latest.ph)}</td>
+      <td>${dc(first.cy,latest.cy)}</td>
+      <td>${dc(first.ma,latest.ma)}</td>
+      <td>${dc(first.total,latest.total)}</td>
+      <td class="${statusCls}" style="font-weight:600">${statusTxt}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('growthBody').innerHTML = rows || emptyRow(9,'Need ≥ 2 exams per student');
+}
+
+/* ════════════════════════════════
+   INSIGHTS
+════════════════════════════════ */
+function renderInsights(d){
+  if(!d.length){ document.getElementById('insightSection').innerHTML=''; return; }
+  const topper = [...d].sort((a,b)=>b.total-a.total)[0];
+  const bestAcc = [...d].sort((a,b)=>b.accuracy-a.accuracy)[0];
+  const mostAtt = [...d].sort((a,b)=>b.attempted-a.attempted)[0];
+  const avgM    = (d.reduce((a,s)=>a+s.total,0)/d.length).toFixed(1);
+  const avgC    = (d.reduce((a,s)=>a+s.correct,0)/d.length).toFixed(1);
+  const avgW    = (d.reduce((a,s)=>a+s.wrong,0)/d.length).toFixed(1);
+  const avgAtt  = (d.reduce((a,s)=>a+s.attempted,0)/d.length).toFixed(1);
+  const avgNA   = (d.reduce((a,s)=>a+s.not_attempted,0)/d.length).toFixed(1);
+  const totC    = d.reduce((a,s)=>a+s.correct,0);
+  const totW    = d.reduce((a,s)=>a+s.wrong,0);
+  const ovAcc   = totC+totW>0?(totC/(totC+totW)*100).toFixed(1):0;
+  function subjectStats(cf,wf,naf){
+    const c=d.reduce((a,s)=>a+Number(s[cf]||0),0);
+    const w=d.reduce((a,s)=>a+Number(s[wf]||0),0);
+    const na=d.reduce((a,s)=>a+Number(s[naf]||0),0);
+    return{avgC:(c/d.length).toFixed(1),avgW:(w/d.length).toFixed(1),avgNA:(na/d.length).toFixed(1),acc:c+w>0?(c/(c+w)*100).toFixed(1):0};
+  }
+  const ph=subjectStats('ph_correct','ph_wrong','ph_not_attempted');
+  const cy=subjectStats('cy_correct','cy_wrong','cy_not_attempted');
+  const ma=subjectStats('ma_correct','ma_wrong','ma_not_attempted');
+  document.getElementById('insightSection').innerHTML=`
+  <div class="insight-grid">
+    <div class="insight-card"><h6>🏆 Topper</h6><div class="big">${topper.total}</div><small>${esc(topper.name)}<br><span style="font-family:var(--mono);font-size:10px">${esc(topper._id)}</span></small></div>
+    <div class="insight-card"><h6>🎯 Best Accuracy</h6><div class="big">${bestAcc.accuracy.toFixed(1)}%</div><small>${esc(bestAcc.name)}<br><span style="font-family:var(--mono);font-size:10px">${esc(bestAcc._id)}</span></small></div>
+    <div class="insight-card"><h6>📝 Most Attempted</h6><div class="big">${mostAtt.attempted}<small style="font-size:14px">/${TOTAL_QP}</small></div><small>${esc(mostAtt.name)}</small></div>
+    <div class="insight-card"><h6>📊 Avg Score</h6><div class="big">${avgM}</div><small>final marks</small></div>
+    <div class="insight-card"><h6>✅ Avg Correct</h6><div class="big acc-good">${avgC}</div><small>per student</small></div>
+    <div class="insight-card"><h6>❌ Avg Wrong</h6><div class="big neg">${avgW}</div><small>per student</small></div>
+    <div class="insight-card"><h6>📈 Class Accuracy</h6><div class="big">${ovAcc}%</div><small>correct/attempted</small></div>
+    <div class="insight-card"><h6>⏭️ Avg Skipped</h6><div class="big">${avgNA}</div><small>not attempted</small></div>
+  </div>
+  <div class="subj-stat-row">
+    ${subjStatCard('⚡ Physics','ph',ph)}
+    ${subjStatCard('🧪 Chemistry','cy',cy)}
+    ${subjStatCard('∫ Mathematics','ma',ma)}
+  </div>`;
+}
+
+function subjStatCard(title,cls,st){
+  const accCls = Number(st.acc)>=70?'acc-good':Number(st.acc)>=50?'acc-avg':'acc-low';
+  return `<div class="subj-stat ${cls}">
+    <div class="ss-label">${title}</div>
+    <div class="ss-avg">${st.avgC}<span style="font-size:14px;font-weight:400;color:var(--slate)">/15</span></div>
+    <div style="margin-top:8px">
+      <div class="ss-row"><label>Avg Correct</label><strong>${st.avgC}</strong></div>
+      <div class="ss-row"><label>Avg Wrong</label><strong>${st.avgW}</strong></div>
+      <div class="ss-row"><label>Avg Skipped</label><strong>${st.avgNA}</strong></div>
+      <div class="ss-row"><label>Accuracy</label><strong class="${accCls}">${st.acc}%</strong></div>
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════
+   SORT
+════════════════════════════════ */
+function initSort(tableId, renderFn, dataFn){
+  const table = document.getElementById(tableId);
+  if(!table) return;
+  table.querySelectorAll('thead th[data-sort]').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col = th.dataset.sort;
+      const state = sortState[tableId] || {};
+      const dir = (state.col===col && state.dir==='asc') ? 'desc' : 'asc';
+      sortState[tableId] = {col,dir};
+      table.querySelectorAll('thead th').forEach(t=>t.classList.remove('asc','desc'));
+      th.classList.add(dir);
+      const sorted = [...dataFn()].sort((a,b)=>{
+        let av = a[col], bv = b[col];
+        if(typeof av==='string') av=av.toLowerCase(), bv=String(bv||'').toLowerCase();
+        else av=Number(av||0), bv=Number(bv||0);
+        return dir==='asc' ? (av>bv?1:-1) : (av<bv?1:-1);
+      });
+      renderFn(sorted);
+    });
+  });
+}
+
+/* ════════════════════════════════
+   UTILITIES
+════════════════════════════════ */
+function groupBy(arr,key){ return arr.reduce((m,s)=>{ (m[s[key]]=m[s[key]]||[]).push(s); return m; },{}); }
+function groupByNormName(d){ const m={}; d.forEach(s=>{ (m[s._nameNorm]=m[s._nameNorm]||[]).push(s); }); return m; }
+function emptyRow(cols,msg='No data'){return`<tr><td colspan="${cols}" style="text-align:center;padding:32px;color:var(--slate-lt)">${msg}</td></tr>`;}
+function esc(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+function updateTitle(){
+  const e=document.getElementById('examFilter').value;
+  const m=document.getElementById('moduleFilter').value;
+  document.getElementById('dashTitle').textContent =
+    e&&m ? `${e} — ${m}` : e ? `Exam: ${e}` : m ? `Module: ${m}` : 'Analytics Dashboard — All Exams';
+}
+
+/* ════════════════════════════════
+   BOOT
+════════════════════════════════ */
+fetchStudents().then(()=>{
+  // Set up sorting after data loads
+  initSort('resultTable',   renderResultTable, ()=>lastFiltered);
+  initSort('compTable',     renderComparison,  ()=>lastFiltered);
+  initSort('growthTable',   renderGrowth,      ()=>lastFiltered);
+});
+</script>
+</body>
+</html>
