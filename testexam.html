@@ -662,8 +662,8 @@ fetch("/exam_config.json")
     examConfig = selectedExam;
 
     // highlight selected card
-    document.querySelectorAll(".exam-card").forEach(c => c.classList.remove("selected"));
-    document.querySelectorAll(".exam-card")[index].classList.add("selected");
+    /*document.querySelectorAll(".exam-card").forEach(c => c.classList.remove("selected"));
+    document.querySelectorAll(".exam-card")[index].classList.add("selected");*/
 
     let html = `<h3>${selectedExam.exam_name}</h3><ul>`;
 
