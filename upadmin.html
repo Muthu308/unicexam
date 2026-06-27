@@ -769,7 +769,7 @@ function renderQwPage(filtered){
     </div>
   </div>`;
 
-  // Type-wise summary
+    // Type-wise summary
   const typeHtml=`<div style="margin-bottom:16px">
     <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="ti ti-tags" style="color:var(--gold)"></i>Question Type Summary</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;">
@@ -790,6 +790,91 @@ function renderQwPage(filtered){
       }).join('')}
     </div>
   </div>`;
+
+  /* ── TABLE 1: Subject × Type × Difficulty ── Accuracy / Avg Hardness / Wrong% ── */
+  const subjects=[...new Set(all.map(q=>q.sec))];
+  const types=[...new Set(all.map(q=>q.qType))];
+  const diffs=['Easy','Medium','Hard','Very Hard'];
+  const diffCols=diffs.filter(d=>all.some(q=>q.diff===d));
+
+  function cellStats(qs){
+    const totAtt=qs.reduce((a,q)=>a+q.correct+q.wrong,0);
+    const totC=qs.reduce((a,q)=>a+q.correct,0);
+    const totW=qs.reduce((a,q)=>a+q.wrong,0);
+    const totAll=qs.reduce((a,q)=>a+q.correct+q.wrong+q.na,0);
+    const acc=totAtt?(totC/totAtt*100).toFixed(1):null;
+    const wPct=totAll?(totW/totAll*100).toFixed(1):null;
+    const avH=qs.length?avg(qs.map(q=>q.hardness)).toFixed(1):null;
+    return{acc,wPct,avH,count:qs.length};
+  }
+
+  function renderCell(st,emptyText='—'){
+    if(!st||st.count===0) return `<td style="background:#FAFAFA;color:var(--slate-lt);font-size:10px;text-align:center">${emptyText}</td>`;
+    const accColor=st.acc===null?'#94A3B8':parseFloat(st.acc)>=70?'#15803D':parseFloat(st.acc)>=40?'#D97706':'#E11D48';
+    const wColor=parseFloat(st.wPct)>=50?'#E11D48':parseFloat(st.wPct)>=25?'#D97706':'#64748B';
+    return `<td style="padding:8px 12px;vertical-align:middle;text-align:center;font-size:10.5px;min-width:80px">
+      <div style="display:flex;flex-direction:column;gap:2px;align-items:center">
+        <span style="color:${accColor};font-weight:700;font-size:12px">${st.acc!==null?st.acc+'%':'—'}</span>
+        <span style="font-size:9px;color:var(--slate-lt)">Acc</span>
+        <span style="color:#0369A1;font-weight:600;font-size:11px">${st.avH!==null?st.avH+'%':'—'}</span>
+        <span style="font-size:9px;color:var(--slate-lt)">Hard</span>
+        <span style="color:${wColor};font-weight:600;font-size:11px">${st.wPct!==null?st.wPct+'%':'—'}</span>
+        <span style="font-size:9px;color:var(--slate-lt)">Wrong</span>
+      </div>
+    </td>`;
+  }
+
+  /* Build subject × type rows — no All Types row, no All Subjects row, no Overall column */
+  let matrixRows='';
+  subjects.forEach(sec=>{
+    const secCls=sec==='Physics'?'#1D4ED8':sec==='Chemistry'?'#15803D':'#92400E';
+    const secBg=sec==='Physics'?'#EFF6FF':sec==='Chemistry'?'#F0FDF4':'#FFFBEB';
+    const secQs=all.filter(q=>q.sec===sec);
+    /* Only per-type rows — no All Types summary */
+    types.forEach((type,ti)=>{
+      const tqs=secQs.filter(q=>q.qType===type);
+      matrixRows+=`<tr style="${ti===0?'background:'+secBg:''}">
+        ${ti===0?`<td style="font-weight:700;color:${secCls};padding:7px 10px;white-space:nowrap;vertical-align:top" rowspan="${types.length}">${sec}</td>`:''}
+        <td style="font-size:11px;padding:7px 10px;font-weight:500;color:var(--text2)">${type}</td>
+        ${diffCols.map(d=>renderCell(cellStats(tqs.filter(q=>q.diff===d)))).join('')}
+      </tr>`;
+    });
+  });
+
+  const secTypeTable=`
+  <div style="margin-bottom:16px">
+    <div style="font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+      <i class="ti ti-table" style="color:var(--gold)"></i>
+      Table 1 — Subject × Type × Difficulty
+      <span style="font-size:10.5px;font-weight:400;color:var(--slate)">Accuracy · Avg Hardness% · Wrong%</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th style="text-align:left;cursor:default">Subject</th>
+          <th style="text-align:left;cursor:default">Type</th>
+          ${diffCols.map(d=>`<th style="cursor:default">${d}</th>`).join('')}
+        </tr></thead>
+        <tbody>${matrixRows}</tbody>
+      </table>
+    </div>
+    <div style="font-size:10px;color:var(--slate-lt);margin-top:5px">Each cell: <span style="color:#15803D;font-weight:600">Acc%</span> = correct/attempted · <span style="color:#0369A1;font-weight:600">Hard%</span> = avg hardness · <span style="color:#E11D48;font-weight:600">Wrong%</span> = wrong/total</div>
+  </div>`;
+
+  /* ── TABLE 2: Student-wise Subject × Type accuracy + wrong% + strength ── */
+  const stuList=[...new Set(examData.map(r=>({id:r.s_id,name:r.name||r.s_id})).map(JSON.stringify))].map(JSON.parse);
+
+  function stuTypeSubjStats(sid,sec,type){
+    const row=examData.find(r=>String(r.s_id)===String(sid)); if(!row) return null;
+    const res=Array.isArray(row.res)?row.res:[], rSt=Array.isArray(row.res_status)?row.res_status:[];
+    const qs=all.filter(q=>(!sec||q.sec===sec)&&(!type||q.qType===type));
+    let c=0,w=0,na=0;
+    qs.forEach(q=>{ const idx=q.q-1; const st=rSt[idx]||'not_attempted'; if(st==='correct')c++; else if(st==='wrong')w++; else na++; });
+    const att=c+w, totAll=c+w+na;
+    const acc=att?(c/att*100).toFixed(1):null;
+    const wPct=totAll?(w/totAll*100).toFixed(1):null;
+    return{c,w,na,acc,wPct,att};
+  }
 
   // ── Main table ──
   const tableRows=filtered.map(q=>{
