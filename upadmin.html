@@ -704,6 +704,7 @@ function filterQwTable(){
 function renderQwPage(filtered){
   if(!filtered.length){ $('qwArea').innerHTML=`<div class="empty"><i class="ti ti-filter-off"></i><p>No questions match the current filters</p></div>`; return; }
   const all=qwRawData; // use all for summary cards, filtered for table
+  const examData=allStudentData.filter(r=>r.exam_name===qwCurrentExam);
 
   // ── Summary KPIs ──
   const counts={Easy:0,Medium:0,Hard:0,'Very Hard':0};
