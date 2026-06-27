@@ -1027,13 +1027,14 @@ async function openQwStudentModal(sid, examName){
   }
   $('qwModalTitle').textContent=`Q-wise: ${r.name||sid} — ${examName}`;
   $('qwModalBody').innerHTML=`
+    <div class="sec-title">Q-wise Result Summary: ${r.name}-${sid} — ${examName}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-radius:8px;padding:9px 13px;margin-bottom:12px">
       <span><b>Total:</b> ${totalQ}</span><span class="pos">✓ ${r.correct}</span><span class="neg">✗ ${r.wrong}</span><span class="na-val">NA: ${r.not_attempted}</span><span class="nv-badge">NV: ${res.filter(x=>x==='NV').length}</span><span><b>Final:</b> <strong>${r.final_marks}</strong></span><span class="${pctClass(r.percentage)}">${r.percentage}%</span><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span>
     </div>
     <div class="subj-mini" style="margin-bottom:12px">${Object.entries(secs).map(([sec,s])=>`<div class="sm-card ${sec==='Physics'?'ph':sec==='Chemistry'?'cy':'ma'}"><div class="sm-lbl">${sec}</div><div class="sm-cwa"><span class="pos">✓ ${s.c}</span><span class="neg">✗ ${s.w}</span><span class="na-val">— ${s.na}</span>${s.nv?`<span class="nv-badge">NV:${s.nv}</span>`:''}</div></div>`).join('')}</div>
     <div class="qw-2col">
-      <div class="qw-col-box"><div class="tbl-wrap"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfA,0)}</tbody></table></div></div>
-      <div class="qw-col-box"><div class="tbl-wrap"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfB,Math.ceil(totalQ/2))}</tbody></table></div></div>
+      <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfA,0)}</tbody></table></div>
+      <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfB,Math.ceil(totalQ/2))}</tbody></table></div>
     </div>`;
   $('qwModal').classList.add('open');
 }
