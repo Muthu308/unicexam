@@ -556,11 +556,11 @@ function renderStudentResultTable(){
   if(examF) results=results.filter(r=>r.exam_name===examF);
   if(!results.length){ $('srResultArea').innerHTML=`<div class="empty"><i class="ti ti-database-off"></i><p>No results found</p></div>`; return; }
   $('srResultArea').innerHTML=`<div class="box" style="margin-bottom:14px"><div class="box-title" style="margin-bottom:12px"><i class="ti ti-chart-bar"></i>Exam Results</div><div class="tbl-wrap"><table><thead><tr><th style="text-align:left;cursor:default">Exam</th><th>Rank</th><th>PH</th><th>CY</th><th>MA</th><th>Correct</th><th>Wrong</th><th>Not Att.</th><th>Not Visited</th><th>+Marks</th><th>−Marks</th><th>Bonus</th><th>Final</th><th>%</th><th>Grade</th><th>Q-wise</th></tr></thead>
-  <tbody>${results.map(r=>{ const marks=Array.isArray(r.qp_marks)?r.qp_marks:[]; const pos=marks.reduce((a,v)=>a+(v>0?v:0),0); const neg=marks.reduce((a,v)=>a+(v<0?Math.abs(v):0),0); const res=Array.isArray(r.res)?r.res:[]; const nv=res.filter(x=>x==='NV').length; return`<tr><td>${r.exam_name}</td><td><span class="rank-b ${r.rank===1?'rank-1':''}">#${r.rank}</span></td><td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td><td class="pos">${r.correct}</td><td class="neg">${r.wrong}</td><td class="na-val">${r.not_attempted}</td><td>${nv>0?`<span class="nv-badge">NV: ${nv}</span>`:'—'}</td><td class="pos">+${pos}</td><td class="neg">−${neg}</td><td>${Number(r.bonus)>0?`<span class="pos">+${r.bonus}</span>`:'—'}</td><td style="font-weight:700">${r.final_marks}</td><td class="${pctClass(r.percentage)}">${r.percentage}%</td><td><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span></td><td><button class="btn btn-sky" style="padding:3px 8px;font-size:11px" onclick="openQwModal('${r.s_id}','${r.exam_name}')"><i class="ti ti-list-numbers"></i></button></td></tr>`; }).join('')}</tbody></table></div></div>
+  <tbody>${results.map(r=>{ const marks=Array.isArray(r.qp_marks)?r.qp_marks:[]; const pos=marks.reduce((a,v)=>a+(v>0?v:0),0); const neg=marks.reduce((a,v)=>a+(v<0?Math.abs(v):0),0); const res=Array.isArray(r.res)?r.res:[]; const nv=res.filter(x=>x==='NV').length; return`<tr><td>${r.exam_name}</td><td><span class="rank-b ${r.rank===1?'rank-1':''}">#${r.rank}</span></td><td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td><td class="pos">${r.correct}</td><td class="neg">${r.wrong}</td><td class="na-val">${r.not_attempted}</td><td>${nv>0?`<span class="nv-badge">NV: ${nv}</span>`:'—'}</td><td class="pos">+${pos}</td><td class="neg">−${neg}</td><td>${Number(r.bonus)>0?`<span class="pos">+${r.bonus}</span>`:'—'}</td><td style="font-weight:700">${r.final_marks}</td><td class="${pctClass(r.percentage)}">${r.percentage}%</td><td><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span></td><td><button class="btn btn-sky" style="padding:3px 8px;font-size:11px" onclick="openQwStudentModal('${r.s_id}','${r.exam_name}')"><i class="ti ti-list-numbers"></i></button></td></tr>`; }).join('')}</tbody></table></div></div>
   <div class="subj-mini">${[{key:'ph',label:'⚡ Physics',cls:'ph'},{key:'cy',label:'🧪 Chemistry',cls:'cy'},{key:'ma',label:'∫ Mathematics',cls:'ma'}].map(s=>`<div class="sm-card ${s.cls}"><div class="sm-lbl">${s.label}</div><div class="sm-marks">${avg(results.map(r=>Number(r[s.key]))).toFixed(1)}</div><div class="sm-cwa"><span style="color:#059669">✓ ${avg(results.map(r=>Number(r[s.key+'_correct']))).toFixed(1)}</span><span style="color:#E11D48">✗ ${avg(results.map(r=>Number(r[s.key+'_wrong']))).toFixed(1)}</span><span style="color:#94A3B8">— ${avg(results.map(r=>Number(r[s.key+'_not_attempted']))).toFixed(1)}</span></div></div>`).join('')}</div>`;
 }
 
-/* ══ Q-WISE STUDENT MODAL ══ */
+/* ══ Q-WISE STUDENT MODAL ══
 function openQwModal(sid, examName){
   const r=allStudentData.find(row=>String(row.s_id)===String(sid)&&row.exam_name===examName);
   if(!r){ alert('No question data'); return; }
@@ -588,7 +588,7 @@ function openQwModal(sid, examName){
     <div class="subj-mini" style="margin-bottom:14px">${Object.entries(secs).map(([sec,s])=>`<div class="sm-card ${sec==='Physics'?'ph':sec==='Chemistry'?'cy':'ma'}"><div class="sm-lbl">${sec}</div><div class="sm-cwa"><span class="pos">✓ ${s.c}</span><span class="neg">✗ ${s.w}</span><span class="na-val">NA: ${s.na}</span>${s.nv?`<span class="nv-badge">NV:${s.nv}</span>`:''}</div></div>`).join('')}</div>
     <div class="tbl-wrap"><table><thead><tr><th style="text-align:left;cursor:default">Q#</th><th>Subject</th><th>Type</th><th>Your Ans</th><th>Correct Ans</th><th>Status</th><th>Marks</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   $('stuModal').classList.add('open');
-}
+} */
 
 /* ══════════════════════════════════════════
    QUESTION-WISE ANALYSIS PAGE (ENHANCED)
@@ -903,17 +903,102 @@ tbody tr:nth-child(even) td{background:#F8FAFC}
   $('pdfModal').classList.add('open');
 }
 
-/* ══ COMPARISON ══ */
+/* ═══════════════════════════════════════
+   COMPARISON PAGE (with top cards)
+═══════════════════════════════════════ */
 function renderComparison(){
   const exam=$('cmpExamSel').value, sortKey=$('cmpSubjSel').value||'final_marks';
+  $('cmpCards').style.display='none';
   if(!exam){ $('cmpArea').innerHTML=`<div class="empty"><i class="ti ti-git-compare"></i><p>Select an exam</p></div>`; return; }
   let data=[...allStudentData.filter(r=>r.exam_name===exam)];
   data.sort((a,b)=>Number(b[sortKey]||b.final_marks)-Number(a[sortKey]||a.final_marks));
   if(!data.length){ $('cmpArea').innerHTML=`<div class="empty"><p>No data</p></div>`; return; }
+  /* Build top cards */
+  const medals=['🥇','🥈','🥉'];
+  function topCard(title,cls,key,arr){
+    const top3=[...arr].sort((a,b)=>Number(b[key]||0)-Number(a[key]||0)).slice(0,3);
+    const items=top3.map((r,i)=>`<div class="top-item"><span class="top-medal">${medals[i]}</span><div><div class="top-name">${r.name||r.s_id}</div><div class="top-id">${r.s_id}</div></div><div class="top-score">${r[key]||0}</div></div>`).join('');
+    return`<div class="cmp-card ${cls}"><div class="cmp-card-title">${title}</div>${items}</div>`;
+  }
+  /* High accuracy */
+  const accData=[...data].map(r=>({...r,_acc:r.correct>0?(r.correct/(r.correct+r.wrong)*100):0})).sort((a,b)=>b._acc-a._acc);
+  const top3Acc=accData.slice(0,3).map((r,i)=>`<div class="top-item"><span class="top-medal">${medals[i]}</span><div><div class="top-name">${r.name||r.s_id}</div><div class="top-id">${r.s_id}</div></div><div class="top-score" style="color:#6D28D9">${r._acc.toFixed(1)}%</div></div>`).join('');
+  /* High negative */
+  const negData=[...data].sort((a,b)=>Number(b.wrong||0)-Number(a.wrong||0));
+  const top3Neg=negData.slice(0,3).map((r,i)=>`<div class="top-item"><span class="top-medal">${medals[i]}</span><div><div class="top-name">${r.name||r.s_id}</div><div class="top-id">${r.s_id}</div></div><div class="top-score neg">${r.wrong||0}</div></div>`).join('');
+  $('cmpCards').innerHTML=
+    topCard('🏆 Overall Top 3','ov','final_marks',data)+
+    topCard('⚡ Physics Top 3','ph','ph',data)+
+    topCard('🧪 Chemistry Top 3','cy','cy',data)+
+    topCard('∫ Maths Top 3','ma','ma',data)+
+    `<div class="cmp-card acc"><div class="cmp-card-title">🎯 Highest Accuracy</div>${top3Acc}</div>`+
+    `<div class="cmp-card neg-mk"><div class="cmp-card-title">⚠️ High Negative Marks</div>${top3Neg}</div>`;
+  $('cmpCards').style.display='grid';
   const maxFinal=Math.max(...data.map(r=>Number(r.final_marks)));
-  const rows=data.map(r=>{ const pct=(Number(r.final_marks)/maxFinal*100); return`<tr><td><span class="rank-b ${r.rank===1?'rank-1':''}">#${r.rank}</span></td><td>${r.name||r.s_id}</td><td style="font-family:var(--mono);font-size:11px">${r.s_id}</td><td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td><td class="pos">${r.correct}</td><td class="neg">${r.wrong}</td><td class="na-val">${r.not_attempted}</td><td style="min-width:120px"><div style="display:flex;align-items:center;gap:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="width:${pct}%;background:${r.band==='A+'?'#059669':r.band==='A'?'#2563EB':r.band==='B'?'#D97706':'#E11D48'}"></div></div><span style="font-weight:700;font-size:12px;min-width:30px">${r.final_marks}</span></div></td><td class="${pctClass(r.percentage)}">${r.percentage}%</td><td><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span></td></tr>`; }).join('');
-  $('cmpArea').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th style="cursor:default">Rank</th><th style="text-align:left;cursor:default">Name</th><th style="cursor:default">ID</th><th>Physics</th><th>Chemistry</th><th>Maths</th><th>✓ C</th><th>✗ W</th><th>— NA</th><th>Final Score</th><th>%</th><th>Grade</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const rows=data.map(r=>{ const pct=(Number(r.final_marks)/maxFinal*100); return`<tr>
+    <td><span class="rank-b ${r.rank===1?'rank-1':''}">#${r.rank}</span></td>
+    <td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="openQwStudentModal('${r.s_id}','${exam}')">${r.name||r.s_id}</button></td>
+    <td style="font-family:var(--mono);font-size:11px">${r.s_id}</td>
+    <td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>
+    <td class="pos">${r.correct}</td><td class="neg">${r.wrong}</td><td class="na-val">${r.not_attempted}</td>
+    <td style="min-width:110px"><div style="display:flex;align-items:center;gap:6px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="width:${pct}%;background:${r.band==='A+'?'#059669':r.band==='A'?'#2563EB':r.band==='B'?'#D97706':'#E11D48'}"></div></div><span style="font-weight:700;font-size:12px;min-width:28px">${r.final_marks}</span></div></td>
+    <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+    <td><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span></td>
+  </tr>`; }).join('');
+  $('cmpArea').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th style="cursor:default">Rank</th><th style="text-align:left;cursor:default">Name</th><th style="cursor:default">ID</th><th>Physics</th><th>Chemistry</th><th>Maths</th><th>✓ C</th><th>✗ W</th><th>— NA</th><th>Score</th><th>%</th><th>Grade</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+
+
+/* ═══════════════════════════════════════
+   Q-WISE STUDENT MODAL (2-column, from QP file)
+═══════════════════════════════════════ */
+async function openQwStudentModal(sid, examName){
+  const r=allStudentData.find(row=>String(row.s_id)===String(sid)&&row.exam_name===examName);
+  if(!r){ showToast('No question data','danger'); return; }
+  /* Load QP file */
+  if(!qpFilesCache[examName]){ const qf=r.exam_qp_image_file; if(qf){ try{ const resp=await fetch(qf); qpFilesCache[examName]=await resp.json(); }catch(e){ qpFilesCache[examName]=null; } } else qpFilesCache[examName]=null; }
+  const qpData=qpFilesCache[examName];
+  const res=Array.isArray(r.res)?r.res:[], resStatus=Array.isArray(r.res_status)?r.res_status:[], qpMarks=Array.isArray(r.qp_marks)?r.qp_marks:[];
+  const correctAns=answerKeys[examName]||[], totalQ=res.length;
+  /* Get section and type from QP file */
+  function getSec(i){ return(qpData&&qpData[i]&&qpData[i].section)||defaultSec(i,totalQ); }
+  function getType(i){ return(qpData&&qpData[i]&&(qpData[i].type||qpData[i].question_type))||'MCQ'; }
+  function getQLabel(i){ return(qpData&&qpData[i]&&qpData[i].question)||`Q${i+1}`; }
+  function defaultSec(i,t){ const p=Math.floor(t/3); if(i<p)return'Physics'; if(i<p*2)return'Chemistry'; return'Mathematics'; }
+  const secs={};
+  res.forEach((ans,i)=>{
+    const sec=getSec(i); if(!secs[sec]) secs[sec]={c:0,w:0,na:0,nv:0};
+    const st=resStatus[i]||'not_attempted';
+    if(st==='correct')secs[sec].c++; else if(st==='wrong')secs[sec].w++; else secs[sec].na++;
+    if(ans==='NV')secs[sec].nv++;
+  });
+  /* Build 2-column rows */
+  const halfA=res.slice(0,Math.ceil(totalQ/2)), halfB=res.slice(Math.ceil(totalQ/2));
+  function buildHalfRows(half,startIdx){
+    return half.map((ans,j)=>{
+      const i=startIdx+j;
+      const st=resStatus[i]||'not_attempted', mk=qpMarks[i], isNV=ans==='NV';
+      const sec=getSec(i), qtype=getType(i), ql=getQLabel(i);
+      const secColor=sec==='Physics'?'chip-blue':sec==='Chemistry'?'chip-green':'chip-gold';
+      const stBadge=st==='correct'?`<span class="chip chip-green" style="font-size:10px">✓</span>`:st==='wrong'?`<span class="chip chip-red" style="font-size:10px">✗</span>`:isNV?`<span class="nv-badge">NV</span>`:`<span class="chip chip-gray" style="font-size:10px">—</span>`;
+      const mkStr=mk>0?`<span class="pos">+${mk}</span>`:mk<0?`<span class="neg">${mk}</span>`:`<span class="na-val">0</span>`;
+      return`<tr><td style="font-weight:700;font-family:var(--mono);min-width:60px">${ql}</td><td><span class="chip ${secColor}" style="font-size:10px">${sec.substring(0,3)}</span></td><td style="font-size:10px">${qtype}</td><td style="font-family:var(--mono);font-size:11px">${isNV?'<span class="nv-badge">NV</span>':ans||'—'}</td><td style="font-family:var(--mono);font-weight:600;font-size:11px">${correctAns[i]||'—'}</td><td>${stBadge}</td><td>${mkStr}</td></tr>`;
+    }).join('');
+  }
+  $('qwModalTitle').textContent=`Q-wise: ${r.name||sid} — ${examName}`;
+  $('qwModalBody').innerHTML=`
+    <div style="display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-radius:8px;padding:9px 13px;margin-bottom:12px">
+      <span><b>Total:</b> ${totalQ}</span><span class="pos">✓ ${r.correct}</span><span class="neg">✗ ${r.wrong}</span><span class="na-val">NA: ${r.not_attempted}</span><span class="nv-badge">NV: ${res.filter(x=>x==='NV').length}</span><span><b>Final:</b> <strong>${r.final_marks}</strong></span><span class="${pctClass(r.percentage)}">${r.percentage}%</span><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span>
+    </div>
+    <div class="subj-mini" style="margin-bottom:12px">${Object.entries(secs).map(([sec,s])=>`<div class="sm-card ${sec==='Physics'?'ph':sec==='Chemistry'?'cy':'ma'}"><div class="sm-lbl">${sec}</div><div class="sm-cwa"><span class="pos">✓ ${s.c}</span><span class="neg">✗ ${s.w}</span><span class="na-val">— ${s.na}</span>${s.nv?`<span class="nv-badge">NV:${s.nv}</span>`:''}</div></div>`).join('')}</div>
+    <div class="qw-2col">
+      <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj</th><th>Type</th><th>Ans</th><th>Correct</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfA,0)}</tbody></table></div>
+      <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj</th><th>Type</th><th>Ans</th><th>Correct</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfB,Math.ceil(totalQ/2))}</tbody></table></div>
+    </div>`;
+  $('qwModal').classList.add('open');
+}
+function printQwModal(){ const b=$('qwModalBody'); if(!b) return; const w=window.open('','_print','width=900,height=700'); w.document.write(`<html><head><title>Q-wise</title><style>*{font-family:Inter,sans-serif;font-size:11px;box-sizing:border-box}body{padding:10mm}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:5px;text-align:center}th{background:#0B1F4B;color:#fff}thead th:first-child,tbody td:first-child{text-align:left}.pos{color:#059669}.neg{color:#E11D48}</style></head><body>${b.innerHTML}</body></html>`); w.document.close(); w.print(); }
+
 
 /* ══ STUDENT PDF ══ */
 let pdfIframeDoc=null;
