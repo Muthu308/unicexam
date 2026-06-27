@@ -377,15 +377,19 @@ tbody tr:last-child td{border-bottom:none}
 </div>
 
 <!-- ══ MODALS ══ -->
+<!-- STUDENT DETAIL MODAL -->
 <div class="modal-overlay" id="stuModal">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <h3><i class="ti ti-user-circle"></i><span id="modal-stu-title">Student Details</span></h3>
-      <button class="modal-close" onclick="closeModal('stuModal')">✕</button>
-    </div>
-    <div class="modal-body" id="stuModalBody"></div>
-  </div>
+  <div class="modal-box"><div class="modal-hdr"><h3><i class="ti ti-user-circle"></i><span id="modal-stu-title">Student</span></h3><button class="modal-close" onclick="closeModal('stuModal')">✕</button></div>
+  <div class="modal-body" id="stuModalBody"></div></div>
 </div>
+<!-- Q-WISE MODAL -->
+<div class="modal-overlay" id="qwModal">
+  <div class="modal-box wide"><div class="modal-hdr">
+    <h3><i class="ti ti-list-numbers"></i><span id="qwModalTitle">Question-wise</span></h3>
+    <div style="display:flex;gap:8px"><button class="btn btn-red" onclick="printQwModal()" style="padding:5px 12px;font-size:11px"><i class="ti ti-printer"></i>PDF</button><button class="modal-close" onclick="closeModal('qwModal')">✕</button></div>
+  </div><div class="modal-body" id="qwModalBody"></div></div>
+</div>
+
 <div class="modal-overlay" id="pdfModal">
   <div class="modal-box" style="max-width:960px">
     <div class="modal-hdr">
@@ -540,7 +544,7 @@ function renderExamResult(examFilter){
     return`<div class="box" style="margin-bottom:14px">
       <div class="box-hdr"><div class="box-title"><i class="ti ti-notebook"></i>${exam}</div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="chip chip-blue">${n} students</span><span class="chip chip-gold">Highest: ${high}</span><span class="chip chip-gray">Avg: ${avgS}</span></div></div>
       <div class="tbl-wrap"><table><thead><tr><th style="text-align:left;cursor:default">Rank</th><th style="text-align:left;cursor:default">Student</th><th>ID</th><th>PH</th><th>CY</th><th>MA</th><th>Correct</th><th>Wrong</th><th>Not Att.</th><th>+Marks</th><th>−Marks</th><th>Bonus</th><th>Final</th><th>%</th><th>Grade</th></tr></thead>
-      <tbody>${data.map(r=>{ const marks=Array.isArray(r.qp_marks)?r.qp_marks:[]; const pos=marks.reduce((a,v)=>a+(v>0?v:0),0); const neg=marks.reduce((a,v)=>a+(v<0?Math.abs(v):0),0); return`<tr><td><span class="rank-b ${r.rank===1?'rank-1':''}">#${r.rank}</span></td><td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="openStudentModal('${r.s_id}')">${r.name||r.s_id}</button></td><td style="font-family:var(--mono);font-size:11px">${r.s_id}</td><td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td><td class="pos">${r.correct}</td><td class="neg">${r.wrong}</td><td class="na-val">${r.not_attempted}</td><td class="pos">+${pos}</td><td class="neg">−${neg}</td><td>${Number(r.bonus)>0?`<span class="pos">+${r.bonus}</span>`:'—'}</td><td style="font-weight:700">${r.final_marks}</td><td class="${pctClass(r.percentage)}">${r.percentage}%</td><td><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span></td></tr>`; }).join('')}</tbody></table></div></div>`;
+      <tbody>${data.map(r=>{ const marks=Array.isArray(r.qp_marks)?r.qp_marks:[]; const pos=marks.reduce((a,v)=>a+(v>0?v:0),0); const neg=marks.reduce((a,v)=>a+(v<0?Math.abs(v):0),0); return`<tr><td><span class="rank-b ${r.rank===1?'rank-1':''}">#${r.rank}</span></td><td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11px" onclick="openQwStudentModal('${r.s_id}','${exam}')">${r.name||r.s_id}</button></td><td style="font-family:var(--mono);font-size:11px">${r.s_id}</td><td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td><td class="pos">${r.correct}</td><td class="neg">${r.wrong}</td><td class="na-val">${r.not_attempted}</td><td class="pos">+${pos}</td><td class="neg">−${neg}</td><td>${Number(r.bonus)>0?`<span class="pos">+${r.bonus}</span>`:'—'}</td><td style="font-weight:700">${r.final_marks}</td><td class="${pctClass(r.percentage)}">${r.percentage}%</td><td><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span></td></tr>`; }).join('')}</tbody></table></div></div>`;
   }).join('');
 }
 
