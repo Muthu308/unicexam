@@ -792,8 +792,7 @@ function renderQwPage(filtered){
   </div>`;
 
   /* ── TABLE 1: Subject × Type × Difficulty ── Accuracy / Avg Hardness / Wrong% ── */
-  const subjects=[...new Set(all.map(q=>q.sec))];
-  const types=[...new Set(all.map(q=>q.qType))];
+ 
   const diffs=['Easy','Medium','Hard','Very Hard'];
   const diffCols=diffs.filter(d=>all.some(q=>q.diff===d));
 
