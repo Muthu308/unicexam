@@ -1031,14 +1031,181 @@ async function openQwStudentModal(sid, examName){
       <span><b>Total:</b> ${totalQ}</span><span class="pos">✓ ${r.correct}</span><span class="neg">✗ ${r.wrong}</span><span class="na-val">NA: ${r.not_attempted}</span><span class="nv-badge">NV: ${res.filter(x=>x==='NV').length}</span><span><b>Final:</b> <strong>${r.final_marks}</strong></span><span class="${pctClass(r.percentage)}">${r.percentage}%</span><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span>
     </div>
     <div class="subj-mini" style="margin-bottom:12px">${Object.entries(secs).map(([sec,s])=>`<div class="sm-card ${sec==='Physics'?'ph':sec==='Chemistry'?'cy':'ma'}"><div class="sm-lbl">${sec}</div><div class="sm-cwa"><span class="pos">✓ ${s.c}</span><span class="neg">✗ ${s.w}</span><span class="na-val">— ${s.na}</span>${s.nv?`<span class="nv-badge">NV:${s.nv}</span>`:''}</div></div>`).join('')}</div>
-    <div class="qw-2col"><div class="tbl-wrap">
-      <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfA,0)}</tbody></table></div>
-      <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfB,Math.ceil(totalQ/2))}</tbody></table></div>
-    </div></div>`;
+    <div class="qw-2col">
+      <div class="qw-col-box"><div class="tbl-wrap"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfA,0)}</tbody></table></div></div>
+      <div class="qw-col-box"><div class="tbl-wrap"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj.</th><th>Type</th><th>Stu. Ans</th><th>Key</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfB,Math.ceil(totalQ/2))}</tbody></table></div></div>
+    </div>`;
   $('qwModal').classList.add('open');
 }
-function printQwModal(){ const b=$('qwModalBody'); if(!b) return; const w=window.open('','_print','width=900,height=700'); w.document.write(`<html><head><title>Q-wise</title><style>*{font-family:Inter,sans-serif;font-size:11px;box-sizing:border-box}body{padding:10mm}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:5px;text-align:center}th{background:#0B1F4B;color:#fff}thead th:first-child,tbody td:first-child{text-align:left}.pos{color:#059669}.neg{color:#E11D48}</style></head><body>${b.innerHTML}</body></html>`); w.document.close(); w.print(); }
 
+  function printQwModal() {
+  const b = $('qwModalBody');
+  if (!b) return;
+
+  const w = window.open('', '_print', 'width=1000,height=800');
+
+  w.document.write(`
+<!doctype html>
+<html>
+<head>
+<title>Q-wise Report</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  margin:0;
+  padding:12mm;
+  background:#fff;
+  color:#222;
+  font-size:11px;
+}
+
+h1,h2,h3{
+  margin:0 0 8px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:12px 0 20px;
+  page-break-inside:auto;
+}
+
+thead{
+  display:table-header-group;
+}
+
+tfoot{
+  display:table-footer-group;
+}
+
+tr{
+  page-break-inside:avoid;
+}
+
+th{
+  background:#0B1F4B;
+  color:#fff;
+  padding:7px 6px;
+  font-size:11px;
+  font-weight:600;
+  border:1px solid #d7dbe3;
+}
+
+td{
+  padding:6px;
+  border:1px solid #dfe3ea;
+  text-align:center;
+}
+
+tbody tr:nth-child(even){
+  background:#f8fafc;
+}
+
+tbody tr:hover{
+  background:#eef5ff;
+}
+
+th:first-child,
+td:first-child{
+  text-align:left;
+  font-weight:600;
+}
+
+.pos{
+  color:#059669;
+  font-weight:700;
+}
+
+.neg{
+  color:#dc2626;
+  font-weight:700;
+}
+
+.na-val{
+  color:#64748b;
+}
+
+.nv-badge{
+  display:inline-block;
+  padding:2px 6px;
+  border-radius:10px;
+  background:#f3f4f6;
+  border:1px solid #d1d5db;
+  font-size:10px;
+  font-weight:600;
+}
+
+.chip{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:12px;
+  font-size:10px;
+  font-weight:600;
+}
+
+.chip-blue{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.chip-green{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.chip-gold{
+  background:#fef3c7;
+  color:#b45309;
+}
+
+.sm-card{
+  display:inline-block;
+  margin:4px;
+  padding:8px 12px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  background:#fafafa;
+}
+
+@media print{
+
+  body{
+    padding:8mm;
+  }
+
+  table{
+    page-break-inside:auto;
+  }
+
+  tr{
+    page-break-inside:avoid;
+  }
+
+  .no-print{
+    display:none!important;
+  }
+
+}
+</style>
+
+</head>
+
+<body>
+${b.innerHTML}
+</body>
+
+</html>
+`);
+
+  w.document.close();
+  w.focus();
+  w.print();
+}
 
 /* ══ STUDENT PDF ══ */
 let pdfIframeDoc=null;
