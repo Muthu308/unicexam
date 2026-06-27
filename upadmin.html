@@ -647,7 +647,14 @@ async function loadQwAnalysis(){
     const p=Math.floor(totalQ/3); if(i<p)return'Physics'; if(i<p*2)return'Chemistry'; return'Mathematics';
   }
   function getType(i){ return(qpData&&qpData[i]&&qpData[i].type)||'MCQ'; }
-  function getLabel(i){ return(qpData&&qpData[i]&&qpData[i].question)||`Q${i+1}`; }
+  //function getLabel(i){ return(qpData&&qpData[i]&&qpData[i].question)||`Q${i+1}`; }
+  function getLabel(i) {
+  const q = qpData && qpData[i] && qpData[i].question;
+  if (q) {
+    return q.replace(/Question\s*/i, 'Q'); // "Question 1" → "Q1"
+  }
+  return `Q${i + 1}`;
+  }
 
   // Build per-question stats
   qwRawData=[];
@@ -990,7 +997,13 @@ async function openQwStudentModal(sid, examName){
   /* Get section and type from QP file */
   function getSec(i){ return(qpData&&qpData[i]&&qpData[i].section)||defaultSec(i,totalQ); }
   function getType(i){ return(qpData&&qpData[i]&&(qpData[i].type||qpData[i].question_type))||'MCQ'; }
-  function getQLabel(i){ return(qpData&&qpData[i]&&qpData[i].question)||`Q${i+1}`; }
+  function getQLabel(i) {
+  const q = qpData && qpData[i] && qpData[i].question;
+  if (q) {
+    return q.replace(/Question\s*/i, 'Q'); // "Question 1" → "Q1"
+  }
+  return `Q${i + 1}`;
+}
   function defaultSec(i,t){ const p=Math.floor(t/3); if(i<p)return'Physics'; if(i<p*2)return'Chemistry'; return'Mathematics'; }
   const secs={};
   res.forEach((ans,i)=>{
@@ -1018,10 +1031,10 @@ async function openQwStudentModal(sid, examName){
       <span><b>Total:</b> ${totalQ}</span><span class="pos">✓ ${r.correct}</span><span class="neg">✗ ${r.wrong}</span><span class="na-val">NA: ${r.not_attempted}</span><span class="nv-badge">NV: ${res.filter(x=>x==='NV').length}</span><span><b>Final:</b> <strong>${r.final_marks}</strong></span><span class="${pctClass(r.percentage)}">${r.percentage}%</span><span class="grade-badge ${gradeClass(r.band)}">${r.band}</span>
     </div>
     <div class="subj-mini" style="margin-bottom:12px">${Object.entries(secs).map(([sec,s])=>`<div class="sm-card ${sec==='Physics'?'ph':sec==='Chemistry'?'cy':'ma'}"><div class="sm-lbl">${sec}</div><div class="sm-cwa"><span class="pos">✓ ${s.c}</span><span class="neg">✗ ${s.w}</span><span class="na-val">— ${s.na}</span>${s.nv?`<span class="nv-badge">NV:${s.nv}</span>`:''}</div></div>`).join('')}</div>
-    <div class="qw-2col">
+    <div class="qw-2col"><div class="tbl-wrap">
       <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj</th><th>Type</th><th>Ans</th><th>Correct</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfA,0)}</tbody></table></div>
       <div class="qw-col-box"><table><thead><tr><th style="text-align:left">Q#</th><th>Subj</th><th>Type</th><th>Ans</th><th>Correct</th><th>Status</th><th>Marks</th></tr></thead><tbody>${buildHalfRows(halfB,Math.ceil(totalQ/2))}</tbody></table></div>
-    </div>`;
+    </div></div>`;
   $('qwModal').classList.add('open');
 }
 function printQwModal(){ const b=$('qwModalBody'); if(!b) return; const w=window.open('','_print','width=900,height=700'); w.document.write(`<html><head><title>Q-wise</title><style>*{font-family:Inter,sans-serif;font-size:11px;box-sizing:border-box}body{padding:10mm}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:5px;text-align:center}th{background:#0B1F4B;color:#fff}thead th:first-child,tbody td:first-child{text-align:left}.pos{color:#059669}.neg{color:#E11D48}</style></head><body>${b.innerHTML}</body></html>`); w.document.close(); w.print(); }
