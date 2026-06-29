@@ -1123,7 +1123,7 @@ async function loadQuestionWise(){
           rows += `<tr style="background:${ti%2===0?st.rowBg:'#fff'}">
             <td style="padding:6px 10px 6px 22px;color:#475569;font-size:11px;font-weight:500;
                 border-left:3px solid ${st.border}">↳ ${t}</td>
-            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">—</td>
+            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">${rangeStr}</td>
             <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
             <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.w}</td>
             <td style="padding:6px 8px;text-align:center;color:#64748b">${d.na}</td>
@@ -1418,13 +1418,13 @@ tbody tr:nth-child(even) td{background:#fafbfe}
   </table>
 
   <div class="sec-title">Subject / Section-wise Performance</div>
-  <table>
+ <!-- <table>
     <thead><tr>
       <th style="text-align:left">Section</th><th>Range</th><th>✓ Correct</th><th>✗ Wrong</th><th>Not Att.</th>
       <th>(+) Marks</th><th>(-) Marks</th><th>Total Marks</th>
     </tr></thead>
     <tbody>${sectionRows}</tbody>
-  </table>
+  </table>-->
 
   <!-- Subject × Type breakdown table --> 
   ${buildUnifiedSectionTable()}
