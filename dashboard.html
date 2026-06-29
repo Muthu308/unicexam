@@ -1058,59 +1058,130 @@ async function loadQuestionWise(){
     return html;
   }
 
-  /* ── Build type-wise section table rows ── */
-  function buildTypeBreakdownTable(){
+  /* ══════════════════════════════════════════════
+     UNIFIED Section + Type table
+     Structure per subject:
+       • Subject header row  (rowspan = types+1)
+       • Sub-rows per type   (indented)
+       • Subject TOTAL row   (bold, shaded)
+     Then a grand TOTAL row at the bottom.
+  ══════════════════════════════════════════════ */
+  function buildUnifiedSectionTable(){
     const allTypes = new Set();
     Object.values(secMap).forEach(s => Object.keys(s.types).forEach(t => allTypes.add(t)));
-    const typesArr = [...allTypes];
-    if(typesArr.length === 1 && typesArr[0] === "Unknown") return "";
+    const hasTypes = !(allTypes.size === 1 && allTypes.has("Unknown"));
 
-    let html = `<div style="margin-top:12px">
-      <div style="font-size:13px;font-weight:600;color:#0e1e4a;margin-bottom:6px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #f1f5f9;padding-bottom:4px;">📋 Subject × Type Breakdown</div>
-      <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <thead>
-          <tr style="background:#0e1e4a">
-            <th style="color:#fff;padding:8px 10px;text-align:left;font-size:11px">Section</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Type</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">✓ C</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">✗ W</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">— NA</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Accuracy</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Marks</th>
-            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Focus</th>
-          </tr>
-        </thead>
-        <tbody>`;
+    // Subject background colours
+    const secStyle = {
+      "Physics":    { hdrBg:"#1e40af", rowBg:"#eff6ff", totBg:"#dbeafe", border:"#bfdbfe", label:"⚡ Physics" },
+      "Chemistry":  { hdrBg:"#166534", rowBg:"#f0fdf4", totBg:"#dcfce7", border:"#bbf7d0", label:"🧪 Chemistry" },
+      "Mathematics":{ hdrBg:"#92400e", rowBg:"#fefce8", totBg:"#fef9c3", border:"#fde68a", label:"∫ Mathematics" }
+    };
+    const defaultStyle = { hdrBg:"#374151", rowBg:"#f9fafb", totBg:"#f1f5f9", border:"#e2e8f0", label:"" };
 
-    Object.keys(secMap).forEach(sec => {
-      const types = secMap[sec].types;
-      const typeKeys = Object.keys(types);
-      typeKeys.forEach((t, ti) => {
-        const d = types[t];
-        const total = d.c + d.w + d.na;
-        const acc = total > 0 ? ((d.c/total)*100).toFixed(1) : 0;
-        const accNum = parseFloat(acc);
-        const focusTag = accNum >= 60
-          ? `<span style="background:#dcfce7;color:#15803d;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">Strong</span>`
-          : accNum >= 35
-            ? `<span style="background:#fef9c3;color:#92400e;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">Practice</span>`
-            : `<span style="background:#fee2e2;color:#b91c1c;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">Focus!</span>`;
-        const rowBg = ti%2===0?"#ffffff":"#f9fafb";
-        html += `<tr style="background:${rowBg}">
-          ${ti===0?`<td rowspan="${typeKeys.length}" style="padding:8px 10px;font-weight:600;color:#0e1e4a;vertical-align:middle;border-right:2px solid #e2e8f0">${sec}</td>`:""}
-          <td style="padding:6px 10px;text-align:center;font-size:11px;font-weight:500">${t}</td>
-          <td style="padding:6px 10px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
-          <td style="padding:6px 10px;text-align:center;color:#b91c1c;font-weight:600">${d.w}</td>
-          <td style="padding:6px 10px;text-align:center;color:#64748b">${d.na}</td>
-          <td style="padding:6px 10px;text-align:center;font-weight:600;color:${accNum>=60?'#15803d':accNum>=35?'#d97706':'#dc2626'}">${acc}%</td>
-          <td style="padding:6px 10px;text-align:center;font-weight:700">${d.marks}</td>
-          <td style="padding:6px 10px;text-align:center">${focusTag}</td>
-        </tr>`;
-      });
+    const totalPos = res.reduce((acc,_,i) => acc+(qpMarks[i]>0?qpMarks[i]:0), 0);
+    const totalNeg = res.reduce((acc,_,i) => acc+(qpMarks[i]<0?qpMarks[i]:0), 0);
+
+    const focusTag = accNum =>
+      accNum >= 60
+        ? `<span style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">✓ Strong</span>`
+        : accNum >= 35
+          ? `<span style="background:#fef9c3;color:#92400e;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">⚠ Practice</span>`
+          : `<span style="background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">✗ Focus!</span>`;
+
+    const accColor = a => a>=60?'#15803d':a>=35?'#d97706':'#dc2626';
+
+    let rows = "";
+    const sections = Object.keys(secMap);
+
+    sections.forEach(sec => {
+      const s = secMap[sec];
+      const st = secStyle[sec] || defaultStyle;
+      const label = st.label || sec;
+      const typeKeys = Object.keys(s.types);
+      const hasTypeData = hasTypes && !(typeKeys.length===1 && typeKeys[0]==="Unknown");
+      // total rows this subject spans: 1 (header) + N types (if shown) + 1 (subject total)
+      const spanCount = hasTypeData ? typeKeys.length + 2 : 2;
+      const rangeStr = s.range.length ? `Q${s.range[0]}–Q${s.range[s.range.length-1]}` : "—";
+      const sAcc = (s.c+s.w+s.na) > 0 ? ((s.c/(s.c+s.w+s.na))*100).toFixed(1) : "0.0";
+
+      // ── Subject header row ──
+      rows += `<tr>
+        <td colspan="9" style="padding:7px 12px;font-weight:700;font-size:12px;
+            background:${st.hdrBg};color:#fff;letter-spacing:.3px">
+          ${label} &nbsp;<span style="font-weight:400;font-size:10px;opacity:.75">${rangeStr}</span>
+        </td>
+      </tr>`;
+
+      // ── Type sub-rows ──
+      if(hasTypeData){
+        typeKeys.forEach((t, ti) => {
+          const d = s.types[t];
+          const tot = d.c + d.w + d.na;
+          const acc = tot > 0 ? ((d.c/tot)*100).toFixed(1) : "0.0";
+          const accN = parseFloat(acc);
+          rows += `<tr style="background:${ti%2===0?st.rowBg:'#fff'}">
+            <td style="padding:6px 10px 6px 22px;color:#475569;font-size:11px;font-weight:500;
+                border-left:3px solid ${st.border}">↳ ${t}</td>
+            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">—</td>
+            <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
+            <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.w}</td>
+            <td style="padding:6px 8px;text-align:center;color:#64748b">${d.na}</td>
+            <td style="padding:6px 8px;text-align:center;font-weight:600;color:${accColor(accN)}">${acc}%</td>
+            <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">+${d.marks>0?d.marks:0}</td>
+            <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.marks<0?d.marks:0}</td>
+            <td style="padding:6px 8px;text-align:center;font-weight:700">${focusTag(accN)}</td>
+          </tr>`;
+        });
+      }
+
+      // ── Subject total row ──
+      rows += `<tr style="background:${st.totBg};border-top:1.5px solid ${st.border}">
+        <td style="padding:8px 12px;font-weight:700;color:#0e1e4a;font-size:12px">
+          ${sec} Total${s.nv?` <span style="color:#3b82f6;font-size:10px;font-weight:500">(${s.nv} NV)</span>`:""}
+        </td>
+        <td style="padding:8px;text-align:center;font-weight:600;font-size:11px;color:#475569">${rangeStr}</td>
+        <td style="padding:8px;text-align:center;color:#15803d;font-weight:700">${s.c}</td>
+        <td style="padding:8px;text-align:center;color:#b91c1c;font-weight:700">${s.w}</td>
+        <td style="padding:8px;text-align:center;color:#64748b;font-weight:600">${s.na}</td>
+        <td style="padding:8px;text-align:center;font-weight:700;color:${accColor(parseFloat(sAcc))}">${sAcc}%</td>
+        <td style="padding:8px;text-align:center;color:#15803d;font-weight:700">+${s.pos}</td>
+        <td style="padding:8px;text-align:center;color:#b91c1c;font-weight:700">${s.neg}</td>
+        <td style="padding:8px;text-align:center;font-weight:700;color:#0e1e4a">${s.marks}</td>
+      </tr>`;
     });
 
-    html += `</tbody></table></div>`;
-    return html;
+    // ── Grand Total row ──
+    const gTot = totC+totW+totNA;
+    const gAcc = gTot > 0 ? ((totC/gTot)*100).toFixed(1) : "0.0";
+    rows += `<tr style="background:#0e1e4a">
+      <td style="padding:9px 12px;font-weight:700;color:#fff;font-size:12px">📊 Grand Total</td>
+      <td style="padding:9px 8px;text-align:center;color:rgba(255,255,255,.6);font-size:11px">Q1–Q${totalQ}</td>
+      <td style="padding:9px 8px;text-align:center;color:#86efac;font-weight:700">${totC}</td>
+      <td style="padding:9px 8px;text-align:center;color:#fca5a5;font-weight:700">${totW}</td>
+      <td style="padding:9px 8px;text-align:center;color:rgba(255,255,255,.6)">${totNA}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700;color:${parseFloat(gAcc)>=60?'#86efac':parseFloat(gAcc)>=35?'#fde68a':'#fca5a5'}">${gAcc}%</td>
+      <td style="padding:9px 8px;text-align:center;color:#86efac;font-weight:700">+${totalPos}</td>
+      <td style="padding:9px 8px;text-align:center;color:#fca5a5;font-weight:700">${totalNeg}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:800;color:#f0b800">${totMarks}</td>
+    </tr>`;
+
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+      <thead>
+        <tr style="background:#1e293b">
+          <th style="color:#fff;padding:9px 12px;text-align:left;font-size:11px;min-width:130px">Section / Type</th>
+          <th style="color:#fff;padding:9px 8px;text-align:center;font-size:11px">Range</th>
+          <th style="color:#86efac;padding:9px 8px;text-align:center;font-size:11px">✓ Correct</th>
+          <th style="color:#fca5a5;padding:9px 8px;text-align:center;font-size:11px">✗ Wrong</th>
+          <th style="color:rgba(255,255,255,.6);padding:9px 8px;text-align:center;font-size:11px">— NA</th>
+          <th style="color:#fde68a;padding:9px 8px;text-align:center;font-size:11px">Accuracy</th>
+          <th style="color:#86efac;padding:9px 8px;text-align:center;font-size:11px">(+) Marks</th>
+          <th style="color:#fca5a5;padding:9px 8px;text-align:center;font-size:11px">(−) Marks</th>
+          <th style="color:#fff;padding:9px 8px;text-align:center;font-size:11px">Total / Focus</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
   }
 
   /* ── Build question rows (with type column) ── */
