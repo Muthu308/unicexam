@@ -37,69 +37,25 @@ body{background:#f0f4fb;color:#1e293b}
 .page{display:none}
 .page.active{display:block}
 
-/* ══ LATEST EXAM RESULT CARD (redesigned) ══ */
-.latest-exam-card{
-  background:#fff;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 4px 20px rgba(14,30,74,.10);
-  border:1px solid #e8edf5;
-  margin-bottom:20px;
-}
-.lec-header{
-  background:linear-gradient(135deg,#0e1e4a 0%,#1a3a7a 50%,#185FA5 100%);
-  padding:12px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  gap:8px;
-}
+/* Latest Exam Result Card */
+.latest-exam-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(14,30,74,.10);border:1px solid #e8edf5;margin-bottom:20px}
+.lec-header{background:linear-gradient(135deg,#0e1e4a 0%,#1a3a7a 50%,#185FA5 100%);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .lec-header-left h3{color:#fff;font-size:16px;font-weight:700;margin:0 0 4px}
 .lec-header-left p{color:rgba(255,255,255,.65);font-size:11.5px;margin:0;display:flex;align-items:center;gap:6px}
-.lec-rank-pill{
-  background:rgba(240,184,0,.15);
-  border:1.5px solid rgba(240,184,0,.4);
-  border-radius:50px;
-  padding:4px 16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
+.lec-rank-pill{background:rgba(240,184,0,.15);border:1.5px solid rgba(240,184,0,.4);border-radius:50px;padding:4px 16px;display:flex;align-items:center;gap:8px}
 .lec-rank-pill .rank-num{color:#f0b800;font-size:22px;font-weight:800;line-height:1}
 .lec-rank-pill .rank-lbl{color:rgba(255,255,255,.6);font-size:10px;text-transform:uppercase;letter-spacing:.8px}
 .lec-body{padding:14px 18px}
-.lec-score-row{
-  display:flex;
-  align-items:center;
-  gap:0;
-  background:#f8fafc;
-  border-radius:12px;
-  border:1px solid #edf1f7;
-  overflow:hidden;
-  margin-bottom:16px;
-}
-.lec-score-item{
-  flex:1;
-  padding:10px 8px;
-  text-align:center;
-  border-right:1px solid #edf1f7;
-  position:relative;
-}
+.lec-score-row{display:flex;align-items:center;gap:0;background:#f8fafc;border-radius:12px;border:1px solid #edf1f7;overflow:hidden;margin-bottom:16px}
+.lec-score-item{flex:1;padding:10px 8px;text-align:center;border-right:1px solid #edf1f7;position:relative}
 .lec-score-item:last-child{border-right:none}
 .lec-score-item .si-label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
 .lec-score-item .si-val{font-size:20px;font-weight:800;color:#0e1e4a;line-height:1}
 .lec-score-item .si-sub{font-size:10px;color:#64748b;margin-top:2px}
 .lec-score-item.highlight-score{background:linear-gradient(135deg,#fffbeb,#fef3c7)}
 .lec-score-item.highlight-score .si-val{color:#b45309}
-.lec-subj-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
-.lec-subj-pill{
-  border-radius:10px;
-  padding:10px 12px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.lec-marks-breakdown{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.lec-subj-pill{border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px}
 .lec-subj-pill.ph{background:#eff6ff;border:1px solid #bfdbfe}
 .lec-subj-pill.cy{background:#f0fdf4;border:1px solid #bbf7d0}
 .lec-subj-pill.ma{background:#fef3c7;border:1px solid #fde68a}
@@ -112,18 +68,7 @@ body{background:#f0f4fb;color:#1e293b}
 .lec-subj-pill.ph .sp-marks{color:#1d4ed8}
 .lec-subj-pill.cy .sp-marks{color:#15803d}
 .lec-subj-pill.ma .sp-marks{color:#92400e}
-.lec-marks-breakdown{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:8px;
-}
-.lec-mb-item{
-  background:#f8fafc;
-  border-radius:8px;
-  padding:10px;
-  text-align:center;
-  border:1px solid #edf1f7;
-}
+.lec-mb-item{background:#f8fafc;border-radius:8px;padding:10px;text-align:center;border:1px solid #edf1f7}
 .lec-mb-item .mb-lbl{font-size:10px;color:#94a3b8;margin-bottom:3px}
 .lec-mb-item .mb-val{font-size:14px;font-weight:700}
 .lec-mb-item.pos .mb-val{color:#15803d}
@@ -136,6 +81,34 @@ body{background:#f0f4fb;color:#1e293b}
 .grade-b{background:#fef9c3;color:#92400e}
 .grade-c{background:#fce7f3;color:#9d174d}
 .grade-d{background:#fee2e2;color:#b91c1c}
+
+/* ── Series Comparison Card ── */
+.series-cmp-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(14,30,74,.08);border:1px solid #e8edf5;margin-bottom:18px}
+.series-cmp-header{background:linear-gradient(135deg,#1a3a7a,#185FA5);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.series-cmp-header h3{color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;margin:0}
+.series-cmp-header span{color:rgba(255,255,255,.6);font-size:11px}
+.series-cmp-body{padding:14px 16px}
+.series-cmp-track{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:4px}
+.sct-item{flex:0 0 auto;min-width:110px;background:#f8fafc;border:1px solid #e8edf5;border-radius:10px;padding:10px;text-align:center;position:relative;margin-right:8px}
+.sct-item.current{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a}
+.sct-item .sct-name{font-size:10px;color:#64748b;font-weight:500;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sct-item .sct-pct{font-size:18px;font-weight:800;color:#0e1e4a;line-height:1}
+.sct-item .sct-grade{font-size:10px;font-weight:600;margin-top:3px}
+.sct-item .sct-marks{font-size:10px;color:#64748b;margin-top:2px}
+.sct-arrow{display:flex;align-items:center;color:#94a3b8;font-size:18px;margin-right:8px;flex-shrink:0}
+.sct-delta{font-size:10px;font-weight:600;margin-top:3px}
+.sct-delta.up{color:#15803d}
+.sct-delta.dn{color:#dc2626}
+.sct-delta.same{color:#94a3b8}
+.series-subj-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+.series-subj-mini{background:#f8fafc;border-radius:8px;padding:8px 12px;border:1px solid #edf1f7}
+.series-subj-mini h4{font-size:11px;font-weight:600;color:#0e1e4a;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.mini-track{display:flex;gap:6px;overflow-x:auto}
+.mini-bar-wrap{flex:0 0 auto;text-align:center}
+.mini-bar-lbl{font-size:9px;color:#94a3b8;margin-bottom:2px;white-space:nowrap}
+.mini-bar{height:40px;display:flex;flex-direction:column;justify-content:flex-end}
+.mini-bar-fill{border-radius:3px 3px 0 0;min-height:4px;width:28px;margin:0 auto;transition:height .3s}
+.mini-bar-val{font-size:9px;font-weight:700;color:#0e1e4a;margin-top:2px}
 
 /* Profile */
 .pc-wrap{padding:0;font-family:var(--font-sans,system-ui,sans-serif)}
@@ -228,7 +201,7 @@ th.cy-group{background:#16a34a !important}
 th.ma-group{background:#d97706 !important}
 th.total-group{background:#7c3aed !important}
 
-/* ══ QUESTION-WISE (iframe approach) ══ */
+/* Question-wise controls */
 .qw-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
 .qw-search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
 .qw-search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px}
@@ -247,40 +220,13 @@ th.total-group{background:#7c3aed !important}
 .qw-selected-chip{display:none;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:6px 12px;font-size:12px;color:#1d4ed8;font-weight:500}
 .qw-selected-chip.show{display:flex}
 .qw-selected-chip button{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:14px;line-height:1;padding:0;display:flex}
-
-/* iframe holder */
-.qw-iframe-wrap{
-  background:#f8fafc;
-  border-radius:12px;
-  border:1px solid #e2e8f0;
-  overflow:hidden;
-  position:relative;
-  min-height:200px;
-}
-.qw-iframe-placeholder{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:60px 20px;
-  text-align:center;
-  color:#94a3b8;
-}
+.qw-iframe-wrap{background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;position:relative;min-height:200px}
+.qw-iframe-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:#94a3b8}
 .qw-iframe-placeholder i{font-size:40px;margin-bottom:12px;opacity:.4}
 .qw-iframe-placeholder p{font-size:13px}
 .qw-iframe-placeholder span{font-size:11px;margin-top:4px}
 #qwIframe{width:100%;border:none;display:none;height:0;transition:height .3s}
-.qw-loading-overlay{
-  display:none;
-  position:absolute;
-  inset:0;
-  background:rgba(248,250,252,.9);
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:10px;
-  border-radius:12px;
-}
+.qw-loading-overlay{display:none;position:absolute;inset:0;background:rgba(248,250,252,.9);align-items:center;justify-content:center;flex-direction:column;gap:10px;border-radius:12px}
 .qw-loading-overlay.show{display:flex}
 .qw-spinner{width:32px;height:32px;border:3px solid #dde3f0;border-top-color:#0e1e4a;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -308,10 +254,10 @@ th.total-group{background:#7c3aed !important}
   .pc-id{justify-content:center}
   .pc-row{grid-template-columns:1fr;gap:6px}
   .pc-val{text-align:left}
-  .lec-subj-row{grid-template-columns:1fr}
   .lec-marks-breakdown{grid-template-columns:repeat(2,1fr)}
   .lec-score-row{flex-wrap:wrap}
   .lec-score-item{min-width:50%;border-bottom:1px solid #edf1f7}
+  .series-cmp-track{gap:4px}
 }
 </style>
 </head>
@@ -340,7 +286,7 @@ th.total-group{background:#7c3aed !important}
     <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
     <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
-    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>    
+    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>
   </nav>
   <div class="sb-bottom">
     <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:15px"></i> Logout</button>
@@ -396,8 +342,11 @@ th.total-group{background:#7c3aed !important}
       <p style="font-size:12px;line-height:1.1;margin-top:5px;"><b>Bonus:</b> No negative marking. Bonus up to 5 marks each for PH/CY/MA/Overall. Max total bonus: 20.</p>
     </div>
 
-    <!-- Latest exam card (redesigned) -->
+    <!-- Latest exam card -->
     <div id="latestResultCard"></div>
+
+    <!-- Series comparison card (shown only when series exams exist) -->
+    <div id="seriesComparisonCard"></div>
 
     <div class="sec-box">
       <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
@@ -448,30 +397,26 @@ th.total-group{background:#7c3aed !important}
     </div>
   </div>
 
-  <!-- QUESTION-WISE RESULT (iframe-based) -->
+  <!-- QUESTION-WISE RESULT -->
   <div class="page" id="page-questionwise">
     <div class="sec-box">
       <h2><i class="ti ti-list-numbers"></i> Question-wise Result</h2>
       <p style="font-size:12px;color:#64748b;margin-bottom:16px">
-        Search or select an exam to view the full question-by-question breakdown. The report loads below — use <b>Print PDF</b> to save it.
+        Search or select an exam to view the full question-by-question breakdown including <b>question types</b>. The report loads below — use <b>Print PDF</b> to save it.
       </p>
 
       <div class="qw-controls">
-        <!-- Search dropdown -->
         <div class="qw-search-wrap" id="qwSearchWrap">
           <i class="ti ti-search"></i>
           <input type="text" class="qw-search-input" id="qwSearchInput" placeholder="Search exam…" autocomplete="off" readonly
             onclick="openQwDropdown()" oninput="filterQwDropdown(this.value)">
           <div class="qw-dropdown" id="qwDropdown"></div>
         </div>
-
-        <!-- Selected chip -->
         <div class="qw-selected-chip" id="qwChip">
           <i class="ti ti-file-check" style="font-size:14px"></i>
           <span id="qwChipLabel">—</span>
           <button onclick="clearQwSelection()" title="Clear"><i class="ti ti-x"></i></button>
         </div>
-
         <button class="qw-btn" onclick="loadQuestionWise()" id="qwLoadBtn" disabled>
           <i class="ti ti-search"></i> Load Results
         </button>
@@ -480,7 +425,6 @@ th.total-group{background:#7c3aed !important}
         </button>
       </div>
 
-      <!-- iframe holder -->
       <div class="qw-iframe-wrap" id="qwIframeWrap">
         <div class="qw-iframe-placeholder" id="qwPlaceholder">
           <i class="ti ti-clipboard-list"></i>
@@ -496,7 +440,7 @@ th.total-group{background:#7c3aed !important}
     </div>
   </div>
 
-</div><!-- /main -->
+</div>
 
 <!-- Lightbox -->
 <div class="lightbox" id="imgLightbox">
@@ -531,6 +475,7 @@ function logout(){
 function pctClass(p){ p=parseFloat(p); return p>=70?"pct-good":p>=40?"pct-avg":"pct-low"; }
 function pctBClass(b){ if(b==='A+')return"bandAPlus"; if(b==='A')return"bandA"; if(b==='B')return"bandB"; if(b==='C')return"bandC"; return"bandD"; }
 function gradeBadgeClass(b){ if(b==='A+')return"grade-badge grade-aplus"; if(b==='A')return"grade-badge grade-a"; if(b==='B')return"grade-badge grade-b"; if(b==='C')return"grade-badge grade-c"; return"grade-badge grade-d"; }
+function gradeColor(b){ if(b==='A+')return'#15803d'; if(b==='A')return'#1d4ed8'; if(b==='B')return'#92400e'; if(b==='C')return'#9d174d'; return'#b91c1c'; }
 
 function getComment(r){
   const phT=r.ph_correct+r.ph_wrong+r.ph_not_attempted;
@@ -563,6 +508,126 @@ function getTrend(curr,prev){
   return ` ${prev.exam_name} ➜ ${curr.exam_name} : ${pStr} &nbsp;|&nbsp; ${mStr} &nbsp;|&nbsp; PH:&nbsp;${tM(phDiff)}, CY:&nbsp;${tM(cyDiff)}, MA:&nbsp;${tM(maDiff)}`;
 }
 
+/* ══════════════════════════════════════════════
+   SERIES DETECTION
+   Extracts series name + number from exam names.
+   e.g. "PCM Test 3" → { series: "PCM Test", num: 3 }
+        "JEE Mock 12" → { series: "JEE Mock", num: 12 }
+══════════════════════════════════════════════ */
+function parseExamSeries(examName){
+  // Match trailing number: "PCM Test 3" → series="PCM Test", num=3
+  const m = examName.match(/^(.*?)[\s\-_]+(\d+)\s*$/);
+  if(m) return { series: m[1].trim(), num: parseInt(m[2]) };
+  return null;
+}
+
+function groupBySeries(results){
+  const groups = {};
+  results.forEach(r => {
+    const parsed = parseExamSeries(r.exam_name);
+    if(parsed){
+      if(!groups[parsed.series]) groups[parsed.series] = [];
+      groups[parsed.series].push({ ...r, _seriesNum: parsed.num });
+    }
+  });
+  // Sort each group by series number
+  Object.keys(groups).forEach(s => groups[s].sort((a,b) => a._seriesNum - b._seriesNum));
+  return groups;
+}
+
+/* ── Build Series Comparison Card ── */
+function buildSeriesComparison(latestResult, allResults){
+  const seriesGroups = groupBySeries(allResults);
+  const latestParsed = parseExamSeries(latestResult.exam_name);
+  if(!latestParsed) return ""; // Latest exam has no series number
+
+  const seriesExams = seriesGroups[latestParsed.series];
+  if(!seriesExams || seriesExams.length < 2) return ""; // Need at least 2 exams in series
+
+  // Build track items
+  let trackHTML = "";
+  seriesExams.forEach((r, i) => {
+    const isCurrent = r.exam_name === latestResult.exam_name;
+    const pct = parseFloat(r.percentage);
+
+    // Delta vs previous
+    let deltaHTML = "";
+    if(i > 0){
+      const prev = seriesExams[i-1];
+      const d = (pct - parseFloat(prev.percentage)).toFixed(1);
+      const cls = d > 0 ? "up" : d < 0 ? "dn" : "same";
+      const icon = d > 0 ? "▲" : d < 0 ? "▼" : "━";
+      deltaHTML = `<div class="sct-delta ${cls}">${icon} ${Math.abs(d)}%</div>`;
+    }
+
+    // Arrow between items
+    if(i > 0){
+      trackHTML += `<div class="sct-arrow"><i class="ti ti-arrow-narrow-right"></i></div>`;
+    }
+
+    trackHTML += `
+      <div class="sct-item${isCurrent?' current':''}">
+        <div class="sct-name" title="${r.exam_name}">${r.exam_name}</div>
+        <div class="sct-pct" style="color:${pct>=70?'#15803d':pct>=40?'#d97706':'#dc2626'}">${r.percentage}%</div>
+        <div class="sct-grade" style="color:${gradeColor(r.band)}">${r.band} ${isCurrent?'✦':''}</div>
+        <div class="sct-marks">${r.final_marks} marks</div>
+        ${deltaHTML}
+      </div>`;
+  });
+
+  // Subject mini bars per exam in series
+  const subjects = [
+    { key: "ph", label: "⚡ Physics", color: "#2563eb" },
+    { key: "cy", label: "🧪 Chemistry", color: "#15803d" },
+    { key: "ma", label: "∫ Maths", color: "#d97706" }
+  ];
+
+  let subjMiniHTML = "";
+  subjects.forEach(subj => {
+    const maxMark = Math.max(...seriesExams.map(r => Number(r[subj.key])||0), 1);
+    let bars = seriesExams.map(r => {
+      const val = Number(r[subj.key])||0;
+      const heightPct = Math.round((val/maxMark)*100);
+      const isCurr = r.exam_name === latestResult.exam_name;
+      return `<div class="mini-bar-wrap">
+        <div class="mini-bar-lbl">${r._seriesNum}</div>
+        <div class="mini-bar">
+          <div class="mini-bar-fill" style="height:${Math.max(heightPct*0.4,4)}px;background:${isCurr?subj.color:'#cbd5e1'}"></div>
+        </div>
+        <div class="mini-bar-val">${val}</div>
+      </div>`;
+    }).join("");
+
+    // Delta for latest vs prev in series
+    const latestIdx = seriesExams.findIndex(r => r.exam_name === latestResult.exam_name);
+    let subjDelta = "";
+    if(latestIdx > 0){
+      const d = (Number(latestResult[subj.key])||0) - (Number(seriesExams[latestIdx-1][subj.key])||0);
+      const cls = d > 0 ? "#15803d" : d < 0 ? "#dc2626" : "#94a3b8";
+      const icon = d > 0 ? "▲" : d < 0 ? "▼" : "━";
+      subjDelta = `<span style="font-size:10px;color:${cls};margin-left:6px">${icon} ${Math.abs(d)} vs prev</span>`;
+    }
+
+    subjMiniHTML += `
+      <div class="series-subj-mini">
+        <h4 style="color:${subj.color}">${subj.label}${subjDelta}</h4>
+        <div class="mini-track">${bars}</div>
+      </div>`;
+  });
+
+  return `
+  <div class="series-cmp-card">
+    <div class="series-cmp-header">
+      <h3><i class="ti ti-git-compare" style="font-size:14px"></i> Series Comparison — ${latestParsed.series}</h3>
+      <span>${seriesExams.length} exams in this series &nbsp;·&nbsp; ✦ = current exam</span>
+    </div>
+    <div class="series-cmp-body">
+      <div class="series-cmp-track">${trackHTML}</div>
+      <div class="series-subj-row">${subjMiniHTML}</div>
+    </div>
+  </div>`;
+}
+
 let allResults = [];
 
 /* ══════════════════════════════════════════════
@@ -572,7 +637,6 @@ async function loadStudentResults(){
   try{
     const res = await fetch("students.json");
     const data = await res.json();
-    // NOTE: allResults stored chronologically (oldest → newest) for trend calc
     allResults = data.filter(item=>String(item.s_id)===String(user.std_id));
     if(!allResults.length){
       $("resultTable").innerHTML=`<tr><td colspan="13" style="text-align:center;padding:30px;color:#94a3b8">No results found for your ID.</td></tr>`;
@@ -608,7 +672,7 @@ async function loadStudentResults(){
     });
     $("resultTable").innerHTML=resultRows;
 
-    /* ── Latest exam card (new design) ── */
+    /* ── Latest exam card ── */
     const lr = allResults[allResults.length - 1];
     if(lr){
       const marks = Array.isArray(lr.qp_marks) ? lr.qp_marks : [];
@@ -633,7 +697,6 @@ async function loadStudentResults(){
           </div>
         </div>
         <div class="lec-body">
-          <!-- Score row -->
           <div class="lec-score-row">
             <div class="lec-score-item highlight-score">
               <div class="si-label">Final Score</div>
@@ -650,53 +713,30 @@ async function loadStudentResults(){
               <div class="si-val" style="font-size:15px;margin-top:3px"><span class="${gradeBadgeClass(lr.band)}">${lr.band}</span></div>
               <div class="si-sub">${lr.band==='A+'?'Outstanding':lr.band==='A'?'Excellent':lr.band==='B'?'Good':lr.band==='C'?'Average':'Needs Improvement'}</div>
             </div>
-          </div>        
-
-          <!-- Marks breakdown -->
+          </div>
           <div class="lec-marks-breakdown">
-           <!-- Subject pills <div class="lec-subj-row"> </div>-->
-          
             <div class="lec-subj-pill ph">
               <div class="sp-icon"><i class="ti ti-bolt"></i></div>
-              <div>
-                <div class="sp-name">Physics</div>
-                <div class="sp-marks">${lr.ph}</div>
-              </div>
+              <div><div class="sp-name">Physics</div><div class="sp-marks">${lr.ph}</div></div>
             </div>
             <div class="lec-subj-pill cy">
               <div class="sp-icon"><i class="ti ti-flask"></i></div>
-              <div>
-                <div class="sp-name">Chemistry</div>
-                <div class="sp-marks">${lr.cy}</div>
-              </div>
+              <div><div class="sp-name">Chemistry</div><div class="sp-marks">${lr.cy}</div></div>
             </div>
             <div class="lec-subj-pill ma">
               <div class="sp-icon"><i class="ti ti-math-function"></i></div>
-              <div>
-                <div class="sp-name">Mathematics</div>
-                <div class="sp-marks">${lr.ma}</div>
-              </div>
+              <div><div class="sp-name">Mathematics</div><div class="sp-marks">${lr.ma}</div></div>
             </div>
-          
-            <div class="lec-mb-item pos">
-              <div class="mb-lbl">+ Marks</div>
-              <div class="mb-val">+${posMarks}</div>
-            </div>
-            <div class="lec-mb-item neg">
-              <div class="mb-lbl">− Marks</div>
-              <div class="mb-val">−${negMarks}</div>
-            </div>
-            <div class="lec-mb-item total">
-              <div class="mb-lbl">Net Marks</div>
-              <div class="mb-val">${totalMark}</div>
-            </div>
-            <div class="lec-mb-item bonus">
-              <div class="mb-lbl">Bonus</div>
-              <div class="mb-val">${bonus>0?"+"+bonus:"—"}</div>
-            </div>
+            <div class="lec-mb-item pos"><div class="mb-lbl">+ Marks</div><div class="mb-val">+${posMarks}</div></div>
+            <div class="lec-mb-item neg"><div class="mb-lbl">− Marks</div><div class="mb-val">−${negMarks}</div></div>
+            <div class="lec-mb-item total"><div class="mb-lbl">Net Marks</div><div class="mb-val">${totalMark}</div></div>
+            <div class="lec-mb-item bonus"><div class="mb-lbl">Bonus</div><div class="mb-val">${bonus>0?"+"+bonus:"—"}</div></div>
           </div>
         </div>
       </div>`;
+
+      /* ── Series Comparison (below latest card) ── */
+      $("seriesComparisonCard").innerHTML = buildSeriesComparison(lr, allResults);
     }
 
     /* ── Analysis Table ── */
@@ -709,10 +749,7 @@ async function loadStudentResults(){
         <td class="correct-val">${r.correct}</td><td class="wrong-val">${r.wrong}</td><td class="na-val">${r.not_attempted}</td>
       </tr>`).join("");
 
-    /* ── Performance Summary ── */
     buildSummary();
-
-    /* ── Populate Q-wise dropdown (latest first) ── */
     populateQwDropdown();
 
   }catch(err){
@@ -825,16 +862,14 @@ function buildSummary(){
 }
 
 /* ══════════════════════════════════════════════
-   QUESTION-WISE — SEARCH DROPDOWN (latest first)
+   QUESTION-WISE — SEARCH DROPDOWN
 ══════════════════════════════════════════════ */
 let qwSelectedExam = null;
-let qwExamList = []; // latest first
+let qwExamList = [];
 
 function populateQwDropdown(){
-  // Reverse so latest exam is first
   qwExamList = [...allResults].reverse();
   renderQwDropdown(qwExamList);
-  // Enable search input
   $("qwSearchInput").removeAttribute("readonly");
 }
 
@@ -883,7 +918,6 @@ function selectQwExam(examName){
   $("qwChip").classList.add("show");
   $("qwLoadBtn").disabled = false;
   $("qwPdfBtn").disabled = true;
-  // Reset iframe
   const iframe = $("qwIframe");
   iframe.style.display="none";
   iframe.style.height="0";
@@ -904,13 +938,13 @@ function clearQwSelection(){
 
 /* ══════════════════════════════════════════════
    LOAD Q-WISE INTO IFRAME
+   NEW: includes qpData[i].type support
 ══════════════════════════════════════════════ */
 async function loadQuestionWise(){
   if(!qwSelectedExam) return;
   const examResult = allResults.find(r=>r.exam_name===qwSelectedExam);
   if(!examResult){ alert("Exam data not found."); return; }
 
-  // Show loading
   $("qwLoading").classList.add("show");
   $("qwPlaceholder").style.display="none";
 
@@ -946,31 +980,146 @@ async function loadQuestionWise(){
     if(idx<p)return"Physics"; if(idx<p*2)return"Chemistry"; return"Mathematics";
   }
 
+  /* ── NEW: get question type from qpData ── */
+  function getQType(idx){
+    if(qpData&&qpData[idx]&&qpData[idx].type) return qpData[idx].type;
+    return null; // no type info
+  }
+
   let totC=0,totW=0,totNA=0,totMarks=0,nvcount=0;
+
+  // secMap: per section stats + type breakdown
   const secMap={};
+  // typeMap: global type stats across all subjects
+  const typeMap={};
+
   res.forEach((ans,i)=>{
     const st=resStatus[i]||"not_attempted";
     const mk=Number(qpMarks[i]||0);
     const sec=getSection(i);
+    const qtype=getQType(i)||"Unknown";
+
     if(ans==="NV")nvcount++;
     if(st==="correct")totC++; else if(st==="wrong")totW++; else totNA++;
     totMarks+=mk;
-    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,nv:0,range:[]};
+
+    // Section map
+    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,nv:0,range:[],types:{}};
     secMap[sec].range.push(i+1);
     if(st==="correct"){secMap[sec].c++;secMap[sec].pos+=mk;}
     else if(st==="wrong"){secMap[sec].w++;secMap[sec].neg+=mk;}
     else secMap[sec].na++;
     if(ans==="NV")secMap[sec].nv++;
     secMap[sec].marks+=mk;
+
+    // Per section, per type
+    if(!secMap[sec].types[qtype]) secMap[sec].types[qtype]={c:0,w:0,na:0,marks:0};
+    if(st==="correct"){secMap[sec].types[qtype].c++;secMap[sec].types[qtype].marks+=mk;}
+    else if(st==="wrong"){secMap[sec].types[qtype].w++;secMap[sec].types[qtype].marks+=mk;}
+    else secMap[sec].types[qtype].na++;
+
+    // Global type map
+    if(!typeMap[qtype]) typeMap[qtype]={c:0,w:0,na:0,marks:0,total:0};
+    typeMap[qtype].total++;
+    if(st==="correct"){typeMap[qtype].c++;typeMap[qtype].marks+=mk;}
+    else if(st==="wrong"){typeMap[qtype].w++;typeMap[qtype].marks+=mk;}
+    else typeMap[qtype].na++;
   });
 
-  // Build question rows
+  /* ── Build Focus Suggestions from type performance ── */
+  function buildTypeFocusSuggestions(){
+    const types = Object.keys(typeMap);
+    if(types.length === 1 && types[0] === "Unknown") return "";
+
+    const rows = types.map(t => {
+      const d = typeMap[t];
+      const acc = d.total > 0 ? ((d.c / d.total)*100).toFixed(1) : 0;
+      return { type: t, ...d, acc: parseFloat(acc) };
+    }).sort((a,b) => a.acc - b.acc);
+
+    let html = `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+        <span>🎯 Type-wise Focus Recommendations</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+
+    rows.forEach(r => {
+      const bg = r.acc >= 60 ? "#dcfce7" : r.acc >= 35 ? "#fef9c3" : "#fee2e2";
+      const col = r.acc >= 60 ? "#15803d" : r.acc >= 35 ? "#92400e" : "#b91c1c";
+      const icon = r.acc >= 60 ? "✓ Strong" : r.acc >= 35 ? "⚠ Average" : "✗ Focus";
+      html += `<div style="background:${bg};border-radius:8px;padding:7px 12px;min-width:130px;">
+        <div style="font-size:11px;font-weight:700;color:${col}">${icon}</div>
+        <div style="font-size:13px;font-weight:800;color:#0e1e4a">${r.type}</div>
+        <div style="font-size:10px;color:#64748b">${r.c}C / ${r.w}W / ${r.na}NA &nbsp;|&nbsp; <b style="color:${col}">${r.acc}%</b></div>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+    return html;
+  }
+
+  /* ── Build type-wise section table rows ── */
+  function buildTypeBreakdownTable(){
+    const allTypes = new Set();
+    Object.values(secMap).forEach(s => Object.keys(s.types).forEach(t => allTypes.add(t)));
+    const typesArr = [...allTypes];
+    if(typesArr.length === 1 && typesArr[0] === "Unknown") return "";
+
+    let html = `<div style="margin-top:12px">
+      <div style="font-size:13px;font-weight:600;color:#0e1e4a;margin-bottom:6px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #f1f5f9;padding-bottom:4px;">📋 Subject × Type Breakdown</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:#0e1e4a">
+            <th style="color:#fff;padding:8px 10px;text-align:left;font-size:11px">Section</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Type</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">✓ C</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">✗ W</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">— NA</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Accuracy</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Marks</th>
+            <th style="color:#fff;padding:8px 10px;text-align:center;font-size:11px">Focus</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    Object.keys(secMap).forEach(sec => {
+      const types = secMap[sec].types;
+      const typeKeys = Object.keys(types);
+      typeKeys.forEach((t, ti) => {
+        const d = types[t];
+        const total = d.c + d.w + d.na;
+        const acc = total > 0 ? ((d.c/total)*100).toFixed(1) : 0;
+        const accNum = parseFloat(acc);
+        const focusTag = accNum >= 60
+          ? `<span style="background:#dcfce7;color:#15803d;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">Strong</span>`
+          : accNum >= 35
+            ? `<span style="background:#fef9c3;color:#92400e;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">Practice</span>`
+            : `<span style="background:#fee2e2;color:#b91c1c;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600">Focus!</span>`;
+        const rowBg = ti%2===0?"#ffffff":"#f9fafb";
+        html += `<tr style="background:${rowBg}">
+          ${ti===0?`<td rowspan="${typeKeys.length}" style="padding:8px 10px;font-weight:600;color:#0e1e4a;vertical-align:middle;border-right:2px solid #e2e8f0">${sec}</td>`:""}
+          <td style="padding:6px 10px;text-align:center;font-size:11px;font-weight:500">${t}</td>
+          <td style="padding:6px 10px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
+          <td style="padding:6px 10px;text-align:center;color:#b91c1c;font-weight:600">${d.w}</td>
+          <td style="padding:6px 10px;text-align:center;color:#64748b">${d.na}</td>
+          <td style="padding:6px 10px;text-align:center;font-weight:600;color:${accNum>=60?'#15803d':accNum>=35?'#d97706':'#dc2626'}">${acc}%</td>
+          <td style="padding:6px 10px;text-align:center;font-weight:700">${d.marks}</td>
+          <td style="padding:6px 10px;text-align:center">${focusTag}</td>
+        </tr>`;
+      });
+    });
+
+    html += `</tbody></table></div>`;
+    return html;
+  }
+
+  /* ── Build question rows (with type column) ── */
   let qRows="";
   res.forEach((ans,i)=>{
     const status=resStatus[i]||"not_attempted";
     const marks=qpMarks[i];
     const sec=getSection(i);
-    const secCls=sec==="Physics"?"subj-ph":sec==="Chemistry"?"subj-cy":"subj-ma";
+    const qtype=getQType(i);
     const secColor=sec==="Physics"?"#1d4ed8":sec==="Chemistry"?"#15803d":"#92400e";
     const secBg=sec==="Physics"?"#eff6ff":sec==="Chemistry"?"#f0fdf4":"#fef3c7";
     const statusBadge=status==="correct"
@@ -982,6 +1131,12 @@ async function loadQuestionWise(){
     const rowBg=i%2===0?"#ffffff":"#f9fafb";
     const cAns=correctAns[i]||"—";
     const displayAns=ans==="NV"?`<span style="color:#3b82f6;font-size:11px">Not Visited</span>`:(ans||"—");
+
+    // Type badge
+    const typeBadge = qtype
+      ? `<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:#f1f5f9;color:#475569">${qtype}</span>`
+      : `<span style="color:#cbd5e1;font-size:10px">—</span>`;
+
     let imgCell=`<span style="color:#94a3b8;font-size:11px">No image</span>`;
     if(qpData&&qpData[i]&&qpData[i].image_base64){
       imgCell=`<img src="data:image/jpeg;base64,${qpData[i].image_base64}" style="width:60px;height:40px;object-fit:contain;border-radius:5px;border:1px solid #e2e8f0;cursor:pointer;" onclick="parent.openLightbox(this.src,'Q${i+1}')">`;
@@ -990,6 +1145,7 @@ async function loadQuestionWise(){
     qRows+=`<tr style="background:${rowBg}">
       <td style="padding:10px 12px;font-weight:700;color:#0e1e4a;white-space:nowrap">Q${i+1}<br><small style="color:#94a3b8;font-size:9px;font-weight:400">${qLabel}</small></td>
       <td style="padding:10px 12px;text-align:center"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:${secBg};color:${secColor}">${sec}</span></td>
+      <td style="padding:10px 12px;text-align:center">${typeBadge}</td>
       <td style="padding:10px 12px;text-align:center">${displayAns}</td>
       <td style="padding:10px 12px;text-align:center;font-weight:600;color:#0e1e4a">${cAns}</td>
       <td style="padding:10px 12px;text-align:center">${statusBadge}</td>
@@ -998,7 +1154,7 @@ async function loadQuestionWise(){
     </tr>`;
   });
 
-  // Build section rows
+  /* ── Section rows ── */
   let sectionRows="";
   Object.keys(secMap).forEach(sec=>{
     const s=secMap[sec];
@@ -1031,7 +1187,7 @@ async function loadQuestionWise(){
   const pctVal=examResult.percentage||"—";
   const grade=examResult.band||"—";
 
-  // ── Build PDF-ready remarks
+  /* ── Remarks with type awareness ── */
   function buildRemarks(){
     const lines=[];
     Object.keys(secMap).forEach(sec=>{
@@ -1039,20 +1195,50 @@ async function loadQuestionWise(){
       const t=s.c+s.w+s.na;
       const pct=t?((s.c/t)*100).toFixed(1):0;
       if(pct>=60) lines.push(`${sec}: Good performance (${pct}% accuracy).`);
-      else if(pct>=35) lines.push(`${sec}: Average performance (${pct}% accuracy). More practice needed.`);
-      else lines.push(`${sec}: Needs significant improvement (${pct}% accuracy). Focus on fundamentals.`);
+      else if(pct>=35) lines.push(`${sec}: Average (${pct}% accuracy). Practice more.`);
+      else lines.push(`${sec}: Needs improvement (${pct}% accuracy). Focus on fundamentals.`);
       if(s.nv>0) lines.push(`${sec}: ${s.nv} question${s.nv>1?"s":""} not visited.`);
+
+      // Type-specific remarks per section
+      Object.keys(s.types).forEach(tp => {
+        if(tp === "Unknown") return;
+        const d = s.types[tp];
+        const tot = d.c + d.w + d.na;
+        const acc = tot > 0 ? ((d.c/tot)*100).toFixed(1) : 0;
+        if(acc < 35 && tot >= 2) lines.push(`${sec} — ${tp} type: Only ${acc}% accuracy. Needs focused revision.`);
+      });
     });
     return lines.join(" ");
   }
 
-  // ── Build question image section for PDF
+  /* ── Compact summary rows (with type) ── */
+  let summaryRows="";
+  for(let i=0;i<totalQ;i+=2){
+    const buildCell=(idx)=>{
+      if(idx>=totalQ)return"<td colspan='6'></td>";
+      const st=resStatus[idx]||"not_attempted";
+      const mk=qpMarks[idx];
+      const cA=correctAns[idx]||"—";
+      const tp=getQType(idx)||"—";
+      const stColor=st==="correct"?"#15803d":st==="wrong"?"#b91c1c":"#64748b";
+      const mkColor=mk>0?"#15803d":mk<0?"#b91c1c":"#64748b";
+      return`<td style="font-weight:700;color:#0e1e4a;">Q${idx+1}</td>
+             <td style="font-size:10px;color:#64748b">${tp}</td>
+             <td>${res[idx]||'—'}</td><td>${cA}</td>
+             <td style="color:${stColor};font-weight:600;">${st==="correct"?"✓ C":st==="wrong"?"✗ W":"— NA"}</td>
+             <td style="color:${mkColor};font-weight:600;">${mk>0?"+":""}${mk}</td>`;
+    };
+    summaryRows+=`<tr>${buildCell(i)}${buildCell(i+1)}</tr>`;
+  }
+
+  /* ── Question image rows for PDF ── */
   let questionImageHTML="";
   res.forEach((ans,i)=>{
     const status=resStatus[i]||"not_attempted";
-    const displayAns=ans==="NV"?`<span style="color:#3b82f6">Not Visited this QP</span>`:(ans||"—");
+    const displayAns=ans==="NV"?`<span style="color:#3b82f6">Not Visited</span>`:(ans||"—");
     const marks=qpMarks[i];
     const cAns=correctAns[i]||"—";
+    const tp=getQType(i);
     const qLabel=qpData&&qpData[i]&&qpData[i].question?qpData[i].question:`Question ${i+1}`;
     const statusTxt=status==="correct"?"✓ Correct":status==="wrong"?"✗ Wrong":"— Not Attempted";
     const statusColor=status==="correct"?"#15803d":status==="wrong"?"#b91c1c":"#64748b";
@@ -1066,6 +1252,7 @@ async function loadQuestionWise(){
       <tr>
         <td style="background:#007bff;color:white;font-weight:bold;width:120px;padding:4px;">${qLabel.toUpperCase()}</td>
         <td style="padding:4px;">
+          <b>Type:</b> ${tp||'—'} &nbsp;|&nbsp;
           <b>Your Answer:</b> ${displayAns} &nbsp;|&nbsp;
           <b>Correct Answer:</b> ${cAns} &nbsp;|&nbsp;
           <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${statusTxt}</span> &nbsp;|&nbsp;
@@ -1076,25 +1263,7 @@ async function loadQuestionWise(){
     </table>`;
   });
 
-  // ── Build compact summary (2 per row)
-  let summaryRows="";
-  for(let i=0;i<totalQ;i+=2){
-    const buildCell=(idx)=>{
-      if(idx>=totalQ)return"<td colspan='5'></td>";
-      const st=resStatus[idx]||"not_attempted";
-      const mk=qpMarks[idx];
-      const cA=correctAns[idx]||"—";
-      const stColor=st==="correct"?"#15803d":st==="wrong"?"#b91c1c":"#64748b";
-      const mkColor=mk>0?"#15803d":mk<0?"#b91c1c":"#64748b";
-      return`<td style="font-weight:700;color:#0e1e4a;">Q${idx+1}</td>
-             <td>${res[idx]||'—'}</td><td>${cA}</td>
-             <td style="color:${stColor};font-weight:600;">${st==="correct"?"✓ C":st==="wrong"?"✗ W":"— NA"}</td>
-             <td style="color:${mkColor};font-weight:600;">${mk>0?"+":""}${mk}</td>`;
-    };
-    summaryRows+=`<tr>${buildCell(i)}${buildCell(i+1)}</tr>`;
-  }
-
-  // ── Complete iframe HTML
+  /* ── Complete iframe HTML ── */
   const iframeHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8">
 <title>Result—${user.name}-${qwSelectedExam}</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1102,13 +1271,11 @@ async function loadQuestionWise(){
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#fff;color:#1e293b;font-size:13px;padding:0}
 .print-bar{background:#0e1e4a;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
-.print-bar h4{font-size:13px;font-weight:600;margin:0;display:flex;align-items:center;gap:7px}
+.print-bar h4{font-size:13px;font-weight:600;margin:0}
 .print-bar-btns{display:flex;gap:8px}
 .pb-btn{padding:6px 14px;border:none;border-radius:6px;font-family:'Poppins',sans-serif;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:500}
 .pb-btn.pdf{background:#dc2626;color:#fff}
 .pb-btn.pdf:hover{background:#b91c1c}
-.pb-btn.close{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2)}
-.pb-btn.close:hover{background:rgba(255,255,255,.25)}
 .report-body{padding:16px}
 .rpt-header{background:linear-gradient(135deg,#0e1e4a,#185FA5);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
 .rpt-header h2{color:#fff;font-size:15px;margin:0}
@@ -1163,15 +1330,18 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     <span><b>— NA QP:</b> ${totNA}</span>
     ${nvcount?`<span style="color:#3b82f6"><b>Not Visited:</b> ${nvcount}</span>`:""}
     <span><b>Bonus Mark:</b> ${examResult.bonus}</span>
-     <span><b>Final Score:</b> <b style="color:#0e1e4a">${finalTotal}  (${pctVal}%)</b></span>    
+    <span><b>Final Score:</b> <b style="color:#0e1e4a">${finalTotal} (${pctVal}%)</b></span>
     <span><b>Grade:</b> <b>${grade}</b></span>
   </div>
 
-  <div class="sec-title">Question-wise Result Summary (2QP per row)</div>
+  <!-- Type-wise Focus Suggestions -->
+  ${buildTypeFocusSuggestions()}
+
+  <div class="sec-title">Question-wise Summary (2 per row) — with Type</div>
   <table>
     <thead><tr>
-      <th style="text-align:left">Q#</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
-      <th style="text-align:left">Q#</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
+      <th style="text-align:left">Q#</th><th>Type</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
+      <th style="text-align:left">Q#</th><th>Type</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
     </tr></thead>
     <tbody>${summaryRows}</tbody>
   </table>
@@ -1184,6 +1354,9 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     </tr></thead>
     <tbody>${sectionRows}</tbody>
   </table>
+
+  <!-- Subject × Type breakdown table -->
+  ${buildTypeBreakdownTable()}
 
   <div class="result-box">
     <h3>Final Result Summary</h3>
@@ -1202,22 +1375,34 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     <b>Remarks: </b>${buildRemarks()}
   </div>
 
-
-
   <div class="sec-title page-break">Question Paper with Result Details</div>
   ${questionImageHTML}
+
+  <div class="sec-title page-break">Question-wise Detail Table (with Type)</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left">Q#</th>
+        <th>Subject</th>
+        <th>Type</th>
+        <th>Your Ans</th>
+        <th>Correct Ans</th>
+        <th>Status</th>
+        <th>Marks</th>
+        <th>Image</th>
+      </tr>
+    </thead>
+    <tbody>${qRows}</tbody>
+  </table>
 
   <div class="footer">Generated by UNIC Academy Student Portal — Confidential</div>
 </div>
 </body></html>`;
 
-  // Write to iframe
   const iframe = $("qwIframe");
   iframe.style.display="block";
-  // Write content
   iframe.srcdoc = iframeHTML;
   iframe.onload = ()=>{
-    // Auto-height
     try{
       const h = iframe.contentDocument.body.scrollHeight;
       iframe.style.height = Math.min(Math.max(h+60, 400), 900)+"px";
@@ -1227,7 +1412,6 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     $("qwLoading").classList.remove("show");
     $("qwPdfBtn").disabled=false;
   };
-  // Also resize on window resize
   window.addEventListener("resize", ()=>{
     try{
       const h = iframe.contentDocument.body.scrollHeight;
@@ -1236,14 +1420,12 @@ tbody tr:nth-child(even) td{background:#fafbfe}
   });
 }
 
-/* Print PDF by triggering print inside iframe */
 function triggerQwPrint(){
   const iframe = $("qwIframe");
   if(!iframe.contentWindow) return;
   iframe.contentWindow.print();
 }
 
-/* Lightbox (called from inside iframe too) */
 function openLightbox(src,title){
   $("lbImg").src=src;
   $("imgLightbox").classList.add("open");
@@ -1297,7 +1479,6 @@ setText("p_id", user.std_id);
 
 loadStudentResults().then(()=>{ initTableSort(); });
 
-// Close dropdown on outside click
 document.addEventListener("click", e=>{
   if(!$("qwSearchWrap")?.contains(e.target)){
     $("qwDropdown")?.classList.remove("open");
