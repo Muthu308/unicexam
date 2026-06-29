@@ -1068,6 +1068,25 @@ async function loadQuestionWise(){
        • Subject TOTAL row   (bold, shaded)
      Then a grand TOTAL row at the bottom.
   ══════════════════════════════════════════════ */
+function formatRange(arr) {
+    if (!arr || arr.length === 0) return "—";
+    const nums = [...new Set(arr)].sort((a, b) => a - b);
+    const ranges = [];
+    let start = nums[0];
+    let end = nums[0];
+    for (let i = 1; i < nums.length; i++) {
+        if (nums[i] === end + 1) {
+            end = nums[i];
+        } else {
+            ranges.push(start === end ? `Q${start}` : `Q${start}–Q${end}`);
+            start = end = nums[i];
+        }
+    }
+    ranges.push(start === end ? `Q${start}` : `Q${start}–Q${end}`);
+
+    return ranges.join("<br>");
+}
+  
   function buildUnifiedSectionTable(){
     const allTypes = new Set();
     Object.values(secMap).forEach(s => Object.keys(s.types).forEach(t => allTypes.add(t)));
@@ -1122,29 +1141,29 @@ async function loadQuestionWise(){
           const tot = d.c + d.w + d.na;
           const acc = tot > 0 ? ((d.c/tot)*100).toFixed(1) : "0.0";
           const accN = parseFloat(acc);
-          const tRange = d.range.length ? `Q${d.range[0]}–Q${d.range[d.range.length-1]}` : "—";
+          //const tRange = d.range.length ? `Q${d.range[0]}–Q${d.range[d.range.length-1]}` : "—";
           
           rows += `<tr style="background:${ti%2===0?st.rowBg:'#fff'}">
             <td style="padding:6px 8px;font-size:11px;font-weight:500; border-left:3px solid ${st.border}">${sec==="Physics"?"PH":sec==="Chemistry"?"CY":"MA"}</td>
             <td style="padding:6px 8px;text-align:center;font-size:11px;color:#475569">${t}</td>
-            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">${tRange}</td>
+            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">${formatRange(d.range)}</td>
             <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
             <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.w}</td>
             <td style="padding:6px 8px;text-align:center;color:#64748b">${d.na}</td>
             <td style="padding:6px 8px;text-align:center;font-weight:600;color:${accColor(accN)}">${acc}%</td>
             <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">+${d.pos}</td>
             <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.neg}</td>
-            <td style="padding:6px 8px;text-align:center;font-weight:700"></td>
+            <td style="padding:6px 8px;text-align:center;font-weight:700">${d.pos-d.neg}</td>
           </tr>`;
         });
       }
 
       // ── Subject total row ──
-      rows += `<tr style="background:${st.totBg};border-top:1.5px solid ${st.border}">
+      rows += `<tr style="background:${st.totBg};border-top:1.5px solid ${st.border};">
         <td colspan="2" style="padding:8px 12px;font-weight:700;color:#0e1e4a;font-size:12px">
           ${sec} Total${s.nv?` <span style="color:#3b82f6;font-size:10px;font-weight:500">(${s.nv} NV)</span>`:""}
         </td>
-        <td style="padding:8px;text-align:center;font-weight:600;font-size:11px;color:#475569">${rangeStr}</td>
+        <td style="padding:8px;text-align:center;font-weight:600;font-size:11px;color:#475569">${formatRange(s.range)}</td>
         <td style="padding:8px;text-align:center;color:#15803d;font-weight:700">${s.c}</td>
         <td style="padding:8px;text-align:center;color:#b91c1c;font-weight:700">${s.w}</td>
         <td style="padding:8px;text-align:center;color:#64748b;font-weight:600">${s.na}</td>
@@ -1167,7 +1186,7 @@ async function loadQuestionWise(){
       <td style="padding:9px 8px;text-align:center;font-weight:700;color:${parseFloat(gAcc)>=60?'#86efac':parseFloat(gAcc)>=35?'#fde68a':'#fca5a5'}">${gAcc}%</td>
       <td style="padding:9px 8px;text-align:center;font-weight:700">+${totalPos}</td>
       <td style="padding:9px 8px;text-align:center;font-weight:700">${totalNeg}</td>
-      <td style="padding:9px 8px;text-align:center;font-weight:800;>${totMarks}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:800;">${totMarks}</td>
     </tr>`;
 
     return `<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
