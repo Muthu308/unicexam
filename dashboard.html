@@ -1125,7 +1125,7 @@ async function loadQuestionWise(){
           const tRange = d.range.length ? `Q${d.range[0]}–Q${d.range[d.range.length-1]}` : "—";
           
           rows += `<tr style="background:${ti%2===0?st.rowBg:'#fff'}">
-            <td style="padding:6px 10px 6px 22px;color:#fff;background:${st.hdrBg};font-size:11px;font-weight:500;
+            <td style="padding:6px 8px;;font-size:11px;font-weight:500;
                 border-left:3px solid ${st.border}">${sec==="Physics"?"PH":sec==="Chemistry"?"CY":"MA"}</td>
             <td style="padding:6px 8px;text-align:center;font-size:11px;color:#475569">${t}</td>
             <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">${tRange}</td>
@@ -1135,7 +1135,7 @@ async function loadQuestionWise(){
             <td style="padding:6px 8px;text-align:center;font-weight:600;color:${accColor(accN)}">${acc}%</td>
             <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">+${d.pos}</td>
             <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.neg}</td>
-            <td style="padding:6px 8px;text-align:center;font-weight:700">{d.marks}</td>
+            <td style="padding:6px 8px;text-align:center;font-weight:700">${d.marks}</td>
           </tr>`;
         });
       }
@@ -1159,16 +1159,16 @@ async function loadQuestionWise(){
     // ── Grand Total row ──
     const gTot = totC+totW+totNA;
     const gAcc = gTot > 0 ? ((totC/gTot)*100).toFixed(1) : "0.0";
-    rows += `<tr style="background:#0e1e4a">
-      <td colspan="2" style="padding:9px 12px;font-weight:700;color:#fff;font-size:12px">Grand Total</td>
+    rows += `<tr>
+      <td colspan="2" style="padding:9px 12px;font-weight:700;font-size:12px">Grand Total</td>
       <td style="padding:9px 8px;text-align:center;color:rgba(255,255,255,.6);font-size:11px">Q1–Q${totalQ}</td>
-      <td style="padding:9px 8px;text-align:center;color:#86efac;font-weight:700">${totC}</td>
-      <td style="padding:9px 8px;text-align:center;color:#fca5a5;font-weight:700">${totW}</td>
-      <td style="padding:9px 8px;text-align:center;color:rgba(255,255,255,.6)">${totNA}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">${totC}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">${totW}</td>
+      <td style="padding:9px 8px;text-align:center;">${totNA}</td>
       <td style="padding:9px 8px;text-align:center;font-weight:700;color:${parseFloat(gAcc)>=60?'#86efac':parseFloat(gAcc)>=35?'#fde68a':'#fca5a5'}">${gAcc}%</td>
-      <td style="padding:9px 8px;text-align:center;color:#86efac;font-weight:700">+${totalPos}</td>
-      <td style="padding:9px 8px;text-align:center;color:#fca5a5;font-weight:700">${totalNeg}</td>
-      <td style="padding:9px 8px;text-align:center;font-weight:800;color:#f0b800">${totMarks}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">+${totalPos}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">${totalNeg}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:800;>${totMarks}</td>
     </tr>`;
 
     return `<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
