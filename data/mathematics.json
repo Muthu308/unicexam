@@ -1,0 +1,92 @@
+{
+  "subject": "Mathematics",
+  "code": "MA",
+  "color": "#2B6CB0",
+  "units": [
+    {
+      "id": "ma_u1",
+      "title": "Unit 1: Calculus",
+      "chapters": [
+        {
+          "id": "ma_u1_c1",
+          "title": "Ch 1: Limits & Continuity",
+          "questions": [
+            {
+              "id": "ma_q1",
+              "type": "MCQ",
+              "latex": true,
+              "question": "Evaluate: $\\lim_{x \\to 0} \\frac{\\sin x}{x}$",
+              "options": ["0", "1", "$\\infty$", "Does not exist"],
+              "answer": [1],
+              "explanation": "This is a standard limit: $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$."
+            },
+            {
+              "id": "ma_q2",
+              "type": "MSQ",
+              "latex": true,
+              "question": "Which of the following limits equal 1? (Select all that apply)",
+              "options": [
+                "$\\lim_{x\\to 0}\\frac{\\tan x}{x}$",
+                "$\\lim_{x\\to 0}\\frac{e^x - 1}{x}$",
+                "$\\lim_{x\\to\\infty}\\frac{1}{x}$",
+                "$\\lim_{x\\to 0}\\frac{\\ln(1+x)}{x}$"
+              ],
+              "answer": [0, 1, 3],
+              "explanation": "All three equal 1 by standard limit results. $\\lim_{x\\to\\infty}\\frac{1}{x} = 0$."
+            }
+          ]
+        },
+        {
+          "id": "ma_u1_c2",
+          "title": "Ch 2: Differentiation",
+          "questions": [
+            {
+              "id": "ma_q3",
+              "type": "MCQ",
+              "latex": true,
+              "question": "If $f(x) = x^3 - 3x^2 + 2$, then $f'(x) = 0$ at:",
+              "options": ["$x = 0, 2$", "$x = 1, 2$", "$x = -1, 2$", "$x = 0, 3$"],
+              "answer": [0],
+              "explanation": "$f'(x) = 3x^2 - 6x = 3x(x-2) = 0 \\Rightarrow x = 0$ or $x = 2$."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ma_u2",
+      "title": "Unit 2: Algebra",
+      "chapters": [
+        {
+          "id": "ma_u2_c1",
+          "title": "Ch 3: Matrices",
+          "questions": [
+            {
+              "id": "ma_q4",
+              "type": "MCQ",
+              "latex": true,
+              "question": "If $A = \\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$, then $\\det(A) = $",
+              "options": ["2", "-2", "10", "-10"],
+              "answer": [1],
+              "explanation": "$\\det(A) = 1\\cdot4 - 2\\cdot3 = 4-6 = -2$."
+            },
+            {
+              "id": "ma_q5",
+              "type": "MSQ",
+              "latex": true,
+              "question": "Which of the following are properties of a symmetric matrix $A$? (Select all that apply)",
+              "options": [
+                "$A = A^T$",
+                "$A = -A^T$",
+                "Eigenvalues are real",
+                "Determinant is always positive"
+              ],
+              "answer": [0, 2],
+              "explanation": "A symmetric matrix satisfies $A=A^T$ and always has real eigenvalues (spectral theorem). Determinant can be negative."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

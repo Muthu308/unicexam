@@ -1,0 +1,92 @@
+{
+  "subject": "Chemistry",
+  "code": "CH",
+  "color": "#E53E3E",
+  "units": [
+    {
+      "id": "ch_u1",
+      "title": "Unit 1: Atomic Structure",
+      "chapters": [
+        {
+          "id": "ch_u1_c1",
+          "title": "Ch 1: Quantum Numbers",
+          "questions": [
+            {
+              "id": "ch_q1",
+              "type": "MCQ",
+              "latex": true,
+              "question": "The maximum number of electrons in a subshell with azimuthal quantum number $l = 3$ is:",
+              "options": ["6", "10", "14", "18"],
+              "answer": [2],
+              "explanation": "For $l=3$ (f-subshell), number of orbitals = $2l+1 = 7$. Max electrons = $2 \\times 7 = 14$."
+            },
+            {
+              "id": "ch_q2",
+              "type": "MSQ",
+              "latex": true,
+              "question": "Which quantum numbers are allowed for an electron in the 3d subshell? (Select all that apply)",
+              "options": [
+                "$n=3, l=2$",
+                "$n=3, l=3$",
+                "$m_l = -2$",
+                "$m_l = +3$"
+              ],
+              "answer": [0, 2],
+              "explanation": "For 3d: $n=3$, $l=2$, and $m_l$ ranges from $-2$ to $+2$. $l=3$ is not allowed for $n=3$ (since $l < n$), and $m_l=+3$ exceeds the limit."
+            }
+          ]
+        },
+        {
+          "id": "ch_u1_c2",
+          "title": "Ch 2: Chemical Bonding",
+          "questions": [
+            {
+              "id": "ch_q3",
+              "type": "MCQ",
+              "latex": false,
+              "question": "Which of the following has the highest bond order?",
+              "options": ["O₂", "O₂⁺", "O₂⁻", "O₂²⁻"],
+              "answer": [1],
+              "explanation": "Bond order of O₂⁺ = 2.5 (highest). O₂ = 2, O₂⁻ = 1.5, O₂²⁻ = 1."
+            },
+            {
+              "id": "ch_q4",
+              "type": "MSQ",
+              "latex": true,
+              "question": "Which of the following molecules are polar? (Select all that apply)",
+              "options": ["$H_2O$", "$CO_2$", "$NH_3$", "$CCl_4$"],
+              "answer": [0, 2],
+              "explanation": "$H_2O$ (bent) and $NH_3$ (pyramidal) are polar due to asymmetric geometry. $CO_2$ (linear) and $CCl_4$ (tetrahedral) are non-polar."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch_u2",
+      "title": "Unit 2: Thermodynamics",
+      "chapters": [
+        {
+          "id": "ch_u2_c1",
+          "title": "Ch 3: Gibbs Free Energy",
+          "questions": [
+            {
+              "id": "ch_q5",
+              "type": "MCQ",
+              "latex": true,
+              "question": "A reaction is spontaneous when:",
+              "options": [
+                "$\\Delta G > 0$",
+                "$\\Delta G < 0$",
+                "$\\Delta G = 0$",
+                "$\\Delta H > 0$ always"
+              ],
+              "answer": [1],
+              "explanation": "Spontaneity is determined by $\\Delta G = \\Delta H - T\\Delta S < 0$."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
