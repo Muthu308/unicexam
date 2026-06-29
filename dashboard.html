@@ -1125,8 +1125,7 @@ async function loadQuestionWise(){
           const tRange = d.range.length ? `Q${d.range[0]}–Q${d.range[d.range.length-1]}` : "—";
           
           rows += `<tr style="background:${ti%2===0?st.rowBg:'#fff'}">
-            <td style="padding:6px 8px;;font-size:11px;font-weight:500;
-                border-left:3px solid ${st.border}">${sec==="Physics"?"PH":sec==="Chemistry"?"CY":"MA"}</td>
+            <td style="padding:6px 8px;font-size:11px;font-weight:500; border-left:3px solid ${st.border}">${sec==="Physics"?"PH":sec==="Chemistry"?"CY":"MA"}</td>
             <td style="padding:6px 8px;text-align:center;font-size:11px;color:#475569">${t}</td>
             <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">${tRange}</td>
             <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
