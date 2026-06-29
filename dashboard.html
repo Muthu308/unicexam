@@ -1405,8 +1405,8 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     <span><b>Grade:</b> <b>${grade}</b></span>
   </div>
 
-  <!-- Type-wise Focus Suggestions -->
-  ${buildTypeFocusSuggestions()}
+  <!-- Type-wise Focus Suggestions
+  ${buildTypeFocusSuggestions()} -->
 
   <div class="sec-title">Question-wise Summary (2 per row) — with Type</div>
   <table>
@@ -1426,8 +1426,8 @@ tbody tr:nth-child(even) td{background:#fafbfe}
     <tbody>${sectionRows}</tbody>
   </table>
 
-  <!-- Subject × Type breakdown table
-  -->
+  <!-- Subject × Type breakdown table --> 
+  ${buildUnifiedSectionTable()}
 
   <div class="result-box">
     <h3>Final Result Summary</h3>
