@@ -1014,9 +1014,10 @@ async function loadQuestionWise(){
 
     // Per section, per type
     if(!secMap[sec].types[qtype]) secMap[sec].types[qtype]={c:0,w:0,na:0,pos:0,neg:0,marks:0};
-    if(st==="correct"){secMap[sec].types[qtype].c++;secMap[sec].types[qtype].marks+=mk;types[qtype].pos+=mk;}
-    else if(st==="wrong"){secMap[sec].types[qtype].w++;secMap[sec].types[qtype].marks+=mk;types[qtype].neg+=mk;}
+    if(st==="correct"){secMap[sec].types[qtype].c++;secMap[sec].types[qtype].marks+=mk;secMap[sec].types[qtype].pos+=mk;}
+    else if(st==="wrong"){secMap[sec].types[qtype].w++;secMap[sec].types[qtype].marks+=mk;secMap[sec].types[qtype].neg+=mk;}
     else secMap[sec].types[qtype].na++;
+    secMap[sec].types[qtype].marks+=mk;
 
     // Global type map
     if(!typeMap[qtype]) typeMap[qtype]={c:0,w:0,na:0,marks:0,pos:0,neg:0,total:0};
