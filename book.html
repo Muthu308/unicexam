@@ -603,17 +603,35 @@ function updateActiveTabs() {
 
 // ══════════════════════════════════════════
 //  LOAD SUBJECT
+//  Tries Hasura-backed content (api/content) first — so questions added via
+//  the Admin Question Builder show up immediately — and falls back to the
+//  static /data/<subject>.json file if the API/DB isn't configured yet.
 // ══════════════════════════════════════════
 async function loadSubject(code) {
   document.getElementById('question-wrap').innerHTML = '<div id="loader"><div class="spinner"></div></div>';
   document.getElementById('loader') && (document.getElementById('loader').querySelector('.spinner').style.borderTopColor = subjectColor());
 
+  let loaded = null;
+
+  // 1. Try live content from Hasura (admin-authored questions)
   try {
-    state.subjectData = await ajax(SUBJECTS[code].file);
-  } catch {
-    document.getElementById('question-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Failed to load subject data</p></div>';
-    return;
+    const remote = await ajax(`api/content?code=${code}`);
+    if (remote && remote.data && remote.data.units) {
+      loaded = remote.data;
+    }
+  } catch { /* fall through to static file */ }
+
+  // 2. Fallback to bundled static JSON
+  if (!loaded) {
+    try {
+      loaded = await ajax(SUBJECTS[code].file);
+    } catch {
+      document.getElementById('question-wrap').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><p>Failed to load subject data</p></div>';
+      return;
+    }
   }
+
+  state.subjectData = loaded;
 
   // Set first chapter
   const firstChapter = state.subjectData.units?.[0]?.chapters?.[0];
@@ -1190,7 +1208,7 @@ function submitModal() {
   updateUserUI();
   document.getElementById('modal-overlay').classList.add('hidden');
   // Submit to API
-  ajax('api/chbookregister', 'POST', data).catch(()=>{});
+  ajax('api/register', 'POST', data).catch(()=>{});
 }
 
 // ══════════════════════════════════════════
