@@ -143,8 +143,55 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f4f5fb;color:#1a1a2e;m
 #main::-webkit-scrollbar{width:4px}
 #main::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:2px}
 
-/* ─── Question Panel ─── */
+/* ─── Concept Panel ─── */
 #question-wrap{max-width:720px;margin:0 auto}
+.concept-card{
+  background:#fff;border-radius:var(--radius-lg);border:1px solid #e5e7eb;
+  box-shadow:var(--shadow);overflow:hidden;margin-bottom:22px
+}
+.concept-header{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 20px;cursor:pointer;user-select:none;
+  border-bottom:1px solid transparent;transition:border-color var(--trans)
+}
+.concept-header.open{border-bottom-color:#f3f4f6}
+.concept-icon{
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff
+}
+.concept-title-wrap{flex:1;min-width:0}
+.concept-eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.concept-title{font-size:14.5px;font-weight:700;color:#111;margin-top:1px}
+.concept-chevron{width:18px;height:18px;color:#9ca3af;flex-shrink:0;transition:transform .25s ease}
+.concept-chevron.open{transform:rotate(180deg)}
+.concept-body{padding:0 22px 20px;display:none}
+.concept-body.open{display:block;animation:fadeUp .2s ease-out}
+.concept-para{font-size:13.5px;line-height:1.85;color:#374151;margin-bottom:13px}
+.concept-para:last-child{margin-bottom:0}
+.concept-para strong{color:#111;font-weight:700}
+.concept-formulas{
+  margin-top:14px;padding:14px 16px;border-radius:12px;
+  background:#f9fafb;border:1px solid #f0f0f0
+}
+.concept-formulas-label{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9ca3af;margin-bottom:9px}
+.formula-chip{
+  display:inline-block;background:#fff;border:1px solid #e5e7eb;
+  border-radius:8px;padding:6px 12px;margin:0 6px 6px 0;
+  font-size:13px;color:#1f2937
+}
+
+/* ─── Question type tabs ─── */
+.qtype-tabs{display:flex;gap:6px;margin-bottom:14px}
+.qtype-tab{
+  padding:7px 16px;border-radius:9px;border:1.5px solid #e5e7eb;
+  background:#fff;font-size:12.5px;font-weight:700;color:#6b7280;
+  cursor:pointer;transition:all var(--trans)
+}
+.qtype-tab .qtype-count{
+  display:inline-block;margin-left:5px;font-size:10.5px;
+  background:#f3f4f6;color:#9ca3af;border-radius:10px;padding:1px 6px
+}
+.qtype-tab.active .qtype-count{background:rgba(255,255,255,.25);color:#fff}
 .q-breadcrumb{font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
 
 /* Progress row */
@@ -193,6 +240,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f4f5fb;color:#1a1a2e;m
 .opt.missed .opt-label{background:#22c55e;color:#fff}
 .opt.wrong .opt-label{background:#ef4444;color:#fff}
 .opt-text{font-size:13.5px;color:#374151;line-height:1.6;flex:1;padding-top:2px}
+
+/* NAT input */
+.nat-wrap{padding:0 22px 4px}
+.nat-input-row{display:flex;align-items:center;gap:10px}
+.nat-input{
+  flex:1;padding:13px 16px;border-radius:11px;border:2px solid #e5e7eb;
+  font-size:15px;font-family:inherit;font-weight:600;color:#111;
+  outline:none;transition:all var(--trans);background:#fff
+}
+.nat-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(108,63,245,.12)}
+.nat-input.correct{border-color:#16a34a;background:#f0fdf4;color:#15803d}
+.nat-input.wrong{border-color:#ef4444;background:#fef2f2;color:#b91c1c}
+.nat-unit{font-size:13px;color:#9ca3af;font-weight:600;white-space:nowrap}
+.nat-correct-value{font-size:12px;color:#16a34a;margin-top:8px;font-weight:600}
 
 /* Explanation */
 .explanation{
@@ -412,6 +473,8 @@ let state = {
   submitted: {},    // { qid: true }
   sidebarOpen: true,
   userData: null,
+  conceptOpen: true,
+  qtypeFilter: 'ALL', // ALL | MCQ | MSQ | NAT
 };
 
 // ── Utilities ──
@@ -557,6 +620,8 @@ async function loadSubject(code) {
   if (firstChapter) {
     state.activeChapterId = firstChapter.id;
     state.questionIndex = 0;
+    state.qtypeFilter = 'ALL';
+    state.conceptOpen = true;
   }
 
   buildSidebar();
@@ -657,8 +722,24 @@ function getCurrentChapter() {
   return getAllChapters().find(c => c.id === state.activeChapterId);
 }
 
-function getQuestions() {
+function getAllQuestions() {
   return getCurrentChapter()?.questions || [];
+}
+
+function getQuestions() {
+  const all = getAllQuestions();
+  if (state.qtypeFilter === 'ALL') return all;
+  return all.filter(q => q.type === state.qtypeFilter);
+}
+
+function getTypeCounts() {
+  const all = getAllQuestions();
+  return {
+    ALL: all.length,
+    MCQ: all.filter(q => q.type === 'MCQ').length,
+    MSQ: all.filter(q => q.type === 'MSQ').length,
+    NAT: all.filter(q => q.type === 'NAT').length,
+  };
 }
 
 function switchSubject(code) {
@@ -666,6 +747,8 @@ function switchSubject(code) {
   state.activeSubject = code;
   state.answers = {};
   state.submitted = {};
+  state.qtypeFilter = 'ALL';
+  state.conceptOpen = true;
   updateActiveTabs();
   loadSubject(code);
 }
@@ -673,6 +756,8 @@ function switchSubject(code) {
 function selectChapter(chapterId) {
   state.activeChapterId = chapterId;
   state.questionIndex = 0;
+  state.qtypeFilter = 'ALL';
+  state.conceptOpen = true;
   updateSidebarActive();
   renderQuestion();
   // On mobile close sidebar
@@ -730,18 +815,99 @@ function canGoPrev() {
   return all.findIndex(c => c.id === state.activeChapterId) > 0;
 }
 
+function renderConceptHTML(chapter, color) {
+  const c = chapter?.concept;
+  if (!c) return '';
+  const openCls = state.conceptOpen ? ' open' : '';
+  let bodyHTML = '';
+  (c.body || []).forEach(p => {
+    // Convert **bold** markdown to <strong>
+    const withBold = p.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    bodyHTML += `<p class="concept-para">${withBold}</p>`;
+  });
+  let formulasHTML = '';
+  if (c.formulas && c.formulas.length) {
+    formulasHTML = `<div class="concept-formulas">
+      <div class="concept-formulas-label">Key Formulas</div>
+      ${c.formulas.map(f => `<span class="formula-chip">${f}</span>`).join('')}
+    </div>`;
+  }
+  return `
+    <div class="concept-card">
+      <div class="concept-header${openCls}" onclick="toggleConcept()">
+        <div class="concept-icon" style="background:${color}">💡</div>
+        <div class="concept-title-wrap">
+          <div class="concept-eyebrow" style="color:${color}">Concept</div>
+          <div class="concept-title">${c.title}</div>
+        </div>
+        <svg class="concept-chevron${openCls}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </div>
+      <div class="concept-body${openCls}" id="concept-body">
+        ${bodyHTML}
+        ${formulasHTML}
+      </div>
+    </div>`;
+}
+
+function toggleConcept() {
+  state.conceptOpen = !state.conceptOpen;
+  const header = document.querySelector('.concept-header');
+  const body = document.getElementById('concept-body');
+  const chevron = document.querySelector('.concept-chevron');
+  if (header) header.classList.toggle('open', state.conceptOpen);
+  if (body) body.classList.toggle('open', state.conceptOpen);
+  if (chevron) chevron.classList.toggle('open', state.conceptOpen);
+  // Re-render latex inside concept if just opened
+  if (state.conceptOpen && body) renderLatex(body);
+}
+
+function renderTypeTabsHTML() {
+  const counts = getTypeCounts();
+  const color = subjectColor();
+  const types = [
+    { key:'ALL', label:'All' },
+    { key:'MCQ', label:'MCQ' },
+    { key:'MSQ', label:'MSQ' },
+    { key:'NAT', label:'NAT' },
+  ];
+  let html = '<div class="qtype-tabs">';
+  types.forEach(t => {
+    const count = counts[t.key];
+    if (t.key !== 'ALL' && count === 0) return;
+    const active = state.qtypeFilter === t.key;
+    html += `<button class="qtype-tab${active?' active':''}" style="${active?`background:${color};color:#fff;border-color:transparent`:''}" onclick="setQtypeFilter('${t.key}')">${t.label}<span class="qtype-count">${count}</span></button>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function setQtypeFilter(type) {
+  state.qtypeFilter = type;
+  state.questionIndex = 0;
+  renderQuestion();
+}
+
 // ══════════════════════════════════════════
 //  RENDER QUESTION
 // ══════════════════════════════════════════
 function renderQuestion() {
   const wrap = document.getElementById('question-wrap');
-  const questions = getQuestions();
-  const q = questions[state.questionIndex];
   const chapter = getCurrentChapter();
   const color = subjectColor();
+  const conceptHTML = renderConceptHTML(chapter, color);
+  const tabsHTML = renderTypeTabsHTML();
+
+  const questions = getQuestions();
+  const q = questions[state.questionIndex];
 
   if (!q) {
-    wrap.innerHTML = '<div class="empty"><div class="empty-icon">📚</div><p>Select a chapter to begin</p></div>';
+    wrap.innerHTML = `
+      <div class="fade-in">
+        ${conceptHTML}
+        ${tabsHTML}
+        <div class="empty"><div class="empty-icon">📭</div><p>No ${state.qtypeFilter !== 'ALL' ? state.qtypeFilter : ''} questions in this chapter</p></div>
+      </div>`;
+    if (chapter?.concept?.latex && state.conceptOpen) renderLatex(document.getElementById('concept-body'));
     return;
   }
 
@@ -750,32 +916,40 @@ function renderQuestion() {
   const totalQ = questions.length;
   const pct = ((state.questionIndex + 1) / totalQ) * 100;
 
-  // Options HTML
-  let optionsHTML = '';
-  q.options.forEach((opt, i) => {
-    let cls = 'opt';
-    let labelContent = LABELS[i];
-    if (isSubmitted) {
-      cls += ' disabled';
-      const isCorrect = q.answer.includes(i);
-      const isSel = selected.includes(i);
-      if (isCorrect && isSel)  { cls += ' correct'; labelContent = '✓'; }
-      else if (isCorrect)       { cls += ' missed';  labelContent = '✓'; }
-      else if (isSel)           { cls += ' wrong';   labelContent = '✗'; }
-    } else {
-      if (selected.includes(i)) cls += ' selected';
-    }
-    optionsHTML += `
-      <button class="${cls}" data-idx="${i}" onclick="toggleOption(${i})">
-        <span class="opt-label">${labelContent}</span>
-        <span class="opt-text">${opt}</span>
-      </button>`;
-  });
+  // ── Body HTML depends on question type ──
+  let bodyHTML = '';
+
+  if (q.type === 'NAT') {
+    bodyHTML = renderNATHTML(q, isSubmitted);
+  } else {
+    // MCQ / MSQ options
+    let optionsHTML = '';
+    q.options.forEach((opt, i) => {
+      let cls = 'opt';
+      let labelContent = LABELS[i];
+      if (isSubmitted) {
+        cls += ' disabled';
+        const isCorrect = q.answer.includes(i);
+        const isSel = selected.includes(i);
+        if (isCorrect && isSel)  { cls += ' correct'; labelContent = '✓'; }
+        else if (isCorrect)       { cls += ' missed';  labelContent = '✓'; }
+        else if (isSel)           { cls += ' wrong';   labelContent = '✗'; }
+      } else {
+        if (selected.includes(i)) cls += ' selected';
+      }
+      optionsHTML += `
+        <button class="${cls}" data-idx="${i}" onclick="toggleOption(${i})">
+          <span class="opt-label">${labelContent}</span>
+          <span class="opt-text">${opt}</span>
+        </button>`;
+    });
+    bodyHTML = `<div class="q-options">${optionsHTML}</div>`;
+  }
 
   // Explanation
   let exHTML = '';
   if (isSubmitted && q.explanation) {
-    const isRight = JSON.stringify([...selected].sort((a,b)=>a-b)) === JSON.stringify([...q.answer].sort((a,b)=>a-b));
+    const isRight = checkIsCorrect(q, selected);
     const cls = isRight ? 'correct' : 'wrong';
     const icon = isRight ? '🎉' : '💡';
     const head = isRight ? 'Correct!' : "Not quite — here's why:";
@@ -795,15 +969,22 @@ function renderQuestion() {
   dotsHTML += '</div>';
 
   // Action btn
+  const hasAnswer = q.type === 'NAT' ? (selected !== undefined && selected !== null && selected !== '') : selected.length > 0;
   let actionHTML = '';
   if (!isSubmitted) {
-    actionHTML = `<button class="btn btn-primary" id="btn-check" onclick="submitAnswer()" ${selected.length===0?'disabled':''} style="background:${color}">Check Answer</button>`;
+    actionHTML = `<button class="btn btn-primary" id="btn-check" onclick="submitAnswer()" ${!hasAnswer?'disabled':''} style="background:${color}">Check Answer</button>`;
   } else {
     actionHTML = `<button class="btn btn-primary" onclick="goNext()" ${!canGoNext()?'disabled':''} style="background:${color}">${state.questionIndex < totalQ-1 ? 'Next Question →' : 'Next Chapter →'}</button>`;
   }
 
+  let typeHintHTML = '';
+  if (q.type === 'MSQ') typeHintHTML = '<span class="q-type-hint">Select all correct answers</span>';
+  else if (q.type === 'NAT') typeHintHTML = '<span class="q-type-hint">Enter a numeric value</span>';
+
   wrap.innerHTML = `
     <div class="fade-in">
+      ${conceptHTML}
+      ${tabsHTML}
       <div class="q-breadcrumb">${chapter?.title || ''}</div>
       <div class="q-progress-row">
         <div class="q-progress-track"><div class="q-progress-fill" style="width:${pct}%;background:${color}"></div></div>
@@ -812,13 +993,13 @@ function renderQuestion() {
       <div class="q-card">
         <div class="q-card-header" style="background:${hex2rgba(color,.06)}">
           <span class="q-type-badge" style="background:${color}">${q.type}</span>
-          ${q.type==='MSQ' ? '<span class="q-type-hint">Select all correct answers</span>' : ''}
+          ${typeHintHTML}
           <span class="q-num">Q${state.questionIndex+1}</span>
         </div>
         <div class="q-body">
           <div class="q-text q-question">${q.question}</div>
         </div>
-        <div class="q-options">${optionsHTML}</div>
+        ${bodyHTML}
         ${exHTML}
         <div class="q-actions">
           <button class="btn btn-outline" onclick="goPrev()" ${!canGoPrev()?'disabled':''}>
@@ -834,9 +1015,64 @@ function renderQuestion() {
     </div>`;
 
   // Render LaTeX if needed
-  if (q.latex) {
+  if (q.latex || chapter?.concept?.latex) {
     renderLatex(wrap);
   }
+
+  // Bind NAT input listener
+  if (q.type === 'NAT' && !isSubmitted) {
+    const natInput = document.getElementById('nat-input');
+    if (natInput) {
+      natInput.addEventListener('input', () => {
+        state.answers[q.id] = natInput.value;
+        const checkBtn = document.getElementById('btn-check');
+        if (checkBtn) checkBtn.disabled = natInput.value.trim() === '';
+      });
+      natInput.focus();
+    }
+  }
+}
+
+function renderNATHTML(q, isSubmitted) {
+  const selected = state.answers[q.id];
+  let inputCls = 'nat-input';
+  let valueAttr = isSubmitted ? (selected ?? '') : (selected ?? '');
+  let correctNoteHTML = '';
+
+  if (isSubmitted) {
+    const isRight = checkIsCorrect(q, selected);
+    inputCls += isRight ? ' correct' : ' wrong';
+    if (!isRight) {
+      correctNoteHTML = `<div class="nat-correct-value">✓ Correct answer: ${q.answer}${q.unit ? ' ' + q.unit : ''}</div>`;
+    }
+  }
+
+  return `
+    <div class="nat-wrap">
+      <div class="nat-input-row">
+        <input
+          type="number"
+          step="any"
+          class="${inputCls}"
+          id="nat-input"
+          placeholder="Enter your answer"
+          value="${valueAttr ?? ''}"
+          ${isSubmitted ? 'disabled' : ''}
+        >
+        ${q.unit ? `<span class="nat-unit">${q.unit}</span>` : ''}
+      </div>
+      ${correctNoteHTML}
+    </div>`;
+}
+
+function checkIsCorrect(q, selected) {
+  if (q.type === 'NAT') {
+    const val = parseFloat(selected);
+    if (isNaN(val)) return false;
+    const tol = q.tolerance ?? 0;
+    return Math.abs(val - q.answer) <= tol;
+  }
+  return JSON.stringify([...(selected||[])].sort((a,b)=>a-b)) === JSON.stringify([...q.answer].sort((a,b)=>a-b));
 }
 
 function goToDot(i) {
@@ -849,7 +1085,7 @@ function goToDot(i) {
 // ══════════════════════════════════════════
 function toggleOption(idx) {
   const q = getQuestions()[state.questionIndex];
-  if (!q || state.submitted[q.id]) return;
+  if (!q || state.submitted[q.id] || q.type === 'NAT') return;
   const prev = state.answers[q.id] || [];
   if (q.type === 'MCQ') {
     state.answers[q.id] = [idx];
@@ -872,19 +1108,25 @@ function toggleOption(idx) {
 function submitAnswer() {
   const q = getQuestions()[state.questionIndex];
   if (!q || state.submitted[q.id]) return;
-  const selected = state.answers[q.id] || [];
-  if (!selected.length) return;
+  const selected = state.answers[q.id];
+
+  if (q.type === 'NAT') {
+    if (selected === undefined || selected === null || String(selected).trim() === '') return;
+  } else {
+    if (!selected || !selected.length) return;
+  }
 
   state.submitted[q.id] = true;
 
   // Track attempt
   if (state.userData) {
-    const isCorrect = JSON.stringify([...selected].sort((a,b)=>a-b)) === JSON.stringify([...q.answer].sort((a,b)=>a-b));
-    ajax('api/attempt.php', 'POST', {
+    const isCorrect = checkIsCorrect(q, selected);
+    ajax('api/attempt', 'POST', {
       userId: state.userData.email || state.userData.name || 'guest',
       questionId: q.id,
       subject: state.activeSubject,
       chapterId: state.activeChapterId,
+      questionType: q.type,
       selected,
       correct: q.answer,
       isCorrect,
@@ -948,7 +1190,7 @@ function submitModal() {
   updateUserUI();
   document.getElementById('modal-overlay').classList.add('hidden');
   // Submit to API
-  ajax('api/register.php', 'POST', data).catch(()=>{});
+  ajax('api/chbookregister', 'POST', data).catch(()=>{});
 }
 
 // ══════════════════════════════════════════
