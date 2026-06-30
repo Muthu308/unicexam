@@ -671,7 +671,7 @@ async function loadQwAnalysis(){
       else{ na++; naStuds.push({name:row.name||row.s_id,id:row.s_id,nv:ans==='NV'}); }
     });
     const hardness=((wrong+na)/n)*100;
-    let diff='Easy'; if(hardness>=75)diff='Very Hard'; else if(hardness>=50)diff='Hard'; else if(hardness>=30)diff='Medium';
+    let diff='Easy'; if(hardness>=75)diff='Very Hard'; else if(hardness>=50)diff='Hard'; else if(hardness>=25)diff='Medium';
     qwRawData.push({
       q:i+1, label:getLabel(i), sec:getSec(i), qType:getType(i),
       correct,wrong,na,nv,hardness,diff,
@@ -714,8 +714,8 @@ function renderQwPage(filtered){
 
   const kpiHtml=`<div class="qw-summary-grid">
     <div class="qw-kpi"><div class="qk-lbl">Total Questions</div><div class="qk-val">${all.length}</div><div class="qk-sub">in this exam</div></div>
-    <div class="qw-kpi easy"><div class="qk-lbl">Easy</div><div class="qk-val">${counts.Easy}</div><div class="qk-sub">≤ 30% hard</div></div>
-    <div class="qw-kpi medium"><div class="qk-lbl">Medium</div><div class="qk-val">${counts.Medium}</div><div class="qk-sub">30–50%</div></div>
+    <div class="qw-kpi easy"><div class="qk-lbl">Easy</div><div class="qk-val">${counts.Easy}</div><div class="qk-sub">≤ 25% hard</div></div>
+    <div class="qw-kpi medium"><div class="qk-lbl">Medium</div><div class="qk-val">${counts.Medium}</div><div class="qk-sub">25–50%</div></div>
     <div class="qw-kpi hard"><div class="qk-lbl">Hard</div><div class="qk-val">${counts.Hard}</div><div class="qk-sub">50–75%</div></div>
     <div class="qw-kpi vhard"><div class="qk-lbl">Very Hard</div><div class="qk-val">${counts['Very Hard']}</div><div class="qk-sub">&gt; 75%</div></div>
     <div class="qw-kpi"><div class="qk-lbl">Avg Hardness</div><div class="qk-val">${avgHardness}%</div><div class="qk-sub">overall</div></div>
@@ -729,7 +729,7 @@ function renderQwPage(filtered){
   const rangeHtml=`<div style="margin-bottom:16px">
     <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="ti ti-adjustments-horizontal" style="color:var(--gold)"></i>Hardness Range — Question Numbers</div>
     <div class="range-grid">
-      ${[['Easy','#15803D','#DCFCE7','0–30%','qn-easy'],['Medium','#0369A1','#E0F2FE','30–50%','qn-medium'],['Hard','#92400E','#FEF3C7','50–75%','qn-hard'],['Very Hard','#B91C1C','#FEE2E2','75–100%','qn-vhard']].map(([label,col,bg,range,cls])=>`
+      ${[['Easy','#15803D','#DCFCE7','0–25%','qn-easy'],['Medium','#0369A1','#E0F2FE','25–50%','qn-medium'],['Hard','#92400E','#FEF3C7','50–75%','qn-hard'],['Very Hard','#B91C1C','#FEE2E2','75–100%','qn-vhard']].map(([label,col,bg,range,cls])=>`
       <div class="range-card">
         <div class="rc-title"><span>${label}</span><span class="rc-badge" style="background:${bg};color:${col}">${range} · ${rangeGroups[label].length} Qs</span></div>
         <div class="hardness-bar"><div class="hardness-fill" style="width:${all.length?(rangeGroups[label].length/all.length*100).toFixed(0):0}%;background:${col}"></div></div>
