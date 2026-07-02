@@ -170,10 +170,562 @@
               "tolerance": 1,
               "unit": "m/s",
               "explanation": "$v = f\\lambda = 50 \\times 4 = 200$ m/s."
-            }
+            },
+              {
+    "id": "ph_u1",
+    "title": "Unit 1: Units and Measurements",
+    "chapters": [
+      {
+        "id": "ph_u1_c1",
+        "title": "Ch 1: Units, Dimensions & Errors",
+        "concept": {
+          "title": "SI Units and Dimensional Analysis",
+          "formulas": [
+            "Dimensional formula: [M^a L^b T^c]",
+            "Absolute error Δa = |a_measured - a_true|",
+            "Relative error = Δa/a, Percentage error = (Δa/a)×100",
+            "For Z = A^p B^q/C^r, ΔZ/Z = p(ΔA/A) + q(ΔB/B) + r(ΔC/C)"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u2",
+    "title": "Unit 2: Kinematics",
+    "chapters": [
+      {
+        "id": "ph_u2_c1",
+        "title": "Ch 1: Motion in Straight Line",
+        "concept": {
+          "title": "Displacement, Velocity, Acceleration",
+          "formulas": [
+            "v = u + at",
+            "s = ut + 1/2 at^2",
+            "v^2 = u^2 + 2as",
+            "s_nth = u + a/2(2n-1)"
+          ]
+        }
+      },
+      {
+        "id": "ph_u2_c2",
+        "title": "Ch 2: Motion in a Plane",
+        "concept": {
+          "title": "Projectile Motion & Circular Motion",
+          "formulas": [
+            "T = 2usinθ/g",
+            "H = u^2sin^2θ/2g",
+            "R = u^2sin2θ/g",
+            "a_c = v^2/r = ω^2r"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u3",
+    "title": "Unit 3: Laws of Motion",
+    "chapters": [
+      {
+        "id": "ph_u3_c1",
+        "title": "Ch 1: Newton's Laws & Momentum",
+        "concept": {
+          "title": "Force, Inertia, Momentum",
+          "formulas": [
+            "F = ma = dp/dt",
+            "p = mv",
+            "J = FΔt = Δp",
+            "F_pseudo = -ma_frame"
+          ]
+        }
+      },
+      {
+        "id": "ph_u3_c2",
+        "title": "Ch 2: Friction & Circular Dynamics",
+        "concept": {
+          "title": "Friction, Banking of Roads",
+          "formulas": [
+            "f_s ≤ μ_s N",
+            "f_k = μ_k N",
+            "tanθ = v^2/rg for ideal banking",
+            "v_max = √{μ_srg} for unbanked road"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u4",
+    "title": "Unit 4: Work, Energy and Power",
+    "chapters": [
+      {
+        "id": "ph_u4_c1",
+        "title": "Ch 1: Work, Energy & Collisions",
+        "concept": {
+          "title": "Work-Energy Theorem, Conservation",
+          "formulas": [
+            "W = F·s·cosθ = ∫F·ds",
+            "KE = 1/2 mv^2",
+            "PE_gravity = mgh",
+            "PE_spring = 1/2 kx^2",
+            "P = W/t = F·v"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u5",
+    "title": "Unit 5: Rotational Motion",
+    "chapters": [
+      {
+        "id": "ph_u5_c1",
+        "title": "Ch 1: Centre of Mass & Torque",
+        "concept": {
+          "title": "COM, Moment of Force",
+          "formulas": [
+            "x_cm = Σm_ix_i/Σm_i",
+            "τ = r × F = rFsinθ",
+            "L = r × p = Iω",
+            "τ = Iα = dL/dt"
+          ]
+        }
+      },
+      {
+        "id": "ph_u5_c2",
+        "title": "Ch 2: Moment of Inertia",
+        "concept": {
+          "title": "MI Theorems & Rigid Body Rotation",
+          "formulas": [
+            "I = Σmr^2",
+            "I_parallel = I_cm + Md^2",
+            "I_perp = I_x + I_y",
+            "KE_rot = 1/2 Iω^2"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u6",
+    "title": "Unit 6: Gravitation",
+    "chapters": [
+      {
+        "id": "ph_u6_c1",
+        "title": "Ch 1: Gravitation & Satellites",
+        "concept": {
+          "title": "Kepler's Laws, Orbital Motion",
+          "formulas": [
+            "F = GMm/r^2",
+            "g = GM/R^2",
+            "v_o = √(GM/r)",
+            "v_e = √(2GM/R) = √2 × v_o at surface",
+            "T^2 ∝ r^3"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u7",
+    "title": "Unit 7: Properties of Solids and Liquids",
+    "chapters": [
+      {
+        "id": "ph_u7_c1",
+        "title": "Ch 1: Elasticity",
+        "concept": {
+          "title": "Stress, Strain, Hooke's Law",
+          "formulas": [
+            "Y = (F/A)/(ΔL/L) = Stress/Strain",
+            "B = -ΔP/(ΔV/V)",
+            "η = (F/A)/θ = Shearing stress/Shear strain"
+          ]
+        }
+      },
+      {
+        "id": "ph_u7_c2",
+        "title": "Ch 2: Fluid Mechanics",
+        "concept": {
+          "title": "Pressure, Viscosity, Surface Tension",
+          "formulas": [
+            "P = hρg",
+            "F_buoyant = Vρ_fluid g",
+            "v_t = 2r^2(ρ-σ)g/9η",
+            "T = F/L",
+            "P + 1/2ρv^2 + ρgh = constant"
+          ]
+        }
+      },
+      {
+        "id": "ph_u7_c3",
+        "title": "Ch 3: Heat & Thermodynamics",
+        "concept": {
+          "title": "Thermal Expansion, Calorimetry",
+          "formulas": [
+            "ΔL = αLΔT",
+            "ΔV = γVΔT, γ = 3α",
+            "Q = mcΔT",
+            "Q = mL"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u8",
+    "title": "Unit 8: Thermodynamics",
+    "chapters": [
+      {
+        "id": "ph_u8_c1",
+        "title": "Ch 1: Laws of Thermodynamics",
+        "concept": {
+          "title": "First & Second Law",
+          "formulas": [
+            "ΔU = Q - W",
+            "W = ∫PdV = PΔV for isobaric",
+            "PV^γ = constant for adiabatic",
+            "η = 1 - T2/T1 for Carnot engine"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u9",
+    "title": "Unit 9: Kinetic Theory of Gases",
+    "chapters": [
+      {
+        "id": "ph_u9_c1",
+        "title": "Ch 1: KTG",
+        "concept": {
+          "title": "Ideal Gas Equation, Degrees of Freedom",
+          "formulas": [
+            "PV = nRT = NkT",
+            "v_rms = √(3RT/M) = √(3P/ρ)",
+            "U = f/2 nRT",
+            "C_p - C_v = R, γ = C_p/C_v"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u10",
+    "title": "Unit 10: Oscillations and Waves",
+    "chapters": [
+      {
+        "id": "ph_u10_c1",
+        "title": "Ch 1: Simple Harmonic Motion",
+        "concept": {
+          "title": "SHM, Pendulum, Spring",
+          "formulas": [
+            "x = Asin(ωt + φ)",
+            "v = ω√(A^2 - x^2)",
+            "T = 2π√(m/k)",
+            "T = 2π√(l/g)"
+          ]
+        }
+      },
+      {
+        "id": "ph_u10_c2",
+        "title": "Ch 2: Waves",
+        "concept": {
+          "title": "Wave Motion, Standing Waves",
+          "formulas": [
+            "v = fλ = √(T/μ)",
+            "y = Asin(kx - ωt), k = 2π/λ",
+            "f_n = nv/2L for string",
+            "f_beat = |f1 - f2|"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u11",
+    "title": "Unit 11: Electrostatics",
+    "chapters": [
+      {
+        "id": "ph_u11_c1",
+        "title": "Ch 1: Electric Charges & Fields",
+        "concept": {
+          "title": "Coulomb's Law, Electric Field",
+          "formulas": [
+            "F = kq1q2/r^2 = q1q2/4πε₀r^2",
+            "E = F/q = kq/r^2",
+            "Φ_E = ∫E·dA = q_enc/ε₀",
+            "τ = p × E, p = q·2l"
+          ]
+        }
+      },
+      {
+        "id": "ph_u11_c2",
+        "title": "Ch 2: Potential & Capacitance",
+        "concept": {
+          "title": "Electric Potential, Capacitors",
+          "formulas": [
+            "V = kq/r",
+            "W = qΔV",
+            "C = Q/V = ε₀A/d",
+            "U = 1/2 CV^2 = 1/2 QV = Q^2/2C"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u12",
+    "title": "Unit 12: Current Electricity",
+    "chapters": [
+      {
+        "id": "ph_u12_c1",
+        "title": "Ch 1: Ohm's Law & Circuits",
+        "concept": {
+          "title": "Current, Resistance, Kirchhoff Laws",
+          "formulas": [
+            "I = Q/t",
+            "V = IR, R = ρL/A",
+            "P = VI = I^2R = V^2/R",
+            "R_s = R1+R2+..., 1/R_p = 1/R1+1/R2+..."
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u13",
+    "title": "Unit 13: Magnetic Effects of Current and Magnetism",
+    "chapters": [
+      {
+        "id": "ph_u13_c1",
+        "title": "Ch 1: Magnetic Field due to Current",
+        "concept": {
+          "title": "Biot-Savart, Ampere's Law",
+          "formulas": [
+            "dB = μ₀/4π (Idl×r̂)/r^2",
+            "B = μ₀I/2πr for straight wire",
+            "B = μ₀nI for solenoid",
+            "F = IlBsinθ = qvBsinθ"
+          ]
+        }
+      },
+      {
+        "id": "ph_u13_c2",
+        "title": "Ch 2: Magnetism",
+        "concept": {
+          "title": "Bar Magnet, Earth's Magnetism",
+          "formulas": [
+            "τ = M × B",
+            "B_axis = μ₀/4π (2M/r^3)",
+            "B_eq = μ₀/4π (M/r^3)",
+            "tanδ = B_V/B_H"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u14",
+    "title": "Unit 14: Electromagnetic Induction and Alternating Currents",
+    "chapters": [
+      {
+        "id": "ph_u14_c1",
+        "title": "Ch 1: EMI",
+        "concept": {
+          "title": "Faraday's Law, Lenz's Law",
+          "formulas": [
+            "ε = -dΦ/dt = -NdΦ/dt",
+            "ε = Blv",
+            "L = NΦ/I",
+            "U = 1/2 LI^2"
+          ]
+        }
+      },
+      {
+        "id": "ph_u14_c2",
+        "title": "Ch 2: Alternating Current",
+        "concept": {
+          "title": "AC Circuits, LCR, Transformer",
+          "formulas": [
+            "I = I₀sinωt, I_rms = I₀/√2",
+            "X_L = ωL, X_C = 1/ωC",
+            "Z = √(R^2 + (X_L - X_C)^2)",
+            "P_avg = V_rms I_rms cosφ",
+            "Vs/Vp = Ns/Np = Ip/Is"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u15",
+    "title": "Unit 15: Electromagnetic Waves",
+    "chapters": [
+      {
+        "id": "ph_u15_c1",
+        "title": "Ch 1: EM Waves",
+        "concept": {
+          "title": "Displacement Current, EM Spectrum",
+          "formulas": [
+            "c = 1/√(μ₀ε₀) = 3×10^8 m/s",
+            "E/B = c",
+            "I_d = ε₀ dΦ_E/dt",
+            "u = 1/2 ε₀E^2 + B^2/2μ₀"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u16",
+    "title": "Unit 16: Optics",
+    "chapters": [
+      {
+        "id": "ph_u16_c1",
+        "title": "Ch 1: Ray Optics",
+        "concept": {
+          "title": "Reflection, Refraction, Lenses",
+          "formulas": [
+            "1/f = 1/v - 1/u, m = v/u",
+            "μ = sin i/sin r = c/v",
+            "μ2/v - μ1/u = (μ2-μ1)/R",
+            "P = 1/f in meters"
+          ]
+        }
+      },
+      {
+        "id": "ph_u16_c2",
+        "title": "Ch 2: Wave Optics",
+        "concept": {
+          "title": "Interference, Diffraction, Polarization",
+          "formulas": [
+            "β = λD/d",
+            "Δx = nλ for bright, (2n-1)λ/2 for dark",
+            "a sinθ = nλ for minima",
+            "μ = tan i_p"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u17",
+    "title": "Unit 17: Dual Nature of Matter and Radiation",
+    "chapters": [
+      {
+        "id": "ph_u17_c1",
+        "title": "Ch 1: Photoelectric Effect & Matter Waves",
+        "concept": {
+          "title": "Einstein's Equation, de Broglie",
+          "formulas": [
+            "hν = φ₀ + KE_max = φ₀ + eV₀",
+            "λ = h/p = h/mv",
+            "λ = h/√(2mKE) = 12.27/√V Å"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u18",
+    "title": "Unit 18: Atoms and Nuclei",
+    "chapters": [
+      {
+        "id": "ph_u18_c1",
+        "title": "Ch 1: Atomic Structure",
+        "concept": {
+          "title": "Bohr Model, Hydrogen Spectrum",
+          "formulas": [
+            "r_n = 0.53n^2 Å",
+            "E_n = -13.6/n^2 eV",
+            "1/λ = R(1/n1^2 - 1/n2^2), R = 1.097×10^7 m^-1",
+            "L = nħ = nh/2π"
+          ]
+        }
+      },
+      {
+        "id": "ph_u18_c2",
+        "title": "Ch 2: Nuclear Physics",
+        "concept": {
+          "title": "Mass Defect, Radioactivity",
+          "formulas": [
+            "E = Δmc^2",
+            "N = N₀e^-λt",
+            "t_1/2 = 0.693/λ",
+            "A = λN"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u19",
+    "title": "Unit 19: Electronic Devices",
+    "chapters": [
+      {
+        "id": "ph_u19_c1",
+        "title": "Ch 1: Semiconductors & Diodes",
+        "concept": {
+          "title": "p-n Junction, Zener Diode",
+          "formulas": [
+            "I = I₀(e^(eV/kT) - 1)",
+            "n_i^2 = n_e n_h",
+            "r_f = ΔV/ΔI forward, r_r = ΔV/ΔI reverse"
+          ]
+        }
+      },
+      {
+        "id": "ph_u19_c2",
+        "title": "Ch 2: Logic Gates",
+        "concept": {
+          "title": "OR, AND, NOT, NAND, NOR",
+          "formulas": [
+            "Y = A+B for OR",
+            "Y = A·B for AND",
+            "Y = Ā for NOT",
+            "Y = (A·B)̄ for NAND",
+            "Y = (A+B)̄ for NOR"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "ph_u20",
+    "title": "Unit 20: Experimental Skills",
+    "chapters": [
+      {
+        "id": "ph_u20_c1",
+        "title": "Ch 1: Measuring Instruments",
+        "concept": {
+          "title": "Vernier Calipers, Screw Gauge",
+          "formulas": [
+            "Least Count = 1MSD - 1VSD",
+            "LC_vernier = 1MSD/n",
+            "LC_screw = Pitch/Total divisions on head scale"
+          ]
+        }
+      },
+      {
+        "id": "ph_u20_c2",
+        "title": "Ch 2: Electricity & Optics Experiments",
+        "concept": {
+          "title": "Meter Bridge, Galvanometer, Lenses",
+          "formulas": [
+            "S = R(100-l)/l for meter bridge",
+            "G = (R·S)/(R-S) for galvanometer",
+            "f = uv/(u+v) for lens",
+            "ρ = RA/l"
+          ]
+        }
+      }
+    ]
+  }
+
           ]
         }
       ]
     }
   ]
+  
 }
