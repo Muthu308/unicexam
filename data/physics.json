@@ -191,11 +191,11 @@
     ]
   },
   {
-    "id": "ph_u2",
-    "title": "Unit 2: Kinematics",
+    "id": "ph_u2.1",
+    "title": "Unit 2.1: Kinematics",
     "chapters": [
       {
-        "id": "ph_u2_c1",
+        "id": "ph_u2.1_c1",
         "title": "Ch 1: Motion in Straight Line",
         "concept": {
           "title": "Displacement, Velocity, Acceleration",
@@ -208,7 +208,7 @@
         }
       },
       {
-        "id": "ph_u2_c2",
+        "id": "ph_u2.1_c2",
         "title": "Ch 2: Motion in a Plane",
         "concept": {
           "title": "Projectile Motion & Circular Motion",
