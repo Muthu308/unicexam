@@ -838,7 +838,59 @@
                 2
               ],
               "explanation": "Centripetal acceleration $a_c = \\frac{v^2}{r}$ is always directed towards the center of the circle, perpendicular to velocity."
-            }
+            },
+            {
+  "id": "ph_u2_q031",
+  "type": "MCQ",
+  "latex": true,
+  "difficulty": "easy",
+  "difficulty_rating": 4,
+  "topic": "circular_motion",
+  "chapter_id": "ph_u2_c2",
+  "subtopic": "Uniform Circular Motion",
+  "question": "A particle is moving in a circular path of radius $r$ at a constant speed $v$. Which one of the following graphs correctly represents its acceleration $a$?",
+  "options": [
+    "Graph (a): $a$ vs $r$ is a horizontal line",
+    "Graph (b): $a$ vs $r$ is a straight line with positive slope",
+    "Graph (c): $a$ vs $r$ increases sharply with $r$",
+    "Graph (d): $a$ vs $r$ is a rectangular hyperbola, decreasing with $r$"
+  ],
+  "answer": [3],
+  "explanation": "For uniform circular motion, centripetal acceleration $a = \\frac{v^2}{r}$. Since $v$ is constant, $a \\propto \\frac{1}{r}$. This is a rectangular hyperbola. As $r$ increases, $a$ decreases. Graph (d) shows $a$ decreasing with $r$ like $1/r$. **Rating 4**: Graph interpretation + $a_c$ formula. 1.5m.",
+  "figure_latex": {
+    "package": ["pgfplots"],
+    "setup": "\\pgfplotsset{compat=1.18}",
+    "options": [
+      {
+        "label": "(a)",
+        "code": "\\begin{tikzpicture}\\begin{axis}[axis lines = left, xlabel = {$r$}, ylabel = {$a$}, xtick = \\empty, ytick = \\empty, xmin=0, xmax=4, ymin=0, ymax=3, width=5cm, height=4cm]\\addplot[black, thick] coordinates {(0,2) (4,2)};\\end{axis}\\end{tikzpicture}"
+      },
+      {
+        "label": "(b)",
+        "code": "\\begin{tikzpicture}\\begin{axis}[axis lines = left, xlabel = {$r$}, ylabel = {$a$}, xtick = \\empty, ytick = \\empty, xmin=0, xmax=4, ymin=0, ymax=4, width=5cm, height=4cm]\\addplot[black, thick] {0.5 + 0.8*x};\\end{axis}\\end{tikzpicture}"
+      },
+      {
+        "label": "(c)",
+        "code": "\\begin{tikzpicture}\\begin{axis}[axis lines = left, xlabel = {$r$}, ylabel = {$a$}, xtick = \\empty, ytick = \\empty, xmin=0, xmax=3, ymin=0, ymax=4, width=5cm, height=4cm, domain=0:2.5]\\addplot[black, thick] {0.5*x^2};\\end{axis}\\end{tikzpicture}"
+      },
+      {
+        "label": "(d)",
+        "code": "\\begin{tikzpicture}\\begin{axis}[axis lines = left, xlabel = {$r$}, ylabel = {$a$}, xtick = \\empty, ytick = \\empty, xmin=0, xmax=5, ymin=0, ymax=5, width=5cm, height=4cm, domain=0.5:4.5]\\addplot[black, thick] {4/x};\\end{axis}\\end{tikzpicture}"
+      }
+    ]
+  },
+  "source": {
+    "type": "exam",
+    "exam": "NDA",
+    "exam_stage": "II",
+    "year": 2014,
+    "q_no": 99,
+    "subject": "Physics",
+    "modified": false,
+    "verified_by": "UNIC_PHY_03",
+    "verified_date": "2026-01-20"
+  }
+}
           ]
         }
       ]
