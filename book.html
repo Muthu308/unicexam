@@ -938,79 +938,14 @@ function canGoPrev() {
   return all.findIndex(c => c.id === state.activeChapterId) > 0;
 }
 
-function formatText(text = "") {
-  return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-}
-
-function renderConceptBody(body = []) {
-  return `
-    <div class="concept-body">
-      ${body.map(item => {
-
-        // Backward compatibility (old string format)
-        if (typeof item === "string") {
-          return `<p class="concept-para">${formatText(item)}</p>`;
-        }
-
-        switch (item.type) {
-
-          case "heading":
-            return `<h4 class="concept-heading">${formatText(item.text)}</h4>`;
-
-          case "paragraph":
-            return `<p class="concept-para">${formatText(item.text)}</p>`;
-
-          case "list":
-            return `
-              <ul class="concept-list">
-                ${item.items.map(i => `<li>${formatText(i)}</li>`).join("")}
-              </ul>
-            `;
-
-          case "note":
-            return `
-              <div class="concept-note">
-                💡 ${formatText(item.text)}
-              </div>
-            `;
-
-          case "syntax":
-            return `
-              <div class="concept-syntax">
-                ${item.title ? `<div class="syntax-title">${item.title}</div>` : ""}
-                <pre><code>${item.code}</code></pre>
-              </div>
-            `;
-
-          case "table":
-            return `
-              <div class="table-wrapper">
-                <table class="concept-table">
-                  <thead>
-                    <tr>
-                      ${item.headers.map(h => `<th>${h}</th>`).join("")}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${item.rows.map(r => `
-                      <tr>
-                        ${r.map(c => `<td>${formatText(c)}</td>`).join("")}
-                      </tr>
-                    `).join("")}
-                  </tbody>
-                </table>
-              </div>
-            `;
-
-          default:
-            return "";
-        }
-
-      }).join("")}
-    </div>
-  `;
-}
-
+function formatText(text = "") { return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); } 
+function renderConceptBody(body = []) { 
+  return body.map(item => { 
+    // Backward compatibility (old string format) 
+    if (typeof item === "string") { 
+      return <p class="concept-para">${formatText(item)}</p>; 
+        } 
+    switch (item.type) { case "heading": return <h4 class="concept-heading">${formatText(item.text)}</h4>; case "paragraph": return <p class="concept-para">${formatText(item.text)}</p>; case "list": return <ul class="concept-list"> ${item.items.map(i => <li>${formatText(i)}</li>).join("")} </ul> ; case "note": return <div class="concept-note"> 💡 ${formatText(item.text)} </div> ; case "syntax": return <div class="concept-syntax"> ${item.title ? <div class="syntax-title">${item.title}</div> : ""} <pre><code>${item.code}</code></pre> </div> ; case "table": return <table class="concept-table"> <thead> <tr> ${item.headers.map(h => <th>${h}</th>).join("")} </tr> </thead> <tbody> ${item.rows.map(r => <tr> ${r.map(c => <td>${c}</td>).join("")} </tr> ).join("")} </tbody> </table> ; default: return ""; } }).join(""); }
   
 function renderConceptHTML(chapter, color) {
   const c = chapter?.concept;
