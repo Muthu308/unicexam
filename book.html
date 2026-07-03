@@ -390,37 +390,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f4f5fb;color:#1a1a2e;m
     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }
 
-/* Syntax Block */
-.concept-syntax {
-    margin: 22px 0;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #dbeafe;
-    box-shadow: 0 4px 10px rgba(0,0,0,.06);
-}
-
-.syntax-title {
-    background: #2563eb;
-    color: white;
-    padding: 10px 15px;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.concept-syntax pre {
-    margin: 0;
-    padding: 18px;
-    background: #0f172a;
-    overflow-x: auto;
-}
-
-.concept-syntax code {
-    color: #e2e8f0;
-    font-size: 14px;
-    font-family: Consolas, Monaco, monospace;
-    white-space: pre;
-}
-
 /* Table */
 .concept-table {
     width: 100%;
@@ -938,14 +907,25 @@ function canGoPrev() {
   return all.findIndex(c => c.id === state.activeChapterId) > 0;
 }
 
-function formatText(text = "") { return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); } 
+function formatText(text = "") 
+  { 
+    return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); 
+  } 
 function renderConceptBody(body = []) { 
   return body.map(item => { 
     // Backward compatibility (old string format) 
     if (typeof item === "string") { 
       return <p class="concept-para">${formatText(item)}</p>; 
         } 
-    switch (item.type) { case "heading": return <h4 class="concept-heading">${formatText(item.text)}</h4>; case "paragraph": return <p class="concept-para">${formatText(item.text)}</p>; case "list": return <ul class="concept-list"> ${item.items.map(i => <li>${formatText(i)}</li>).join("")} </ul> ; case "note": return <div class="concept-note"> 💡 ${formatText(item.text)} </div> ; case "syntax": return <div class="concept-syntax"> ${item.title ? <div class="syntax-title">${item.title}</div> : ""} <pre><code>${item.code}</code></pre> </div> ; case "table": return <table class="concept-table"> <thead> <tr> ${item.headers.map(h => <th>${h}</th>).join("")} </tr> </thead> <tbody> ${item.rows.map(r => <tr> ${r.map(c => <td>${c}</td>).join("")} </tr> ).join("")} </tbody> </table> ; default: return ""; } }).join(""); }
+    switch (item.type) { 
+      case "heading": return <h4 class="concept-heading">${formatText(item.text)}</h4>; 
+      case "paragraph": return <p class="concept-para">${formatText(item.text)}</p>; 
+      case "list": return <ul class="concept-list"> ${item.items.map(i => <li>${formatText(i)}</li>).join("")} </ul> ; 
+      case "note": return <div class="concept-note"> 💡 ${formatText(item.text)} </div> ; 
+      case "syntax": return <div class="concept-syntax"> ${item.title ? <div class="syntax-title">${item.title}</div> : ""} <pre><code>${item.code}</code></pre> </div> ; 
+      case "table": return <table class="concept-table"> <thead> <tr> ${item.headers.map(h => <th>${h}</th>).join("")} </tr> </thead> <tbody> ${item.rows.map(r => <tr> ${r.map(c => <td>${c}</td>).join("")} </tr> ).join("")} </tbody> </table> ; 
+      default: return ""; } }).join("");
+  }
   
 function renderConceptHTML(chapter, color) {
   const c = chapter?.concept;
