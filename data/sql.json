@@ -887,55 +887,271 @@
           ]
         },
         {
-          "id": "sql_u6_c2",
-          "title": "Ch 2: String Functions",
-          "concept": {
-            "title": "Manipulating Text Data",
-            "body": [
-              "Common string functions: UPPER()/LOWER() change case, LENGTH() returns character count, CONCAT() joins strings, TRIM() removes leading/trailing spaces.",
-              "SUBSTRING(str, start, length) extracts part of a string.",
-              "REPLACE(str, old, new) substitutes occurrences of one substring with another."
-            ],
-            "syntax": [
-              "SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM employees;",
-              "SELECT UPPER(name) FROM students;"
-            ]
-          },
-          "questions": [
-            {
-              "id": "sql_q035",
-              "type": "MCQ",
-              "difficulty_rating": 2,
-              "question": "What does CONCAT(first_name, ' ', last_name) do?",
-              "options": [
-                "Compares the two names",
-                "Joins first_name and last_name with a space between them",
-                "Deletes last_name",
-                "Counts characters"
-              ],
-              "answer": [
-                1
-              ],
-              "explanation": "CONCAT joins its arguments into a single string, here producing 'FirstName LastName'."
-            },
-            {
-              "id": "sql_q036",
-              "type": "MCQ",
-              "difficulty_rating": 2,
-              "question": "Which function removes leading and trailing spaces from a string?",
-              "options": [
-                "LENGTH()",
-                "TRIM()",
-                "UPPER()",
-                "CONCAT()"
-              ],
-              "answer": [
-                1
-              ],
-              "explanation": "TRIM() strips whitespace (or a specified character) from both ends of a string."
-            }
-          ]
-        },
+  "id": "sql_u6_c2",
+  "title": "Ch 2: String Functions",
+  "concept": {
+    "title": "Manipulating Text Data",
+    "body": [
+      "1. What are String Functions?",
+      "String functions are SQL functions used to manipulate, clean, and format text data stored in database columns.",
+      "They are commonly used in Data Analytics, Reporting, and ETL processes to prepare data for analysis.",
+      "Common string functions include UPPER(), LOWER(), LENGTH(), CONCAT(), SUBSTRING(), TRIM(), and REPLACE().",
+      "UPPER() converts text to uppercase.",
+      "LOWER() converts text to lowercase.",
+      "LENGTH() returns the total number of characters in a string.",
+      "CONCAT() joins two or more strings into one.",
+      "SUBSTRING(string, start, length) extracts a portion of a string.",
+      "TRIM() removes leading and trailing spaces from a string.",
+      "REPLACE(string, old_text, new_text) replaces occurrences of one substring with another."
+    ],
+    "syntax": [
+      "SELECT UPPER(name) FROM employees;",
+      "SELECT LOWER(email) FROM employees;",
+      "SELECT LENGTH(name) FROM employees;",
+      "SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM employees;",
+      "SELECT SUBSTRING(name, 1, 3) FROM employees;",
+      "SELECT TRIM('   SQL   ');",
+      "SELECT REPLACE('I love Java', 'Java', 'SQL');"
+    ],
+    "practice": [
+      "Convert employee names to uppercase.",
+      "Convert emails to lowercase.",
+      "Combine first_name and last_name into full_name.",
+      "Extract the first 4 letters of each employee's name.",
+      "Remove extra spaces from city names.",
+      "Replace 'Java' with 'SQL' in a text string."
+    ]
+  },
+  "questions": [
+    {
+      "id": "sql_q035",
+      "type": "MCQ",
+      "difficulty_rating": 2,
+      "question": "What does CONCAT(first_name, ' ', last_name) do?",
+      "options": [
+        "Compares first_name and last_name",
+        "Joins first_name and last_name with a space",
+        "Deletes last_name",
+        "Counts the number of characters"
+      ],
+      "answer": [1],
+      "explanation": "CONCAT() combines multiple strings into one. Here it joins the first name, a space, and the last name to produce a full name."
+    },
+    {
+      "id": "sql_q036",
+      "type": "MCQ",
+      "difficulty_rating": 2,
+      "question": "Which function removes leading and trailing spaces from a string?",
+      "options": [
+        "LENGTH()",
+        "TRIM()",
+        "UPPER()",
+        "CONCAT()"
+      ],
+      "answer": [1],
+      "explanation": "TRIM() removes unnecessary spaces from the beginning and end of a string."
+    },
+    {
+      "id": "sql_q037",
+      "type": "MCQ",
+      "difficulty_rating": 1,
+      "question": "Which function converts text to uppercase?",
+      "options": [
+        "LOWER()",
+        "UPPER()",
+        "CONCAT()",
+        "REPLACE()"
+      ],
+      "answer": [1],
+      "explanation": "UPPER() converts every alphabetic character in a string to uppercase."
+    },
+    {
+      "id": "sql_q038",
+      "type": "MCQ",
+      "difficulty_rating": 1,
+      "question": "Which function converts text to lowercase?",
+      "options": [
+        "UPPER()",
+        "LOWER()",
+        "LENGTH()",
+        "SUBSTRING()"
+      ],
+      "answer": [1],
+      "explanation": "LOWER() converts all alphabetic characters in a string to lowercase."
+    },
+    {
+      "id": "sql_q039",
+      "type": "MCQ",
+      "difficulty_rating": 2,
+      "question": "What does LENGTH('Database') return?",
+      "options": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "answer": [1],
+      "explanation": "The word 'Database' contains 8 characters, so LENGTH('Database') returns 8."
+    },
+    {
+      "id": "sql_q040",
+      "type": "MCQ",
+      "difficulty_rating": 2,
+      "question": "What is the output of SUBSTRING('Employee', 1, 3)?",
+      "options": [
+        "Emp",
+        "mpl",
+        "ploy",
+        "Employee"
+      ],
+      "answer": [0],
+      "explanation": "SUBSTRING(string, start, length) extracts characters starting from position 1. The first three characters of 'Employee' are 'Emp'."
+    },
+    {
+      "id": "sql_q041",
+      "type": "MCQ",
+      "difficulty_rating": 2,
+      "question": "What is the output of REPLACE('I love Java', 'Java', 'SQL')?",
+      "options": [
+        "I love Java SQL",
+        "I love SQL",
+        "Java SQL",
+        "I SQL love"
+      ],
+      "answer": [1],
+      "explanation": "REPLACE() substitutes all occurrences of the specified text. 'Java' is replaced with 'SQL'."
+    },
+    {
+      "id": "sql_q042",
+      "type": "MCQ",
+      "difficulty_rating": 2,
+      "question": "Which function is best used to combine first_name and last_name into one column?",
+      "options": [
+        "LENGTH()",
+        "CONCAT()",
+        "TRIM()",
+        "SUBSTRING()"
+      ],
+      "answer": [1],
+      "explanation": "CONCAT() joins two or more strings into a single string."
+    },
+    {
+      "id": "sql_q043",
+      "type": "MCQ",
+      "difficulty_rating": 3,
+      "question": "Which query extracts the first four characters of the name column?",
+      "options": [
+        "SELECT LENGTH(name) FROM employees;",
+        "SELECT SUBSTRING(name, 1, 4) FROM employees;",
+        "SELECT CONCAT(name, 4) FROM employees;",
+        "SELECT TRIM(name) FROM employees;"
+      ],
+      "answer": [1],
+      "explanation": "SUBSTRING(name, 1, 4) starts at the first character and extracts four characters."
+    },
+    {
+      "id": "sql_q044",
+      "type": "MCQ",
+      "difficulty_rating": 3,
+      "question": "Why is TRIM() commonly used in data cleaning?",
+      "options": [
+        "To convert text to uppercase",
+        "To remove unwanted spaces around text values",
+        "To count characters",
+        "To join multiple strings"
+      ],
+      "answer": [1],
+      "explanation": "Extra spaces often cause duplicate values and comparison issues. TRIM() removes these unwanted leading and trailing spaces."
+    },
+    {
+      "id": "sql_q045",
+      "type": "MCQ",
+      "difficulty_rating": 3,
+      "question": "Which SQL function is commonly used to standardize email addresses before analysis?",
+      "options": [
+        "LOWER()",
+        "LENGTH()",
+        "TRIM()",
+        "SUBSTRING()"
+      ],
+      "answer": [0],
+      "explanation": "Email addresses are usually converted to lowercase using LOWER() so that different letter cases are treated consistently."
+    }, {
+    "id": "sql_q046",
+    "type": "MSQ",
+    "difficulty_rating": 3,
+    "question": "Which of the following SQL functions are used to change the letter case of text?",
+    "options": [
+      "UPPER()",
+      "LOWER()",
+      "LENGTH()",
+      "TRIM()"
+    ],
+    "answer": [0, 1],
+    "explanation": "UPPER() converts text to uppercase, while LOWER() converts text to lowercase."
+  },
+  {
+    "id": "sql_q047",
+    "type": "MSQ",
+    "difficulty_rating": 3,
+    "question": "Which SQL functions are commonly used for cleaning text data?",
+    "options": [
+      "TRIM()",
+      "REPLACE()",
+      "UPPER()",
+      "CONCAT()"
+    ],
+    "answer": [0, 1, 2],
+    "explanation": "TRIM() removes unwanted spaces, REPLACE() substitutes text, and UPPER() helps standardize text. CONCAT() joins strings rather than cleaning them."
+  },
+  {
+    "id": "sql_q048",
+    "type": "MSQ",
+    "difficulty_rating": 4,
+    "question": "Which of the following functions return a string as output?",
+    "options": [
+      "UPPER()",
+      "LOWER()",
+      "CONCAT()",
+      "LENGTH()"
+    ],
+    "answer": [0, 1, 2],
+    "explanation": "UPPER(), LOWER(), and CONCAT() return strings. LENGTH() returns a numeric value."
+  },
+  {
+    "id": "sql_q049",
+    "type": "NAT",
+    "difficulty_rating": 2,
+    "question": "What is the output of LENGTH('Database')?",
+    "answer": "8",
+    "explanation": "The word 'Database' contains 8 characters."
+  },
+  {
+    "id": "sql_q050",
+    "type": "NAT",
+    "difficulty_rating": 2,
+    "question": "What is the output of SUBSTRING('Employee', 1, 4)?",
+    "answer": "Empl",
+    "explanation": "Starting from position 1, the first four characters are 'Empl'."
+  },
+  {
+    "id": "sql_q051",
+    "type": "NAT",
+    "difficulty_rating": 2,
+    "question": "What is the output of REPLACE('SQL Basics', 'Basics', 'Tutorial')?",
+    "answer": "SQL Tutorial",
+    "explanation": "REPLACE() substitutes 'Basics' with 'Tutorial'."
+  },
+  {
+    "id": "sql_q052",
+    "type": "NAT",
+    "difficulty_rating": 2,
+    "question": "What is the output of TRIM('   SQL   ')?",
+    "answer": "SQL",
+    "explanation": "TRIM() removes leading and trailing spaces."
+  }
+  ]
+},
         {
           "id": "sql_u6_c3",
           "title": "Ch 3: Date & Time Functions",
