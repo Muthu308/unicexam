@@ -892,18 +892,53 @@
   "concept": {
     "title": "Manipulating Text Data",
     "body": [
-      "1. What are String Functions?",
-      "String functions are SQL functions used to manipulate, clean, and format text data stored in database columns.",
-      "They are commonly used in Data Analytics, Reporting, and ETL processes to prepare data for analysis.",
-      "Common string functions include UPPER(), LOWER(), LENGTH(), CONCAT(), SUBSTRING(), TRIM(), and REPLACE().",
-      "UPPER() converts text to uppercase.",
-      "LOWER() converts text to lowercase.",
-      "LENGTH() returns the total number of characters in a string.",
-      "CONCAT() joins two or more strings into one.",
-      "SUBSTRING(string, start, length) extracts a portion of a string.",
-      "TRIM() removes leading and trailing spaces from a string.",
-      "REPLACE(string, old_text, new_text) replaces occurrences of one substring with another."
-    ],
+  {
+    "type": "heading",
+    "text": "1. What are String Functions?"
+  },
+  {
+    "type": "paragraph",
+    "text": "String functions are used to manipulate, clean, and format text data."
+  },
+  {
+    "type": "list",
+    "items": [
+      "Manipulate text data",
+      "Clean messy data",
+      "Format outputs"
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "Used heavily in <b>Data Analytics</b>, <b>Reporting</b>, and <b>ETL</b> processes."
+  },
+  {
+    "type": "heading",
+    "text": "Common String Functions"
+  },
+  {
+    "type": "table",
+    "headers": ["Function", "Purpose"],
+    "rows": [
+      ["UPPER()", "Convert to uppercase"],
+      ["LOWER()", "Convert to lowercase"],
+      ["LENGTH()", "Count characters"],
+      ["CONCAT()", "Join strings"],
+      ["SUBSTRING()", "Extract part of string"],
+      ["TRIM()", "Remove spaces"],
+      ["REPLACE()", "Replace text"]
+    ]
+  },
+  {
+    "type": "syntax",
+    "title": "Example",
+    "code": "SELECT UPPER(name)\nFROM employees;"
+  },
+  {
+    "type": "note",
+    "text": "UPPER() returns all letters in uppercase."
+  }
+],
     "syntax": [
       "SELECT UPPER(name) FROM employees;",
       "SELECT LOWER(email) FROM employees;",
