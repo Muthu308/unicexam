@@ -603,7 +603,7 @@ async function init() {
   try {
     state.config = await ajax('data/config.json');
   } catch {
-    state.config = { academyName:'UNIC Academic', logoText:'UN', subjects:['PH','CH','MA','BIO'], howDidYouFindUs:['Google','Friend','YouTube','Other'] };
+    state.config = { academyName:'UNIC Academic', logoText:'UN', subjects:['PH','CH','MA','BIO','SQL'], howDidYouFindUs:['Google','Friend','YouTube','Other'] };
   }
 
   // Apply branding
@@ -1060,6 +1060,103 @@ function renderTypeTabsHTML() {
   return html;
 }
 
+const QUESTIONS_PER_PAGE = 3;
+
+function renderQuestionPage() {
+
+    const start = Math.floor(state.questionIndex / QUESTIONS_PER_PAGE) * QUESTIONS_PER_PAGE;
+    const end = Math.min(start + QUESTIONS_PER_PAGE, questions.length);
+
+    const container = document.getElementById("questionContainer");
+
+    let html = "";
+
+    for (let i = start; i < end; i++) {
+
+        const q = questions[i];
+
+        html += `
+            <div class="question-card">
+
+                <div class="question-header">
+                    Question ${i + 1} of ${questions.length}
+                </div>
+
+                <div class="question-text">
+                    ${q.question}
+                </div>
+        `;
+
+        if (q.type === "MCQ") {
+
+            html += `<div class="options">`;
+
+            q.options.forEach((option, index) => {
+
+                const checked = state.answers[i]?.includes(index) ? "checked" : "";
+
+                html += `
+                    <label>
+                        <input
+                            type="radio"
+                            name="q${i}"
+                            value="${index}"
+                            ${checked}
+                            onchange="saveMCQ(${i},${index})">
+                        ${option}
+                    </label>
+                `;
+            });
+
+            html += `</div>`;
+
+        }
+        else if (q.type === "MSQ") {
+
+            html += `<div class="options">`;
+
+            q.options.forEach((option, index) => {
+
+                const checked = state.answers[i]?.includes(index) ? "checked" : "";
+
+                html += `
+                    <label>
+                        <input
+                            type="checkbox"
+                            value="${index}"
+                            ${checked}
+                            onchange="saveMSQ(${i},${index},this.checked)">
+                        ${option}
+                    </label>
+                `;
+            });
+
+            html += `</div>`;
+
+        }
+        else if (q.type === "NAT") {
+
+            const value = state.answers[i] || "";
+
+            html += `
+                <input
+                    type="text"
+                    value="${value}"
+                    placeholder="Enter your answer"
+                    oninput="saveNAT(${i}, this.value)">
+            `;
+        }
+
+        html += `</div>`;
+    }
+
+    container.innerHTML = html;
+
+    document.getElementById("pageInfo").textContent =
+        `Questions ${start + 1}-${end} of ${questions.length}`;
+
+}
+  
 function setQtypeFilter(type) {
   state.qtypeFilter = type;
   state.questionIndex = 0;
@@ -1077,7 +1174,7 @@ function renderQuestion() {
   const tabsHTML = renderTypeTabsHTML();
 
   const questions = getQuestions();
-  const q = questions[state.questionIndex];
+  const q = questions[state.questionIndex];  
 
   if (!q) {
     wrap.innerHTML = `
@@ -1244,13 +1341,33 @@ function renderNATHTML(q, isSubmitted) {
 }
 
 function checkIsCorrect(q, selected) {
-  if (q.type === 'NAT') {
-    const val = parseFloat(selected);
-    if (isNaN(val)) return false;
-    const tol = q.tolerance ?? 0;
-    return Math.abs(val - q.answer) <= tol;
+  if (q.type === "NAT") {
+
+    const answer = String(q.answer).trim();
+    const input = String(selected).trim();
+
+    // Numeric NAT
+    if (answer !== "" && !isNaN(Number(answer))) {
+      const val = Number(input);
+      if (isNaN(val)) return false;
+
+      const tol = q.tolerance ?? 0;
+      return Math.abs(val - Number(answer)) <= tol;
+    }
+
+    // Text NAT
+    const normalize = (str) =>
+      str
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLowerCase();
+
+    return normalize(input) === normalize(answer);
   }
-  return JSON.stringify([...(selected||[])].sort((a,b)=>a-b)) === JSON.stringify([...q.answer].sort((a,b)=>a-b));
+
+  // MCQ / MSQ
+  return JSON.stringify([...(selected || [])].sort((a, b) => a - b)) ===
+         JSON.stringify([...q.answer].sort((a, b) => a - b));
 }
 
 function goToDot(i) {
