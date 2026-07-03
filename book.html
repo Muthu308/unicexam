@@ -917,6 +917,7 @@ function renderConceptHTML(chapter, color) {
       ${c.formulas.map(f => `<span class="formula-chip">${f}</span>`).join('')}
     </div>`;
   }
+  
   let syntaxHTML = '';
   if (c.syntax && c.syntax.length) {
     syntaxHTML = `<div class="concept-formulas">
@@ -938,6 +939,7 @@ function renderConceptHTML(chapter, color) {
       <div class="concept-body${openCls}" id="concept-body">
         ${bodyHTML}
         ${formulasHTML}
+        ${syntaxHTML}
       </div>
     </div>`;
 }
