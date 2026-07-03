@@ -361,6 +361,158 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f4f5fb;color:#1a1a2e;m
   .q-actions{padding:0 16px 16px}
   .explanation{margin:0 16px 16px}
 }
+
+  /* Main Content */
+.concept-body {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    line-height: 1.8;
+    color: #333;
+}
+
+/* Heading */
+.concept-heading {
+    margin: 25px 0 12px;
+    padding-left: 12px;
+    border-left: 5px solid #4f46e5;
+    color: #1e293b;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* Paragraph */
+.concept-para {
+    margin: 12px 0;
+    font-size: 16px;
+    color: #444;
+}
+
+/* Strong Text */
+.concept-para strong,
+.concept-list strong,
+.concept-note strong {
+    color: #2563eb;
+}
+
+/* List */
+.concept-list {
+    margin: 15px 0 20px 25px;
+    padding: 0;
+}
+
+.concept-list li {
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+/* Note Box */
+.concept-note {
+    margin: 20px 0;
+    padding: 15px 18px;
+    background: #fff8db;
+    border-left: 6px solid #facc15;
+    border-radius: 8px;
+    color: #6b5500;
+    font-size: 15px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+/* Syntax Block */
+.concept-syntax {
+    margin: 22px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 4px 10px rgba(0,0,0,.06);
+}
+
+.syntax-title {
+    background: #2563eb;
+    color: white;
+    padding: 10px 15px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.concept-syntax pre {
+    margin: 0;
+    padding: 18px;
+    background: #0f172a;
+    overflow-x: auto;
+}
+
+.concept-syntax code {
+    color: #e2e8f0;
+    font-size: 14px;
+    font-family: Consolas, Monaco, monospace;
+    white-space: pre;
+}
+
+/* Table */
+.concept-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+
+.concept-table thead {
+    background: #2563eb;
+    color: white;
+}
+
+.concept-table th,
+.concept-table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.concept-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.concept-table tbody tr:hover {
+    background: #eef4ff;
+}
+
+.concept-table th {
+    font-weight: 600;
+}
+
+.concept-table td,
+.concept-table th {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Scroll on Mobile */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+/* Responsive */
+@media (max-width:768px) {
+
+    .concept-heading {
+        font-size: 20px;
+    }
+
+    .concept-para,
+    .concept-list li {
+        font-size: 15px;
+    }
+
+    .concept-table th,
+    .concept-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .concept-syntax code {
+        font-size: 13px;
+    }
+}
+  
 </style>
 </head>
 <body>
@@ -458,7 +610,7 @@ const SUBJECTS = {
   CH:  { label:'Chemistry',   emoji:'🧪', color:'#E53E3E', file:'data/chemistry.json' },
   MA:  { label:'Mathematics', emoji:'∑',  color:'#2563EB', file:'data/mathematics.json' },
   BIO: { label:'Biology',     emoji:'🧬', color:'#16a34a', file:'data/biology.json' },
-  SQL: { label:'SQL',     emoji:'SQL', color:'#0F9D8C', file:'data/sql.json' },
+  SQL: { label:'SQL',         emoji:'⛁⛁', color:'#0F9D8C', file:'data/sql.json' },
 };
 
 const LABELS = ['A','B','C','D','E'];
@@ -837,66 +989,75 @@ function canGoPrev() {
 function formatText(text = "") {
   return text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
+
 function renderConceptBody(body = []) {
-  return body.map(item => {
+  return `
+    <div class="concept-body">
+      ${body.map(item => {
 
-    // Backward compatibility (old string format)
-    if (typeof item === "string") {
-      return `<p class="concept-para">${formatText(item)}</p>`;
-    }
+        // Backward compatibility (old string format)
+        if (typeof item === "string") {
+          return `<p class="concept-para">${formatText(item)}</p>`;
+        }
 
-    switch (item.type) {
+        switch (item.type) {
 
-      case "heading":
-        return `<h4 class="concept-heading">${formatText(item.text)}</h4>`;
+          case "heading":
+            return `<h4 class="concept-heading">${formatText(item.text)}</h4>`;
 
-      case "paragraph":
-        return `<p class="concept-para">${formatText(item.text)}</p>`;
+          case "paragraph":
+            return `<p class="concept-para">${formatText(item.text)}</p>`;
 
-      case "list":
-        return `
-          <ul class="concept-list">
-            ${item.items.map(i => `<li>${formatText(i)}</li>`).join("")}
-          </ul>
-        `;
+          case "list":
+            return `
+              <ul class="concept-list">
+                ${item.items.map(i => `<li>${formatText(i)}</li>`).join("")}
+              </ul>
+            `;
 
-      case "note":
-        return `
-          <div class="concept-note">
-            💡 ${formatText(item.text)}
-          </div>
-        `;
+          case "note":
+            return `
+              <div class="concept-note">
+                💡 ${formatText(item.text)}
+              </div>
+            `;
 
-      case "syntax":
-        return `
-          <div class="concept-syntax">
-            ${item.title ? `<div class="syntax-title">${item.title}</div>` : ""}
-            <pre><code>${item.code}</code></pre>
-          </div>
-        `;
-      case "table":
-        return `
-          <table class="concept-table">
-            <thead>
-              <tr>
-                ${item.headers.map(h => `<th>${h}</th>`).join("")}
-              </tr>
-            </thead>
-            <tbody>
-              ${item.rows.map(r => `
-                <tr>
-                  ${r.map(c => `<td>${c}</td>`).join("")}
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        `;
+          case "syntax":
+            return `
+              <div class="concept-syntax">
+                ${item.title ? `<div class="syntax-title">${item.title}</div>` : ""}
+                <pre><code>${item.code}</code></pre>
+              </div>
+            `;
 
-      default:
-        return "";
-    }
-  }).join("");
-}  
+          case "table":
+            return `
+              <div class="table-wrapper">
+                <table class="concept-table">
+                  <thead>
+                    <tr>
+                      ${item.headers.map(h => `<th>${h}</th>`).join("")}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${item.rows.map(r => `
+                      <tr>
+                        ${r.map(c => `<td>${formatText(c)}</td>`).join("")}
+                      </tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </div>
+            `;
+
+          default:
+            return "";
+        }
+
+      }).join("")}
+    </div>
+  `;
+}
 
   
 function renderConceptHTML(chapter, color) {
