@@ -231,8 +231,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f4f5fb;color:#1a1a2e;m
 
 /* Batch of question cards */
 .q-batch{display:flex;flex-direction:column;gap:18px;margin-bottom:16px}
-.q-batch-actions{display:flex;gap:10px;margin-top:2px;justify-content:space-between}
-.q-batch-actions .btn{flex:0 0 auto;justify-content:center;min-width:112px;padding:10px 20px}
+.q-batch-actions{display:flex;gap:10px;margin-top:2px}
+.q-batch-actions .btn{flex:1;justify-content:center}
 
 /* Card */
 .q-card{background:#fff;border-radius:var(--radius-lg);border:1px solid #e5e7eb;box-shadow:var(--shadow);overflow:hidden}
@@ -316,36 +316,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:#f4f5fb;color:#1a1a2e;m
 /* Dot navigator */
 .q-dots{display:flex;justify-content:center;gap:6px;margin-top:14px;flex-wrap:wrap}
 .q-dot{height:6px;border-radius:3px;transition:all .25s ease;cursor:pointer}
-
-/* ─── Section headings & icon buttons ─── */
-.section-heading-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-.section-heading{font-size:15.5px;font-weight:700;color:#111;display:flex;align-items:center;gap:8px}
-.section-heading .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.icon-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:32px;height:32px;border-radius:9px;border:1.5px solid #e5e7eb;
-  background:#fff;color:#6b7280;cursor:pointer;transition:all var(--trans);flex-shrink:0
-}
-.icon-btn:hover{background:#f9fafb;border-color:#d1d5db;color:#111}
-.icon-btn.active{background:var(--brand);border-color:var(--brand);color:#fff}
-.icon-btn svg{width:15px;height:15px;pointer-events:none}
-.questions-section{position:relative}
-
-/* Fullscreen mode */
-.questions-section:fullscreen,
-.sql-playground:fullscreen{
-  background:#f4f5fb;padding:22px;overflow-y:auto;display:block
-}
-.questions-section:fullscreen{max-width:none}
-.questions-section:fullscreen .q-batch-actions,
-.questions-section:fullscreen .section-heading-row{max-width:760px;margin-left:auto;margin-right:auto}
-.questions-section:fullscreen .q-batch{max-width:760px;margin-left:auto;margin-right:auto}
-.questions-section:fullscreen .q-progress-row,
-.questions-section:fullscreen .q-breadcrumb,
-.questions-section:fullscreen .qtype-tabs{max-width:760px;margin-left:auto;margin-right:auto}
-.sql-playground:fullscreen .sql-pg-body{max-width:900px;margin:0 auto;padding-top:6px}
-.sql-playground:fullscreen textarea#sql-editor{min-height:220px}
-#app:fullscreen{background:#f4f5fb}
 
 /* ─── SQL Playground ─── */
 .sql-playground{
@@ -496,11 +466,6 @@ table.sql-result-table tbody tr:nth-child(even){background:#f8fafc}
   textarea#sql-editor{font-size:13px;min-height:100px;padding:12px 14px}
   .sql-pg-actions{gap:8px}
   .sql-pg-actions .btn{flex:1;justify-content:center;padding:10px 8px;font-size:12.5px}
-  .section-heading{font-size:14px}
-  .icon-btn{width:29px;height:29px}
-  .icon-btn svg{width:13.5px;height:13.5px}
-  .questions-section:fullscreen,
-  .sql-playground:fullscreen{padding:14px}
 }
 @media(max-width:400px){
   .q-card-header{flex-wrap:wrap;padding:10px 14px}
@@ -534,7 +499,7 @@ table.sql-result-table tbody tr:nth-child(even){background:#f8fafc}
       </div>
       <div class="field">
         <label>Mobile Number</label>
-        <input type="tel" id="f-mobile" placeholder="+91 9655168622">
+        <input type="tel" id="f-mobile" placeholder="9655168622">
         <div class="errmsg" id="err-mobile"></div>
       </div>
       <div class="field">
@@ -561,19 +526,16 @@ table.sql-result-table tbody tr:nth-child(even){background:#f8fafc}
     <div id="logo-box">UN</div>
     <span id="brand-name">UNIC Academic</span>
     <nav id="subject-tabs"></nav>
-    <button id="app-fs-toggle" class="icon-btn" title="Full screen" aria-label="Toggle full screen" style="margin-left:4px">
-      <svg id="app-fs-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V5a1 1 0 011-1h3M4 16v3a1 1 0 001 1h3M20 8V5a1 1 0 00-1-1h-3M20 16v3a1 1 0 01-1 1h-3"/></svg>
-    </button>
     <div style="position:relative">
       <button id="user-btn">?</button>
       <div id="user-dropdown">
         <div class="uname" id="dd-name">Guest</div>
         <div class="uemail" id="dd-email"></div>
         <hr>
-        <!--<a href="admin.html">
+      <!-- <a href="admin.html">
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           Admin Panel
-        </a>-->
+        </a>--->
         <button class="dropdown-btn" id="dd-signout">
           <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
           Sign out
@@ -615,8 +577,8 @@ const SUBJECTS = {
 const LABELS = ['A','B','C','D','E'];
 const BATCH_SIZE = 3;
 
-// ── SQL Playground sample schema ──
-const SQL_SAMPLE_SCHEMA = `CREATE TABLE Student (
+// ── SQL Playground fallback (used only if a chapter has no playground config) ──
+const DEFAULT_SQL_SCHEMA = `CREATE TABLE Student (
   Roll_No INT PRIMARY KEY,
   Name VARCHAR(30),
   Class VARCHAR(5),
@@ -630,7 +592,7 @@ INSERT INTO Student VALUES (4, 'Kabir', '10B', 64);
 INSERT INTO Student VALUES (5, 'Meera', '10A', 79);
 INSERT INTO Student VALUES (6, 'Vihaan', '10C', 58);`;
 
-const SQL_SAMPLE_QUERIES = [
+const DEFAULT_SQL_QUERIES = [
   'SELECT * FROM Student;',
   "SELECT Name, Marks FROM Student WHERE Class = '10A';",
   'SELECT Class, AVG(Marks) FROM Student GROUP BY Class;',
@@ -638,28 +600,17 @@ const SQL_SAMPLE_QUERIES = [
   "UPDATE Student SET Marks = 90 WHERE Name = 'Aman';",
 ];
 
-// Resolve the SQL Playground schema/sample-queries for the current chapter.
-// Each chapter in the JSON can optionally include:
-//   "sqlPlayground": { "schema": "CREATE TABLE ...", "sampleQueries": ["SELECT ..."] }
-// If a chapter doesn't define one, the global sample Student table is used instead.
-function getSqlPlaygroundConfig() {
+// Each SQL chapter can carry its own `playground: { schema, sampleQueries }`
+// (e.g. two tables for the Joins chapter, a Gender column for GROUP BY, an
+// empty table for the CREATE TABLE chapter). Falls back to the defaults
+// above for chapters that don't define one (or for non-SQL subjects).
+function getActivePlayground() {
   const chapter = getCurrentChapter();
-  const custom = chapter?.sqlPlayground;
-  if (custom && custom.schema) {
-    return {
-      schema: custom.schema,
-      queries: (custom.sampleQueries && custom.sampleQueries.length) ? custom.sampleQueries : SQL_SAMPLE_QUERIES,
-    };
-  }
-  return { schema: SQL_SAMPLE_SCHEMA, queries: SQL_SAMPLE_QUERIES };
-}
-
-// Pulls table names out of a schema string so the UI can show a friendly hint
-// like "Student, Class" without needing that listed separately in the JSON.
-function extractTableNames(schema) {
-  const matches = [...schema.matchAll(/CREATE TABLE\s+(?:IF NOT EXISTS\s+)?["'`]?(\w+)["'`]?/gi)];
-  const names = matches.map(m => m[1]);
-  return names.length ? names.join(', ') : 'sample';
+  const pg = chapter?.playground;
+  return {
+    schema: pg?.schema || DEFAULT_SQL_SCHEMA,
+    sampleQueries: (pg?.sampleQueries && pg.sampleQueries.length) ? pg.sampleQueries : DEFAULT_SQL_QUERIES,
+  };
 }
 
 // ── State ──
@@ -677,19 +628,10 @@ let state = {
   qtypeFilter: 'ALL', // ALL | MCQ | MSQ | NAT
   sqlPgOpen: true,
   sqlDb: null,
-  sqlLoadedChapterId: null,
+  sqlJsLoading: null,
+  sqlLoadedChapterId: null, // which chapter's schema is currently loaded into sqlDb
 };
 
-// Cached promise for the sql.js WASM module (loaded once, reused across chapters)
-let sqlJsModulePromise = null;
-function loadSqlJsModule() {
-  if (!sqlJsModulePromise) {
-    sqlJsModulePromise = initSqlJs({
-      locateFile: file => `https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/${file}`
-    });
-  }
-  return sqlJsModulePromise;
-}
 
 // ── Utilities ──
 function hex2rgba(hex, a) {
@@ -1253,30 +1195,22 @@ function renderQuestion() {
     <div class="fade-in">
       ${conceptHTML}
       ${sqlPgHTML}
-      <div class="questions-section" id="questions-section-box">
-        <div class="section-heading-row">
-          <div class="section-heading"><span class="dot" style="background:${color}"></span> Practice Questions</div>
-          <button class="icon-btn" id="questions-fs-btn" title="Full screen" onclick="toggleFullscreen('questions-section-box','questions-fs-btn')">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V5a1 1 0 011-1h3M4 16v3a1 1 0 001 1h3M20 8V5a1 1 0 00-1-1h-3M20 16v3a1 1 0 01-1 1h-3"/></svg>
-          </button>
-        </div>
-        ${tabsHTML}
-        <div class="q-breadcrumb">${chapter?.title || ''}</div>
-        <div class="q-progress-row">
-          <div class="q-progress-track"><div class="q-progress-fill" style="width:${pct}%;background:${color}"></div></div>
-          <span class="q-progress-label">${batchStart+1}-${batchEnd} / ${totalQ}</span>
-        </div>
-        <div class="q-batch">
-          ${cardsHTML}
-        </div>
-        <div class="q-batch-actions">
-          <button class="btn btn-outline" onclick="goPrev()" ${!canGoPrev()?'disabled':''}>
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Prev 3
-          </button>
-          <button class="btn btn-primary" onclick="goNext()" ${!canGoNext()?'disabled':''} style="background:${color}">Next 3 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
-        </div>
-        ${dotsHTML}
+      ${tabsHTML}
+      <div class="q-breadcrumb">${chapter?.title || ''}</div>
+      <div class="q-progress-row">
+        <div class="q-progress-track"><div class="q-progress-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span class="q-progress-label">${batchStart+1}-${batchEnd} / ${totalQ}</span>
       </div>
+      <div class="q-batch">
+        ${cardsHTML}
+      </div>
+      <div class="q-batch-actions">
+        <button class="btn btn-outline" onclick="goPrev()" ${!canGoPrev()?'disabled':''}>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg> Prev 3
+        </button>
+        <button class="btn btn-primary" onclick="goNext()" ${!canGoNext()?'disabled':''} style="background:${color}">Next 3 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      ${dotsHTML}
     </div>`;
 
   // Render LaTeX if needed
@@ -1432,37 +1366,6 @@ function goToDot(batchStartIndex) {
 }
 
 // ══════════════════════════════════════════
-//  FULLSCREEN HELPERS
-// ══════════════════════════════════════════
-const EXPAND_ICON = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V5a1 1 0 011-1h3M4 16v3a1 1 0 001 1h3M20 8V5a1 1 0 00-1-1h-3M20 16v3a1 1 0 01-1 1h-3"/>';
-const COLLAPSE_ICON = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 4v3a1 1 0 01-1 1H5M15 4v3a1 1 0 001 1h3M9 20v-3a1 1 0 00-1-1H5M15 20v-3a1 1 0 011-1h3"/>';
-
-function toggleFullscreen(elementId, btnId) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  const isThisFullscreen = document.fullscreenElement === el;
-  if (!isThisFullscreen) {
-    (el.requestFullscreen || el.webkitRequestFullscreen)?.call(el);
-  } else {
-    (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
-  }
-}
-
-function updateFullscreenIcons() {
-  const fsEl = document.fullscreenElement;
-  document.querySelectorAll('#app-fs-toggle, #sql-fs-btn, #questions-fs-btn').forEach(btn => {
-    if (!btn) return;
-    const targetId = btn.id === 'app-fs-toggle' ? 'app' : (btn.id === 'sql-fs-btn' ? 'sql-playground-box' : 'questions-section-box');
-    const isActive = fsEl && fsEl.id === targetId;
-    btn.classList.toggle('active', !!isActive);
-    const svg = btn.querySelector('svg');
-    if (svg) svg.innerHTML = isActive ? COLLAPSE_ICON : EXPAND_ICON;
-  });
-}
-document.addEventListener('fullscreenchange', updateFullscreenIcons);
-document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
-
-// ══════════════════════════════════════════
 //  ANSWER HANDLING
 // ══════════════════════════════════════════
 function toggleOption(qid, idx) {
@@ -1517,30 +1420,27 @@ function submitAnswer(qid) {
 function renderSqlPlaygroundHTML() {
   const openCls = state.sqlPgOpen ? '' : ' hidden';
   const chevronOpen = state.sqlPgOpen ? ' open' : '';
-  const cfg = getSqlPlaygroundConfig();
-  const tableNames = extractTableNames(cfg.schema);
-  const firstQuery = cfg.queries[0] || 'SELECT 1;';
+  const pg = getActivePlayground();
+  const starterQuery = pg.sampleQueries[0] || 'SELECT * FROM Student;';
   return `
-    <div class="sql-playground" id="sql-playground-box">
+    <div class="sql-playground">
       <div class="sql-pg-header" onclick="toggleSqlPlayground()">
         <div class="sql-pg-icon">🖥️</div>
         <div class="sql-pg-title-wrap">
-          <div class="sql-pg-eyebrow">Live Practice</div>
+          <div class="sql-pg-eyebrow">Live Practice — this chapter's schema</div>
           <div class="sql-pg-title">SQL Playground — run real queries</div>
         </div>
-        <button class="icon-btn" id="sql-fs-btn" title="Full screen" onclick="event.stopPropagation(); toggleFullscreen('sql-playground-box','sql-fs-btn')">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V5a1 1 0 011-1h3M4 16v3a1 1 0 001 1h3M20 8V5a1 1 0 00-1-1h-3M20 16v3a1 1 0 01-1 1h-3"/></svg>
-        </button>
         <svg class="concept-chevron${chevronOpen}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
       </div>
       <div class="sql-pg-body${openCls}" id="sql-pg-body">
-        <div class="sql-schema-note" id="sql-schema-note">
-          Sample table(s) <code>${tableNames}</code> for this chapter are already loaded. Write any SQL below and click Run — it's a real SQLite engine running in your browser.
-        </div>
-        <textarea id="sql-editor" spellcheck="false">${firstQuery}</textarea>
+        <details class="sql-schema-note" open>
+          <summary style="cursor:pointer;font-weight:700;color:#0F9D8C">📋 Preloaded schema for this chapter (click to collapse)</summary>
+          <pre style="margin-top:10px;background:#1e1e2e;color:#e2e8f0;border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:12.5px;line-height:1.6;white-space:pre-wrap">${pg.schema}</pre>
+        </details>
+        <textarea id="sql-editor" spellcheck="false">${starterQuery}</textarea>
         <div class="sql-pg-actions">
           <button class="btn btn-primary" id="sql-run-btn" style="background:#0F9D8C" onclick="runSqlQuery()">▶ Run Query</button>
-          <button class="btn btn-outline" onclick="resetSqlPlayground()">↺ Reset Sample Data</button>
+          <button class="btn btn-outline" onclick="resetSqlPlayground()">↺ Reset This Chapter's Data</button>
         </div>
         <div class="sql-sample-queries" id="sql-sample-queries"></div>
         <div class="sql-result-wrap" id="sql-result-wrap"></div>
@@ -1559,8 +1459,8 @@ function toggleSqlPlayground() {
 function bindSqlPlaygroundEvents() {
   const chipsWrap = document.getElementById('sql-sample-queries');
   if (!chipsWrap) return;
-  const cfg = getSqlPlaygroundConfig();
-  chipsWrap.innerHTML = cfg.queries.map(q =>
+  const pg = getActivePlayground();
+  chipsWrap.innerHTML = pg.sampleQueries.map(q =>
     `<span class="sql-sample-chip" onclick="loadSampleQuery(this)">${q}</span>`
   ).join('');
 }
@@ -1570,20 +1470,37 @@ function loadSampleQuery(el) {
   if (editor) editor.value = el.textContent;
 }
 
-// Rebuilds the in-browser SQLite DB whenever the active chapter changes (so
-// each chapter's own schema loads), but reuses the same wasm module and skips
-// rebuilding the DB if we're still on the same chapter and one already exists.
-async function ensureSqlEngine(forceReload = false) {
-  if (state.sqlDb && state.sqlLoadedChapterId === state.activeChapterId && !forceReload) {
+// Builds (or rebuilds) the SQLite engine using the ACTIVE CHAPTER's schema.
+// If the student switches to a different chapter, the schema is different,
+// so the in-memory database is recreated to match — each chapter gets its
+// own tables (e.g. two tables for a Joins chapter, an empty table for the
+// CREATE TABLE chapter, a Gender column for the GROUP BY chapter, etc).
+async function ensureSqlEngine(forceRebuild = false) {
+  const chapterId = state.activeChapterId;
+  if (state.sqlDb && state.sqlLoadedChapterId === chapterId && !forceRebuild) {
     return state.sqlDb;
   }
-  const SQL = await loadSqlJsModule();
-  const cfg = getSqlPlaygroundConfig();
-  const db = new SQL.Database();
-  db.run(cfg.schema);
-  state.sqlDb = db;
-  state.sqlLoadedChapterId = state.activeChapterId;
-  return db;
+
+  state.sqlJsLoading = (async () => {
+    // initSqlJs is provided by the sql.js CDN script tag in <head>
+    const SQL = await initSqlJs({
+      locateFile: file => `https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/${file}`
+    });
+    const db = new SQL.Database();
+    const pg = getActivePlayground();
+    try {
+      db.run(pg.schema);
+    } catch (e) {
+      // A chapter's starter schema is occasionally just an explanatory
+      // comment (e.g. the "write your own CREATE TABLE" chapters) — that's
+      // fine, the student's own queries will create tables from scratch.
+    }
+    state.sqlDb = db;
+    state.sqlLoadedChapterId = chapterId;
+    return db;
+  })();
+
+  return state.sqlJsLoading;
 }
 
 async function runSqlQuery() {
@@ -1626,11 +1543,11 @@ async function runSqlQuery() {
 
 async function resetSqlPlayground() {
   const resultWrap = document.getElementById('sql-result-wrap');
+  state.sqlDb = null;
+  state.sqlLoadedChapterId = null;
   try {
     await ensureSqlEngine(true);
-    const cfg = getSqlPlaygroundConfig();
-    const tableNames = extractTableNames(cfg.schema);
-    if (resultWrap) resultWrap.innerHTML = `<div class="sql-result-msg ok">✓ Sample data reset — ${tableNames} restored to its original state.</div>`;
+    if (resultWrap) resultWrap.innerHTML = `<div class="sql-result-msg ok">✓ Data reset — this chapter's sample table(s) restored to their original rows.</div>`;
   } catch (err) {
     if (resultWrap) resultWrap.innerHTML = `<div class="sql-result-msg err">✗ Could not reset: ${err.message}</div>`;
   }
@@ -1688,7 +1605,7 @@ function submitModal() {
   updateUserUI();
   document.getElementById('modal-overlay').classList.add('hidden');
   // Submit to API
-  ajax('api/register', 'POST', data).catch(()=>{});
+  ajax('api/adregister', 'POST', data).catch(()=>{});
 }
 
 // ══════════════════════════════════════════
@@ -1706,11 +1623,6 @@ function bindEvents() {
   document.getElementById('sidebar-toggle').addEventListener('click', () => {
     state.sidebarOpen = !state.sidebarOpen;
     document.getElementById('sidebar').classList.toggle('closed', !state.sidebarOpen);
-  });
-
-  // Whole-app fullscreen toggle
-  document.getElementById('app-fs-toggle').addEventListener('click', () => {
-    toggleFullscreen('app', 'app-fs-toggle');
   });
 
   // User dropdown
