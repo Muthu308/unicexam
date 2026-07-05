@@ -739,7 +739,457 @@
                 "created_date": "2025-12-15",
                 "modified": false
               }
-            }
+            },
+             {
+    "id": "ph_u2_q022",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 2,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Speed vs Velocity",
+    "question": "Which one of the following statement is correct?",
+    "options": [
+      "The speed of an object is always equal to the magnitude of its velocity",
+      "The speed of an object can be greater than the magnitude of its velocity",
+      "The speed of an object is always less than the magnitude of its velocity",
+      "The speed of an object can never be equal to the magnitude of its velocity"
+    ],
+    "answer": [1],
+    "explanation": "Speed is scalar, total distance/total time. Velocity is vector, displacement/total time. Since distance ≥ |displacement|, speed ≥ |velocity|. For straight line motion without direction change, speed = |velocity|. For any other motion, speed > |velocity|. So speed can be greater than magnitude of velocity. *Rating 2*: Basic definition check.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 101,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q023",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 3,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Velocity-Time Graph",
+    "question": "The velocity-time graph for a particle moving in a straight line is shown. The displacement of the particle in 5 seconds is:\n\n[Graph: Velocity (m/s) on y-axis. From t=0 to t=2s, v=4 m/s. From t=2 to t=4s, v increases linearly to 8 m/s. From t=4 to t=5s, v=8 m/s]",
+    "options": [
+      "24 m",
+      "28 m",
+      "32 m",
+      "36 m"
+    ],
+    "answer": [1],
+    "explanation": "Displacement = area under v-t graph. Split into 3 parts:\n1. 0-2s: Rectangle, area = 4 × 2 = 8 m\n2. 2-4s: Trapezoid, area = ½(4+8)×2 = 12 m \n3. 4-5s: Rectangle, area = 8 × 1 = 8 m\nTotal = 8 + 12 + 8 = 28 m. *Rating 3*: Graph area calculation.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 102,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q024",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 2,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Uniform Acceleration",
+    "question": "A body starts from rest and moves with uniform acceleration. The ratio of the distance covered in the nth second to the distance covered in n seconds is:",
+    "options": [
+      "$\\frac{2n-1}{n^2}$",
+      "$\\frac{2n+1}{n^2}$",
+      "$\\frac{n^2}{2n-1}$",
+      "$\\frac{2n-1}{2n+1}$"
+    ],
+    "answer": [0],
+    "explanation": "Distance in n seconds: $s_n = \\frac{1}{2}an^2$. Distance in nth second: $s_{nth} = u + \\frac{a}{2}(2n-1) = \\frac{a}{2}(2n-1)$ since u=0. Ratio = $\\frac{\\frac{a}{2}(2n-1)}{\\frac{1}{2}an^2} = \\frac{2n-1}{n^2}$. *Rating 2*: Direct formula application.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 103,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q025",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 3,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Free Fall",
+    "question": "A stone is dropped from a height h. It hits the ground with a velocity v. If the stone is dropped from a height 4h, the velocity with which it hits the ground is:",
+    "options": [
+      "v",
+      "2v",
+      "4v",
+      "16v"
+    ],
+    "answer": [1],
+    "explanation": "Using $v^2 = u^2 + 2gh$, with u=0. So $v = \\sqrt{2gh}$. If height = 4h, then $v' = \\sqrt{2g(4h)} = \\sqrt{4} × \\sqrt{2gh} = 2v$. *Rating 3*: Proportionality in kinematics.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 104,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q026",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 3,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Relative Motion",
+    "question": "Two trains A and B are moving on parallel tracks with velocities 60 km/h and 90 km/h respectively. Train A is ahead of B. The relative velocity of B with respect to A is:",
+    "options": [
+      "30 km/h in direction of motion",
+      "150 km/h in direction of motion",
+      "30 km/h opposite to direction of motion",
+      "150 km/h opposite to direction of motion"
+    ],
+    "answer": [0],
+    "explanation": "Relative velocity $v_{BA} = v_B - v_A = 90 - 60 = 30$ km/h. Since B is faster and behind A, B is catching up. So relative velocity is 30 km/h in direction of motion. *Rating 3*: Basic relative velocity.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 105,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q027",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 4,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Uniform Acceleration",
+    "question": "A car accelerates from rest at a constant rate α for some time, after which it decelerates at a constant rate β to come to rest. If the total time elapsed is t, the maximum velocity attained is:",
+    "options": [
+      "$\\frac{αβt}{α+β}$",
+      "$\\frac{αβt}{α-β}$",
+      "$\\frac{(α+β)t}{αβ}$",
+      "$\\frac{α+β}{αβt}$"
+    ],
+    "answer": [0],
+    "explanation": "Let max velocity = $v_{max}$. Time to accelerate: $t_1 = v_{max}/α$. Time to decelerate: $t_2 = v_{max}/β$. Total $t = t_1 + t_2 = v_{max}(1/α + 1/β) = v_{max}(α+β)/αβ$. So $v_{max} = \\frac{αβt}{α+β}$. *Rating 4*: Multi-stage motion.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 106,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q028",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 3,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Displacement-Time Graph",
+    "question": "The slope of displacement-time graph gives:",
+    "options": [
+      "Acceleration",
+      "Velocity",
+      "Force",
+      "Momentum"
+    ],
+    "answer": [1],
+    "explanation": "By definition, velocity $v = ds/dt$. On s-t graph, slope = $\\Delta s/\\Delta t$ = instantaneous velocity. *Rating 3*: Graph interpretation basic.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 107,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q029",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 5,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Vertical Projection",
+    "question": "A ball is thrown vertically upward with velocity u. The time taken to reach the maximum height is T. The distance traveled in the last second of its upward journey is:",
+    "options": [
+      "$\\frac{1}{2}g$",
+      "u - $\\frac{1}{2}g$",
+      "uT - $\\frac{1}{2}gT^2$",
+      "$\\frac{u^2}{2g}$"
+    ],
+    "answer": [0],
+    "explanation": "At max height v=0, so $T = u/g$. Distance in last second of ascent = distance in 1st second of descent from top = $\\frac{1}{2}g(1)^2 = \\frac{1}{2}g$. Using symmetry of projectile. *Rating 5*: Requires symmetry concept.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 108,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q030",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 3,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Average Speed",
+    "question": "A person travels from A to B at a speed of 40 km/h and returns at 60 km/h. The average speed for the whole journey is:",
+    "options": [
+      "50 km/h",
+      "48 km/h",
+      "45 km/h",
+      "52 km/h"
+    ],
+    "answer": [1],
+    "explanation": "Let distance AB = d. Time going = d/40, time returning = d/60. Total distance = 2d. Total time = d/40 + d/60 = d(3+2)/120 = 5d/120 = d/24. Average speed = 2d/(d/24) = 48 km/h. Note: not arithmetic mean. *Rating 3*: Harmonic mean trap.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 109,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q031",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 4,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Uniform Acceleration",
+    "question": "A particle moving with uniform acceleration has velocity 6 m/s at a point and 10 m/s at another point which is 64 m away from the first. The acceleration is:",
+    "options": [
+      "0.5 m/s²",
+      "0.25 m/s²",
+      "1.0 m/s²",
+      "2.0 m/s²"
+    ],
+    "answer": [0],
+    "explanation": "Using $v^2 = u^2 + 2as$: $10^2 = 6^2 + 2×a×64$ → $100 = 36 + 128a$ → $64 = 128a$ → $a = 0.5$ m/s². *Rating 4*: Direct but needs equation selection.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 110,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q032",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 3,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Distance vs Displacement",
+    "question": "A person moves 30 m north, then 20 m east, then 30√2 m south-west. The displacement from the starting point is:",
+    "options": [
+      "Zero",
+      "10 m west",
+      "10 m east",
+      "20 m west"
+    ],
+    "answer": [1],
+    "explanation": "Take north=+y, east=+x. Moves: (0,30) → (20,30). Then 30√2 m SW = 30 m west + 30 m south. Final: (20-30, 30-30) = (-10, 0). So 10 m west of start. *Rating 3*: Vector addition.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 111,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q033",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 6,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Velocity-Time Graph",
+    "question": "The v-t graph of a particle is a straight line inclined to time axis. The slope of this line represents:",
+    "options": [
+      "Velocity",
+      "Acceleration",
+      "Displacement",
+      "Jerk"
+    ],
+    "answer": [1],
+    "explanation": "Slope of v-t graph = $dv/dt$ = acceleration. If line is straight, acceleration is uniform. If line is horizontal, a=0. *Rating 6*: JEE asks this to check graph fundamentals. Common to confuse with s-t graph.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 112,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q034",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 5,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Free Fall",
+    "question": "Two balls are dropped from heights h and 2h respectively. The ratio of time taken to reach the ground is:",
+    "options": [
+      "1 : 2",
+      "1 : √2",
+      "1 : 4",
+      "√2 : 1"
+    ],
+    "answer": [1],
+    "explanation": "For free fall from rest, $h = \\frac{1}{2}gt^2$ → $t = \\sqrt{2h/g}$. So $t ∝ \\sqrt{h}$. Ratio = $\\sqrt{h} : \\sqrt{2h} = 1 : \\sqrt{2}$. *Rating 5*: Proportionality trap - not linear.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 113,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q035",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 4,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Uniform Acceleration",
+    "question": "A body starts from rest. If it covers distance $s_1$ in first 10 seconds and $s_2$ in next 10 seconds, then $s_2/s_1$ is:",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "answer": [2],
+    "explanation": "$s_1 = \\frac{1}{2}a(10)^2 = 50a$. Distance in 20s: $s = \\frac{1}{2}a(20)^2 = 200a$. So $s_2 = s - s_1 = 200a - 50a = 150a$. Ratio $s_2/s_1 = 150a/50a = 3$. Or use $s_n ∝ (2n-1)$: 1:3 for n=1,2. *Rating 4*: Tests ratio concept.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 114,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  },
+  {
+    "id": "ph_u2_q036",
+    "type": "MCQ",
+    "latex": true,
+    "difficulty": "easy",
+    "difficulty_rating": 5,
+    "topic": "motion_in_1d",
+    "chapter_id": "ph_u2_c1",
+    "subtopic": "Relative Motion",
+    "question": "A police jeep is chasing a thief's car which is moving with velocity 90 km/h. The jeep moving with 126 km/h fires a bullet with muzzle velocity 360 km/h. The bullet hits the car with velocity:",
+    "options": [
+      "270 km/h",
+      "396 km/h",
+      "486 km/h",
+      "576 km/h"
+    ],
+    "answer": [1],
+    "explanation": "Velocity of bullet w.r.t ground = velocity of jeep + muzzle velocity = 126 + 360 = 486 km/h. Velocity of car = 90 km/h. Relative velocity of bullet w.r.t car = 486 - 90 = 396 km/h. *Rating 5*: Double relative motion. JEE loves this type.",
+    "source": {
+      "type": "exam",
+      "exam": "NDA",
+      "exam_stage": "II",
+      "year": 2017,
+      "q_no": 115,
+      "subject": "Physics",
+      "modified": false,
+      "verified_by": "UNIC_PHY_03",
+      "verified_date": "2026-01-20"
+    }
+  }
           ]
         },
         {
