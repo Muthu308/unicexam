@@ -780,7 +780,7 @@ function updateSectionProgress(){
 
         let key = "q"+(originalIndex+1);
 
-        if(answers[key]){
+        if(answers[key] !== undefined && answers[key] !== null && answers[key] !== ""){
             attempted++;
 
             if(typeof answerKeys !== "undefined"){
@@ -1175,7 +1175,10 @@ function updatePalette(){
 
         if(i===current) btn.classList.add("current");
         else if(review[i]) btn.classList.add("review");
-        else if(answers[key]) btn.classList.add("answered");
+        else if(answers[key] !== undefined && answers[key] !== null && answers[key] !== "")
+        {
+        btn.classList.add("answered");
+        }
         else if(visited[i]) btn.classList.add("not-answered");
     });
 }
@@ -1188,7 +1191,7 @@ function showPreview(){
     questions.forEach((q,i)=>{
 
         let key = "q"+(i+1);
-        let ans = answers[key] || "Not Answered";
+        let ans = (answers[key] !== undefined &&  answers[key] !== null && answers[key] !== "") ? answers[key] : "Not Answered";
         let sectionName = q.section || "General";
 
         html += `<div class="preview-item">
