@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       const {
         session,
         subject,
-        topic = "",
+        topic,
         faculty_name,
         faculty_user_id,
         student_ids = [],
@@ -192,7 +192,7 @@ export default async function handler(req, res) {
         id,
         session,
         subject,
-        topic = "",
+        topic,
         faculty_name,
         faculty_user_id,
         student_ids = [],
