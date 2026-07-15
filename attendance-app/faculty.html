@@ -52,7 +52,7 @@
   <script>
     const API = window.API_BASE || "";
     let currentClass = null;
-    // state[student_id] = { status, reason, assignment_submitted, assignment_submission_link }
+    // state[student_id] = { status, reason, in_time, out_time, assignment_submitted, assignment_submission_link }
     let state = {};
 
     function escapeHtml(str) {
@@ -92,7 +92,14 @@
       currentClass = cls;
       state = {};
       (cls.student_ids || []).forEach((sid) => {
-        state[sid] = { status: "Present", reason: "", assignment_submitted: false, assignment_submission_link: "" };
+        state[sid] = {
+          status: "Present",
+          reason: "",
+          in_time: "",
+          out_time: "",
+          assignment_submitted: false,
+          assignment_submission_link: "",
+        };
       });
 
       document.getElementById("classMeta").textContent =
@@ -108,14 +115,26 @@
       roster.innerHTML = (cls.student_ids || [])
         .map(
           (sid) => `
-        <div class="roster-row" data-sid="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1.6fr 1.3fr;">
+        <div class="roster-row" data-sid="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1.8fr 1.3fr;">
           <div class="mono">${escapeHtml(sid)}</div>
           <div class="status-choices">
             <button type="button" data-status="Present" class="chosen-Present">Present</button>
             <button type="button" data-status="Absent">Absent</button>
+            <button type="button" data-status="Late">Late</button>
             <button type="button" data-status="Reason">Reason</button>
           </div>
           <input type="text" class="reason-input" placeholder="Reason (optional)" style="display:none;" />
+        </div>
+        <div class="roster-row late-row" data-late-for="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1fr 1fr; padding-top:0; display:none;">
+          <div class="hint">In / Out time</div>
+          <label style="margin:0; display:flex; align-items:center; gap:6px; text-transform:none; font-family:inherit; font-size:0.85rem;">
+            In:
+            <input type="time" class="in-time-input" />
+          </label>
+          <label style="margin:0; display:flex; align-items:center; gap:6px; text-transform:none; font-family:inherit; font-size:0.85rem;">
+            Out:
+            <input type="time" class="out-time-input" />
+          </label>
         </div>
         <div class="roster-row" data-assign-for="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1fr 1.3fr; padding-top:0;">
           <div class="hint">Assignment</div>
@@ -130,6 +149,9 @@
       roster.querySelectorAll(".roster-row[data-sid]").forEach((row) => {
         const sid = row.dataset.sid;
         const reasonInput = row.querySelector(".reason-input");
+        const lateRow = roster.querySelector(`.roster-row[data-late-for="${CSS.escape(sid)}"]`);
+        const inTimeInput = lateRow.querySelector(".in-time-input");
+        const outTimeInput = lateRow.querySelector(".out-time-input");
 
         row.querySelectorAll(".status-choices button").forEach((btn) => {
           btn.addEventListener("click", () => {
@@ -139,16 +161,35 @@
             row.querySelectorAll(".status-choices button").forEach((b) => (b.className = ""));
             btn.className = `chosen-${status}`;
 
-            reasonInput.style.display = status === "Reason" ? "block" : "none";
-            if (status !== "Reason") {
+            // Reason box: shown for "Reason" (mandatory-ish free text) and "Late" (optional note)
+            reasonInput.style.display = status === "Reason" || status === "Late" ? "block" : "none";
+            reasonInput.placeholder =
+              status === "Late" ? "Reason for being late (optional)" : "Reason (optional)";
+            if (status !== "Reason" && status !== "Late") {
               state[sid].reason = "";
               reasonInput.value = "";
+            }
+
+            // In/out time fields only apply when marked Late
+            lateRow.style.display = status === "Late" ? "flex" : "none";
+            if (status !== "Late") {
+              state[sid].in_time = "";
+              state[sid].out_time = "";
+              inTimeInput.value = "";
+              outTimeInput.value = "";
             }
           });
         });
 
         reasonInput.addEventListener("input", () => {
           state[sid].reason = reasonInput.value;
+        });
+
+        inTimeInput.addEventListener("input", () => {
+          state[sid].in_time = inTimeInput.value;
+        });
+        outTimeInput.addEventListener("input", () => {
+          state[sid].out_time = outTimeInput.value;
         });
       });
 
@@ -194,7 +235,9 @@
       const attendance_data = Object.entries(state).map(([student_id, v]) => ({
         student_id,
         status: v.status,
-        reason: v.status === "Reason" ? v.reason : "",
+        reason: v.status === "Reason" || v.status === "Late" ? v.reason : "",
+        in_time: v.status === "Late" ? v.in_time : "",
+        out_time: v.status === "Late" ? v.out_time : "",
         assignment_submitted: v.assignment_submitted,
         assignment_submission_link: v.assignment_submitted ? v.assignment_submission_link : "",
       }));
@@ -241,7 +284,7 @@
           <div style="margin-bottom:14px;">
             <div class="hint mono">${new Date(r.marked_at).toLocaleString()} — record #${r.id}</div>
             <table>
-              <thead><tr><th>Student</th><th>Status</th><th>Reason</th><th>Assignment</th></tr></thead>
+              <thead><tr><th>Student</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Assignment</th></tr></thead>
               <tbody>
                 ${r.attendance_data
                   .map(
@@ -250,6 +293,7 @@
                     <td class="mono">${escapeHtml(a.student_id)}</td>
                     <td><span class="status-pill status-${a.status}">${a.status}</span></td>
                     <td>${escapeHtml(a.reason || "—")}</td>
+                    <td>${a.status === "Late" ? `${escapeHtml(a.in_time || "—")} / ${escapeHtml(a.out_time || "—")}` : "—"}</td>
                     <td>${a.assignment_submitted ? `Submitted${a.assignment_submission_link ? ` — <a href="${escapeHtml(a.assignment_submission_link)}" target="_blank">link</a>` : ""}` : "Not submitted"}</td>
                   </tr>`
                   )
