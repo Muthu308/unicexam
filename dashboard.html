@@ -1587,15 +1587,6 @@ function initTableSort(){
   });
 }
 
-/* ══════════════════════════════════════════════
-   ATTENDANCE TAB
-   Reads from the same Vercel/Hasura attendance API
-   used by the standalone student.html — but skips
-   its login step since this dashboard already has
-   the student in localStorage ("student").
-   Set ATTEND_API to another origin if the attendance
-   backend is deployed separately from this dashboard.
-══════════════════════════════════════════════ */
 const ATTEND_API = "";
 let attendanceRecords = [];
 
@@ -1739,7 +1730,7 @@ setText("p_dob", user.dob);
 setText("p_id", user.std_id);
 
 loadStudentResults().then(()=>{ initTableSort(); });
-
+loadAttendance();
 document.addEventListener("click", e=>{
   if(!$("qwSearchWrap")?.contains(e.target)){
     $("qwDropdown")?.classList.remove("open");
