@@ -1602,7 +1602,7 @@ let attendanceRecords = [];
 async function loadAttendance(){
   const box = $("attendanceContent");
   try{
-    const res = await fetch(`${ATTEND_API}/api/student-attendance?student_id=${encodeURIComponent(user.std_id)}`);
+    const res = await fetch(`/api/student-attendance?student_id=${encodeURIComponent(user.std_id)}`);
     const records = await res.json();
     if(!res.ok) throw new Error(records.error || "Failed to load attendance");
 
