@@ -163,6 +163,24 @@ body{background:#f0f4fb;color:#1e293b}
 .subj-stat-row.wrong strong{color:#dc2626}
 .subj-stat-row.na strong{color:#94a3b8}
 
+/* Attendance tab */
+.att-filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
+.att-filter-bar label{font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;margin-right:4px}
+.att-filter-group{display:flex;align-items:center;gap:6px}
+.att-select{padding:8px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;color:#1e293b;background:#fff;outline:none;min-width:150px}
+.att-select:focus{border-color:#0e1e4a}
+.att-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.att-present{background:#dcfce7;color:#15803d}
+.att-absent{background:#fee2e2;color:#b91c1c}
+.att-reason{background:#fef9c3;color:#92400e}
+.att-day-group{margin-bottom:20px}
+.att-day-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.att-day-hdr h3{font-size:13px;font-weight:600;color:#0e1e4a}
+.att-day-hdr .att-day-sub{font-size:11px;color:#94a3b8}
+.att-links a{color:#185FA5;font-weight:500;text-decoration:none;font-size:11px}
+.att-links a:hover{text-decoration:underline}
+.att-empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
+
 /* Section box */
 .sec-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
 .sec-box h2{font-size:14px;font-weight:600;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
@@ -283,6 +301,7 @@ th.total-group{background:#7c3aed !important}
   <nav class="sb-nav">
     <div class="nav-label">Main</div>
     <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
+    <button class="nav-item" onclick="showPage('attendance',this)"><i class="ti ti-calendar-check"></i> Attendance</button>
     <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
     <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
@@ -329,6 +348,35 @@ th.total-group{background:#7c3aed !important}
           <div class="pc-row"><div class="pc-lbl"><i class="ti ti-map-pin"></i>Institute</div><div class="pc-val"><span class="pc-inst">UNIC Academy</span></div></div>
           <div class="pc-row"><div class="pc-lbl"><i class="ti ti-circle-check"></i>Status</div><div class="pc-val"><span class="pc-status"><i class="ti ti-point-filled" style="font-size:10px"></i> Active</span></div></div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE -->
+  <div class="page" id="page-attendance">
+    <div class="cards-row" id="attSummaryCards">
+      <div class="sc"><h3>Loading</h3><p>—</p></div>
+    </div>
+
+    <div class="sec-box">
+      <h2><i class="ti ti-calendar-check"></i> Attendance</h2>
+      <div class="att-filter-bar">
+        <div class="att-filter-group">
+          <label for="attDateFilter">Date</label>
+          <select class="att-select" id="attDateFilter" onchange="renderAttendanceView()">
+            <option value="">All dates</option>
+          </select>
+        </div>
+        <div class="att-filter-group">
+          <label for="attSubjectFilter">Subject</label>
+          <select class="att-select" id="attSubjectFilter" onchange="renderAttendanceView()">
+            <option value="">All subjects</option>
+          </select>
+        </div>
+        <button class="qw-btn" onclick="resetAttendanceFilters()"><i class="ti ti-filter-x"></i> Reset filters</button>
+      </div>
+      <div id="attendanceContent">
+        <div class="att-empty">Loading attendance…</div>
       </div>
     </div>
   </div>
@@ -1539,6 +1587,140 @@ function initTableSort(){
   });
 }
 
+/* ══════════════════════════════════════════════
+   ATTENDANCE TAB
+   Reads from the same Vercel/Hasura attendance API
+   used by the standalone student.html — but skips
+   its login step since this dashboard already has
+   the student in localStorage ("student").
+   Set ATTEND_API to another origin if the attendance
+   backend is deployed separately from this dashboard.
+══════════════════════════════════════════════ */
+const ATTEND_API = "";
+let attendanceRecords = [];
+
+async function loadAttendance(){
+  const box = $("attendanceContent");
+  try{
+    const res = await fetch(`${ATTEND_API}/api/student-attendance?student_id=${encodeURIComponent(user.std_id)}`);
+    const records = await res.json();
+    if(!res.ok) throw new Error(records.error || "Failed to load attendance");
+
+    attendanceRecords = Array.isArray(records) ? records : [];
+    populateAttendanceFilters();
+    renderAttendanceView();
+  }catch(err){
+    console.error(err);
+    box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load attendance: ${err.message}</div>`;
+    $("attSummaryCards").innerHTML = `<div class="sc r"><h3>Attendance</h3><p style="font-size:13px">Unavailable</p></div>`;
+  }
+}
+
+function populateAttendanceFilters(){
+  const dates = [...new Set(attendanceRecords.map(r => r.class_date).filter(Boolean))]
+    .sort((a,b) => new Date(b) - new Date(a));
+  const subjects = [...new Set(attendanceRecords.map(r => r.subject).filter(Boolean))]
+    .sort((a,b) => a.localeCompare(b));
+
+  const dateSel = $("attDateFilter");
+  const subjSel = $("attSubjectFilter");
+  dateSel.innerHTML = `<option value="">All dates</option>` +
+    dates.map(d => `<option value="${d}">${d}</option>`).join("");
+  subjSel.innerHTML = `<option value="">All subjects</option>` +
+    subjects.map(s => `<option value="${s.replace(/"/g,'&quot;')}">${s}</option>`).join("");
+}
+
+function resetAttendanceFilters(){
+  $("attDateFilter").value = "";
+  $("attSubjectFilter").value = "";
+  renderAttendanceView();
+}
+
+function attStatusPill(status){
+  if(status === "Present") return `<span class="att-pill att-present"><i class="ti ti-check" style="font-size:12px"></i> Present</span>`;
+  if(status === "Absent") return `<span class="att-pill att-absent"><i class="ti ti-x" style="font-size:12px"></i> Absent</span>`;
+  if(status === "Reason") return `<span class="att-pill att-reason"><i class="ti ti-message-circle" style="font-size:12px"></i> Reason</span>`;
+  return `<span class="att-pill" style="background:#f1f5f9;color:#64748b">—</span>`;
+}
+
+function renderAttendanceView(){
+  const dateFilter = $("attDateFilter").value;
+  const subjectFilter = $("attSubjectFilter").value;
+  const box = $("attendanceContent");
+
+  let filtered = attendanceRecords;
+  if(dateFilter) filtered = filtered.filter(r => r.class_date === dateFilter);
+  if(subjectFilter) filtered = filtered.filter(r => r.subject === subjectFilter);
+
+  /* ── Summary cards (reflect current filter) ── */
+  const total = filtered.length;
+  const present = filtered.filter(r => r.status === "Present").length;
+  const absent = filtered.filter(r => r.status === "Absent").length;
+  const reason = filtered.filter(r => r.status === "Reason").length;
+  const assignmentsDone = filtered.filter(r => r.assignment_submitted).length;
+  const pct = total ? Math.round((present/total)*100) : 0;
+
+  $("attSummaryCards").innerHTML = `
+    <div class="sc b"><h3>Total Classes</h3><p>${total}</p></div>
+    <div class="sc g"><h3>Present</h3><p>${present}</p></div>
+    <div class="sc r"><h3>Absent</h3><p>${absent}</p></div>
+    <div class="sc a"><h3>Reason</h3><p>${reason}</p></div>
+    <div class="sc p"><h3>Attendance %</h3><p>${pct}%</p></div>
+    <div class="sc"><h3>Assignments Done</h3><p>${assignmentsDone}/${total}</p></div>`;
+
+  if(!total){
+    box.innerHTML = `<div class="att-empty">${attendanceRecords.length ? "No classes match this filter." : "No attendance records found yet."}</div>`;
+    return;
+  }
+
+  /* ── Group by day, newest first ── */
+  const groups = {};
+  filtered.forEach(r => {
+    const day = r.class_date || (r.marked_at ? r.marked_at.slice(0,10) : "Unknown date");
+    (groups[day] = groups[day] || []).push(r);
+  });
+  const days = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
+
+  box.innerHTML = days.map(day => {
+    const rows = groups[day].map(r => {
+      const links = [];
+      if(r.syllabus_link) links.push(`<a href="${r.syllabus_link}" target="_blank">Syllabus</a>`);
+      if(r.notes_link) links.push(`<a href="${r.notes_link}" target="_blank">Notes</a>`);
+      if(r.assignment_link) links.push(`<a href="${r.assignment_link}" target="_blank">Assignment</a>`);
+      const assignmentStatus = r.assignment_submitted
+        ? `Submitted${r.assignment_submission_link ? ` — <a href="${r.assignment_submission_link}" target="_blank">your link</a>` : ""}`
+        : `<span style="color:#94a3b8">Not submitted</span>`;
+      return `
+        <tr>
+          <td>${r.start_time || "—"}${r.end_time ? "–"+r.end_time : ""}</td>
+          <td>${r.subject || "—"}</td>
+          <td>${r.topic || "—"}</td>
+          <td>${r.faculty_name || "—"}</td>
+          <td>${attStatusPill(r.status)}</td>
+          <td>${r.reason || "—"}</td>
+          <td>${assignmentStatus}</td>
+          <td class="att-links">${links.join(" · ") || "—"}</td>
+        </tr>`;
+    }).join("");
+
+    return `
+      <div class="att-day-group">
+        <div class="att-day-hdr">
+          <h3>${day}</h3>
+          <span class="att-day-sub">${groups[day].length} class${groups[day].length===1?"":"es"}</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>Assignment</th><th>Links</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }).join("");
+}
+
 /* ── Bootstrap ── */
 const user = JSON.parse(localStorage.getItem("student"));
 if(!user) window.location.href="index.html";
@@ -1562,23 +1744,6 @@ document.addEventListener("click", e=>{
     $("qwDropdown")?.classList.remove("open");
   }
 });
-
-  /*<div class="sec-title page-break">Question-wise Detail Table (with Type)</div>
-  <table>
-    <thead>
-      <tr>
-        <th style="text-align:left">Q#</th>
-        <th>Subject</th>
-        <th>Type</th>
-        <th>Your Ans</th>
-        <th>Correct Ans</th>
-        <th>Status</th>
-        <th>Marks</th>
-        <th>Image</th>
-      </tr>
-    </thead>
-    <tbody>${qRows}</tbody>
-  </table>*/
 </script>
 </body>
 </html>
