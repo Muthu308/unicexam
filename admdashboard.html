@@ -1,872 +1,1749 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EduAdmin — User Management</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
-  <style>
-    body { background: #f4f6fb; font-size: 14px; }
-    .sidebar {
-      width: 220px; min-height: 100vh; background: #1a2236;
-      position: fixed; top: 0; left: 0; z-index: 100;
-    }
-    .sidebar .logo { padding: 22px 20px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
-    .sidebar .logo-title { color: #fff; font-size: 16px; font-weight: 600; }
-    .sidebar .logo-sub { color: #8a9bb5; font-size: 11px; }
-    .sidebar .nav-link {
-      color: #8a9bb5; padding: 10px 20px; display: flex; align-items: center;
-      gap: 10px; font-size: 13px; border-left: 3px solid transparent;
-    }
-    .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,.05); }
-    .sidebar .nav-link.active { color: #fff; background: rgba(59,130,246,.15); border-left-color: #3b82f6; }
-    .sidebar .nav-link i { font-size: 16px; width: 18px; }
-    .main-content { margin-left: 220px; }
-    .topbar {
-      background: #fff; border-bottom: 1px solid #e5e7eb;
-      padding: 12px 24px; position: sticky; top: 0; z-index: 99;
-    }
-    .page-body { padding: 24px; }
-    .stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 20px; }
-    .stat-label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
-    .stat-value { font-size: 26px; font-weight: 600; color: #111827; }
-    .stat-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
-    .card { border: 1px solid #e5e7eb; border-radius: 10px; }
-    .card-header { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 14px 20px; font-weight: 600; font-size: 14px; }
-    .table th { font-size: 12px; color: #6b7280; font-weight: 500; background: #f9fafb; }
-    .table td { vertical-align: middle; font-size: 13px; }
-    .badge-active { background: #d1fae5; color: #065f46; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
-    .badge-inactive { background: #fee2e2; color: #991b1b; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
-    .btn-icon { width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
-    .avatar { width: 34px; height: 34px; border-radius: 50%; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
-    .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-    .toast-container { position: fixed; top: 16px; right: 16px; z-index: 99999; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIC Academy – Student Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#f0f4fb;color:#1e293b}
+
+/* Sidebar */
+.sidebar{width:240px;position:fixed;top:0;left:0;height:100vh;background:#0e1e4a;display:flex;flex-direction:column;z-index:100;transition:transform .3s;overflow:hidden}
+.sb-brand{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+.sb-logo{width:36px;height:36px;background:#f0b800;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0e1e4a;flex-shrink:0}
+.sb-name{color:#fff;font-size:13px;font-weight:600;line-height:1.2}
+.sb-tag{color:rgba(255,255,255,.3);font-size:9px;letter-spacing:.9px;text-transform:uppercase}
+.sb-student{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:9px}
+.sb-av{width:34px;height:34px;border-radius:50%;background:rgba(240,184,0,.15);border:1.5px solid rgba(240,184,0,.35);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sb-sname{color:#fff;font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-sid{color:rgba(255,255,255,.32);font-size:10px}
+.sb-nav{flex:1;padding:10px;overflow-y:auto}
+.nav-label{font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.22);padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 11px;border-radius:8px;margin-bottom:2px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:.2s;font-family:'Poppins',sans-serif}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(240,184,0,.12);color:#f0b800}
+.nav-item i{font-size:15px;flex-shrink:0;width:17px}
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.07)}
+.logout-btn{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;border-radius:8px;background:rgba(239,68,68,.1);border:none;color:#fca5a5;font-size:12px;cursor:pointer;font-family:'Poppins',sans-serif;transition:.2s}
+.logout-btn:hover{background:rgba(239,68,68,.2)}
+.main{margin-left:240px;min-height:100vh;padding:20px;background:#f0f4fb}
+.topbar{background:#fff;border-radius:12px;padding:14px 20px;box-shadow:0 1px 5px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.topbar h1{font-size:17px;font-weight:600;color:#0e1e4a}
+.topbar p{font-size:11.5px;color:#94a3b8;margin-top:1px}
+.badge-active{padding:4px 12px;border-radius:20px;background:#dcfce7;color:#15803d;font-size:11px;font-weight:500}
+.page{display:none}
+.page.active{display:block}
+
+/* Latest Exam Result Card */
+.latest-exam-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(14,30,74,.10);border:1px solid #e8edf5;margin-bottom:20px}
+.lec-header{background:linear-gradient(135deg,#0e1e4a 0%,#1a3a7a 50%,#185FA5 100%);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.lec-header-left h3{color:#fff;font-size:16px;font-weight:700;margin:0 0 4px}
+.lec-header-left p{color:rgba(255,255,255,.65);font-size:11.5px;margin:0;display:flex;align-items:center;gap:6px}
+.lec-rank-pill{background:rgba(240,184,0,.15);border:1.5px solid rgba(240,184,0,.4);border-radius:50px;padding:4px 16px;display:flex;align-items:center;gap:8px}
+.lec-rank-pill .rank-num{color:#f0b800;font-size:22px;font-weight:800;line-height:1}
+.lec-rank-pill .rank-lbl{color:rgba(255,255,255,.6);font-size:10px;text-transform:uppercase;letter-spacing:.8px}
+.lec-body{padding:14px 18px}
+.lec-score-row{display:flex;align-items:center;gap:0;background:#f8fafc;border-radius:12px;border:1px solid #edf1f7;overflow:hidden;margin-bottom:16px}
+.lec-score-item{flex:1;padding:10px 8px;text-align:center;border-right:1px solid #edf1f7;position:relative}
+.lec-score-item:last-child{border-right:none}
+.lec-score-item .si-label{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.lec-score-item .si-val{font-size:20px;font-weight:800;color:#0e1e4a;line-height:1}
+.lec-score-item .si-sub{font-size:10px;color:#64748b;margin-top:2px}
+.lec-score-item.highlight-score{background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+.lec-score-item.highlight-score .si-val{color:#b45309}
+.lec-marks-breakdown{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.lec-subj-pill{border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.lec-subj-pill.ph{background:#eff6ff;border:1px solid #bfdbfe}
+.lec-subj-pill.cy{background:#f0fdf4;border:1px solid #bbf7d0}
+.lec-subj-pill.ma{background:#fef3c7;border:1px solid #fde68a}
+.lec-subj-pill .sp-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.lec-subj-pill.ph .sp-icon{background:#dbeafe;color:#1d4ed8}
+.lec-subj-pill.cy .sp-icon{background:#dcfce7;color:#15803d}
+.lec-subj-pill.ma .sp-icon{background:#fde68a;color:#92400e}
+.lec-subj-pill .sp-name{font-size:10px;color:#64748b;font-weight:500}
+.lec-subj-pill .sp-marks{font-size:17px;font-weight:800;line-height:1.1}
+.lec-subj-pill.ph .sp-marks{color:#1d4ed8}
+.lec-subj-pill.cy .sp-marks{color:#15803d}
+.lec-subj-pill.ma .sp-marks{color:#92400e}
+.lec-mb-item{background:#f8fafc;border-radius:8px;padding:10px;text-align:center;border:1px solid #edf1f7}
+.lec-mb-item .mb-lbl{font-size:10px;color:#94a3b8;margin-bottom:3px}
+.lec-mb-item .mb-val{font-size:14px;font-weight:700}
+.lec-mb-item.pos .mb-val{color:#15803d}
+.lec-mb-item.neg .mb-val{color:#dc2626}
+.lec-mb-item.total .mb-val{color:#0e1e4a}
+.lec-mb-item.bonus .mb-val{color:#d97706}
+.grade-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.grade-aplus{background:#dcfce7;color:#15803d}
+.grade-a{background:#dbeafe;color:#1d4ed8}
+.grade-b{background:#fef9c3;color:#92400e}
+.grade-c{background:#fce7f3;color:#9d174d}
+.grade-d{background:#fee2e2;color:#b91c1c}
+
+/* ── Series Comparison Card ── */
+.series-cmp-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(14,30,74,.08);border:1px solid #e8edf5;margin-bottom:18px}
+.series-cmp-header{background:linear-gradient(135deg,#1a3a7a,#185FA5);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.series-cmp-header h3{color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;margin:0}
+.series-cmp-header span{color:rgba(255,255,255,.6);font-size:11px}
+.series-cmp-body{padding:14px 16px}
+.series-cmp-track{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:4px}
+.sct-item{flex:0 0 auto;min-width:110px;background:#f8fafc;border:1px solid #e8edf5;border-radius:10px;padding:10px;text-align:center;position:relative;margin-right:8px}
+.sct-item.current{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-color:#fde68a}
+.sct-item .sct-name{font-size:10px;color:#64748b;font-weight:500;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sct-item .sct-pct{font-size:18px;font-weight:800;color:#0e1e4a;line-height:1}
+.sct-item .sct-grade{font-size:10px;font-weight:600;margin-top:3px}
+.sct-item .sct-marks{font-size:10px;color:#64748b;margin-top:2px}
+.sct-arrow{display:flex;align-items:center;color:#94a3b8;font-size:18px;margin-right:8px;flex-shrink:0}
+.sct-delta{font-size:10px;font-weight:600;margin-top:3px}
+.sct-delta.up{color:#15803d}
+.sct-delta.dn{color:#dc2626}
+.sct-delta.same{color:#94a3b8}
+.series-subj-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:12px}
+.series-subj-mini{background:#f8fafc;border-radius:8px;padding:8px 12px;border:1px solid #edf1f7}
+.series-subj-mini h4{font-size:11px;font-weight:600;color:#0e1e4a;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.mini-track{display:flex;gap:6px;overflow-x:auto}
+.mini-bar-wrap{flex:0 0 auto;text-align:center}
+.mini-bar-lbl{font-size:9px;color:#94a3b8;margin-bottom:2px;white-space:nowrap}
+.mini-bar{height:40px;display:flex;flex-direction:column;justify-content:flex-end}
+.mini-bar-fill{border-radius:3px 3px 0 0;min-height:4px;width:28px;margin:0 auto;transition:height .3s}
+.mini-bar-val{font-size:9px;font-weight:700;color:#0e1e4a;margin-top:2px}
+
+/* Profile */
+.pc-wrap{padding:0;font-family:var(--font-sans,system-ui,sans-serif)}
+.pc-hero{background:linear-gradient(135deg,#185FA5 0%,#378ADD 100%);border-radius:18px;padding:20px;display:flex;align-items:center;gap:16px;margin-bottom:20px;box-shadow:0 10px 25px rgba(24,95,165,.15)}
+.pc-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid rgba(255,255,255,.25)}
+.pc-avatar i{font-size:38px;color:#fff}
+.pc-name{margin:0;font-size:22px;font-weight:700;color:#fff}
+.pc-id{margin:4px 0 0;font-size:13px;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:6px}
+.pc-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:5px 12px;border-radius:30px;background:rgba(255,255,255,.18);color:#fff;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.25)}
+.pc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.pc-section{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.06);border:1px solid #edf1f7}
+.pc-sec-hdr{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#0e1e4a;color:#fff}
+.pc-sec-hdr i{font-size:18px}
+.pc-sec-hdr span{font-size:14px;font-weight:600}
+.pc-row{display:grid;grid-template-columns:170px 1fr;align-items:center;padding:14px 18px;border-bottom:1px solid #eef2f7}
+.pc-row:last-child{border-bottom:none}
+.pc-lbl{display:flex;align-items:center;gap:8px;color:#64748b;font-size:13px;font-weight:500}
+.pc-lbl i{font-size:16px;color:#185FA5}
+.pc-val{color:#1e293b;font-size:13px;font-weight:600;text-align:left;word-break:break-word}
+.pc-status{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:30px;background:#e8f8ef;color:#16a34a;font-size:12px;font-weight:600}
+.pc-inst{display:inline-flex;align-items:center;padding:5px 12px;border-radius:30px;background:#e8f1ff;color:#185FA5;font-size:12px;font-weight:600}
+.bandAPlus{color:green;font-weight:bold}
+.bandA{color:#0056b3;font-weight:bold}
+.bandB{color:#b36b00;font-weight:bold}
+.bandC{color:#8a2be2;font-weight:bold}
+.bandD{color:red;font-weight:bold}
+
+/* Stat cards row */
+.cards-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.sc{background:#fff;border-radius:12px;padding:15px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);border-left:3px solid #0e1e4a}
+.sc.g{border-left-color:#16a34a}
+.sc.a{border-left-color:#f0b800}
+.sc.r{border-left-color:#dc2626}
+.sc.b{border-left-color:#2563eb}
+.sc.p{border-left-color:#7c3aed}
+.sc h3{font-size:10px;color:#94a3b8;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.sc p{font-size:20px;font-weight:700;color:#0e1e4a;line-height:1}
+.sc span{font-size:10.5px;color:#64748b}
+
+/* Subject summary cards */
+.subj-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.subj-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 5px rgba(0,0,0,.06)}
+.subj-card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #f1f5f9}
+.subj-card-title.ph{border-color:#2563eb;color:#1d4ed8}
+.subj-card-title.cy{border-color:#16a34a;color:#15803d}
+.subj-card-title.ma{border-color:#dc2626;color:#b91c1c}
+.subj-stat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f8fafc;font-size:12px}
+.subj-stat-row:last-child{border-bottom:none}
+.subj-stat-row label{color:#94a3b8;font-size:11px}
+.subj-stat-row strong{color:#1e293b;font-weight:600}
+.subj-stat-row.correct strong{color:#16a34a}
+.subj-stat-row.wrong strong{color:#dc2626}
+.subj-stat-row.na strong{color:#94a3b8}
+
+/* Attendance tab */
+.att-filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
+.att-filter-bar label{font-size:10.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;margin-right:4px}
+.att-filter-group{display:flex;align-items:center;gap:6px}
+.att-select{padding:8px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;color:#1e293b;background:#fff;outline:none;min-width:150px}
+.att-select:focus{border-color:#0e1e4a}
+.att-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.att-present{background:#dcfce7;color:#15803d}
+.att-absent{background:#fee2e2;color:#b91c1c}
+.att-reason{background:#fef9c3;color:#92400e}
+.att-day-group{margin-bottom:20px}
+.att-day-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.att-day-hdr h3{font-size:13px;font-weight:600;color:#0e1e4a}
+.att-day-hdr .att-day-sub{font-size:11px;color:#94a3b8}
+.att-links a{color:#185FA5;font-weight:500;text-decoration:none;font-size:11px}
+.att-links a:hover{text-decoration:underline}
+.att-empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
+
+/* Section box */
+.sec-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
+.sec-box h2{font-size:14px;font-weight:600;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.sec-box h2 i{font-size:17px;color:#f0b800}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:#0e1e4a}
+thead th{color:#fff;padding:10px 12px;font-weight:500;text-align:center;font-size:11.5px;white-space:nowrap}
+thead th:first-child{text-align:left}
+thead tr.sub-hdr th{background:#1a3060;font-size:10.5px;color:rgba(255,255,255,.7);padding:6px 12px;font-weight:400}
+tbody td{padding:10px 12px;text-align:center;border-bottom:1px solid #f1f5f9;color:#374151;white-space:nowrap}
+tbody td:first-child{text-align:left;font-weight:500;color:#0e1e4a}
+tbody tr:hover{background:#f8fafc}
+tbody tr:last-child td{border-bottom:none}
+tbody tr.trend-row td{background:#fafbfe;font-size:11px;color:#64748b;padding:4px 12px 8px;border-bottom:2px solid #f0f4fb}
+tbody tr.trend-row td span.up{color:#16a34a;font-weight:600}
+tbody tr.trend-row td span.dn{color:#dc2626;font-weight:600}
+tbody tr.trend-row td span.same{color:#94a3b8}
+.rank-badge{display:inline-block;padding:2px 8px;border-radius:20px;background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700}
+.rank-first{background:#fef9c3;color:#92400e}
+.pct-good{color:#16a34a;font-weight:600}
+.pct-avg{color:#d97706;font-weight:600}
+.pct-low{color:#dc2626;font-weight:600}
+.pos-marks{color:#16a34a;font-weight:600}
+.neg-marks{color:#dc2626;font-weight:600}
+.comment-strong{background:#dcfce7;color:#15803d;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+.comment-weak{background:#fee2e2;color:#b91c1c;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+.comment-avg{background:#fef9c3;color:#92400e;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:500}
+td.correct-val{color:#16a34a;font-weight:600}
+td.wrong-val{color:#dc2626;font-weight:600}
+td.na-val{color:#94a3b8}
+th.ph-group{background:#2563eb !important}
+th.cy-group{background:#16a34a !important}
+th.ma-group{background:#d97706 !important}
+th.total-group{background:#7c3aed !important}
+
+/* Question-wise controls */
+.qw-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.qw-search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
+.qw-search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px}
+.qw-search-input{width:100%;padding:8px 14px 8px 34px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;color:#1e293b;background:#fff;outline:none}
+.qw-search-input:focus{border-color:#0e1e4a}
+.qw-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid #dde3f0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:50;max-height:220px;overflow-y:auto;display:none}
+.qw-dropdown.open{display:block}
+.qw-dropdown-item{padding:9px 14px;font-size:12.5px;color:#1e293b;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s}
+.qw-dropdown-item:hover,.qw-dropdown-item.selected{background:#eff6ff;color:#1d4ed8}
+.qw-dropdown-item .ddi-badge{background:#0e1e4a;color:#fff;font-size:10px;padding:1px 6px;border-radius:4px}
+.qw-dropdown-item .ddi-badge.latest{background:#15803d}
+.qw-dropdown-empty{padding:12px 14px;font-size:12px;color:#94a3b8;text-align:center}
+.qw-btn{padding:8px 18px;background:#0e1e4a;color:#fff;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:6px}
+.qw-btn:hover{background:#1a3060}
+.qw-btn:disabled{background:#94a3b8;cursor:not-allowed;opacity:.7}
+.qw-selected-chip{display:none;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:6px 12px;font-size:12px;color:#1d4ed8;font-weight:500}
+.qw-selected-chip.show{display:flex}
+.qw-selected-chip button{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:14px;line-height:1;padding:0;display:flex}
+.qw-iframe-wrap{background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;position:relative;min-height:200px}
+.qw-iframe-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;color:#94a3b8}
+.qw-iframe-placeholder i{font-size:40px;margin-bottom:12px;opacity:.4}
+.qw-iframe-placeholder p{font-size:13px}
+.qw-iframe-placeholder span{font-size:11px;margin-top:4px}
+#qwIframe{width:100%;border:none;display:none;height:0;transition:height .3s}
+.qw-loading-overlay{display:none;position:absolute;inset:0;background:rgba(248,250,252,.9);align-items:center;justify-content:center;flex-direction:column;gap:10px;border-radius:12px}
+.qw-loading-overlay.show{display:flex}
+.qw-spinner{width:32px;height:32px;border:3px solid #dde3f0;border-top-color:#0e1e4a;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lightbox-inner{background:#fff;border-radius:14px;padding:16px;max-width:90vw;max-height:90vh;overflow:auto;position:relative}
+.lightbox-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;cursor:pointer;color:#475569}
+.lightbox img{max-width:80vw;max-height:75vh;display:block;border-radius:8px}
+
+.mob-toggle{display:none;position:fixed;top:13px;left:13px;z-index:200;background:#0e1e4a;border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:20px;cursor:pointer;align-items:center;justify-content:center}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:99}
+#overlay.show{display:block}
+
+@media(max-width:768px){
+  .mob-toggle{display:flex}
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:14px;padding-top:56px}
+  .topbar{flex-direction:column;align-items:flex-start;gap:6px}
+  .subj-cards{grid-template-columns:1fr}
+  .pc-grid{grid-template-columns:1fr}
+  .pc-hero{flex-direction:column;text-align:center}
+  .pc-id{justify-content:center}
+  .pc-row{grid-template-columns:1fr;gap:6px}
+  .pc-val{text-align:left}
+  .lec-marks-breakdown{grid-template-columns:repeat(2,1fr)}
+  .lec-score-row{flex-wrap:wrap}
+  .lec-score-item{min-width:50%;border-bottom:1px solid #edf1f7}
+  .series-cmp-track{gap:4px}
+}
+</style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="logo">
-    <div class="logo-title"><i class="bi bi-mortarboard-fill me-2"></i>EduAdmin</div>
-    <div class="logo-sub">Management Portal</div>
+<button class="mob-toggle" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
+
+<div class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">U</div>
+    <div>
+      <div class="sb-name">UNIC Academy</div>
+      <div class="sb-tag">Student Portal</div>
+    </div>
   </div>
-  <nav class="mt-2">
-    <a class="nav-link active" href="#" onclick="showSection('users')"><i class="bi bi-people"></i> User Management</a>
-    <a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-calendar-check"></i> Classes <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>
-    <a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-clipboard-check"></i> Attendance <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>
+  <div class="sb-student">
+    <div class="sb-av">&#x1F393;</div>
+    <div>
+      <div class="sb-sname" id="sb_name">Loading…</div>
+      <div class="sb-sid" id="sb_sid">ID: —</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-label">Main</div>
+    <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
+    <button class="nav-item" onclick="showPage('attendance',this)"><i class="ti ti-calendar-check"></i> Attendance</button>
+    <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
+    <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Results</button>
+    <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
+    <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>
   </nav>
+  <div class="sb-bottom">
+    <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:15px"></i> Logout</button>
+  </div>
 </div>
+<div id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- MAIN -->
-<div class="main-content">
-  <!-- TOPBAR -->
-  <div class="topbar d-flex align-items-center justify-content-between">
-    <span id="page-title" class="fw-semibold" style="font-size:15px">User Management</span>
-    <div class="d-flex align-items-center gap-2">
-      <i class="bi bi-person-circle fs-5 text-secondary"></i>
-      <span class="text-secondary" style="font-size:13px">Admin</span>
-      <span class="badge" style="background:#dbeafe;color:#1d4ed8;font-size:11px">admin</span>
+<div class="main">
+  <div class="topbar">
+    <div>
+      <h1 id="topbar_name">Welcome</h1>
+      <p>Academic Dashboard — UNIC Academy</p>
+    </div>
+    <span class="badge-active">&#10003; Active</span>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="page active" id="page-profile">
+    <div class="pc-wrap">
+      <div class="pc-hero">
+        <div class="pc-avatar"><i class="ti ti-user-circle" aria-hidden="true"></i></div>
+        <div>
+          <p class="pc-name" id="p_name">Student Name</p>
+          <p class="pc-id"><i class="ti ti-id-badge" style="font-size:13px"></i><span id="p_stdid">Student ID</span></p>
+          <div class="pc-badge"><i class="ti ti-circle-check" style="font-size:12px"></i> Active</div>
+        </div>
+      </div>
+      <div class="pc-grid">
+        <div class="pc-section">
+          <div class="pc-sec-hdr"><i class="ti ti-user"></i><span>Personal information</span></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-mail"></i>Email</div><div class="pc-val" id="p_email">—</div></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-phone"></i>Mobile</div><div class="pc-val" id="p_mobile">—</div></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-calendar"></i>Date of birth</div><div class="pc-val" id="p_dob">—</div></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-id-badge"></i>Student ID</div><div class="pc-val" id="p_id">—</div></div>
+        </div>
+        <div class="pc-section">
+          <div class="pc-sec-hdr"><i class="ti ti-building"></i><span>Academic information</span></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-book"></i>Class</div><div class="pc-val" id="p_class">—</div></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-school"></i>School</div><div class="pc-val" id="p_school">—</div></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-map-pin"></i>Institute</div><div class="pc-val"><span class="pc-inst">UNIC Academy</span></div></div>
+          <div class="pc-row"><div class="pc-lbl"><i class="ti ti-circle-check"></i>Status</div><div class="pc-val"><span class="pc-status"><i class="ti ti-point-filled" style="font-size:10px"></i> Active</span></div></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- BODY -->
-  <div class="page-body">
-
-    <!-- STATS ROW -->
-    <div class="row g-3 mb-4">
-      <div class="col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Total Students</div>
-          <div class="stat-value" id="stat-total">—</div>
-          <div class="stat-sub">across all schools</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Active</div>
-          <div class="stat-value text-success" id="stat-active">—</div>
-          <div class="stat-sub">currently active</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Inactive</div>
-          <div class="stat-value text-danger" id="stat-inactive">—</div>
-          <div class="stat-sub">deactivated accounts</div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="stat-card">
-          <div class="stat-label">Schools</div>
-          <div class="stat-value" id="stat-schools">—</div>
-          <div class="stat-sub">registered</div>
-        </div>
-      </div>
+  <!-- ATTENDANCE -->
+  <div class="page" id="page-attendance">
+    <div class="cards-row" id="attSummaryCards">
+      <div class="sc"><h3>Loading</h3><p>—</p></div>
     </div>
 
-    <!-- USER TABLE CARD -->
-    <div class="card shadow-sm">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-people me-2"></i>All Students</span>
-        <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
-          <i class="bi bi-plus-lg me-1"></i> New Student
+    <div class="sec-box">
+      <h2><i class="ti ti-calendar-check"></i> Attendance</h2>
+      <div class="att-filter-bar">
+        <div class="att-filter-group">
+          <label for="attDateFilter">Date</label>
+          <select class="att-select" id="attDateFilter" onchange="renderAttendanceView()">
+            <option value="">All dates</option>
+          </select>
+        </div>
+        <div class="att-filter-group">
+          <label for="attSubjectFilter">Subject</label>
+          <select class="att-select" id="attSubjectFilter" onchange="renderAttendanceView()">
+            <option value="">All subjects</option>
+          </select>
+        </div>
+        <button class="qw-btn" onclick="resetAttendanceFilters()"><i class="ti ti-filter-x"></i> Reset filters</button>
+      </div>
+      <div id="attendanceContent">
+        <div class="att-empty">Loading attendance…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAM RESULTS -->
+  <div class="page" id="page-results">
+    <div class="sec-box">
+      <h2><i class="ti ti-notebook"></i> Important Notes:</h2>
+      <p style="font-size:12px;margin-top:5px;"><b>Grade Scale: </b>A+ : 85%-100% (Outstanding), A : 70%-84% (Excellent), B : 55%-69% (Good), C : 40%-54% (Average), D : Below 40% (Needs Improvement)</p>
+      <p style="font-size:12px;line-height:1.1;margin-top:5px;"><b>Abbreviations: </b>C = Correct, W = Wrong, NA = Not Attempted, PH = Physics, CY = Chemistry, MA = Mathematics</p>
+      <p style="font-size:12px;line-height:1.1;margin-top:5px;"><b>Bonus:</b> No negative marking. Bonus up to 5 marks each for PH/CY/MA/Overall. Max total bonus: 20.</p>
+    </div>
+
+    <!-- Latest exam card -->
+    <div id="latestResultCard"></div>
+
+    <!-- Series comparison card (shown only when series exams exist) -->
+    <div id="seriesComparisonCard"></div>
+
+    <div class="sec-box">
+      <h2><i class="ti ti-chart-bar"></i> Exam Results</h2>
+      <div class="tbl-wrap">
+        <table id="examResultsTable">
+          <thead>
+            <tr>
+              <th>Exam</th><th>Rank</th><th>Physics</th><th>Chemistry</th><th>Maths</th>
+              <th>(+ Marks)</th><th>(- Marks)</th><th>Total Marks</th>
+              <th>Bonus</th><th>Final Marks</th><th>%</th><th>Grade</th><th>Comment</th>
+            </tr>
+          </thead>
+          <tbody id="resultTable"><tr><td colspan="13" style="text-align:center;padding:30px;color:#94a3b8">Loading results…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE SUMMARY -->
+  <div class="page" id="page-summary">
+    <div id="summaryContent"><div class="cards-row"><div class="sc"><h3>Loading</h3><p>—</p></div></div></div>
+  </div>
+
+  <!-- EXAM ANALYSIS -->
+  <div class="page" id="page-analysis">
+    <div class="sec-box">
+      <h2><i class="ti ti-clipboard-list"></i> Exam Analysis — Correct / Wrong / Not Attempted</h2>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Exam</th>
+              <th colspan="3" class="ph-group">⚡ Physics</th>
+              <th colspan="3" class="cy-group">🧪 Chemistry</th>
+              <th colspan="3" class="ma-group">∫ Mathematics</th>
+              <th colspan="3" class="total-group">📊 Total</th>
+            </tr>
+            <tr class="sub-hdr">
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+              <th>✓ C</th><th>✗ W</th><th>— NA</th>
+            </tr>
+          </thead>
+          <tbody id="analysisTable"><tr><td colspan="13" style="text-align:center;padding:30px;color:#94a3b8">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTION-WISE RESULT -->
+  <div class="page" id="page-questionwise">
+    <div class="sec-box">
+      <h2><i class="ti ti-list-numbers"></i> Question-wise Result</h2>
+      <p style="font-size:12px;color:#64748b;margin-bottom:16px">
+        Search or select an exam to view the full question-by-question breakdown including <b>question types</b>. The report loads below — use <b>Print PDF</b> to save it.
+      </p>
+
+      <div class="qw-controls">
+        <div class="qw-search-wrap" id="qwSearchWrap">
+          <i class="ti ti-search"></i>
+          <input type="text" class="qw-search-input" id="qwSearchInput" placeholder="Search exam…" autocomplete="off" readonly
+            onclick="openQwDropdown()" oninput="filterQwDropdown(this.value)">
+          <div class="qw-dropdown" id="qwDropdown"></div>
+        </div>
+        <div class="qw-selected-chip" id="qwChip">
+          <i class="ti ti-file-check" style="font-size:14px"></i>
+          <span id="qwChipLabel">—</span>
+          <button onclick="clearQwSelection()" title="Clear"><i class="ti ti-x"></i></button>
+        </div>
+        <button class="qw-btn" onclick="loadQuestionWise()" id="qwLoadBtn" disabled>
+          <i class="ti ti-search"></i> Load Results
+        </button>
+        <button class="qw-btn" style="background:#dc2626" id="qwPdfBtn" onclick="triggerQwPrint()" disabled>
+          <i class="ti ti-printer"></i> Print PDF
         </button>
       </div>
-      <div class="card-body">
-        <!-- FILTERS -->
-        <div class="row g-2 mb-3">
-          <div class="col-md-4">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input type="text" class="form-control" id="search-input" placeholder="Search name, email, ID..." oninput="filterTable()">
-            </div>
-          </div>
-          <div class="col-md-3">
-            <select class="form-select form-select-sm" id="filter-school" onchange="filterTable()">
-              <option value="">All Schools</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <select class="form-select form-select-sm" id="filter-status" onchange="filterTable()">
-              <option value="">All Status</option>
-              <option value="true">Active</option>
-              <option value="false">Inactive</option>
-            </select>
-          </div>
-          <div class="col-md-3 text-end">
-            <button class="btn btn-outline-secondary btn-sm" onclick="loadUsers()">
-              <i class="bi bi-arrow-clockwise me-1"></i> Refresh
-            </button>
-          </div>
-        </div>
 
-        <!-- TABLE -->
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Student</th>
-                <th>Email</th>
-                <th>Std ID</th>
-                <th>Class</th>
-                <th>School</th>
-                <th>Mobile</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="user-tbody">
-              <tr><td colspan="9" class="text-center text-muted py-4">Loading...</td></tr>
-            </tbody>
-          </table>
+      <div class="qw-iframe-wrap" id="qwIframeWrap">
+        <div class="qw-iframe-placeholder" id="qwPlaceholder">
+          <i class="ti ti-clipboard-list"></i>
+          <p>No exam selected yet</p>
+          <span>Search or select an exam above, then click <b>Load Results</b></span>
         </div>
-        <div class="mt-2 text-muted" style="font-size:12px" id="table-count"></div>
-      </div>
-    </div>
-
-  </div><!-- /page-body -->
-</div><!-- /main-content -->
-
-<!-- ===================== CREATE / EDIT MODAL ===================== -->
-<div class="modal fade" id="userModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="userModalTitle">New Student</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-name" placeholder="Student full name">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
-            <input type="email" class="form-control" id="f-email" placeholder="student@example.com">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Student ID <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-std" placeholder="e.g. STD001">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Mobile <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-mobile" placeholder="10-digit mobile number">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">School Name <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-school" placeholder="School name">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">School ID</label>
-            <input type="text" class="form-control" id="f-school-id" placeholder="e.g. SCH001">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Class <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-class" placeholder="e.g. Grade 10-A">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Date of Birth</label>
-            <input type="date" class="form-control" id="f-dob">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label fw-semibold">Password</label>
-            <div class="input-group">
-              <input type="password" class="form-control" id="f-password" placeholder="Leave blank to keep existing">
-              <button class="btn btn-outline-secondary" type="button" onclick="togglePwd()"><i class="bi bi-eye" id="pwd-eye"></i></button>
-            </div>
-          </div>
-          <div class="col-md-6" id="status-toggle-wrap" style="display:none">
-            <label class="form-label fw-semibold">Status</label>
-            <div class="form-check form-switch mt-2">
-              <input class="form-check-input" type="checkbox" id="f-status" checked>
-              <label class="form-check-label" for="f-status">Active</label>
-            </div>
-          </div>
+        <div class="qw-loading-overlay" id="qwLoading">
+          <div class="qw-spinner"></div>
+          <p style="font-size:12px;color:#64748b">Loading question data…</p>
         </div>
-        <div id="modal-error" class="alert alert-danger mt-3 py-2 d-none"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="modal-save-btn" onclick="saveUser()">
-          <i class="bi bi-check-lg me-1"></i> Save
-        </button>
+        <iframe id="qwIframe" title="Question-wise Result"></iframe>
       </div>
     </div>
   </div>
+
 </div>
 
-<!-- ===================== VIEW MODAL ===================== -->
-<div class="modal fade" id="viewModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Student Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" id="view-body"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="view-edit-btn">
-          <i class="bi bi-pencil me-1"></i> Edit
-        </button>
-      </div>
-    </div>
+<!-- Lightbox -->
+<div class="lightbox" id="imgLightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lbImg" src="" alt="Question">
   </div>
 </div>
-
-<!-- ===================== TOAST ===================== -->
-<div class="toast-container">
-  <div id="main-toast" class="toast align-items-center border-0" role="alert">
-    <div class="d-flex">
-      <div class="toast-body" id="toast-msg"></div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-    </div>
-  </div>
-</div>
-
-<!-- LOADING -->
-<div class="loading-overlay d-none" id="loading">
-  <div class="spinner-border text-light"></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-const API = {
+/* ── Helpers ── */
+const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || "—"; };
+const $ = id => document.getElementById(id);
 
-  async request(action, payload = {}) {
-
-    const response = await fetch(
-      "/api/adminuserman",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          action,
-          payload
-        })
-      }
-    );
-
-    const data =
-      await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        data.error ||
-        "Server Error"
-      );
-    }
-
-    return data;
-  },
-
-  async getUsers() {
-    return this.request("list");
-  },
-
-  async getUser(user_id) {
-    return this.request(
-      "get",
-      { user_id }
-    );
-  },
-
-  async createUser(fields) {
-    return this.request(
-      "create",
-      fields
-    );
-  },
-
-  async updateUser(
-    user_id,
-    set
-  ) {
-    return this.request(
-      "update",
-      {
-        user_id,
-        set
-      }
-    );
-  },
-
-  async deleteUser(
-    user_id
-  ) {
-    return this.request(
-      "delete",
-      { user_id }
-    );
+function toggleSidebar(){
+  $("sidebar").classList.toggle("open");
+  $("overlay").classList.toggle("show");
+}
+function showPage(name, btn){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+  $("page-" + name).classList.add("active");
+  if(btn) btn.classList.add("active");
+  if(window.innerWidth <= 768) $("sidebar").classList.remove("open");
+}
+function logout(){
+  if(confirm("Are you sure you want to logout?")){
+    localStorage.removeItem("student");
+    window.location.href = "index.html";
   }
+}
+function pctClass(p){ p=parseFloat(p); return p>=70?"pct-good":p>=40?"pct-avg":"pct-low"; }
+function pctBClass(b){ if(b==='A+')return"bandAPlus"; if(b==='A')return"bandA"; if(b==='B')return"bandB"; if(b==='C')return"bandC"; return"bandD"; }
+function gradeBadgeClass(b){ if(b==='A+')return"grade-badge grade-aplus"; if(b==='A')return"grade-badge grade-a"; if(b==='B')return"grade-badge grade-b"; if(b==='C')return"grade-badge grade-c"; return"grade-badge grade-d"; }
+function gradeColor(b){ if(b==='A+')return'#15803d'; if(b==='A')return'#1d4ed8'; if(b==='B')return'#92400e'; if(b==='C')return'#9d174d'; return'#b91c1c'; }
 
-};
-
-
-  
-let USERS = [];
-
-let CURRENT_ID = null;
-
-const userModal =
-  new bootstrap.Modal(
-    document.getElementById(
-      "userModal"
-    )
-  );
-
-const viewModal =
-  new bootstrap.Modal(
-    document.getElementById(
-      "viewModal"
-    )
-  );
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-    loadUsers();
-  }
-);
-
-async function loadUsers() {
-
-  try {
-
-    showLoading(true);
-
-    USERS =
-      await API.getUsers();
-
-    renderUsers(
-      USERS
-    );
-
-    updateStats();
-
-    loadSchoolFilter();
-
-  } catch (err) {
-
-    showToast(
-      err.message,
-      "danger"
-    );
-
-  } finally {
-
-    showLoading(false);
-
-  }
-
+function getComment(r){
+  const phT=r.ph_correct+r.ph_wrong+r.ph_not_attempted;
+  const cyT=r.cy_correct+r.cy_wrong+r.cy_not_attempted;
+  const maT=r.ma_correct+r.ma_wrong+r.ma_not_attempted;
+  const phPct=phT?r.ph_correct/phT*100:0;
+  const cyPct=cyT?r.cy_correct/cyT*100:0;
+  const maPct=maT?r.ma_correct/maT*100:0;
+  const strong=[],weak=[];
+  if(phPct>=60)strong.push("PH"); else if(phPct<35)weak.push("PH");
+  if(cyPct>=60)strong.push("CY"); else if(cyPct<35)weak.push("CY");
+  if(maPct>=60)strong.push("MA"); else if(maPct<35)weak.push("MA");
+  let html="";
+  if(strong.length)html+=`<span class="comment-strong">Strong: ${strong.join(", ")}</span> `;
+  if(weak.length)html+=`<span class="comment-weak">Focus: ${weak.join(", ")}</span>`;
+  if(!html)html=`<span class="comment-avg">Balanced</span>`;
+  return html;
 }
 
-function renderUsers(users) {
+function getTrend(curr,prev){
+  if(!prev)return"";
+  const diff=parseFloat(curr.percentage)-parseFloat(prev.percentage);
+  const markDiff=parseFloat(curr.final_marks)-parseFloat(prev.final_marks);
+  const phDiff=(parseFloat(curr.ph)||0)-(parseFloat(prev.ph)||0);
+  const cyDiff=(parseFloat(curr.cy)||0)-(parseFloat(prev.cy)||0);
+  const maDiff=(parseFloat(curr.ma)||0)-(parseFloat(prev.ma)||0);
+  const tM=v=>v>0?`<span class="up">▲ ${v}</span>`:v<0?`<span class="dn">▼ ${Math.abs(v)}</span>`:`<span class="same">━ 0</span>`;
+  const pStr=diff>0?`<span class="up">▲ ${diff.toFixed(1)}%</span>`:diff<0?`<span class="dn">▼ ${Math.abs(diff).toFixed(1)}%</span>`:`<span class="same">━ No change</span>`;
+  const mStr=markDiff>0?`<span class="up">+${markDiff} marks</span>`:markDiff<0?`<span class="dn">${markDiff} marks</span>`:"";
+  return ` ${prev.exam_name} ➜ ${curr.exam_name} : ${pStr} &nbsp;|&nbsp; ${mStr} &nbsp;|&nbsp; PH:&nbsp;${tM(phDiff)}, CY:&nbsp;${tM(cyDiff)}, MA:&nbsp;${tM(maDiff)}`;
+}
 
-  const tbody =
-    document.getElementById(
-      "user-tbody"
-    );
+/* ══════════════════════════════════════════════
+   SERIES DETECTION
+   Extracts series name + number from exam names.
+   e.g. "PCM Test 3" → { series: "PCM Test", num: 3 }
+        "JEE Mock 12" → { series: "JEE Mock", num: 12 }
+══════════════════════════════════════════════ */
+function parseExamSeries(examName){
+  // Match trailing number: "PCM Test 3" → series="PCM Test", num=3
+  const m = examName.match(/^(.*?)[\s\-_]+(\d+)\s*$/);
+  if(m) return { series: m[1].trim(), num: parseInt(m[2]) };
+  return null;
+}
 
-  if (!users.length) {
+function groupBySeries(results){
+  const groups = {};
+  results.forEach(r => {
+    const parsed = parseExamSeries(r.exam_name);
+    if(parsed){
+      if(!groups[parsed.series]) groups[parsed.series] = [];
+      groups[parsed.series].push({ ...r, _seriesNum: parsed.num });
+    }
+  });
+  // Sort each group by series number
+  Object.keys(groups).forEach(s => groups[s].sort((a,b) => a._seriesNum - b._seriesNum));
+  return groups;
+}
 
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="9"
-        class="text-center">
-        No Users
-        </td>
-      </tr>`;
+/* ── Build Series Comparison Card ── */
+function buildSeriesComparison(latestResult, allResults){
+  const seriesGroups = groupBySeries(allResults);
+  const latestParsed = parseExamSeries(latestResult.exam_name);
+  if(!latestParsed) return ""; // Latest exam has no series number
 
+  const seriesExams = seriesGroups[latestParsed.series];
+  if(!seriesExams || seriesExams.length < 2) return ""; // Need at least 2 exams in series
+
+  // Build track items
+  let trackHTML = "";
+  seriesExams.forEach((r, i) => {
+    const isCurrent = r.exam_name === latestResult.exam_name;
+    const pct = parseFloat(r.percentage);
+
+    // Delta vs previous
+    let deltaHTML = "";
+    if(i > 0){
+      const prev = seriesExams[i-1];
+      const d = (pct - parseFloat(prev.percentage)).toFixed(1);
+      const cls = d > 0 ? "up" : d < 0 ? "dn" : "same";
+      const icon = d > 0 ? "▲" : d < 0 ? "▼" : "━";
+      deltaHTML = `<div class="sct-delta ${cls}">${icon} ${Math.abs(d)}%</div>`;
+    }
+
+    // Arrow between items
+    if(i > 0){
+      trackHTML += `<div class="sct-arrow"><i class="ti ti-arrow-narrow-right"></i></div>`;
+    }
+
+    trackHTML += `
+      <div class="sct-item${isCurrent?' current':''}">
+        <div class="sct-name" title="${r.exam_name}">${r.exam_name}</div>
+        <div class="sct-pct" style="color:${pct>=70?'#15803d':pct>=40?'#d97706':'#dc2626'}">${r.percentage}%</div>
+        <div class="sct-grade" style="color:${gradeColor(r.band)}">${r.band} ${isCurrent?'✦':''}</div>
+        <div class="sct-marks">${r.final_marks} marks</div>
+        ${deltaHTML}
+      </div>`;
+  });
+
+  // Subject mini bars per exam in series
+  const subjects = [
+    { key: "ph", label: "⚡ Physics", color: "#2563eb" },
+    { key: "cy", label: "🧪 Chemistry", color: "#15803d" },
+    { key: "ma", label: "∫ Maths", color: "#d97706" }
+  ];
+
+  let subjMiniHTML = "";
+  subjects.forEach(subj => {
+    const maxMark = Math.max(...seriesExams.map(r => Number(r[subj.key])||0), 1);
+    let bars = seriesExams.map(r => {
+      const val = Number(r[subj.key])||0;
+      const heightPct = Math.round((val/maxMark)*100);
+      const isCurr = r.exam_name === latestResult.exam_name;
+      return `<div class="mini-bar-wrap">
+        <div class="mini-bar-lbl">${r._seriesNum}</div>
+        <div class="mini-bar">
+          <div class="mini-bar-fill" style="height:${Math.max(heightPct*0.4,4)}px;background:${isCurr?subj.color:'#cbd5e1'}"></div>
+        </div>
+        <div class="mini-bar-val">${val}</div>
+      </div>`;
+    }).join("");
+
+    // Delta for latest vs prev in series
+    const latestIdx = seriesExams.findIndex(r => r.exam_name === latestResult.exam_name);
+    let subjDelta = "";
+    if(latestIdx > 0){
+      const d = (Number(latestResult[subj.key])||0) - (Number(seriesExams[latestIdx-1][subj.key])||0);
+      const cls = d > 0 ? "#15803d" : d < 0 ? "#dc2626" : "#94a3b8";
+      const icon = d > 0 ? "▲" : d < 0 ? "▼" : "━";
+      subjDelta = `<span style="font-size:10px;color:${cls};margin-left:6px">${icon} ${Math.abs(d)} vs prev</span>`;
+    }
+
+    subjMiniHTML += `
+      <div class="series-subj-mini">
+        <h4 style="color:${subj.color}">${subj.label}${subjDelta}</h4>
+        <div class="mini-track">${bars}</div>
+      </div>`;
+  });
+
+  return `
+  <div class="series-cmp-card">
+    <div class="series-cmp-header">
+      <h3><i class="ti ti-git-compare" style="font-size:14px"></i> Series Comparison — ${latestParsed.series}</h3>
+      <span>${seriesExams.length} exams in this series &nbsp;·&nbsp; ✦ = current exam</span>
+    </div>
+    <div class="series-cmp-body">
+      <div class="series-cmp-track">${trackHTML}</div>
+      <div class="series-subj-row">${subjMiniHTML}</div>
+    </div>
+  </div>`;
+}
+
+let allResults = [];
+
+/* ══════════════════════════════════════════════
+   LOAD STUDENT RESULTS
+══════════════════════════════════════════════ */
+async function loadStudentResults(){
+  try{
+    const res = await fetch("students.json");
+    const data = await res.json();
+    allResults = data.filter(item=>String(item.s_id)===String(user.std_id));
+    if(!allResults.length){
+      $("resultTable").innerHTML=`<tr><td colspan="13" style="text-align:center;padding:30px;color:#94a3b8">No results found for your ID.</td></tr>`;
+      return;
+    }
+
+    /* ── Exam Results Table ── */
+    let resultRows="";
+    allResults.forEach((r,i)=>{
+      const marks = Array.isArray(r.qp_marks) ? r.qp_marks : [];
+      const posMarks = marks.reduce((acc, val) => acc + (val > 0 ? val : 0), 0);
+      const negMarks = marks.reduce((acc, val) => acc + (val < 0 ? Math.abs(val) : 0), 0);
+      const totalMark = posMarks - negMarks;
+      const bonus=Number(r.bonus)||0;
+      const rankCls=Number(r.rank)===1?"rank-badge rank-first":"rank-badge";
+      const trend = r.exam_name?.startsWith("PCM") ? getTrend(r, allResults[i - 1]): "";
+      resultRows+=`
+        <tr>
+          <td>${r.exam_name}</td>
+          <td><span class="${rankCls}">${r.rank}</span></td>
+          <td>${r.ph}</td><td>${r.cy}</td><td>${r.ma}</td>
+          <td class="pos-marks">+${posMarks}</td>
+          <td class="neg-marks">−${negMarks}</td>
+          <td>${totalMark}</td>
+          <td>${bonus>0?`<span class="pos-marks">+${bonus}</span>`:'—'}</td>
+          <td><strong>${r.final_marks}</strong></td>
+          <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+          <td class="${pctBClass(r.band)}">${r.band}</td>
+          <td>${getComment(r)}</td>
+        </tr>
+        ${trend?`<tr class="trend-row"><td></td><td colspan="12">${trend}</td></tr>`:""}
+      `;
+    });
+    $("resultTable").innerHTML=resultRows;
+
+    /* ── Latest exam card ── */
+    const lr = allResults[allResults.length - 1];
+    if(lr){
+      const marks = Array.isArray(lr.qp_marks) ? lr.qp_marks : [];
+      const posMarks = marks.reduce((acc,v)=>acc+(v>0?v:0),0);
+      const negMarks = marks.reduce((acc,v)=>acc+(v<0?Math.abs(v):0),0);
+      const totalMark = posMarks - negMarks;
+      const bonus = Number(lr.bonus)||0;
+      const examDate = lr.exam_date || "";
+
+      $("latestResultCard").innerHTML=`
+      <div class="latest-exam-card">
+        <div class="lec-header">
+          <div class="lec-header-left">
+            <h3><i class="ti ti-trophy" style="font-size:14px;margin-right:6px;color:#f0b800"></i>Latest Result — ${lr.exam_name}</h3>
+            <p><i class="ti ti-calendar" style="font-size:11px"></i> ${examDate||"Most Recent Exam"} &nbsp;·&nbsp; ${lr.ph_correct+lr.cy_correct+lr.ma_correct} correct out of ${lr.ph_correct+lr.ph_wrong+lr.ph_not_attempted+lr.cy_correct+lr.cy_wrong+lr.cy_not_attempted+lr.ma_correct+lr.ma_wrong+lr.ma_not_attempted} questions</p>
+          </div>
+          <div class="lec-rank-pill">
+            <div>
+              <div class="rank-lbl">Rank</div>
+              <div class="rank-num">#${lr.rank}</div>
+            </div>
+          </div>
+        </div>
+        <div class="lec-body">
+          <div class="lec-score-row">
+            <div class="lec-score-item highlight-score">
+              <div class="si-label">Final Score</div>
+              <div class="si-val">${lr.final_marks}</div>
+              <div class="si-sub">out of max</div>
+            </div>
+            <div class="lec-score-item">
+              <div class="si-label">Percentage</div>
+              <div class="si-val" style="color:${parseFloat(lr.percentage)>=70?'#15803d':parseFloat(lr.percentage)>=40?'#d97706':'#dc2626'}">${lr.percentage}%</div>
+              <div class="si-sub">score rate</div>
+            </div>
+            <div class="lec-score-item">
+              <div class="si-label">Grade</div>
+              <div class="si-val" style="font-size:15px;margin-top:3px"><span class="${gradeBadgeClass(lr.band)}">${lr.band}</span></div>
+              <div class="si-sub">${lr.band==='A+'?'Outstanding':lr.band==='A'?'Excellent':lr.band==='B'?'Good':lr.band==='C'?'Average':'Needs Improvement'}</div>
+            </div>
+          </div>
+          <div class="lec-marks-breakdown">
+            <div class="lec-subj-pill ph">
+              <div class="sp-icon"><i class="ti ti-bolt"></i></div>
+              <div><div class="sp-name">Physics</div><div class="sp-marks">${lr.ph}</div></div>
+            </div>
+            <div class="lec-subj-pill cy">
+              <div class="sp-icon"><i class="ti ti-flask"></i></div>
+              <div><div class="sp-name">Chemistry</div><div class="sp-marks">${lr.cy}</div></div>
+            </div>
+            <div class="lec-subj-pill ma">
+              <div class="sp-icon"><i class="ti ti-math-function"></i></div>
+              <div><div class="sp-name">Mathematics</div><div class="sp-marks">${lr.ma}</div></div>
+            </div>
+            <div class="lec-mb-item pos"><div class="mb-lbl">+ Marks</div><div class="mb-val">+${posMarks}</div></div>
+            <div class="lec-mb-item neg"><div class="mb-lbl">− Marks</div><div class="mb-val">−${negMarks}</div></div>
+            <div class="lec-mb-item total"><div class="mb-lbl">Net Marks</div><div class="mb-val">${totalMark}</div></div>
+            <div class="lec-mb-item bonus"><div class="mb-lbl">Bonus</div><div class="mb-val">${bonus>0?"+"+bonus:"—"}</div></div>
+          </div>
+        </div>
+      </div>`;
+
+      /* ── Series Comparison (below latest card) ── */
+      $("seriesComparisonCard").innerHTML = buildSeriesComparison(lr, allResults);
+    }
+
+    /* ── Analysis Table ── */
+    $("analysisTable").innerHTML=allResults.map(r=>`
+      <tr>
+        <td>${r.exam_name}</td>
+        <td class="correct-val">${r.ph_correct}</td><td class="wrong-val">${r.ph_wrong}</td><td class="na-val">${r.ph_not_attempted}</td>
+        <td class="correct-val">${r.cy_correct}</td><td class="wrong-val">${r.cy_wrong}</td><td class="na-val">${r.cy_not_attempted}</td>
+        <td class="correct-val">${r.ma_correct}</td><td class="wrong-val">${r.ma_wrong}</td><td class="na-val">${r.ma_not_attempted}</td>
+        <td class="correct-val">${r.correct}</td><td class="wrong-val">${r.wrong}</td><td class="na-val">${r.not_attempted}</td>
+      </tr>`).join("");
+
+    buildSummary();
+    populateQwDropdown();
+
+  }catch(err){
+    console.error(err);
+    $("resultTable").innerHTML=`<tr><td colspan="13" style="text-align:center;padding:30px;color:#dc2626">Error loading results.</td></tr>`;
+  }
+}
+
+/* ══ Performance Summary ══ */
+function buildSummary(){
+  const total=allResults.length;
+  const avgMarks=(allResults.reduce((s,r)=>s+Number(r.final_marks),0)/total).toFixed(1);
+  const avgPct=(allResults.reduce((s,r)=>s+Number(r.percentage),0)/total).toFixed(1);
+  const avgCorrect=(allResults.reduce((s,r)=>s+Number(r.correct),0)/total).toFixed(2);
+  const avgWrong=(allResults.reduce((s,r)=>s+Number(r.wrong),0)/total).toFixed(2);
+  const avgNA=(allResults.reduce((s,r)=>s+Number(r.not_attempted),0)/total).toFixed(2);
+  const best=allResults.reduce((b,r)=>Number(r.percentage)>Number(b.percentage)?r:b,allResults[0]);
+  const worst=allResults.reduce((b,r)=>Number(r.percentage)<Number(b.percentage)?r:b,allResults[0]);
+  const phMarks=allResults.map(r=>Number(r.ph));
+  const cyMarks=allResults.map(r=>Number(r.cy));
+  const maMarks=allResults.map(r=>Number(r.ma));
+  const avg=arr=>(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1);
+  const maxV=arr=>Math.max(...arr);
+  const minV=arr=>Math.min(...arr);
+  const avgC=key=>(allResults.reduce((s,r)=>s+Number(r[key]),0)/total).toFixed(1);
+  const subjects=[{name:'Physics',avg:Number(avg(phMarks))},{name:'Chemistry',avg:Number(avg(cyMarks))},{name:'Mathematics',avg:Number(avg(maMarks))}];
+  const sorted=[...subjects].sort((a,b)=>b.avg-a.avg);
+  const strongest=sorted[0],stable=sorted[1],improvement=sorted[2];
+  const subjectCards=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+      <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;"><i class="ti ti-trophy" style="font-size:16px;color:#3B6D11;"></i></div><span style="font-size:14px;font-weight:500;color:#3B6D11;">Strongest subject</span></div>
+        <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${strongest.name}</div>
+        <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${strongest.avg}%;background:#639922;border-radius:4px;"></div></div>
+        <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${strongest.avg}%</span></div>
+      </div>
+      <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#E6F1FB;display:flex;align-items:center;justify-content:center;"><i class="ti ti-chart-line" style="font-size:16px;color:#185FA5;"></i></div><span style="font-size:14px;font-weight:500;color:#185FA5;">Stable subject</span></div>
+        <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${stable.name}</div>
+        <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${stable.avg}%;background:#378ADD;border-radius:4px;"></div></div>
+        <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${stable.avg}%</span></div>
+      </div>
+      <div style="background:#fff;border:0.5px solid #e5e5e5;border-radius:12px;padding:1rem 1.25rem;display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:32px;height:32px;border-radius:8px;background:#FCEBEB;display:flex;align-items:center;justify-content:center;"><i class="ti ti-target" style="font-size:16px;color:#A32D2D;"></i></div><span style="font-size:14px;font-weight:500;color:#A32D2D;">Needs improvement</span></div>
+        <div style="font-size:15px;font-weight:500;color:#1a1a1a;">${improvement.name}</div>
+        <div style="height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:4px 0;"><div style="height:100%;width:${improvement.avg}%;background:#E24B4A;border-radius:4px;"></div></div>
+        <div style="font-size:12px;color:#6c757d;">Average score: <span style="font-weight:500;color:#1a1a1a;">${improvement.avg}%</span></div>
+      </div>
+    </div>`;
+
+  $("summaryContent").innerHTML=`
+    <div class="cards-row">
+      <div class="sc b"><h3>Total Exams</h3><p>${total}</p></div>
+      <div class="sc a"><h3>Avg Marks</h3><p>${avgMarks}</p></div>
+      <div class="sc a"><h3>Avg %</h3><p>${avgPct}%</p></div>
+      <div class="sc g"><h3>Best Exam</h3><p style="font-size:13px;margin-top:3px">${best.exam_name}</p><span>${best.percentage}%</span></div>
+      <div class="sc r"><h3>Needs Work</h3><p style="font-size:13px;margin-top:3px">${worst.exam_name}</p><span>${worst.percentage}%</span></div>
+      <div class="sc g"><h3>Avg Correct</h3><p>${avgCorrect}</p></div>
+      <div class="sc r"><h3>Avg Wrong</h3><p>${avgWrong}</p></div>
+      <div class="sc"><h3>Avg Not Att.</h3><p>${avgNA}</p></div>
+    </div>
+    ${subjectCards}
+    <div class="subj-cards" style="margin-top:12px;">
+      <div class="subj-card"><div class="subj-card-title ph">⚡ Physics</div>
+        <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(phMarks)}</strong></div>
+        <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(phMarks)}</strong></div>
+        <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(phMarks)}</strong></div>
+        <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ph_correct")}</strong></div>
+        <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ph_wrong")}</strong></div>
+        <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ph_not_attempted")}</strong></div>
+      </div>
+      <div class="subj-card"><div class="subj-card-title cy">🧪 Chemistry</div>
+        <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(cyMarks)}</strong></div>
+        <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(cyMarks)}</strong></div>
+        <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(cyMarks)}</strong></div>
+        <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("cy_correct")}</strong></div>
+        <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("cy_wrong")}</strong></div>
+        <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("cy_not_attempted")}</strong></div>
+      </div>
+      <div class="subj-card"><div class="subj-card-title ma">∫ Mathematics</div>
+        <div class="subj-stat-row"><label>Avg Marks</label><strong>${avg(maMarks)}</strong></div>
+        <div class="subj-stat-row"><label>Max Marks</label><strong>${maxV(maMarks)}</strong></div>
+        <div class="subj-stat-row"><label>Min Marks</label><strong>${minV(maMarks)}</strong></div>
+        <div class="subj-stat-row correct"><label>Avg Correct</label><strong>${avgC("ma_correct")}</strong></div>
+        <div class="subj-stat-row wrong"><label>Avg Wrong</label><strong>${avgC("ma_wrong")}</strong></div>
+        <div class="subj-stat-row na"><label>Avg Not Att.</label><strong>${avgC("ma_not_attempted")}</strong></div>
+      </div>
+    </div>
+    <div class="sec-box" style="margin-bottom:0">
+      <h2><i class="ti ti-table"></i> All Exams Overview</h2>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Exam</th><th>PH</th><th>CY</th><th>MA</th><th>Bonus</th><th>Final Marks</th><th>%</th><th>Grade</th><th>Rank</th></tr></thead>
+          <tbody>${allResults.map(r=>`
+            <tr>
+              <td>${r.exam_name}</td>
+              <td>${r.ph} <small>[<span class="pos-marks">+${r.ph_correct*4}</span>|<span class="neg-marks">${r.ph_wrong*-1}</span>]</small></td>
+              <td>${r.cy} <small>[<span class="pos-marks">+${r.cy_correct*4}</span>|<span class="neg-marks">${r.cy_wrong*-1}</span>]</small></td>
+              <td>${r.ma} <small>[<span class="pos-marks">+${r.ma_correct*4}</span>|<span class="neg-marks">${r.ma_wrong*-1}</span>]</small></td>
+              <td><strong>${r.bonus}</strong></td>
+              <td><strong>${r.final_marks} <small>[<span class="pos-marks">+${r.correct*4}</span>|<span class="neg-marks">${r.wrong*-1}</span>]</small></strong></td>
+              <td class="${pctClass(r.percentage)}">${r.percentage}%</td>
+              <td class="${pctBClass(r.band)}">${r.band}</td>
+              <td><span class="${r.rank===1?'rank-badge rank-first':'rank-badge'}">#${r.rank}</span></td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════
+   QUESTION-WISE — SEARCH DROPDOWN
+══════════════════════════════════════════════ */
+let qwSelectedExam = null;
+let qwExamList = [];
+
+function populateQwDropdown(){
+  qwExamList = [...allResults].reverse();
+  renderQwDropdown(qwExamList);
+  $("qwSearchInput").removeAttribute("readonly");
+}
+
+function renderQwDropdown(list){
+  const dd = $("qwDropdown");
+  if(!list.length){
+    dd.innerHTML=`<div class="qw-dropdown-empty">No exams found</div>`;
+    return;
+  }
+  dd.innerHTML = list.map((r,i)=>{
+    const isLatest = (i===0 && list===qwExamList);
+    const badge = isLatest
+      ? `<span class="ddi-badge latest">Latest</span>`
+      : `<span class="ddi-badge">#${allResults.length - allResults.findIndex(x=>x.exam_name===r.exam_name)}</span>`;
+    return `<div class="qw-dropdown-item" onclick="selectQwExam('${r.exam_name.replace(/'/g,"\\'")}')">
+      ${badge}
+      <span>${r.exam_name}</span>
+    </div>`;
+  }).join("");
+}
+
+function openQwDropdown(){
+  $("qwDropdown").classList.add("open");
+  document.addEventListener("click", closeQwDropdownOutside, {once:true});
+}
+
+function filterQwDropdown(val){
+  $("qwDropdown").classList.add("open");
+  const filtered = val.trim()
+    ? qwExamList.filter(r=>r.exam_name.toLowerCase().includes(val.toLowerCase()))
+    : qwExamList;
+  renderQwDropdown(filtered);
+}
+
+function closeQwDropdownOutside(e){
+  if(!$("qwSearchWrap").contains(e.target)){
+    $("qwDropdown").classList.remove("open");
+  }
+}
+
+function selectQwExam(examName){
+  qwSelectedExam = examName;
+  $("qwDropdown").classList.remove("open");
+  $("qwSearchInput").value = examName;
+  $("qwChipLabel").textContent = examName;
+  $("qwChip").classList.add("show");
+  $("qwLoadBtn").disabled = false;
+  $("qwPdfBtn").disabled = true;
+  const iframe = $("qwIframe");
+  iframe.style.display="none";
+  iframe.style.height="0";
+  $("qwPlaceholder").style.display="flex";
+}
+
+function clearQwSelection(){
+  qwSelectedExam = null;
+  $("qwSearchInput").value = "";
+  $("qwChip").classList.remove("show");
+  $("qwLoadBtn").disabled = true;
+  $("qwPdfBtn").disabled = true;
+  const iframe = $("qwIframe");
+  iframe.style.display="none";
+  iframe.style.height="0";
+  $("qwPlaceholder").style.display="flex";
+}
+
+/* ══════════════════════════════════════════════
+   LOAD Q-WISE INTO IFRAME
+   NEW: includes qpData[i].type support
+══════════════════════════════════════════════ */
+async function loadQuestionWise(){
+  if(!qwSelectedExam) return;
+  const examResult = allResults.find(r=>r.exam_name===qwSelectedExam);
+  if(!examResult){ alert("Exam data not found."); return; }
+
+  $("qwLoading").classList.add("show");
+  $("qwPlaceholder").style.display="none";
+
+  const res = examResult.res;
+  const qpMarks = examResult.qp_marks;
+  const resStatus = examResult.res_status;
+  const qpFile = examResult.exam_qp_image_file;
+
+  if(!res||!qpMarks||!resStatus){
+    $("qwLoading").classList.remove("show");
+    $("qwPlaceholder").style.display="flex";
+    $("qwPlaceholder").innerHTML=`<i class="ti ti-alert-circle" style="color:#dc2626"></i><p style="color:#dc2626">Question-wise data not available for this exam.</p>`;
     return;
   }
 
-  tbody.innerHTML =
-    users.map((u, i) => `
-
-    <tr>
-
-      <td>${i + 1}</td>
-
-      <td>
-        <div class="d-flex align-items-center gap-2">
-          <div class="avatar">
-            ${u.name
-              ?.charAt(0)
-              ?.toUpperCase()}
-          </div>
-          ${u.name}
-        </div>
-      </td>
-
-      <td>${u.email_id || ""}</td>
-
-      <td>${u.std_id || ""}</td>
-
-      <td>${u.class_name || ""}</td>
-
-      <td>${u.school_name || ""}</td>
-
-      <td>${u.mobile || ""}</td>
-
-      <td>
-      ${
-        u.active_status
-          ? '<span class="badge-active">Active</span>'
-          : '<span class="badge-inactive">Inactive</span>'
-      }
-      </td>
-
-      <td>
-
-      <button
-      class="btn btn-icon btn-outline-primary"
-      onclick="viewUser(${u.user_id})">
-
-      <i class="bi bi-eye"></i>
-
-      </button>
-
-      <button
-      class="btn btn-icon btn-outline-warning"
-      onclick="editUser(${u.user_id})">
-
-      <i class="bi bi-pencil"></i>
-
-      </button>
-
-      <button
-      class="btn btn-icon btn-outline-danger"
-      onclick="deleteUser(${u.user_id})">
-
-      <i class="bi bi-trash"></i>
-
-      </button>
-
-      </td>
-
-    </tr>
-
-  `).join("");
-
-  document.getElementById(
-    "table-count"
-  ).innerHTML =
-    `${users.length} Users`;
-
-}
-
-function updateStats() {
-
-  document.getElementById(
-    "stat-total"
-  ).innerText =
-    USERS.length;
-
-  document.getElementById(
-    "stat-active"
-  ).innerText =
-    USERS.filter(
-      x => x.active_status
-    ).length;
-
-  document.getElementById(
-    "stat-inactive"
-  ).innerText =
-    USERS.filter(
-      x => !x.active_status
-    ).length;
-
-  document.getElementById(
-    "stat-schools"
-  ).innerText =
-    [...new Set(
-      USERS.map(
-        x => x.school_name
-      )
-    )].length;
-
-}
-
-function openCreateModal() {
-
-  CURRENT_ID = null;
-
-  document
-    .getElementById(
-      "userModalTitle"
-    )
-    .innerHTML =
-    "New Student";
-
-  document
-    .querySelectorAll(
-      "#userModal input"
-    )
-    .forEach(
-      x => x.value = ""
-    );
-
-  document
-    .getElementById(
-      "f-status"
-    ).checked = true;
-
-  userModal.show();
-
-}
-
-async function saveUser() {
-
-  const data = {
-
-    name:
-      document.getElementById(
-        "f-name"
-      ).value,
-
-    email_id:
-      document.getElementById(
-        "f-email"
-      ).value,
-
-    std_id:
-      document.getElementById(
-        "f-std"
-      ).value,
-
-    mobile:
-      document.getElementById(
-        "f-mobile"
-      ).value,
-
-    school_name:
-      document.getElementById(
-        "f-school"
-      ).value,
-
-    school_id:
-      document.getElementById(
-        "f-school-id"
-      ).value,
-
-    class_name:
-      document.getElementById(
-        "f-class"
-      ).value,
-
-    dob:
-      document.getElementById(
-        "f-dob"
-      ).value,
-
-    password:
-      document.getElementById(
-        "f-password"
-      ).value,
-
-    active_status:
-      document.getElementById(
-        "f-status"
-      ).checked,
-
-    user_role:
-      "student"
-  };
-
-  try {
-
-    showLoading(true);
-
-    if (CURRENT_ID) {
-
-      await API.updateUser(
-        CURRENT_ID,
-        data
-      );
-
-      showToast(
-        "User Updated",
-        "success"
-      );
-
-    } else {
-
-      await API.createUser(
-        data
-      );
-
-      showToast(
-        "User Created",
-        "success"
-      );
-
-    }
-
-    userModal.hide();
-
-    loadUsers();
-
-  } catch (err) {
-
-    showToast(
-      err.message,
-      "danger"
-    );
-
-  } finally {
-
-    showLoading(false);
-
+  let qpData=null;
+  if(qpFile){
+    try{ const r=await fetch(qpFile); qpData=await r.json(); }
+    catch(e){ console.warn("QP file load failed:", e); }
   }
 
-}
+  let correctAns=[];
+  try{
+    const r=await fetch("answerKeys.json");
+    const all=await r.json();
+    correctAns=all[qwSelectedExam]||[];
+  }catch(e){ console.warn("Answer key load failed:", e); }
 
-async function editUser(
-  user_id
-) {
+  const totalQ=res.length;
+  function getSection(idx){
+    if(qpData&&qpData[idx]&&qpData[idx].section) return qpData[idx].section;
+    const p=Math.floor(totalQ/3);
+    if(idx<p)return"Physics"; if(idx<p*2)return"Chemistry"; return"Mathematics";
+  }
 
-  const user =
-    await API.getUser(
-      user_id
-    );
+  /* ── NEW: get question type from qpData ── */
+  function getQType(idx){
+    if(qpData&&qpData[idx]&&qpData[idx].type) return qpData[idx].type;
+    return null; // no type info
+  }
 
-  CURRENT_ID =
-    user.user_id;
+  let totC=0,totW=0,totNA=0,totMarks=0,nvcount=0;
 
-  document.getElementById(
-    "f-name"
-  ).value =
-    user.name || "";
+  // secMap: per section stats + type breakdown
+  const secMap={};
+  // typeMap: global type stats across all subjects
+  const typeMap={};
 
-  document.getElementById(
-    "f-email"
-  ).value =
-    user.email_id || "";
+  res.forEach((ans,i)=>{
+    const st=resStatus[i]||"not_attempted";
+    const mk=Number(qpMarks[i]||0);
+    const sec=getSection(i);
+    const qtype=getQType(i)||"Unknown";
 
-  document.getElementById(
-    "f-std"
-  ).value =
-    user.std_id || "";
+    if(ans==="NV")nvcount++;
+    if(st==="correct")totC++; else if(st==="wrong")totW++; else totNA++;
+    totMarks+=mk;
 
-  document.getElementById(
-    "f-mobile"
-  ).value =
-    user.mobile || "";
+    // Section map
+    if(!secMap[sec])secMap[sec]={c:0,w:0,na:0,pos:0,neg:0,marks:0,nv:0,range:[],types:{}};
+    secMap[sec].range.push(i+1);
+    if(st==="correct"){secMap[sec].c++;secMap[sec].pos+=mk;}
+    else if(st==="wrong"){secMap[sec].w++;secMap[sec].neg+=mk;}
+    else secMap[sec].na++;
+    if(ans==="NV")secMap[sec].nv++;
+    secMap[sec].marks+=mk;
 
-  document.getElementById(
-    "f-school"
-  ).value =
-    user.school_name || "";
+    // Per section, per type
+    if(!secMap[sec].types[qtype]) secMap[sec].types[qtype]={c:0,w:0,na:0,pos:0,neg:0,range:[],marks:0};
+    secMap[sec].types[qtype].range.push(i+1);
+    if(st==="correct"){secMap[sec].types[qtype].c++;secMap[sec].types[qtype].marks+=mk;secMap[sec].types[qtype].pos+=mk;}
+    else if(st==="wrong"){secMap[sec].types[qtype].w++;secMap[sec].types[qtype].marks+=mk;secMap[sec].types[qtype].neg+=mk;}
+    else secMap[sec].types[qtype].na++;
+    secMap[sec].types[qtype].marks+=mk;
 
-  document.getElementById(
-    "f-school-id"
-  ).value =
-    user.school_id || "";
-
-  document.getElementById(
-    "f-dob"
-  ).value =
-    user.dob || "";
-  
- document.getElementById(
-    "f-class"
-  ).value =
-    user.class_name || "";
-  
-  document.getElementById(
-    "f-status"
-  ).checked =
-    user.active_status;
-
-  document.getElementById(
-    "status-toggle-wrap"
-  ).style.display =
-    "block";
-
-  userModal.show();
-
-}
-
-async function deleteUser(
-  user_id
-) {
-
-  if (
-    !confirm(
-      "Delete User?"
-    )
-  ) return;
-
-  await API.deleteUser(
-    user_id
-  );
-
-  loadUsers();
-}
-
-async function viewUser(
-  user_id
-) {
-
-  const user =
-    await API.getUser(
-      user_id
-    );
-
-  document.getElementById(
-    "view-body"
-  ).innerHTML = `
-  <table class="table">
-
-  <tr>
-    <th>Name</th>
-    <td>${user.name}</td>
-  </tr>
-
-  <tr>
-    <th>Email</th>
-    <td>${user.email_id}</td>
-  </tr>
-
-  <tr>
-    <th>Student ID</th>
-    <td>${user.std_id}</td>
-  </tr>
-
-  <tr>
-    <th>Mobile</th>
-    <td>${user.mobile}</td>
-  </tr>
-
-  </table>
-  `;
-
-  viewModal.show();
-}
-
-function loadSchoolFilter() {
-
-  const schools =
-    [...new Set(
-      USERS.map(
-        x => x.school_name
-      )
-    )];
-
-  const select =
-    document.getElementById(
-      "filter-school"
-    );
-
-  schools.forEach(s => {
-
-    select.innerHTML +=
-      `<option value="${s}">
-        ${s}
-      </option>`;
-
+    // Global type map
+    if(!typeMap[qtype]) typeMap[qtype]={c:0,w:0,na:0,marks:0,pos:0,neg:0,total:0};
+    typeMap[qtype].total++;
+    if(st==="correct"){typeMap[qtype].c++;typeMap[qtype].marks+=mk;typeMap[qtype].pos+=mk;}
+    else if(st==="wrong"){typeMap[qtype].w++;typeMap[qtype].marks+=mk;typeMap[qtype].neg+=mk;}
+    else typeMap[qtype].na++;
   });
 
+  /* ── Build Focus Suggestions from type performance ── */
+  function buildTypeFocusSuggestions(){
+    const types = Object.keys(typeMap);
+    if(types.length === 1 && types[0] === "Unknown") return "";
+
+    const rows = types.map(t => {
+      const d = typeMap[t];
+      const acc = d.total > 0 ? ((d.c / d.total)*100).toFixed(1) : 0;
+      return { type: t, ...d, acc: parseFloat(acc) };
+    }).sort((a,b) => a.acc - b.acc);
+
+    let html = `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+        <span>🎯 Type-wise Focus Recommendations</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">`;
+
+    rows.forEach(r => {
+      const bg = r.acc >= 60 ? "#dcfce7" : r.acc >= 35 ? "#fef9c3" : "#fee2e2";
+      const col = r.acc >= 60 ? "#15803d" : r.acc >= 35 ? "#92400e" : "#b91c1c";
+      const icon = r.acc >= 60 ? "✓ Strong" : r.acc >= 35 ? "⚠ Average" : "✗ Focus";
+      html += `<div style="background:${bg};border-radius:8px;padding:7px 12px;min-width:130px;">
+        <div style="font-size:11px;font-weight:700;color:${col}">${icon}</div>
+        <div style="font-size:13px;font-weight:800;color:#0e1e4a">${r.type}</div>
+        <div style="font-size:10px;color:#64748b">${r.c}C / ${r.w}W / ${r.na}NA &nbsp;|&nbsp; <b style="color:${col}">${r.acc}%</b></div>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+    return html;
+  }
+
+  /* ══════════════════════════════════════════════
+     UNIFIED Section + Type table
+     Structure per subject:
+       • Subject header row  (rowspan = types+1)
+       • Sub-rows per type   (indented)
+       • Subject TOTAL row   (bold, shaded)
+     Then a grand TOTAL row at the bottom.
+  ══════════════════════════════════════════════ */
+function formatRange(arr) {
+    if (!arr || arr.length === 0) return "—";
+    const nums = [...new Set(arr)].sort((a, b) => a - b);
+    const ranges = [];
+    let start = nums[0];
+    let end = nums[0];
+    for (let i = 1; i < nums.length; i++) {
+        if (nums[i] === end + 1) {
+            end = nums[i];
+        } else {
+            ranges.push(start === end ? `Q${start}` : `Q${start}–Q${end}`);
+            start = end = nums[i];
+        }
+    }
+    ranges.push(start === end ? `Q${start}` : `Q${start}–Q${end}`);
+
+    return ranges.join("<br>");
+}
+  
+  function buildUnifiedSectionTable(){
+    const allTypes = new Set();
+    Object.values(secMap).forEach(s => Object.keys(s.types).forEach(t => allTypes.add(t)));
+    const hasTypes = !(allTypes.size === 1 && allTypes.has("Unknown"));
+
+    // Subject background colours
+    const secStyle = {
+      "Physics":    { hdrBg:"#1e40af", rowBg:"#eff6ff", totBg:"#dbeafe", border:"#bfdbfe", label:"⚡ Physics" },
+      "Chemistry":  { hdrBg:"#166534", rowBg:"#f0fdf4", totBg:"#dcfce7", border:"#bbf7d0", label:"🧪 Chemistry" },
+      "Mathematics":{ hdrBg:"#92400e", rowBg:"#fefce8", totBg:"#fef9c3", border:"#fde68a", label:"∫ Mathematics" }
+    };
+    const defaultStyle = { hdrBg:"#374151", rowBg:"#f9fafb", totBg:"#f1f5f9", border:"#e2e8f0", label:"" };
+
+    const totalPos = res.reduce((acc,_,i) => acc+(qpMarks[i]>0?qpMarks[i]:0), 0);
+    const totalNeg = res.reduce((acc,_,i) => acc+(qpMarks[i]<0?qpMarks[i]:0), 0);
+
+    const focusTag = accNum =>
+      accNum >= 60
+        ? `<span style="background:#dcfce7;color:#15803d;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">✓ Strong</span>`
+        : accNum >= 35
+          ? `<span style="background:#fef9c3;color:#92400e;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">⚠ Practice</span>`
+          : `<span style="background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">✗ Focus!</span>`;
+
+    const accColor = a => a>=60?'#15803d':a>=35?'#d97706':'#dc2626';
+
+    let rows = "";
+    const sections = Object.keys(secMap);
+
+    sections.forEach(sec => {
+      const s = secMap[sec];
+      const st = secStyle[sec] || defaultStyle;
+      const label = st.label || sec;
+      const typeKeys = Object.keys(s.types);
+      const hasTypeData = hasTypes && !(typeKeys.length===1 && typeKeys[0]==="Unknown");
+      // total rows this subject spans: 1 (header) + N types (if shown) + 1 (subject total)
+      const spanCount = hasTypeData ? typeKeys.length + 2 : 2;
+      const rangeStr = s.range.length ? `Q${s.range[0]}–Q${s.range[s.range.length-1]}` : "—";
+      const sAcc = (s.c+s.w+s.na) > 0 ? ((s.c/(s.c+s.w+s.na))*100).toFixed(1) : "0.0";
+
+      // ── Subject header row ──
+    /*  rows += `<tr>
+        <td colspan="9" style="padding:7px 12px;font-weight:700;font-size:12px;
+            background:${st.hdrBg};color:#fff;letter-spacing:.3px">
+          ${label} &nbsp;<span style="font-weight:400;font-size:10px;opacity:.75">${rangeStr}</span>
+        </td>
+      </tr>`;*/
+
+      // ── Type sub-rows ──
+      if(hasTypeData){
+        typeKeys.forEach((t, ti) => {
+          const d = s.types[t];
+          const tot = d.c + d.w + d.na;
+          const acc = tot > 0 ? ((d.c/tot)*100).toFixed(1) : "0.0";
+          const accN = parseFloat(acc);
+          //const tRange = d.range.length ? `Q${d.range[0]}–Q${d.range[d.range.length-1]}` : "—";
+          
+          rows += `<tr style="background:${ti%2===0?st.rowBg:'#fff'}">
+            <td style="padding:6px 8px;font-size:11px;font-weight:500; border-left:3px solid ${st.border}">${sec==="Physics"?"PH":sec==="Chemistry"?"CY":"MA"}</td>
+            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#475569">${t}</td>
+            <td style="padding:6px 8px;text-align:center;font-size:11px;color:#64748b">${formatRange(d.range)}</td>
+            <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">${d.c}</td>
+            <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.w}</td>
+            <td style="padding:6px 8px;text-align:center;color:#64748b">${d.na}</td>
+            <td style="padding:6px 8px;text-align:center;font-weight:600;color:${accColor(accN)}">${acc}%</td>
+            <td style="padding:6px 8px;text-align:center;color:#15803d;font-weight:600">+${d.pos}</td>
+            <td style="padding:6px 8px;text-align:center;color:#b91c1c;font-weight:600">${d.neg}</td>
+            <td style="padding:6px 8px;text-align:center;font-weight:700">${d.pos+d.neg}</td>
+          </tr>`;
+        });
+      }
+
+      // ── Subject total row ──
+      rows += `<tr style="background:${st.totBg};border-top:1.5px solid ${st.border};">
+        <td colspan="2" style="padding:8px 12px;font-weight:700;color:#0e1e4a;font-size:12px">
+          ${sec} Total${s.nv?` <span style="color:#3b82f6;font-size:10px;font-weight:500">(${s.nv} NV)</span>`:""}
+        </td>
+        <td style="padding:8px;text-align:center;font-weight:600;font-size:11px;color:#475569">${formatRange(s.range)}</td>
+        <td style="padding:8px;text-align:center;color:#15803d;font-weight:700">${s.c}</td>
+        <td style="padding:8px;text-align:center;color:#b91c1c;font-weight:700">${s.w}</td>
+        <td style="padding:8px;text-align:center;color:#64748b;font-weight:600">${s.na}</td>
+        <td style="padding:8px;text-align:center;font-weight:700;color:${accColor(parseFloat(sAcc))}">${sAcc}%</td>
+        <td style="padding:8px;text-align:center;color:#15803d;font-weight:700">+${s.pos}</td>
+        <td style="padding:8px;text-align:center;color:#b91c1c;font-weight:700">${s.neg}</td>
+        <td style="padding:8px;text-align:center;font-weight:700;color:#0e1e4a">${s.marks}</td>
+      </tr>`;
+    });
+
+    // ── Grand Total row ──
+    const gTot = totC+totW+totNA;
+    const gAcc = gTot > 0 ? ((totC/gTot)*100).toFixed(1) : "0.0";
+    rows += `<tr>
+      <td colspan="2" style="padding:9px 12px;font-weight:700;font-size:12px">Grand Total</td>
+      <td style="padding:9px 8px;text-align:center;color:rgba(255,255,255,.6);font-size:11px">Q1–Q${totalQ}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">${totC}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">${totW}</td>
+      <td style="padding:9px 8px;text-align:center;">${totNA}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700;color:${parseFloat(gAcc)>=60?'#86efac':parseFloat(gAcc)>=35?'#fde68a':'#fca5a5'}">${gAcc}%</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">+${totalPos}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:700">${totalNeg}</td>
+      <td style="padding:9px 8px;text-align:center;font-weight:800;">${totMarks}</td>
+    </tr>`;
+
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+      <thead>
+        <tr style="background:#1e293b">
+         <th style="color:#fff;padding:9px;text-align:center;">Subject</th>
+          <th style="color:#fff;padding:9px;text-align:left;">Type</th>
+          <th style="color:#fff;padding:9px;text-align:center;">QP Range</th>
+          <th style="color:#86efac;padding:9px;text-align:center;">✓ Correct</th>
+          <th style="color:#fca5a5;padding:9px;text-align:center;">✗ Wrong</th>
+          <th style="color:rgba(255,255,255,.7);padding:9px;text-align:center;">NA</th>
+          <th style="color:#fde68a;padding:9px;text-align:center;">Accuracy</th>
+          <th style="color:#86efac;padding:9px;text-align:center;">+ Marks</th>
+          <th style="color:#fca5a5;padding:9px;text-align:center;">− Marks</th>
+          <th style="color:#fff;padding:9px;text-align:center;">Total</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  /* ── Build question rows (with type column) ── */
+  let qRows="";
+  res.forEach((ans,i)=>{
+    const status=resStatus[i]||"not_attempted";
+    const marks=qpMarks[i];
+    const sec=getSection(i);
+    const qtype=getQType(i);
+    const secColor=sec==="Physics"?"#1d4ed8":sec==="Chemistry"?"#15803d":"#92400e";
+    const secBg=sec==="Physics"?"#eff6ff":sec==="Chemistry"?"#f0fdf4":"#fef3c7";
+    const statusBadge=status==="correct"
+      ?`<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#dcfce7;color:#15803d;">✓ Correct</span>`
+      :status==="wrong"
+        ?`<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#fee2e2;color:#b91c1c;">✗ Wrong</span>`
+        :`<span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#f1f5f9;color:#64748b;">— Not Att.</span>`;
+    const marksCell=marks>0?`<span style="color:#15803d;font-weight:700">+${marks}</span>`:marks<0?`<span style="color:#dc2626;font-weight:700">${marks}</span>`:`<span style="color:#94a3b8">0</span>`;
+    const rowBg=i%2===0?"#ffffff":"#f9fafb";
+    const cAns=correctAns[i]||"—";
+    const displayAns=ans==="NV"?`<span style="color:#3b82f6;font-size:11px">Not Visited</span>`:(ans||"—");
+
+    // Type badge
+    const typeBadge = qtype
+      ? `<span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:#f1f5f9;color:#475569">${qtype}</span>`
+      : `<span style="color:#cbd5e1;font-size:10px">—</span>`;
+
+    let imgCell=`<span style="color:#94a3b8;font-size:11px">No image</span>`;
+    if(qpData&&qpData[i]&&qpData[i].image_base64){
+      imgCell=`<img src="data:image/jpeg;base64,${qpData[i].image_base64}" style="width:60px;height:40px;object-fit:contain;border-radius:5px;border:1px solid #e2e8f0;cursor:pointer;" onclick="parent.openLightbox(this.src,'Q${i+1}')">`;
+    }
+    const qLabel=qpData&&qpData[i]&&qpData[i].question?qpData[i].question:`Question ${i+1}`;
+    qRows+=`<tr style="background:${rowBg}">
+      <td style="padding:10px 12px;font-weight:700;color:#0e1e4a;white-space:nowrap">Q${i+1}<br><small style="color:#94a3b8;font-size:9px;font-weight:400">${qLabel}</small></td>
+      <td style="padding:10px 12px;text-align:center"><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:${secBg};color:${secColor}">${sec}</span></td>
+      <td style="padding:10px 12px;text-align:center">${typeBadge}</td>
+      <td style="padding:10px 12px;text-align:center">${displayAns}</td>
+      <td style="padding:10px 12px;text-align:center;font-weight:600;color:#0e1e4a">${cAns}</td>
+      <td style="padding:10px 12px;text-align:center">${statusBadge}</td>
+      <td style="padding:10px 12px;text-align:center">${marksCell}</td>
+      <td style="padding:10px 12px;text-align:center">${imgCell}</td>
+    </tr>`;
+  });
+
+  /* ── Section rows ── */
+  let sectionRows="";
+  Object.keys(secMap).forEach(sec=>{
+    const s=secMap[sec];
+    const rangeStr=s.range.length?`Q${s.range[0]}–Q${s.range[s.range.length-1]}`:"—";
+    sectionRows+=`<tr>
+      <td style="padding:7px 10px;font-weight:600">${sec}</td>
+      <td style="padding:7px 10px;text-align:center">${rangeStr}</td>
+      <td style="padding:7px 10px;text-align:center;color:#15803d;font-weight:600">${s.c}</td>
+      <td style="padding:7px 10px;text-align:center;color:#b91c1c;font-weight:600">${s.w}</td>
+      <td style="padding:7px 10px;text-align:center;color:#64748b">${s.na}${s.nv?` <span style="color:#3b82f6;font-size:10px">(${s.nv} NV)</span>`:""}</td>
+      <td style="padding:7px 10px;text-align:center;color:#15803d;font-weight:600">+${s.pos}</td>
+      <td style="padding:7px 10px;text-align:center;color:#b91c1c;font-weight:600">${s.neg}</td>
+      <td style="padding:7px 10px;text-align:center;font-weight:700">${s.marks}</td>
+    </tr>`;
+  });
+  const totalPos=res.reduce((acc,_,i)=>acc+(qpMarks[i]>0?qpMarks[i]:0),0);
+  const totalNeg=res.reduce((acc,_,i)=>acc+(qpMarks[i]<0?qpMarks[i]:0),0);
+  sectionRows+=`<tr style="background:#f0f4fb;font-weight:700">
+    <td style="padding:7px 10px">Total</td>
+    <td style="padding:7px 10px;text-align:center">Q1–Q${totalQ}</td>
+    <td style="padding:7px 10px;text-align:center;color:#15803d">${totC}</td>
+    <td style="padding:7px 10px;text-align:center;color:#b91c1c">${totW}</td>
+    <td style="padding:7px 10px;text-align:center">${totNA}</td>
+    <td style="padding:7px 10px;text-align:center;color:#15803d">+${totalPos}</td>
+    <td style="padding:7px 10px;text-align:center;color:#b91c1c">${totalNeg}</td>
+    <td style="padding:7px 10px;text-align:center">${totMarks}</td>
+  </tr>`;
+
+  const finalTotal=examResult.final_marks||totMarks;
+  const pctVal=examResult.percentage||"—";
+  const grade=examResult.band||"—";
+
+  /* ── Remarks with type awareness ── */
+  function buildRemarks(){
+    const lines=[];
+    Object.keys(secMap).forEach(sec=>{
+      const s=secMap[sec];
+      const t=s.c+s.w+s.na;
+      const pct=t?((s.c/t)*100).toFixed(1):0;
+      if(pct>=60) lines.push(`${sec}: Good performance (${pct}% accuracy).`);
+      else if(pct>=35) lines.push(`${sec}: Average (${pct}% accuracy). Practice more.`);
+      else lines.push(`${sec}: Needs improvement (${pct}% accuracy). Focus on fundamentals.`);
+      if(s.nv>0) lines.push(`${sec}: ${s.nv} question${s.nv>1?"s":""} not visited.`);
+
+      // Type-specific remarks per section
+      Object.keys(s.types).forEach(tp => {
+        if(tp === "Unknown") return;
+        const d = s.types[tp];
+        const tot = d.c + d.w + d.na;
+        const acc = tot > 0 ? ((d.c/tot)*100).toFixed(1) : 0;
+        if(acc < 35 && tot >= 2) lines.push(`${sec} — ${tp} type: Only ${acc}% accuracy. Needs focused revision.`);
+      });
+    });
+    return lines.join(" ");
+  }
+
+  /* ── Compact summary rows (with type) ── */
+  let summaryRows="";
+  for(let i=0;i<totalQ;i+=2){
+    const buildCell=(idx)=>{
+      if(idx>=totalQ)return"<td colspan='6'></td>";
+      const st=resStatus[idx]||"not_attempted";
+      const mk=qpMarks[idx];
+      const cA=correctAns[idx]||"—";
+      const tp=getQType(idx)||"—";
+      const stColor=st==="correct"?"#15803d":st==="wrong"?"#b91c1c":"#64748b";
+      const mkColor=mk>0?"#15803d":mk<0?"#b91c1c":"#64748b";
+      return`<td style="font-weight:700;color:#0e1e4a;">Q${idx+1}</td>
+             <td style="font-size:10px;color:#64748b">${tp}</td>
+             <td>${res[idx]||'—'}</td><td>${cA}</td>
+             <td style="color:${stColor};font-weight:600;">${st==="correct"?"✓ C":st==="wrong"?"✗ W":"— NA"}</td>
+             <td style="color:${mkColor};font-weight:600;">${mk>0?"+":""}${mk}</td>`;
+    };
+    summaryRows+=`<tr>${buildCell(i)}${buildCell(i+1)}</tr>`;
+  }
+
+  /* ── Question image rows for PDF ── */
+  let questionImageHTML="";
+  res.forEach((ans,i)=>{
+    const status=resStatus[i]||"not_attempted";
+    const displayAns=ans==="NV"?`<span style="color:#3b82f6">Not Visited</span>`:(ans||"—");
+    const marks=qpMarks[i];
+    const cAns=correctAns[i]||"—";
+    const tp=getQType(i);
+    const qLabel=qpData&&qpData[i]&&qpData[i].question?qpData[i].question:`Question ${i+1}`;
+    const statusTxt=status==="correct"?"✓ Correct":status==="wrong"?"✗ Wrong":"— Not Attempted";
+    const statusColor=status==="correct"?"#15803d":status==="wrong"?"#b91c1c":"#64748b";
+    const marksColor=marks>0?"#15803d":marks<0?"#b91c1c":"#64748b";
+    let imageHTML="<em style='color:#aaa;font-size:11px;'>No image available</em>";
+    if(qpData&&qpData[i]&&qpData[i].image_base64){
+      imageHTML=`<img src="data:image/jpeg;base64,${qpData[i].image_base64}" style="max-width:100%;max-height:300px;display:block;margin:6px auto;border:1px solid #ddd;border-radius:6px;">`;
+    }
+    questionImageHTML+=`
+    <table border="1" cellspacing="0" cellpadding="4" width="100%" style="margin-bottom:2px;border-collapse:collapse;font-size:12px;">
+      <tr>
+        <td style="background:#007bff;color:white;font-weight:bold;width:120px;padding:4px;">${qLabel.toUpperCase()}</td>
+        <td style="padding:4px;">
+          <b>Type:</b> ${tp||'—'} &nbsp;|&nbsp;
+          <b>Your Answer:</b> ${displayAns} &nbsp;|&nbsp;
+          <b>Correct Answer:</b> ${cAns} &nbsp;|&nbsp;
+          <b>Status:</b> <span style="color:${statusColor};font-weight:600;">${statusTxt}</span> &nbsp;|&nbsp;
+          <b>Marks:</b> <span style="color:${marksColor};font-weight:600;">${marks>0?"+":""}${marks}</span>
+        </td>
+      </tr>
+      <tr><td colspan="2" style="padding:4px;text-align:center;">${imageHTML}</td></tr>
+    </table>`;
+  });
+
+  /* ── Complete iframe HTML ── */
+  const iframeHTML=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Result—${user.name}-${qwSelectedExam}</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#fff;color:#1e293b;font-size:13px;padding:0}
+.print-bar{background:#0e1e4a;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.print-bar h4{font-size:13px;font-weight:600;margin:0}
+.print-bar-btns{display:flex;gap:8px}
+.pb-btn{padding:6px 14px;border:none;border-radius:6px;font-family:'Poppins',sans-serif;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;font-weight:500}
+.pb-btn.pdf{background:#dc2626;color:#fff}
+.pb-btn.pdf:hover{background:#b91c1c}
+.report-body{padding:16px}
+.rpt-header{background:linear-gradient(135deg,#0e1e4a,#185FA5);border-radius:12px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.rpt-header h2{color:#fff;font-size:15px;margin:0}
+.rpt-header p{color:rgba(255,255,255,.7);font-size:11px;margin:3px 0 0}
+.rpt-rank{background:rgba(240,184,0,.2);border:1.5px solid rgba(240,184,0,.4);border-radius:30px;padding:6px 16px;text-align:center}
+.rpt-rank .rn{color:#f0b800;font-size:22px;font-weight:800;line-height:1}
+.rpt-rank .rl{color:rgba(255,255,255,.6);font-size:9px;text-transform:uppercase;letter-spacing:.8px}
+.info-bar{display:flex;flex-wrap:wrap;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11.5px}
+.info-bar span b{color:#0e1e4a}
+.sec-title{font-size:13px;font-weight:600;color:#0e1e4a;margin:12px 0 6px;display:flex;align-items:center;gap:6px;border-bottom:2px solid #f1f5f9;padding-bottom:4px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:#0e1e4a;color:#fff;padding:8px 10px;font-weight:500;text-align:center;font-size:11px}
+thead th:first-child{text-align:left}
+tbody td{padding:4px 6px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:middle}
+tbody td:first-child{text-align:left}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even) td{background:#fafbfe}
+.result-box{border:2px solid #0e1e4a;border-radius:8px;padding:12px 20px;text-align:center;background:#f8fafc;margin-top:12px}
+.result-box h3{font-size:13px;margin-bottom:6px;color:#0e1e4a}
+.result-box .final-line{font-size:15px;font-weight:700}
+.remarks-box{border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;background:#fffbeb;margin-top:8px;font-size:11.5px;color:#78350f;line-height:1.7}
+.footer{text-align:center;margin-top:14px;font-size:10px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px}
+@media print{
+  .print-bar{display:none}
+  .report-body{padding:0}
+  body{padding:6px}
+  table,tr,td,th{page-break-inside:avoid}
+  .page-break{page-break-before:always}
+}
+</style></head>
+<body>
+<div class="print-bar">
+  <h4>Question-wise Result — ${qwSelectedExam}</h4>
+  <div class="print-bar-btns">
+    <button class="pb-btn pdf" onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
+</div>
+<div class="report-body">
+  <div class="rpt-header">
+    <div>
+      <h2>UNIC Academy — Question-wise Result</h2>
+      <p>Exam: <b>${qwSelectedExam}</b> &nbsp;·&nbsp; Student: <b>${user.name}</b> &nbsp;·&nbsp; ID: ${user.std_id}</p>
+      <p style="margin-top:3px">Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</p>
+    </div>
+    <div class="rpt-rank"><div class="rl">Rank</div><div class="rn">#${examResult.rank}</div></div>
+  </div>
+
+  <div class="info-bar">
+    <span><b>Total QP:</b> ${totalQ}</span>
+    <span style="color:#15803d"><b>✓ C QP:</b> ${totC}</span>
+    <span style="color:#b91c1c"><b>✗ W QP:</b> ${totW}</span>
+    <span><b>— NA QP:</b> ${totNA}</span>
+    ${nvcount?`<span style="color:#3b82f6"><b>Not Visited:</b> ${nvcount}</span>`:""}
+    <span><b>Bonus Mark:</b> ${examResult.bonus}</span>
+    <span><b>Final Score:</b> <b style="color:#0e1e4a">${finalTotal} (${pctVal}%)</b></span>
+    <span><b>Grade:</b> <b>${grade}</b></span>
+  </div>
+
+  <!-- Type-wise Focus Suggestions
+  ${buildTypeFocusSuggestions()} -->
+
+  <div class="sec-title">Question-wise Summary (2 per row) — with Type</div>
+  <table>
+    <thead><tr>
+      <th style="text-align:left">Q#</th><th>Type</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
+      <th style="text-align:left">Q#</th><th>Type</th><th>Your Ans</th><th>Correct</th><th>Status</th><th>Marks</th>
+    </tr></thead>
+    <tbody>${summaryRows}</tbody>
+  </table>
+
+  <div class="sec-title">Subject / Section-wise Performance</div>
+ <!-- <table>
+    <thead><tr>
+      <th style="text-align:left">Section</th><th>Range</th><th>✓ Correct</th><th>✗ Wrong</th><th>Not Att.</th>
+      <th>(+) Marks</th><th>(-) Marks</th><th>Total Marks</th>
+    </tr></thead>
+    <tbody>${sectionRows}</tbody>
+  </table>-->
+
+  <!-- Subject × Type breakdown table --> 
+  ${buildUnifiedSectionTable()}
+
+  <div class="result-box">
+    <h3>Final Result Summary</h3>
+    <div class="final-line">
+      Final Score: <b style="color:#0e1e4a">${finalTotal}</b>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      Percentage: <b style="color:${parseFloat(pctVal)>=70?'#15803d':parseFloat(pctVal)>=40?'#d97706':'#dc2626'}">${pctVal}%</b>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      Grade: <b>${grade}</b>
+    </div>
+  </div>
+  <p style="font-size:10px;margin-top:8px;color:#64748b">
+    <b>Grade Scale:</b> A+: 85–100% (Outstanding) · A: 70–84% (Excellent) · B: 55–69% (Good) · C: 40–54% (Average) · D: Below 40% (Needs Improvement)
+  </p>
+  <div class="remarks-box">
+    <b>Remarks: </b>${buildRemarks()}
+  </div>
+
+  <div class="sec-title page-break">Question Paper with Result Details</div>
+  ${questionImageHTML}
+
+    <div class="footer">Generated by UNIC Academy Student Portal — Confidential</div>
+</div>
+</body></html>`;
+
+  const iframe = $("qwIframe");
+  iframe.style.display="block";
+  iframe.srcdoc = iframeHTML;
+  iframe.onload = ()=>{
+    try{
+      const h = iframe.contentDocument.body.scrollHeight;
+      iframe.style.height = Math.min(Math.max(h+60, 400), 900)+"px";
+    }catch(e){
+      iframe.style.height="700px";
+    }
+    $("qwLoading").classList.remove("show");
+    $("qwPdfBtn").disabled=false;
+  };
+  window.addEventListener("resize", ()=>{
+    try{
+      const h = iframe.contentDocument.body.scrollHeight;
+      iframe.style.height = Math.min(Math.max(h+60, 400), 900)+"px";
+    }catch(e){}
+  });
 }
 
-function filterTable() {
-
-  const q =
-    document
-      .getElementById(
-        "search-input"
-      )
-      .value
-      .toLowerCase();
-
-  renderUsers(
-    USERS.filter(u =>
-      JSON.stringify(u)
-        .toLowerCase()
-        .includes(q)
-    )
-  );
+function triggerQwPrint(){
+  const iframe = $("qwIframe");
+  if(!iframe.contentWindow) return;
+  iframe.contentWindow.print();
 }
 
-function showLoading(v) {
+function openLightbox(src,title){
+  $("lbImg").src=src;
+  $("imgLightbox").classList.add("open");
+}
+function closeLightbox(){
+  $("imgLightbox").classList.remove("open");
+  $("lbImg").src="";
+}
+$("imgLightbox").addEventListener("click",e=>{if(e.target===$("imgLightbox"))closeLightbox();});
 
-  document
-    .getElementById(
-      "loading"
-    )
-    .classList.toggle(
-      "d-none",
-      !v
-    );
-
+/* ── Table sort ── */
+function initTableSort(){
+  const table = document.getElementById("examResultsTable");
+  if(!table) return;
+  const headers = table.querySelectorAll("th");
+  headers.forEach((th, index) => {
+    let asc = true;
+    th.style.cursor = "pointer";
+    th.addEventListener("click", () => {
+      const tbody = document.getElementById("resultTable");
+      const rows = Array.from(tbody.querySelectorAll("tr:not(.trend-row)"));
+      rows.sort((a, b) => {
+        let aText = a.cells[index]?.innerText.trim() || "";
+        let bText = b.cells[index]?.innerText.trim() || "";
+        let aNum = parseFloat(aText.replace(/[^\d.-]/g, ""));
+        let bNum = parseFloat(bText.replace(/[^\d.-]/g, ""));
+        if(!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+        return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+      });
+      rows.forEach(row => tbody.appendChild(row));
+      asc = !asc;
+    });
+  });
 }
 
-function showToast(
-  msg
-) {
+/* ══════════════════════════════════════════════
+   ATTENDANCE TAB
+   Reads from the same Vercel/Hasura attendance API
+   used by the standalone student.html — but skips
+   its login step since this dashboard already has
+   the student in localStorage ("student").
+   Set ATTEND_API to another origin if the attendance
+   backend is deployed separately from this dashboard.
+══════════════════════════════════════════════ */
+const ATTEND_API = "";
+let attendanceRecords = [];
 
-  document
-    .getElementById(
-      "toast-msg"
-    )
-    .innerHTML = msg;
+async function loadAttendance(){
+  const box = $("attendanceContent");
+  try{
+    const res = await fetch(`${ATTEND_API}/api/student-attendance?student_id=${encodeURIComponent(user.std_id)}`);
+    const records = await res.json();
+    if(!res.ok) throw new Error(records.error || "Failed to load attendance");
 
-  new bootstrap.Toast(
-    document.getElementById(
-      "main-toast"
-    )
-  ).show();
-
+    attendanceRecords = Array.isArray(records) ? records : [];
+    populateAttendanceFilters();
+    renderAttendanceView();
+  }catch(err){
+    console.error(err);
+    box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load attendance: ${err.message}</div>`;
+    $("attSummaryCards").innerHTML = `<div class="sc r"><h3>Attendance</h3><p style="font-size:13px">Unavailable</p></div>`;
+  }
 }
 
+function populateAttendanceFilters(){
+  const dates = [...new Set(attendanceRecords.map(r => r.class_date).filter(Boolean))]
+    .sort((a,b) => new Date(b) - new Date(a));
+  const subjects = [...new Set(attendanceRecords.map(r => r.subject).filter(Boolean))]
+    .sort((a,b) => a.localeCompare(b));
+
+  const dateSel = $("attDateFilter");
+  const subjSel = $("attSubjectFilter");
+  dateSel.innerHTML = `<option value="">All dates</option>` +
+    dates.map(d => `<option value="${d}">${d}</option>`).join("");
+  subjSel.innerHTML = `<option value="">All subjects</option>` +
+    subjects.map(s => `<option value="${s.replace(/"/g,'&quot;')}">${s}</option>`).join("");
+}
+
+function resetAttendanceFilters(){
+  $("attDateFilter").value = "";
+  $("attSubjectFilter").value = "";
+  renderAttendanceView();
+}
+
+function attStatusPill(status){
+  if(status === "Present") return `<span class="att-pill att-present"><i class="ti ti-check" style="font-size:12px"></i> Present</span>`;
+  if(status === "Absent") return `<span class="att-pill att-absent"><i class="ti ti-x" style="font-size:12px"></i> Absent</span>`;
+  if(status === "Reason") return `<span class="att-pill att-reason"><i class="ti ti-message-circle" style="font-size:12px"></i> Reason</span>`;
+  return `<span class="att-pill" style="background:#f1f5f9;color:#64748b">—</span>`;
+}
+
+function renderAttendanceView(){
+  const dateFilter = $("attDateFilter").value;
+  const subjectFilter = $("attSubjectFilter").value;
+  const box = $("attendanceContent");
+
+  let filtered = attendanceRecords;
+  if(dateFilter) filtered = filtered.filter(r => r.class_date === dateFilter);
+  if(subjectFilter) filtered = filtered.filter(r => r.subject === subjectFilter);
+
+  /* ── Summary cards (reflect current filter) ── */
+  const total = filtered.length;
+  const present = filtered.filter(r => r.status === "Present").length;
+  const absent = filtered.filter(r => r.status === "Absent").length;
+  const reason = filtered.filter(r => r.status === "Reason").length;
+  const assignmentsDone = filtered.filter(r => r.assignment_submitted).length;
+  const pct = total ? Math.round((present/total)*100) : 0;
+
+  $("attSummaryCards").innerHTML = `
+    <div class="sc b"><h3>Total Classes</h3><p>${total}</p></div>
+    <div class="sc g"><h3>Present</h3><p>${present}</p></div>
+    <div class="sc r"><h3>Absent</h3><p>${absent}</p></div>
+    <div class="sc a"><h3>Reason</h3><p>${reason}</p></div>
+    <div class="sc p"><h3>Attendance %</h3><p>${pct}%</p></div>
+    <div class="sc"><h3>Assignments Done</h3><p>${assignmentsDone}/${total}</p></div>`;
+
+  if(!total){
+    box.innerHTML = `<div class="att-empty">${attendanceRecords.length ? "No classes match this filter." : "No attendance records found yet."}</div>`;
+    return;
+  }
+
+  /* ── Group by day, newest first ── */
+  const groups = {};
+  filtered.forEach(r => {
+    const day = r.class_date || (r.marked_at ? r.marked_at.slice(0,10) : "Unknown date");
+    (groups[day] = groups[day] || []).push(r);
+  });
+  const days = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
+
+  box.innerHTML = days.map(day => {
+    const rows = groups[day].map(r => {
+      const links = [];
+      if(r.syllabus_link) links.push(`<a href="${r.syllabus_link}" target="_blank">Syllabus</a>`);
+      if(r.notes_link) links.push(`<a href="${r.notes_link}" target="_blank">Notes</a>`);
+      if(r.assignment_link) links.push(`<a href="${r.assignment_link}" target="_blank">Assignment</a>`);
+      const assignmentStatus = r.assignment_submitted
+        ? `Submitted${r.assignment_submission_link ? ` — <a href="${r.assignment_submission_link}" target="_blank">your link</a>` : ""}`
+        : `<span style="color:#94a3b8">Not submitted</span>`;
+      return `
+        <tr>
+          <td>${r.start_time || "—"}${r.end_time ? "–"+r.end_time : ""}</td>
+          <td>${r.subject || "—"}</td>
+          <td>${r.topic || "—"}</td>
+          <td>${r.faculty_name || "—"}</td>
+          <td>${attStatusPill(r.status)}</td>
+          <td>${r.reason || "—"}</td>
+          <td>${assignmentStatus}</td>
+          <td class="att-links">${links.join(" · ") || "—"}</td>
+        </tr>`;
+    }).join("");
+
+    return `
+      <div class="att-day-group">
+        <div class="att-day-hdr">
+          <h3>${day}</h3>
+          <span class="att-day-sub">${groups[day].length} class${groups[day].length===1?"":"es"}</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>Assignment</th><th>Links</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+/* ── Bootstrap ── */
+const user = JSON.parse(localStorage.getItem("student"));
+if(!user) window.location.href="index.html";
+
+setText("sb_name", user.name);
+setText("sb_sid", "ID: "+(user.std_id||"—"));
+setText("topbar_name", "Welcome, "+(user.name||"Student"));
+setText("p_name", user.name);
+setText("p_stdid", "ID: "+user.std_id);
+setText("p_email", user.email_id);
+setText("p_mobile", user.mobile);
+setText("p_class", user.class_name);
+setText("p_school", user.school_name);
+setText("p_dob", user.dob);
+setText("p_id", user.std_id);
+
+loadStudentResults().then(()=>{ initTableSort(); });
+
+document.addEventListener("click", e=>{
+  if(!$("qwSearchWrap")?.contains(e.target)){
+    $("qwDropdown")?.classList.remove("open");
+  }
+});
 </script>
 </body>
 </html>
