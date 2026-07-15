@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Attendance Register</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Class Register</div>
+      <h1>Admin</h1>
+    </div>
+    <nav class="tabs">
+      <a href="index.html">Home</a>
+      <a href="admin.html" class="active">Admin</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="student.html">Student</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="card">
+      <h2>School</h2>
+      <label for="schoolId">School ID</label>
+      <input type="text" id="schoolId" placeholder="e.g. SCH001" />
+      <div class="hint">Filters the faculty/student pickers below and is saved on the class. Leave blank to see everyone.</div>
+      <button type="button" class="secondary" id="refreshPeople">Load faculty &amp; students for this school</button>
+    </div>
+
+    <div class="card">
+      <h2>Add a class</h2>
+      <form id="classForm">
+        <label for="session">Session</label>
+        <input type="text" id="session" placeholder="e.g. 2026-Sem1-BatchA" required />
+
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" placeholder="e.g. Data Structures" required />
+
+        <label for="topic">Topic</label>
+        <input type="text" id="topic" placeholder="e.g. Binary Search Trees" />
+
+        <div class="roster-row" style="grid-template-columns: 1fr 1fr;">
+          <div>
+            <label for="classDate">Class date</label>
+            <input type="text" id="classDate" placeholder="YYYY-MM-DD" />
+          </div>
+          <div>
+            <label for="startTime">Start time</label>
+            <input type="text" id="startTime" placeholder="HH:MM (24h)" />
+          </div>
+        </div>
+        <label for="endTime">End time (optional)</label>
+        <input type="text" id="endTime" placeholder="HH:MM (24h)" />
+
+        <label for="facultySelect">Faculty name — pick from list…</label>
+        <select id="facultySelect">
+          <option value="">Choose faculty…</option>
+        </select>
+        <div class="hint">…or type a name directly if they're not in the list yet:</div>
+        <input type="text" id="facultyText" placeholder="Faculty name" />
+
+        <label for="studentSelect">Student list — pick from roster…</label>
+        <select id="studentSelect" multiple size="6"></select>
+        <div class="hint">Ctrl/Cmd-click to select multiple. …or paste IDs directly below — both are combined:</div>
+        <textarea id="studentPaste" placeholder="Comma or newline separated student IDs (std_id), e.g.&#10;STD1001, STD1002"></textarea>
+
+        <label for="syllabusLink">Syllabus link</label>
+        <input type="text" id="syllabusLink" placeholder="https://…" />
+
+        <label for="notesLink">Notes link</label>
+        <input type="text" id="notesLink" placeholder="https://…" />
+
+        <label for="assignmentLink">Assignment link</label>
+        <input type="text" id="assignmentLink" placeholder="https://…" />
+
+        <button type="submit" id="submitBtn">Save class</button>
+        <div class="msg" id="formMsg"></div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Existing classes</h2>
+      <div id="classList" class="empty">Loading…</div>
+    </div>
+  </main>
+
+  <p class="footer-note">Backend: Hasura GraphQL + Vercel serverless functions</p>
+
+  <script src="config.js"></script>
+  <script>
+    const API = window.API_BASE || "";
+    let facultyOptions = [];
+    let studentOptions = [];
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str ?? "";
+      return div.innerHTML;
+    }
+
+    function parsePastedIds(raw) {
+      return raw.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
+    }
+
+    async function loadPeople() {
+      const schoolId = document.getElementById("schoolId").value.trim();
+      const facultySelect = document.getElementById("facultySelect");
+      const studentSelect = document.getElementById("studentSelect");
+      facultySelect.innerHTML = `<option value="">Loading…</option>`;
+      studentSelect.innerHTML = `<option disabled>Loading…</option>`;
+
+      const qs = schoolId ? `&school_id=${encodeURIComponent(schoolId)}` : "";
+      try {
+        const [facRes, stuRes] = await Promise.all([
+          fetch(`${API}/api/users?role=faculty${qs}`),
+          fetch(`${API}/api/users?role=student${qs}`),
+        ]);
+        facultyOptions = await facRes.json();
+        studentOptions = await stuRes.json();
+
+        facultySelect.innerHTML =
+          `<option value="">Choose faculty…</option>` +
+          (Array.isArray(facultyOptions) ? facultyOptions : [])
+            .map((f) => `<option value="${f.user_id}">${escapeHtml(f.name)} (${escapeHtml(f.std_id || f.user_id)})</option>`)
+            .join("");
+
+        studentSelect.innerHTML = (Array.isArray(studentOptions) ? studentOptions : [])
+          .map((s) => `<option value="${escapeHtml(s.std_id)}">${escapeHtml(s.name)} — ${escapeHtml(s.std_id)} (${escapeHtml(s.class_name || "")})</option>`)
+          .join("") || `<option disabled>No students found for this school</option>`;
+      } catch (err) {
+        facultySelect.innerHTML = `<option value="">Error loading faculty</option>`;
+        studentSelect.innerHTML = `<option disabled>Error loading students</option>`;
+      }
+    }
+
+    document.getElementById("refreshPeople").addEventListener("click", loadPeople);
+
+    document.getElementById("facultySelect").addEventListener("change", (e) => {
+      const chosen = facultyOptions.find((f) => String(f.user_id) === e.target.value);
+      if (chosen) document.getElementById("facultyText").value = chosen.name;
+    });
+
+    async function loadClasses() {
+      const list = document.getElementById("classList");
+      const schoolId = document.getElementById("schoolId").value.trim();
+      list.className = "";
+      list.textContent = "Loading…";
+      try {
+        const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
+        const res = await fetch(`${API}/api/classes${qs}`);
+        const classes = await res.json();
+        if (!Array.isArray(classes) || classes.length === 0) {
+          list.className = "empty";
+          list.textContent = "No classes yet — add one above.";
+          return;
+        }
+        const table = document.createElement("table");
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>ID</th><th>Date / Time</th><th>Session</th><th>Subject</th><th>Topic</th>
+              <th>Faculty</th><th>Students</th><th>Links</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${classes
+              .map(
+                (c) => `
+              <tr>
+                <td class="mono">${c.id}</td>
+                <td>${escapeHtml(c.class_date || "—")} ${escapeHtml(c.start_time || "")}${c.end_time ? "–" + escapeHtml(c.end_time) : ""}</td>
+                <td>${escapeHtml(c.session)}</td>
+                <td>${escapeHtml(c.subject)}</td>
+                <td>${escapeHtml(c.topic || "—")}</td>
+                <td>${escapeHtml(c.faculty_name)}</td>
+                <td class="mono">${(c.student_ids || []).join(", ")}</td>
+                <td>
+                  ${c.syllabus_link ? `<a href="${escapeHtml(c.syllabus_link)}" target="_blank">syllabus</a>` : ""}
+                  ${c.notes_link ? ` · <a href="${escapeHtml(c.notes_link)}" target="_blank">notes</a>` : ""}
+                  ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
+                </td>
+              </tr>`
+              )
+              .join("")}
+          </tbody>`;
+        list.innerHTML = "";
+        list.appendChild(table);
+      } catch (err) {
+        list.className = "msg err";
+        list.textContent = "Could not load classes: " + err.message;
+      }
+    }
+
+    document.getElementById("classForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById("submitBtn");
+      const msg = document.getElementById("formMsg");
+      msg.textContent = "";
+      msg.className = "msg";
+
+      const pickedStudentIds = Array.from(document.getElementById("studentSelect").selectedOptions).map((o) => o.value);
+      const pastedStudentIds = parsePastedIds(document.getElementById("studentPaste").value);
+      const student_ids = Array.from(new Set([...pickedStudentIds, ...pastedStudentIds]));
+
+      const facultySelect = document.getElementById("facultySelect");
+      const faculty_user_id = facultySelect.value || null;
+      const faculty_name = document.getElementById("facultyText").value.trim();
+
+      const payload = {
+        school_id: document.getElementById("schoolId").value.trim() || null,
+        session: document.getElementById("session").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        topic: document.getElementById("topic").value.trim(),
+        class_date: document.getElementById("classDate").value.trim() || null,
+        start_time: document.getElementById("startTime").value.trim() || null,
+        end_time: document.getElementById("endTime").value.trim() || null,
+        faculty_user_id,
+        faculty_name,
+        student_ids,
+        syllabus_link: document.getElementById("syllabusLink").value.trim() || null,
+        notes_link: document.getElementById("notesLink").value.trim() || null,
+        assignment_link: document.getElementById("assignmentLink").value.trim() || null,
+      };
+
+      if (!payload.faculty_name) {
+        msg.className = "msg err";
+        msg.textContent = "Pick a faculty from the list or type a faculty name.";
+        return;
+      }
+      if (student_ids.length === 0) {
+        msg.className = "msg err";
+        msg.textContent = "Pick at least one student, or paste student IDs.";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      try {
+        const res = await fetch(`${API}/api/classes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to save class");
+
+        msg.className = "msg ok";
+        msg.textContent = `Saved — class #${data.id} created.`;
+        document.getElementById("classForm").reset();
+        loadClasses();
+      } catch (err) {
+        msg.className = "msg err";
+        msg.textContent = err.message;
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    loadPeople();
+    loadClasses();
+  </script>
+</body>
+</html>

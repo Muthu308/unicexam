@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Attendance Register</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Class Register</div>
+      <h1>Attendance System</h1>
+    </div>
+  </div>
+
+  <main>
+    <div class="card">
+      <h2>Choose your role</h2>
+      <p>Pick where you'd like to go. Each view talks to the same Hasura-backed
+      register, so a class added by the Admin shows up instantly for Faculty,
+      and attendance marked by Faculty shows up instantly for the Student.</p>
+
+      <div class="roster-row" style="grid-template-columns: 1fr 1fr 1fr;">
+        <a href="admin.html"><button style="width:100%;">Admin</button></a>
+        <a href="faculty.html"><button style="width:100%;">Faculty</button></a>
+        <a href="student.html"><button class="secondary" style="width:100%;">Student</button></a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>How it fits together</h2>
+      <ul>
+        <li><b>Admin</b> creates a class: session, subject, topic, faculty name, and the roster of student IDs.</li>
+        <li><b>Faculty</b> opens a class and marks each student Present, Absent, or gives a Reason.</li>
+        <li><b>Student</b> looks up their attendance history by student ID.</li>
+      </ul>
+    </div>
+  </main>
+
+  <p class="footer-note">Backend: Hasura GraphQL + Vercel serverless functions</p>
+</body>
+</html>

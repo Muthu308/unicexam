@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Student — Attendance Register</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Class Register</div>
+      <h1>Student</h1>
+    </div>
+    <nav class="tabs">
+      <a href="index.html">Home</a>
+      <a href="admin.html">Admin</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="student.html" class="active">Student</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="card" id="loginCard">
+      <h2>Log in</h2>
+      <label for="identifier">Email, mobile, or student ID</label>
+      <input type="text" id="identifier" placeholder="e.g. you@school.edu or STD1001" />
+      <label for="password">Password</label>
+      <input type="text" id="password" placeholder="Password" />
+      <button id="loginBtn">Log in</button>
+      <div class="msg" id="loginMsg"></div>
+    </div>
+
+    <div class="card" id="profileCard" style="display:none;">
+      <h2>Profile</h2>
+      <div id="profile"></div>
+      <button class="secondary" id="logoutBtn">Log out</button>
+    </div>
+
+    <div class="card" id="summaryCard" style="display:none;">
+      <h2>Summary</h2>
+      <div id="summary"></div>
+    </div>
+
+    <div class="card" id="resultCard" style="display:none;">
+      <h2>Attendance — day by day</h2>
+      <div id="result"></div>
+    </div>
+  </main>
+
+  <p class="footer-note">Backend: Hasura GraphQL + Vercel serverless functions</p>
+
+  <script src="config.js"></script>
+  <script>
+    const API = window.API_BASE || "";
+    let profile = null;
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str ?? "";
+      return div.innerHTML;
+    }
+
+    async function login() {
+      const identifier = document.getElementById("identifier").value.trim();
+      const password = document.getElementById("password").value;
+      const msg = document.getElementById("loginMsg");
+      msg.textContent = "";
+      if (!identifier || !password) {
+        msg.className = "msg err";
+        msg.textContent = "Enter both fields.";
+        return;
+      }
+      try {
+        const res = await fetch(`${API}/api/student-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ identifier, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Login failed");
+
+        profile = data;
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("profileCard").style.display = "block";
+        document.getElementById("profile").innerHTML = `
+          <p><b>${escapeHtml(profile.name)}</b> (${escapeHtml(profile.std_id)})<br/>
+          ${escapeHtml(profile.class_name || "")} — ${escapeHtml(profile.school_name || "")}<br/>
+          <span class="hint">${escapeHtml(profile.email_id || "")} ${profile.mobile ? " · " + escapeHtml(profile.mobile) : ""}</span></p>`;
+
+        loadAttendance();
+      } catch (err) {
+        msg.className = "msg err";
+        msg.textContent = err.message;
+      }
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", login);
+    document.getElementById("password").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") login();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      profile = null;
+      document.getElementById("loginCard").style.display = "block";
+      document.getElementById("profileCard").style.display = "none";
+      document.getElementById("summaryCard").style.display = "none";
+      document.getElementById("resultCard").style.display = "none";
+      document.getElementById("password").value = "";
+    });
+
+    async function loadAttendance() {
+      const resultCard = document.getElementById("resultCard");
+      const summaryCard = document.getElementById("summaryCard");
+      const result = document.getElementById("result");
+      const summary = document.getElementById("summary");
+
+      resultCard.style.display = "block";
+      result.className = "";
+      result.textContent = "Loading…";
+      summaryCard.style.display = "none";
+
+      try {
+        const res = await fetch(`${API}/api/student-attendance?student_id=${encodeURIComponent(profile.std_id)}`);
+        const records = await res.json();
+        if (!res.ok) throw new Error(records.error || "Lookup failed");
+
+        if (!Array.isArray(records) || records.length === 0) {
+          result.className = "empty";
+          result.textContent = "No attendance records found yet.";
+          return;
+        }
+
+        const total = records.length;
+        const present = records.filter((r) => r.status === "Present").length;
+        const absent = records.filter((r) => r.status === "Absent").length;
+        const reason = records.filter((r) => r.status === "Reason").length;
+        const assignmentsDone = records.filter((r) => r.assignment_submitted).length;
+        const pct = total ? Math.round((present / total) * 100) : 0;
+
+        summaryCard.style.display = "block";
+        summary.innerHTML = `
+          <p>${total} class record${total === 1 ? "" : "s"}:
+          <span class="status-pill status-Present">${present} Present</span>
+          <span class="status-pill status-Absent">${absent} Absent</span>
+          <span class="status-pill status-Reason">${reason} Reason</span>
+          — <b>${pct}%</b> present. Assignments submitted: <b>${assignmentsDone}/${total}</b>.</p>`;
+
+        // group day-wise by class_date (fall back to the date attendance was marked)
+        const groups = {};
+        records.forEach((r) => {
+          const day = r.class_date || (r.marked_at ? r.marked_at.slice(0, 10) : "Unknown date");
+          groups[day] = groups[day] || [];
+          groups[day].push(r);
+        });
+        const days = Object.keys(groups).sort((a, b) => new Date(b) - new Date(a));
+
+        result.innerHTML = days
+          .map((day) => {
+            const rows = groups[day]
+              .map((r) => {
+                const links = [];
+                if (r.syllabus_link) links.push(`<a href="${escapeHtml(r.syllabus_link)}" target="_blank">Syllabus</a>`);
+                if (r.notes_link) links.push(`<a href="${escapeHtml(r.notes_link)}" target="_blank">Notes</a>`);
+                if (r.assignment_link) links.push(`<a href="${escapeHtml(r.assignment_link)}" target="_blank">Assignment</a>`);
+                const assignmentStatus = r.assignment_submitted
+                  ? `Submitted${r.assignment_submission_link ? ` — <a href="${escapeHtml(r.assignment_submission_link)}" target="_blank">your link</a>` : ""}`
+                  : "Not submitted";
+                return `
+                <tr>
+                  <td>${r.start_time || "—"}${r.end_time ? "–" + r.end_time : ""}</td>
+                  <td>${escapeHtml(r.subject)}</td>
+                  <td>${escapeHtml(r.topic || "—")}</td>
+                  <td>${escapeHtml(r.faculty_name)}</td>
+                  <td><span class="status-pill status-${r.status}">${r.status}</span></td>
+                  <td>${escapeHtml(r.reason || "—")}</td>
+                  <td>${assignmentStatus}</td>
+                  <td>${links.join(" · ")}</td>
+                </tr>`;
+              })
+              .join("");
+            return `
+            <h3 style="margin-bottom:6px;">${escapeHtml(day)}</h3>
+            <table style="margin-bottom:22px;">
+              <thead>
+                <tr><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>Assignment</th><th>Links</th></tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>`;
+          })
+          .join("");
+      } catch (err) {
+        result.className = "msg err";
+        result.textContent = err.message;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Faculty — Attendance Register</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Class Register</div>
+      <h1>Faculty</h1>
+    </div>
+    <nav class="tabs">
+      <a href="index.html">Home</a>
+      <a href="admin.html">Admin</a>
+      <a href="faculty.html" class="active">Faculty</a>
+      <a href="student.html">Student</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="card">
+      <h2>Select a class</h2>
+      <label for="schoolId">School ID (optional filter)</label>
+      <input type="text" id="schoolId" placeholder="e.g. SCH001" />
+      <label for="classSelect">Class</label>
+      <select id="classSelect">
+        <option value="">Loading classes…</option>
+      </select>
+      <div id="classMeta" class="hint"></div>
+      <div id="classLinks" class="hint"></div>
+    </div>
+
+    <div class="card" id="rosterCard" style="display:none;">
+      <h2>Mark attendance &amp; assignment status</h2>
+      <div id="roster"></div>
+      <button id="submitAttendance">Submit attendance</button>
+      <div class="msg" id="attendanceMsg"></div>
+    </div>
+
+    <div class="card" id="historyCard" style="display:none;">
+      <h2>Previous submissions for this class</h2>
+      <div id="history"></div>
+    </div>
+  </main>
+
+  <p class="footer-note">Backend: Hasura GraphQL + Vercel serverless functions</p>
+
+  <script src="config.js"></script>
+  <script>
+    const API = window.API_BASE || "";
+    let currentClass = null;
+    // state[student_id] = { status, reason, assignment_submitted, assignment_submission_link }
+    let state = {};
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str ?? "";
+      return div.innerHTML;
+    }
+
+    async function loadClasses() {
+      const select = document.getElementById("classSelect");
+      const schoolId = document.getElementById("schoolId").value.trim();
+      const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
+      try {
+        const res = await fetch(`${API}/api/classes${qs}`);
+        const classes = await res.json();
+        if (!Array.isArray(classes) || classes.length === 0) {
+          select.innerHTML = `<option value="">No classes yet — ask Admin to add one</option>`;
+          return;
+        }
+        select.innerHTML =
+          `<option value="">Choose a class…</option>` +
+          classes
+            .map(
+              (c) =>
+                `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})</option>`
+            )
+            .join("");
+        select.dataset.classes = JSON.stringify(classes);
+      } catch (err) {
+        select.innerHTML = `<option value="">Error loading classes</option>`;
+      }
+    }
+
+    document.getElementById("schoolId").addEventListener("change", loadClasses);
+
+    function renderRoster(cls) {
+      currentClass = cls;
+      state = {};
+      (cls.student_ids || []).forEach((sid) => {
+        state[sid] = { status: "Present", reason: "", assignment_submitted: false, assignment_submission_link: "" };
+      });
+
+      document.getElementById("classMeta").textContent =
+        `${cls.class_date || "No date set"} ${cls.start_time || ""}${cls.end_time ? "–" + cls.end_time : ""}  •  Topic: ${cls.topic || "—"}  •  Faculty: ${cls.faculty_name}  •  ${(cls.student_ids || []).length} students`;
+
+      const links = [];
+      if (cls.syllabus_link) links.push(`<a href="${escapeHtml(cls.syllabus_link)}" target="_blank">Syllabus</a>`);
+      if (cls.notes_link) links.push(`<a href="${escapeHtml(cls.notes_link)}" target="_blank">Notes</a>`);
+      if (cls.assignment_link) links.push(`<a href="${escapeHtml(cls.assignment_link)}" target="_blank">Assignment</a>`);
+      document.getElementById("classLinks").innerHTML = links.join(" · ");
+
+      const roster = document.getElementById("roster");
+      roster.innerHTML = (cls.student_ids || [])
+        .map(
+          (sid) => `
+        <div class="roster-row" data-sid="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1.6fr 1.3fr;">
+          <div class="mono">${escapeHtml(sid)}</div>
+          <div class="status-choices">
+            <button type="button" data-status="Present" class="chosen-Present">Present</button>
+            <button type="button" data-status="Absent">Absent</button>
+            <button type="button" data-status="Reason">Reason</button>
+          </div>
+          <input type="text" class="reason-input" placeholder="Reason (optional)" style="display:none;" />
+        </div>
+        <div class="roster-row" data-assign-for="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1fr 1.3fr; padding-top:0;">
+          <div class="hint">Assignment</div>
+          <label style="margin:0; display:flex; align-items:center; gap:6px; text-transform:none; font-family:inherit; font-size:0.85rem;">
+            <input type="checkbox" class="assign-check" /> Submitted
+          </label>
+          <input type="text" class="assign-link" placeholder="Submission link (optional)" style="display:none;" />
+        </div>`
+        )
+        .join("");
+
+      roster.querySelectorAll(".roster-row[data-sid]").forEach((row) => {
+        const sid = row.dataset.sid;
+        const reasonInput = row.querySelector(".reason-input");
+
+        row.querySelectorAll(".status-choices button").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const status = btn.dataset.status;
+            state[sid].status = status;
+
+            row.querySelectorAll(".status-choices button").forEach((b) => (b.className = ""));
+            btn.className = `chosen-${status}`;
+
+            reasonInput.style.display = status === "Reason" ? "block" : "none";
+            if (status !== "Reason") {
+              state[sid].reason = "";
+              reasonInput.value = "";
+            }
+          });
+        });
+
+        reasonInput.addEventListener("input", () => {
+          state[sid].reason = reasonInput.value;
+        });
+      });
+
+      roster.querySelectorAll(".roster-row[data-assign-for]").forEach((row) => {
+        const sid = row.dataset.assignFor;
+        const check = row.querySelector(".assign-check");
+        const link = row.querySelector(".assign-link");
+        check.addEventListener("change", () => {
+          state[sid].assignment_submitted = check.checked;
+          link.style.display = check.checked ? "block" : "none";
+          if (!check.checked) {
+            state[sid].assignment_submission_link = "";
+            link.value = "";
+          }
+        });
+        link.addEventListener("input", () => {
+          state[sid].assignment_submission_link = link.value;
+        });
+      });
+
+      document.getElementById("rosterCard").style.display = "block";
+      document.getElementById("attendanceMsg").textContent = "";
+      loadHistory(cls.id);
+    }
+
+    document.getElementById("classSelect").addEventListener("change", (e) => {
+      const id = e.target.value;
+      if (!id) {
+        document.getElementById("rosterCard").style.display = "none";
+        document.getElementById("historyCard").style.display = "none";
+        return;
+      }
+      const classes = JSON.parse(e.target.dataset.classes || "[]");
+      const cls = classes.find((c) => String(c.id) === String(id));
+      if (cls) renderRoster(cls);
+    });
+
+    document.getElementById("submitAttendance").addEventListener("click", async () => {
+      if (!currentClass) return;
+      const btn = document.getElementById("submitAttendance");
+      const msg = document.getElementById("attendanceMsg");
+
+      const attendance_data = Object.entries(state).map(([student_id, v]) => ({
+        student_id,
+        status: v.status,
+        reason: v.status === "Reason" ? v.reason : "",
+        assignment_submitted: v.assignment_submitted,
+        assignment_submission_link: v.assignment_submitted ? v.assignment_submission_link : "",
+      }));
+
+      btn.disabled = true;
+      msg.textContent = "";
+      try {
+        const res = await fetch(`${API}/api/attendance`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ class_id: currentClass.id, attendance_data }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to submit attendance");
+
+        msg.className = "msg ok";
+        msg.textContent = `Attendance saved for class #${currentClass.id} at ${new Date(data.marked_at).toLocaleString()}.`;
+        loadHistory(currentClass.id);
+      } catch (err) {
+        msg.className = "msg err";
+        msg.textContent = err.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    async function loadHistory(classId) {
+      const card = document.getElementById("historyCard");
+      const box = document.getElementById("history");
+      card.style.display = "block";
+      box.className = "";
+      box.textContent = "Loading…";
+      try {
+        const res = await fetch(`${API}/api/attendance?class_id=${classId}`);
+        const records = await res.json();
+        if (!Array.isArray(records) || records.length === 0) {
+          box.className = "empty";
+          box.textContent = "No attendance submitted yet for this class.";
+          return;
+        }
+        box.innerHTML = records
+          .map(
+            (r) => `
+          <div style="margin-bottom:14px;">
+            <div class="hint mono">${new Date(r.marked_at).toLocaleString()} — record #${r.id}</div>
+            <table>
+              <thead><tr><th>Student</th><th>Status</th><th>Reason</th><th>Assignment</th></tr></thead>
+              <tbody>
+                ${r.attendance_data
+                  .map(
+                    (a) => `
+                  <tr>
+                    <td class="mono">${escapeHtml(a.student_id)}</td>
+                    <td><span class="status-pill status-${a.status}">${a.status}</span></td>
+                    <td>${escapeHtml(a.reason || "—")}</td>
+                    <td>${a.assignment_submitted ? `Submitted${a.assignment_submission_link ? ` — <a href="${escapeHtml(a.assignment_submission_link)}" target="_blank">link</a>` : ""}` : "Not submitted"}</td>
+                  </tr>`
+                  )
+                  .join("")}
+              </tbody>
+            </table>
+          </div>`
+          )
+          .join("");
+      } catch (err) {
+        box.className = "msg err";
+        box.textContent = "Could not load history: " + err.message;
+      }
+    }
+
+    loadClasses();
+  </script>
+</body>
+</html>

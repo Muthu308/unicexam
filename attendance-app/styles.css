@@ -1,0 +1,242 @@
+/* ============================================================
+   Attendance Register — shared styles
+   Theme: a paper "class register" — cream ledger background,
+   deep forest-green ink accent, serif headers, monospace IDs.
+   ============================================================ */
+
+:root {
+  --paper: #f7f4ea;
+  --paper-line: #e3ddc9;
+  --ink: #24291f;
+  --ink-soft: #5b6152;
+  --green: #2d5f4c;
+  --green-deep: #1c3f32;
+  --red: #a3372c;
+  --amber: #a3782c;
+  --card: #fffdf7;
+  --border: #d8d0b8;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 39px,
+    var(--paper-line) 40px
+  );
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 28px 40px 18px;
+  border-bottom: 2px solid var(--green-deep);
+  background: var(--paper);
+}
+
+.topbar h1 {
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  margin: 0;
+  color: var(--green-deep);
+}
+
+.topbar .eyebrow {
+  font-family: "Courier New", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+
+nav.tabs {
+  display: flex;
+  gap: 6px;
+}
+
+nav.tabs a {
+  font-family: "Courier New", monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+
+nav.tabs a.active,
+nav.tabs a:hover {
+  color: var(--green-deep);
+  border-color: var(--green);
+  background: rgba(45, 95, 76, 0.08);
+}
+
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 36px 40px 80px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 30px;
+  margin-bottom: 26px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1.15rem;
+  color: var(--green-deep);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
+label {
+  display: block;
+  font-family: "Courier New", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin: 16px 0 6px;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+textarea { resize: vertical; min-height: 60px; }
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+button {
+  font-family: "Courier New", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  background: var(--green-deep);
+  color: #fff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover { background: var(--green); }
+button:disabled { background: #b9b3a0; cursor: not-allowed; }
+
+button.secondary {
+  background: transparent;
+  color: var(--green-deep);
+  border: 1px solid var(--green-deep);
+}
+button.secondary:hover { background: rgba(45, 95, 76, 0.08); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+th {
+  font-family: "Courier New", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+
+.mono { font-family: "Courier New", monospace; }
+
+.status-pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-family: "Courier New", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.status-Present { background: rgba(45, 95, 76, 0.12); color: var(--green-deep); }
+.status-Absent  { background: rgba(163, 55, 44, 0.12); color: var(--red); }
+.status-Reason  { background: rgba(163, 120, 44, 0.14); color: var(--amber); }
+
+.roster-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.6fr 1.3fr;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.roster-row:last-child { border-bottom: none; }
+
+.status-choices { display: flex; gap: 6px; }
+
+.status-choices button {
+  margin: 0;
+  padding: 7px 12px;
+  font-size: 0.7rem;
+  background: #fff;
+  color: var(--ink-soft);
+  border: 1px solid var(--border);
+}
+
+.status-choices button.chosen-Present { background: var(--green-deep); color: #fff; border-color: var(--green-deep); }
+.status-choices button.chosen-Absent  { background: var(--red); color: #fff; border-color: var(--red); }
+.status-choices button.chosen-Reason  { background: var(--amber); color: #fff; border-color: var(--amber); }
+
+.msg { margin-top: 14px; font-size: 0.88rem; }
+.msg.ok  { color: var(--green-deep); }
+.msg.err { color: var(--red); }
+
+.empty {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.footer-note {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  margin-top: 40px;
+}
