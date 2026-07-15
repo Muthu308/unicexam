@@ -9,7 +9,7 @@
 // switch to hashed passwords (e.g. bcrypt) and compare hashes here
 // instead of raw strings.
 
-import { hasuraRequest } from "../lib/hasura.js";
+import { hasuraRequest } from "/hasura.js";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
