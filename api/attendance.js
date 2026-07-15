@@ -1,59 +1,109 @@
 // api/attendance.js
-// POST -> Faculty submits attendance for a class_id.
-//         body: { class_id: 1, attendance_data: [{student_id, status, reason}, ...] }
-// GET  -> Fetch attendance record(s) for a given class_id (?class_id=1)
+// POST -> Save attendance
+// GET  -> Get attendance by class_id
 
 import { hasuraRequest } from "./hasura.js";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+res.setHeader(
+  "Access-Control-Allow-Methods",
+  "GET,POST,PUT,DELETE,OPTIONS"
+);
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-const VALID_STATUSES = ["Present", "Absent", "Reason"];
+const VALID_STATUSES = [
+  "Present",
+  "Absent",
+  "Late",
+  "Reason",
+];
 
 export default async function handler(req, res) {
   setCors(res);
-  if (req.method === "OPTIONS") return res.status(200).end();
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
   try {
+    // ======================================
+    // SAVE ATTENDANCE
+    // ======================================
     if (req.method === "POST") {
       const { class_id, attendance_data } = req.body || {};
 
-      if (!class_id || !Array.isArray(attendance_data)) {
+      if (!class_id) {
         return res.status(400).json({
-          error: "class_id and attendance_data array are required",
+          error: "class_id is required",
         });
       }
 
-      // basic shape validation
-      // each entry: { student_id, status, reason, assignment_submitted, assignment_submission_link }
-      for (const entry of attendance_data) {
-        if (!entry.student_id || !VALID_STATUSES.includes(entry.status)) {
+      if (
+        !Array.isArray(attendance_data) ||
+        attendance_data.length === 0
+      ) {
+        return res.status(400).json({
+          error: "attendance_data must be a non-empty array",
+        });
+      }
+
+      for (const row of attendance_data) {
+        if (!row.student_id) {
+          return res.status(400).json({
+            error: "student_id is required",
+          });
+        }
+
+        if (!VALID_STATUSES.includes(row.status)) {
           return res.status(400).json({
             error:
-              "Each attendance entry needs student_id and a status of Present, Absent or Reason",
+              "Status must be Present, Absent, Late or Reason",
           });
         }
       }
 
-      // normalize optional assignment fields so every row has a consistent shape
-      const normalized = attendance_data.map((e) => ({
-        student_id: e.student_id,
-        status: e.status,
-        reason: e.status === "Reason" ? e.reason || "" : "",
-        assignment_submitted: !!e.assignment_submitted,
-        assignment_submission_link: e.assignment_submitted
-          ? e.assignment_submission_link || ""
-          : "",
+      const normalized = attendance_data.map((row) => ({
+        student_id: row.student_id,
+        status: row.status,
+
+        reason:
+          row.status === "Reason" ||
+          row.status === "Late"
+            ? row.reason || ""
+            : "",
+
+        in_time:
+          row.status === "Late"
+            ? row.in_time || ""
+            : "",
+
+        out_time:
+          row.status === "Late"
+            ? row.out_time || ""
+            : "",
+
+        assignment_submitted:
+          !!row.assignment_submitted,
+
+        assignment_submission_link:
+          row.assignment_submitted
+            ? row.assignment_submission_link || ""
+            : "",
       }));
 
       const mutation = `
-        mutation InsertAttendance($class_id: Int!, $attendance_data: jsonb!) {
+        mutation InsertAttendance(
+          $class_id:Int!,
+          $attendance_data:jsonb!
+        ) {
           insert_attendance_one(
-            object: { class_id: $class_id, attendance_data: $attendance_data }
-          ) {
+            object:{
+              class_id:$class_id
+              attendance_data:$attendance_data
+            }
+          ){
             id
             class_id
             attendance_data
@@ -67,21 +117,31 @@ export default async function handler(req, res) {
         attendance_data: normalized,
       });
 
-      return res.status(200).json(data.insert_attendance_one);
+      return res.status(201).json(data.insert_attendance_one);
     }
 
+    // ======================================
+    // GET ATTENDANCE
+    // ======================================
     if (req.method === "GET") {
       const { class_id } = req.query;
+
       if (!class_id) {
-        return res.status(400).json({ error: "class_id query param required" });
+        return res.status(400).json({
+          error: "class_id query parameter is required",
+        });
       }
 
       const query = `
-        query GetAttendance($class_id: Int!) {
+        query GetAttendance($class_id:Int!) {
           attendance(
-            where: { class_id: { _eq: $class_id } }
-            order_by: { marked_at: desc }
-          ) {
+            where:{
+              class_id:{_eq:$class_id}
+            }
+            order_by:{
+              marked_at:desc
+            }
+          ){
             id
             class_id
             attendance_data
@@ -89,14 +149,116 @@ export default async function handler(req, res) {
           }
         }
       `;
-      const data = await hasuraRequest(query, { class_id: Number(class_id) });
-      return res.status(200).json(data.attendance);
+
+      const data = await hasuraRequest(query, {
+        class_id: Number(class_id),
+      });
+
+      return res.status(200).json(
+        data.attendance || []
+      );
     }
 
-    res.setHeader("Allow", "GET,POST,OPTIONS");
-    return res.status(405).json({ error: "Method not allowed" });
+    if (req.method === "PUT") {
+  const { id, attendance_data } = req.body || {};
+
+  if (!id) {
+    return res.status(400).json({
+      error: "Attendance id is required",
+    });
+  }
+
+  const normalized = attendance_data.map((row) => ({
+    student_id: row.student_id,
+    status: row.status,
+    reason:
+      row.status === "Reason" || row.status === "Late"
+        ? row.reason || ""
+        : "",
+    in_time:
+      row.status === "Late"
+        ? row.in_time || ""
+        : "",
+    out_time:
+      row.status === "Late"
+        ? row.out_time || ""
+        : "",
+    assignment_submitted: !!row.assignment_submitted,
+    assignment_submission_link:
+      row.assignment_submitted
+        ? row.assignment_submission_link || ""
+        : "",
+  }));
+
+  const mutation = `
+    mutation UpdateAttendance(
+      $id:Int!,
+      $attendance_data:jsonb!
+    ){
+      update_attendance_by_pk(
+        pk_columns:{id:$id}
+        _set:{
+          attendance_data:$attendance_data
+        }
+      ){
+        id
+        class_id
+        attendance_data
+        marked_at
+      }
+    }
+  `;
+
+  const data = await hasuraRequest(mutation, {
+    id: Number(id),
+    attendance_data: normalized,
+  });
+
+  return res
+    .status(200)
+    .json(data.update_attendance_by_pk);
+}
+    if (req.method === "DELETE") {
+  const { id } = req.body || {};
+
+  if (!id) {
+    return res.status(400).json({
+      error: "Attendance id is required",
+    });
+  }
+
+  const mutation = `
+    mutation DeleteAttendance($id:Int!){
+      delete_attendance_by_pk(id:$id){
+        id
+      }
+    }
+  `;
+
+  const data = await hasuraRequest(mutation, {
+    id: Number(id),
+  });
+
+  return res.status(200).json({
+    success: true,
+    deleted: data.delete_attendance_by_pk,
+  });
+}
+
+res.setHeader(
+  "Allow",
+  "GET,POST,PUT,DELETE,OPTIONS"
+);
+
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
+
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: err.message });
+    console.error("Attendance API Error:", err);
+
+    return res.status(500).json({
+      error: err.message || "Internal Server Error",
+    });
   }
 }
