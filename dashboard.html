@@ -1604,6 +1604,7 @@ async function loadAttendance(){
   try{
     const res = await fetch(`/api/student-attendance?student_id=${encodeURIComponent(user.std_id)}`);
     const records = await res.json();
+    console.log(records);
     if(!res.ok) throw new Error(records.error || "Failed to load attendance");
 
     attendanceRecords = Array.isArray(records) ? records : [];
