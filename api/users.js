@@ -4,7 +4,7 @@
 // Reads from the existing user_student table so Admin can pick real
 // faculty/students instead of (or in addition to) free-typing IDs.
 
-import { hasuraRequest } from "/hasura.js";
+import { hasuraRequest } from "./hasura.js";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
