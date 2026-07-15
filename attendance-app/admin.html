@@ -71,6 +71,9 @@
 
         <label for="notesLink">Notes link</label>
         <input type="text" id="notesLink" placeholder="https://…" />
+        
+        <label for="videoLink">Youtupe Video link</label>
+        <input type="text" id="videoLink" placeholder="https://…" />
 
         <label for="assignmentLink">Assignment link</label>
         <input type="text" id="assignmentLink" placeholder="https://…" />
@@ -179,6 +182,7 @@
                 <td>
                   ${c.syllabus_link ? `<a href="${escapeHtml(c.syllabus_link)}" target="_blank">syllabus</a>` : ""}
                   ${c.notes_link ? ` · <a href="${escapeHtml(c.notes_link)}" target="_blank">notes</a>` : ""}
+                  ${c.video_link ? ` · <a href="${escapeHtml(c.video_link)}" target="_blank">notes</a>` : ""}
                   ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
                 </td>
               </tr>`
@@ -221,6 +225,7 @@
         student_ids,
         syllabus_link: document.getElementById("syllabusLink").value.trim() || null,
         notes_link: document.getElementById("notesLink").value.trim() || null,
+        video_link: document.getElementById("videoLink").value.trim() || null,
         assignment_link: document.getElementById("assignmentLink").value.trim() || null,
       };
 
