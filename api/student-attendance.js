@@ -3,7 +3,7 @@
 // Returns every attendance record that mentions this student, flattened
 // to just that student's status/reason, newest first, with class details.
 
-import { hasuraRequest } from "../lib/hasura.js";
+import { hasuraRequest } from "/hasura.js";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
