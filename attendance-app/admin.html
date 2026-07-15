@@ -156,6 +156,7 @@
         const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
         const res = await fetch(`${API}/api/classes${qs}`);
         classes = await res.json();
+        console.log(classes);
         if (!Array.isArray(classes) || classes.length === 0) {
           list.className = "empty";
           list.textContent = "No classes yet — add one above.";
