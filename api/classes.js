@@ -2,7 +2,7 @@
 // POST -> Admin creates a new class (session, subject, topic, faculty_name, student_ids[])
 // GET  -> List all classes (used by Admin dashboard and Faculty class picker)
 
-import { hasuraRequest } from "/hasura.js";
+import { hasuraRequest } from "./hasura.js";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
