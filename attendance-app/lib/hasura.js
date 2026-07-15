@@ -4,8 +4,8 @@
 // admin secret is never exposed to the browser.
 
 export async function hasuraRequest(query, variables = {}) {
-  const endpoint = process.env.HASURA_ENDPOINT; // e.g. https://xxxx.hasura.app/v1/graphql
-  const adminSecret = process.env.HASURA_ADMIN_SECRET;
+  const endpoint = process.env.HASURA_URL; // e.g. https://xxxx.hasura.app/v1/graphql
+  const adminSecret = process.env.HASURA_SECRET;
 
   if (!endpoint || !adminSecret) {
     throw new Error(
