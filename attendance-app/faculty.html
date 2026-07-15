@@ -54,14 +54,14 @@
     let currentClass = null;
     // state[student_id] = { status, reason, in_time, out_time, assignment_submitted, assignment_submission_link }
     let state = {};
-
+   
     function escapeHtml(str) {
       const div = document.createElement("div");
       div.textContent = str ?? "";
       return div.innerHTML;
     }
 
-    async function loadClasses() {
+    async function loadClasses(classId) {
       const select = document.getElementById("classSelect");
       const schoolId = document.getElementById("schoolId").value.trim();
       const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
@@ -120,7 +120,13 @@
           <div class="status-choices">
             <button type="button" data-status="Present" class="chosen-Present">Present</button>
             <button type="button" data-status="Absent">Absent</button>
-            <button type="button" data-status="Late">Late</button>
+            <button
+    type="button"
+    data-status="Late"
+    class="late-btn"
+    disabled>
+    Late
+</button>
             <button type="button" data-status="Reason">Reason</button>
           </div>
           <input type="text" class="reason-input" placeholder="Reason (optional)" style="display:none;" />
@@ -154,32 +160,65 @@
         const outTimeInput = lateRow.querySelector(".out-time-input");
 
         row.querySelectorAll(".status-choices button").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const status = btn.dataset.status;
-            state[sid].status = status;
+  btn.addEventListener("click", () => {
 
-            row.querySelectorAll(".status-choices button").forEach((b) => (b.className = ""));
-            btn.className = `chosen-${status}`;
+    const status = btn.dataset.status;
 
-            // Reason box: shown for "Reason" (mandatory-ish free text) and "Late" (optional note)
-            reasonInput.style.display = status === "Reason" || status === "Late" ? "block" : "none";
-            reasonInput.placeholder =
-              status === "Late" ? "Reason for being late (optional)" : "Reason (optional)";
-            if (status !== "Reason" && status !== "Late") {
-              state[sid].reason = "";
-              reasonInput.value = "";
+    const lateBtn = row.querySelector('[data-status="Late"]');
+
+        if (status === "Present") {
+            lateBtn.disabled = false;
+        } else {
+            lateBtn.disabled = true;
+        
+            if (state[sid].status === "Late") {
+                state[sid].status = status;
             }
+        }
 
-            // In/out time fields only apply when marked Late
-            lateRow.style.display = status === "Late" ? "flex" : "none";
-            if (status !== "Late") {
-              state[sid].in_time = "";
-              state[sid].out_time = "";
-              inTimeInput.value = "";
-              outTimeInput.value = "";
-            }
-          });
-        });
+    // Late is allowed only after Present
+    if (status === "Late" && state[sid].status !== "Present") {
+      alert("Late can only be selected for a Present student.");
+      return;
+    }
+
+    state[sid].status = status;
+
+    row.querySelectorAll(".status-choices button").forEach(b => {
+      b.className = "";
+    });
+
+    btn.className = `chosen-${status}`;
+
+    reasonInput.style.display =
+      status === "Reason" || status === "Late"
+        ? "block"
+        : "none";
+
+    reasonInput.placeholder =
+      status === "Late"
+        ? "Reason for being late"
+        : "Reason";
+
+    if (status !== "Reason" && status !== "Late") {
+      reasonInput.value = "";
+      state[sid].reason = "";
+    }
+
+    lateRow.style.display =
+      status === "Late"
+        ? "flex"
+        : "none";
+
+    if (status !== "Late") {
+      inTimeInput.value = "";
+      outTimeInput.value = "";
+      state[sid].in_time = "";
+      state[sid].out_time = "";
+    }
+
+  });
+});
 
         reasonInput.addEventListener("input", () => {
           state[sid].reason = reasonInput.value;
