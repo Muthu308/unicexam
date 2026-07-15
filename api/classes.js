@@ -32,14 +32,15 @@ export default async function handler(req, res) {
         subject,
         topic = "",
         faculty_name,
-        faculty_user_id = null,
+        faculty_user_id,
         student_ids = [],
-        school_id = null,
-        class_date = null,
-        start_time = null,
-        end_time = null,
-        syllabus_link = null,
-        notes_link = null,
+        school_id,
+        class_date,
+        start_time,
+        end_time,
+        syllabus_link,
+        notes_link,
+        video_link,
         assignment_link = null,
       } = req.body || {};
 
@@ -69,6 +70,7 @@ export default async function handler(req, res) {
           $end_time: time
           $syllabus_link: String
           $notes_link: String
+          $video_link: String
           $assignment_link: String
         ) {
           insert_classes_one(
@@ -85,6 +87,7 @@ export default async function handler(req, res) {
               end_time: $end_time
               syllabus_link: $syllabus_link
               notes_link: $notes_link
+              video_link: $video_link
               assignment_link: $assignment_link
             }
           ) {
@@ -101,6 +104,7 @@ export default async function handler(req, res) {
             end_time
             syllabus_link
             notes_link
+            video_link
             assignment_link
             created_at
           }
@@ -123,6 +127,7 @@ export default async function handler(req, res) {
         end_time,
         syllabus_link,
         notes_link,
+        video_link,
         assignment_link,
       });
 
@@ -157,6 +162,7 @@ export default async function handler(req, res) {
             end_time
             syllabus_link
             notes_link
+            video_link
             assignment_link
             created_at
           }
@@ -188,15 +194,16 @@ export default async function handler(req, res) {
         subject,
         topic = "",
         faculty_name,
-        faculty_user_id = null,
+        faculty_user_id,
         student_ids = [],
-        school_id = null,
-        class_date = null,
-        start_time = null,
-        end_time = null,
-        syllabus_link = null,
-        notes_link = null,
-        assignment_link = null,
+        school_id,
+        class_date,
+        start_time,
+        end_time,
+        syllabus_link,
+        notes_link,
+        video_link,
+        assignment_link,
       } = req.body || {};
 
       if (!id) {
@@ -220,6 +227,7 @@ export default async function handler(req, res) {
           $end_time:time
           $syllabus_link:String
           $notes_link:String
+          $video_link: String
           $assignment_link:String
         ) {
           update_classes_by_pk(
@@ -237,6 +245,7 @@ export default async function handler(req, res) {
               end_time:$end_time
               syllabus_link:$syllabus_link
               notes_link:$notes_link
+              video_link:$video_link
               assignment_link:$assignment_link
             }
           ) {
@@ -253,6 +262,7 @@ export default async function handler(req, res) {
             end_time
             syllabus_link
             notes_link
+            video_link
             assignment_link
             created_at
           }
@@ -276,6 +286,7 @@ export default async function handler(req, res) {
         end_time,
         syllabus_link,
         notes_link,
+        video_link
         assignment_link,
       });
 
