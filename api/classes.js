@@ -286,7 +286,7 @@ export default async function handler(req, res) {
         end_time,
         syllabus_link,
         notes_link,
-        video_link
+        video_link,
         assignment_link,
       });
 
