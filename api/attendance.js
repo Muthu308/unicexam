@@ -3,7 +3,7 @@
 //         body: { class_id: 1, attendance_data: [{student_id, status, reason}, ...] }
 // GET  -> Fetch attendance record(s) for a given class_id (?class_id=1)
 
-import { hasuraRequest } from "/hasura.js";
+import { hasuraRequest } from "./hasura.js";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
