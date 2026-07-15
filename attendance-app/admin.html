@@ -96,6 +96,8 @@
     const API = window.API_BASE || "";
     let facultyOptions = [];
     let studentOptions = [];
+    let classes = [];
+    let editingClassId = null;
 
     function escapeHtml(str) {
       const div = document.createElement("div");
@@ -153,7 +155,7 @@
       try {
         const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
         const res = await fetch(`${API}/api/classes${qs}`);
-        const classes = await res.json();
+        classes = await res.json();
         if (!Array.isArray(classes) || classes.length === 0) {
           list.className = "empty";
           list.textContent = "No classes yet — add one above.";
@@ -164,7 +166,7 @@
           <thead>
             <tr>
               <th>ID</th><th>Date / Time</th><th>Session</th><th>Subject</th><th>Topic</th>
-              <th>Faculty</th><th>Students</th><th>Links</th>
+              <th>Faculty</th><th>Students</th><th>Links</th><th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -185,6 +187,15 @@
                   ${c.video_link ? ` · <a href="${escapeHtml(c.video_link)}" target="_blank">notes</a>` : ""}
                   ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
                 </td>
+                <td>
+                  <button class="edit-btn" onclick="editClass(${c.id})">
+                    ✏️ Edit
+                  </button>
+                
+                  <button class="delete-btn" onclick="deleteClass(${c.id})">
+                    🗑 Delete
+                  </button>
+                </td>
               </tr>`
               )
               .join("")}
@@ -196,6 +207,48 @@
         list.textContent = "Could not load classes: " + err.message;
       }
     }
+
+    function editClass(id) {
+  const c = classes.find(x => Number(x.id) === Number(id));
+
+  if (!c) return;
+
+  editingClassId = c.id;
+
+  document.getElementById("session").value = c.session || "";
+  document.getElementById("subject").value = c.subject || "";
+  document.getElementById("topic").value = c.topic || "";
+
+  document.getElementById("classDate").value = c.class_date || "";
+  document.getElementById("startTime").value = c.start_time || "";
+  document.getElementById("endTime").value = c.end_time || "";
+
+  document.getElementById("schoolId").value = c.school_id || "";
+  document.getElementById("facultyText").value = c.faculty_name || "";
+
+  document.getElementById("syllabusLink").value = c.syllabus_link || "";
+  document.getElementById("notesLink").value = c.notes_link || "";
+  document.getElementById("videoLink").value = c.video_link || "";
+  document.getElementById("assignmentLink").value = c.assignment_link || "";
+
+  document.getElementById("studentPaste").value =
+    (c.student_ids || []).join(",");
+
+  const faculty = facultyOptions.find(
+    f => Number(f.user_id) === Number(c.faculty_user_id)
+  );
+
+  if (faculty) {
+    document.getElementById("facultySelect").value = faculty.user_id;
+  }
+
+  document.getElementById("submitBtn").textContent = "Update Class";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
 
     document.getElementById("classForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -242,8 +295,11 @@
 
       submitBtn.disabled = true;
       try {
+        if (editingClassId) {
+            payload.id = editingClassId;
+          }
         const res = await fetch(`${API}/api/classes`, {
-          method: "POST",
+          method: editingClassId ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
@@ -251,8 +307,11 @@
         if (!res.ok) throw new Error(data.error || "Failed to save class");
 
         msg.className = "msg ok";
-        msg.textContent = `Saved — class #${data.id} created.`;
-        document.getElementById("classForm").reset();
+        msg.textContent = editingClassId
+                      ? "Class updated successfully."
+                      : `Saved — class #${data.id} created.`;
+        editingClassId = null;
+        document.getElementById("submitBtn").textContent = "Save Class";
         loadClasses();
       } catch (err) {
         msg.className = "msg err";
@@ -261,6 +320,35 @@
         submitBtn.disabled = false;
       }
     });
+
+async function deleteClass(id) {
+
+  if (!confirm("Delete this class?")) return;
+
+  try {
+
+    const res = await fetch(`${API}/api/classes`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Delete failed");
+    }
+
+    alert("Class deleted successfully.");
+
+    loadClasses();
+
+  } catch (err) {
+    alert(err.message);
+  }
+}
 
     loadPeople();
     loadClasses();
