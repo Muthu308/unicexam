@@ -5,6 +5,128 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Faculty — Attendance Register</title>
 <link rel="stylesheet" href="styles.css" />
+<style>
+  /* ---- Wider container ---- */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  .card { width: 100%; box-sizing: border-box; }
+
+  /* ---- Tabs ---- */
+  .view-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 18px 0 12px;
+    border-bottom: 1px solid #e2e2e2;
+  }
+  .view-tab {
+    background: none;
+    border: none;
+    padding: 10px 18px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #777;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+  }
+  .view-tab.active {
+    color: #1a1a1a;
+    border-bottom: 3px solid #4f46e5;
+  }
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
+  /* ---- Responsive roster/history tables ---- */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.roster-table, table.history-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  table.roster-table th, table.roster-table td,
+  table.history-table th, table.history-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    vertical-align: middle;
+  }
+  table.roster-table th, table.history-table th {
+    background: #fafafa;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #666;
+    white-space: nowrap;
+  }
+  .status-choices { display: flex; gap: 4px; flex-wrap: wrap; }
+  .status-choices button {
+    font-size: 0.78rem;
+    padding: 5px 9px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .status-choices button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .status-choices button.chosen-Present { background: #e6f7ec; border-color: #34a853; color: #1a7a3a; }
+  .status-choices button.chosen-Absent { background: #fdeaea; border-color: #ea4335; color: #b3261e; }
+  .status-choices button.chosen-Late { background: #fff6e0; border-color: #f4b400; color: #8a6100; }
+  .status-choices button.chosen-Reason { background: #eef1fd; border-color: #4f46e5; color: #3730a3; }
+  .reason-input, .assign-link { width: 140px; font-size: 0.82rem; padding: 5px 7px; }
+  .inout-cell { display: flex; gap: 6px; align-items: center; white-space: nowrap; }
+  .inout-cell input[type="time"] { width: 92px; font-size: 0.82rem; padding: 3px 4px; }
+  .assign-cell { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .assign-cell label { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; white-space: nowrap; }
+  .row-actions { display: flex; gap: 6px; white-space: nowrap; }
+  .row-actions button {
+    font-size: 0.78rem;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+  }
+  .row-actions .edit-btn { color: #4f46e5; border-color: #c7c9f7; }
+  .row-actions .delete-btn { color: #b3261e; border-color: #f3c5c2; }
+  .editing-banner {
+    background: #fff6e0;
+    border: 1px solid #f4b400;
+    color: #8a6100;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  .editing-banner button {
+    border: none;
+    background: none;
+    color: #8a6100;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  /* ---- Mobile responsiveness ---- */
+  @media (max-width: 720px) {
+    .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .tabs { flex-wrap: wrap; }
+    main { padding: 0 10px; }
+    .view-tab { padding: 8px 12px; font-size: 0.88rem; }
+    table.roster-table, table.history-table { min-width: 640px; }
+    .reason-input, .assign-link { width: 110px; }
+  }
+</style>
 </head>
 <body>
   <div class="topbar">
@@ -33,16 +155,28 @@
       <div id="classLinks" class="hint"></div>
     </div>
 
-    <div class="card" id="rosterCard" style="display:none;">
-      <h2>Mark attendance &amp; assignment status</h2>
-      <div id="roster"></div>
-      <button id="submitAttendance">Submit attendance</button>
-      <div class="msg" id="attendanceMsg"></div>
+    <div class="view-tabs" id="viewTabs" style="display:none;">
+      <button type="button" class="view-tab active" data-view="attendance">Attendance</button>
+      <button type="button" class="view-tab" data-view="history">Previous Attendance</button>
     </div>
 
-    <div class="card" id="historyCard" style="display:none;">
-      <h2>Previous submissions for this class</h2>
-      <div id="history"></div>
+    <div class="view-panel active" id="panelAttendance">
+      <div class="card" id="rosterCard" style="display:none;">
+        <h2>Mark attendance &amp; assignment status</h2>
+        <div id="editingBanner"></div>
+        <div class="table-scroll">
+          <div id="roster"></div>
+        </div>
+        <button id="submitAttendance">Submit attendance</button>
+        <div class="msg" id="attendanceMsg"></div>
+      </div>
+    </div>
+
+    <div class="view-panel" id="panelHistory">
+      <div class="card" id="historyCard" style="display:none;">
+        <h2>Previous submissions for this class</h2>
+        <div id="history"></div>
+      </div>
     </div>
   </main>
 
@@ -52,16 +186,28 @@
   <script>
     const API = window.API_BASE || "";
     let currentClass = null;
+    let editingRecordId = null; // set when editing an existing history record
     // state[student_id] = { status, reason, in_time, out_time, assignment_submitted, assignment_submission_link }
     let state = {};
-   
+
     function escapeHtml(str) {
       const div = document.createElement("div");
       div.textContent = str ?? "";
       return div.innerHTML;
     }
 
-    async function loadClasses(classId) {
+    // ---- Tab switching ----
+    document.querySelectorAll(".view-tab").forEach((btn) => {
+      btn.addEventListener("click", () => switchToTab(btn.dataset.view));
+    });
+
+    function switchToTab(view) {
+      document.querySelectorAll(".view-tab").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+      document.getElementById("panelAttendance").classList.toggle("active", view === "attendance");
+      document.getElementById("panelHistory").classList.toggle("active", view === "history");
+    }
+
+    async function loadClasses() {
       const select = document.getElementById("classSelect");
       const schoolId = document.getElementById("schoolId").value.trim();
       const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
@@ -88,7 +234,13 @@
 
     document.getElementById("schoolId").addEventListener("change", loadClasses);
 
-    function renderRoster(cls) {
+    function clearEditingState() {
+      editingRecordId = null;
+      document.getElementById("editingBanner").innerHTML = "";
+      document.getElementById("submitAttendance").textContent = "Submit attendance";
+    }
+
+    function renderRoster(cls, prefillData) {
       currentClass = cls;
       state = {};
       (cls.student_ids || []).forEach((sid) => {
@@ -102,6 +254,22 @@
         };
       });
 
+      // Prefill from an existing record when editing
+      if (prefillData) {
+        prefillData.forEach((a) => {
+          if (state[a.student_id]) {
+            state[a.student_id] = {
+              status: a.status || "Present",
+              reason: a.reason || "",
+              in_time: a.in_time || "",
+              out_time: a.out_time || "",
+              assignment_submitted: !!a.assignment_submitted,
+              assignment_submission_link: a.assignment_submission_link || "",
+            };
+          }
+        });
+      }
+
       document.getElementById("classMeta").textContent =
         `${cls.class_date || "No date set"} ${cls.start_time || ""}${cls.end_time ? "–" + cls.end_time : ""}  •  Topic: ${cls.topic || "—"}  •  Faculty: ${cls.faculty_name}  •  ${(cls.student_ids || []).length} students`;
 
@@ -112,128 +280,106 @@
       document.getElementById("classLinks").innerHTML = links.join(" · ");
 
       const roster = document.getElementById("roster");
-      roster.innerHTML = (cls.student_ids || [])
-        .map(
-          (sid) => `
-        <div class="roster-row" data-sid="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1.8fr 1.3fr;">
-          <div class="mono">${escapeHtml(sid)}</div>
-          <div class="status-choices">
-            <button type="button" data-status="Present" class="chosen-Present">Present</button>
-            <button type="button" data-status="Absent">Absent</button>
-            <button
-    type="button"
-    data-status="Late"
-    class="late-btn"
-    disabled>
-    Late
-</button>
-            <button type="button" data-status="Reason">Reason</button>
-          </div>
-          <input type="text" class="reason-input" placeholder="Reason (optional)" style="display:none;" />
-        </div>
-        <div class="roster-row late-row" data-late-for="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1fr 1fr; padding-top:0; display:none;">
-          <div class="hint">In / Out time</div>
-          <label style="margin:0; display:flex; align-items:center; gap:6px; text-transform:none; font-family:inherit; font-size:0.85rem;">
-            In:
-            <input type="time" class="in-time-input" />
-          </label>
-          <label style="margin:0; display:flex; align-items:center; gap:6px; text-transform:none; font-family:inherit; font-size:0.85rem;">
-            Out:
-            <input type="time" class="out-time-input" />
-          </label>
-        </div>
-        <div class="roster-row" data-assign-for="${escapeHtml(sid)}" style="grid-template-columns: 1fr 1fr 1.3fr; padding-top:0;">
-          <div class="hint">Assignment</div>
-          <label style="margin:0; display:flex; align-items:center; gap:6px; text-transform:none; font-family:inherit; font-size:0.85rem;">
-            <input type="checkbox" class="assign-check" /> Submitted
-          </label>
-          <input type="text" class="assign-link" placeholder="Submission link (optional)" style="display:none;" />
-        </div>`
-        )
-        .join("");
+      roster.innerHTML = `
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>In / Out Time</th>
+              <th>Assignment</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(cls.student_ids || [])
+              .map((sid) => {
+                const s = state[sid];
+                const isLate = s.status === "Late";
+                const showReason = s.status === "Reason" || s.status === "Late";
+                return `
+              <tr data-sid="${escapeHtml(sid)}">
+                <td class="mono">${escapeHtml(sid)}</td>
+                <td>
+                  <div class="status-choices">
+                    <button type="button" data-status="Present" class="${s.status === "Present" ? "chosen-Present" : ""}">Present</button>
+                    <button type="button" data-status="Absent" class="${s.status === "Absent" ? "chosen-Absent" : ""}">Absent</button>
+                    <button type="button" data-status="Late" class="late-btn ${s.status === "Late" ? "chosen-Late" : ""}" ${s.status === "Present" || s.status === "Late" ? "" : "disabled"}>Late</button>
+                    <button type="button" data-status="Reason" class="${s.status === "Reason" ? "chosen-Reason" : ""}">Reason</button>
+                  </div>
+                </td>
+                <td>
+                  <input type="text" class="reason-input" placeholder="${isLate ? "Reason for being late" : "Reason"}"
+                    style="display:${showReason ? "block" : "none"};" value="${escapeHtml(s.reason)}" />
+                </td>
+                <td>
+                  <div class="inout-cell">
+                    <span class="hint">In</span>
+                    <input type="time" class="in-time-input" value="${escapeHtml(s.in_time)}" ${isLate ? "" : "disabled"} />
+                    <span class="hint">Out</span>
+                    <input type="time" class="out-time-input" value="${escapeHtml(s.out_time)}" ${isLate ? "" : "disabled"} />
+                  </div>
+                </td>
+                <td>
+                  <div class="assign-cell">
+                    <label><input type="checkbox" class="assign-check" ${s.assignment_submitted ? "checked" : ""} /> Submitted</label>
+                    <input type="text" class="assign-link" placeholder="Submission link (optional)"
+                      style="display:${s.assignment_submitted ? "block" : "none"};" value="${escapeHtml(s.assignment_submission_link)}" />
+                  </div>
+                </td>
+              </tr>`;
+              })
+              .join("")}
+          </tbody>
+        </table>`;
 
-      roster.querySelectorAll(".roster-row[data-sid]").forEach((row) => {
+      roster.querySelectorAll("tr[data-sid]").forEach((row) => {
         const sid = row.dataset.sid;
         const reasonInput = row.querySelector(".reason-input");
-        const lateRow = roster.querySelector(`.roster-row[data-late-for="${CSS.escape(sid)}"]`);
-        const inTimeInput = lateRow.querySelector(".in-time-input");
-        const outTimeInput = lateRow.querySelector(".out-time-input");
+        const inTimeInput = row.querySelector(".in-time-input");
+        const outTimeInput = row.querySelector(".out-time-input");
+        const lateBtn = row.querySelector('[data-status="Late"]');
 
         row.querySelectorAll(".status-choices button").forEach((btn) => {
-  btn.addEventListener("click", () => {
+          btn.addEventListener("click", () => {
+            const status = btn.dataset.status;
 
-    const status = btn.dataset.status;
-
-    const lateBtn = row.querySelector('[data-status="Late"]');
-
-        if (status === "Present") {
-            lateBtn.disabled = false;
-        } else {
-            lateBtn.disabled = true;
-        
-            if (state[sid].status === "Late") {
-                state[sid].status = status;
+            // Late is only selectable once the student is (or was) marked Present
+            if (status === "Late" && state[sid].status !== "Present" && state[sid].status !== "Late") {
+              alert("Late can only be selected for a Present student.");
+              return;
             }
-        }
 
-    // Late is allowed only after Present
-    if (status === "Late" && state[sid].status !== "Present") {
-      alert("Late can only be selected for a Present student.");
-      return;
-    }
+            state[sid].status = status;
+            lateBtn.disabled = !(status === "Present" || status === "Late");
 
-    state[sid].status = status;
+            row.querySelectorAll(".status-choices button").forEach((b) => (b.className = b === lateBtn ? "late-btn" : ""));
+            btn.className = status === "Late" ? "late-btn chosen-Late" : `chosen-${status}`;
 
-    row.querySelectorAll(".status-choices button").forEach(b => {
-      b.className = "";
-    });
+            const showReason = status === "Reason" || status === "Late";
+            reasonInput.style.display = showReason ? "block" : "none";
+            reasonInput.placeholder = status === "Late" ? "Reason for being late" : "Reason";
+            if (!showReason) {
+              state[sid].reason = "";
+              reasonInput.value = "";
+            }
 
-    btn.className = `chosen-${status}`;
-
-    reasonInput.style.display =
-      status === "Reason" || status === "Late"
-        ? "block"
-        : "none";
-
-    reasonInput.placeholder =
-      status === "Late"
-        ? "Reason for being late"
-        : "Reason";
-
-    if (status !== "Reason" && status !== "Late") {
-      reasonInput.value = "";
-      state[sid].reason = "";
-    }
-
-    lateRow.style.display =
-      status === "Late"
-        ? "flex"
-        : "none";
-
-    if (status !== "Late") {
-      inTimeInput.value = "";
-      outTimeInput.value = "";
-      state[sid].in_time = "";
-      state[sid].out_time = "";
-    }
-
-  });
-});
-
-        reasonInput.addEventListener("input", () => {
-          state[sid].reason = reasonInput.value;
+            const isLate = status === "Late";
+            inTimeInput.disabled = !isLate;
+            outTimeInput.disabled = !isLate;
+            if (!isLate) {
+              state[sid].in_time = "";
+              state[sid].out_time = "";
+              inTimeInput.value = "";
+              outTimeInput.value = "";
+            }
+          });
         });
 
-        inTimeInput.addEventListener("input", () => {
-          state[sid].in_time = inTimeInput.value;
-        });
-        outTimeInput.addEventListener("input", () => {
-          state[sid].out_time = outTimeInput.value;
-        });
-      });
+        reasonInput.addEventListener("input", () => (state[sid].reason = reasonInput.value));
+        inTimeInput.addEventListener("input", () => (state[sid].in_time = inTimeInput.value));
+        outTimeInput.addEventListener("input", () => (state[sid].out_time = outTimeInput.value));
 
-      roster.querySelectorAll(".roster-row[data-assign-for]").forEach((row) => {
-        const sid = row.dataset.assignFor;
         const check = row.querySelector(".assign-check");
         const link = row.querySelector(".assign-link");
         check.addEventListener("change", () => {
@@ -244,21 +390,22 @@
             link.value = "";
           }
         });
-        link.addEventListener("input", () => {
-          state[sid].assignment_submission_link = link.value;
-        });
+        link.addEventListener("input", () => (state[sid].assignment_submission_link = link.value));
       });
 
       document.getElementById("rosterCard").style.display = "block";
       document.getElementById("attendanceMsg").textContent = "";
+      document.getElementById("viewTabs").style.display = "flex";
       loadHistory(cls.id);
     }
 
     document.getElementById("classSelect").addEventListener("change", (e) => {
       const id = e.target.value;
+      clearEditingState();
       if (!id) {
         document.getElementById("rosterCard").style.display = "none";
         document.getElementById("historyCard").style.display = "none";
+        document.getElementById("viewTabs").style.display = "none";
         return;
       }
       const classes = JSON.parse(e.target.dataset.classes || "[]");
@@ -284,8 +431,10 @@
       btn.disabled = true;
       msg.textContent = "";
       try {
-        const res = await fetch(`${API}/api/attendance`, {
-          method: "POST",
+        const isEdit = !!editingRecordId;
+        const url = isEdit ? `${API}/api/attendance/${editingRecordId}` : `${API}/api/attendance`;
+        const res = await fetch(url, {
+          method: isEdit ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ class_id: currentClass.id, attendance_data }),
         });
@@ -293,7 +442,10 @@
         if (!res.ok) throw new Error(data.error || "Failed to submit attendance");
 
         msg.className = "msg ok";
-        msg.textContent = `Attendance saved for class #${currentClass.id} at ${new Date(data.marked_at).toLocaleString()}.`;
+        msg.textContent = isEdit
+          ? `Attendance record #${editingRecordId} updated.`
+          : `Attendance saved for class #${currentClass.id} at ${new Date(data.marked_at).toLocaleString()}.`;
+        clearEditingState();
         loadHistory(currentClass.id);
       } catch (err) {
         msg.className = "msg err";
@@ -302,6 +454,36 @@
         btn.disabled = false;
       }
     });
+
+    function startEditRecord(record) {
+      editingRecordId = record.id;
+      renderRoster(currentClass, record.attendance_data);
+      document.getElementById("submitAttendance").textContent = "Save changes";
+      document.getElementById("editingBanner").innerHTML = `
+        <div class="editing-banner">
+          <span>Editing submission #${record.id} (${new Date(record.marked_at).toLocaleString()})</span>
+          <button type="button" id="cancelEditBtn">Cancel edit</button>
+        </div>`;
+      document.getElementById("cancelEditBtn").addEventListener("click", () => {
+        clearEditingState();
+        renderRoster(currentClass);
+      });
+      switchToTab("attendance");
+    }
+
+    async function deleteRecord(recordId) {
+      if (!confirm(`Delete attendance submission #${recordId}? This cannot be undone.`)) return;
+      try {
+        const res = await fetch(`${API}/api/attendance/${recordId}`, { method: "DELETE" });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Failed to delete record");
+        }
+        loadHistory(currentClass.id);
+      } catch (err) {
+        alert("Could not delete: " + err.message);
+      }
+    }
 
     async function loadHistory(classId) {
       const card = document.getElementById("historyCard");
@@ -317,31 +499,55 @@
           box.textContent = "No attendance submitted yet for this class.";
           return;
         }
+
+        window.__historyRecords = records;
+
         box.innerHTML = records
-          .map(
-            (r) => `
-          <div style="margin-bottom:14px;">
-            <div class="hint mono">${new Date(r.marked_at).toLocaleString()} — record #${r.id}</div>
-            <table>
-              <thead><tr><th>Student</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Assignment</th></tr></thead>
-              <tbody>
-                ${r.attendance_data
-                  .map(
-                    (a) => `
-                  <tr>
-                    <td class="mono">${escapeHtml(a.student_id)}</td>
-                    <td><span class="status-pill status-${a.status}">${a.status}</span></td>
-                    <td>${escapeHtml(a.reason || "—")}</td>
-                    <td>${a.status === "Late" ? `${escapeHtml(a.in_time || "—")} / ${escapeHtml(a.out_time || "—")}` : "—"}</td>
-                    <td>${a.assignment_submitted ? `Submitted${a.assignment_submission_link ? ` — <a href="${escapeHtml(a.assignment_submission_link)}" target="_blank">link</a>` : ""}` : "Not submitted"}</td>
-                  </tr>`
-                  )
-                  .join("")}
-              </tbody>
-            </table>
-          </div>`
-          )
+          .map((r) => {
+            const dateStr = new Date(r.marked_at).toLocaleDateString();
+            const timeStr = new Date(r.marked_at).toLocaleTimeString();
+            return `
+          <div style="margin-bottom:18px;">
+            <div class="hint mono" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <span>${dateStr} ${timeStr} — record #${r.id}</span>
+              <span class="row-actions">
+                <button type="button" class="edit-btn" data-record-id="${r.id}">Edit</button>
+                <button type="button" class="delete-btn" data-record-id="${r.id}">Delete</button>
+              </span>
+            </div>
+            <div class="table-scroll">
+              <table class="history-table">
+                <thead><tr><th>Date</th><th>Student</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Assignment</th></tr></thead>
+                <tbody>
+                  ${r.attendance_data
+                    .map(
+                      (a) => `
+                    <tr>
+                      <td class="mono">${dateStr}</td>
+                      <td class="mono">${escapeHtml(a.student_id)}</td>
+                      <td><span class="status-pill status-${a.status}">${a.status}</span></td>
+                      <td>${escapeHtml(a.reason || "—")}</td>
+                      <td>${a.status === "Late" ? `${escapeHtml(a.in_time || "—")} / ${escapeHtml(a.out_time || "—")}` : "—"}</td>
+                      <td>${a.assignment_submitted ? `Submitted${a.assignment_submission_link ? ` — <a href="${escapeHtml(a.assignment_submission_link)}" target="_blank">link</a>` : ""}` : "Not submitted"}</td>
+                    </tr>`
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+          })
           .join("");
+
+        box.querySelectorAll(".edit-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const record = (window.__historyRecords || []).find((r) => String(r.id) === String(btn.dataset.recordId));
+            if (record) startEditRecord(record);
+          });
+        });
+        box.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", () => deleteRecord(btn.dataset.recordId));
+        });
       } catch (err) {
         box.className = "msg err";
         box.textContent = "Could not load history: " + err.message;
