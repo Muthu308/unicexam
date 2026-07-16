@@ -38,6 +38,7 @@
     .table td { vertical-align: middle; font-size: 13px; }
     .badge-active { background: #d1fae5; color: #065f46; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
     .badge-inactive { background: #fee2e2; color: #991b1b; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+    .badge-role { background: #ede9fe; color: #5b21b6; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; text-transform: capitalize; }
     .btn-icon { width: 30px; height: 30px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; }
     .avatar { width: 34px; height: 34px; border-radius: 50%; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
     .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9999; display: flex; align-items: center; justify-content: center; }
@@ -54,8 +55,11 @@
   </div>
   <nav class="mt-2">
     <a class="nav-link active" href="#" onclick="showSection('users')"><i class="bi bi-people"></i> User Management</a>
-    <a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-calendar-check"></i> Classes <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>
-    <a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-clipboard-check"></i> Attendance <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>
+    <a class="nav-link active" href="https://unicexamschool.vercel.app/attendance-app/admin.html"><i class="bi bi-people"></i> Class Register</a>
+    <a class="nav-link active" href="https://unicexamschool.vercel.app/attendance-app/faculty.html"><i class="bi bi-people"></i> Attendance</a>
+    <a class="nav-link active" href="https://unicexamschool.vercel.app/attendance-app/reports.html" ><i class="bi bi-people"></i> Reports</a>
+    <!--<a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-calendar-check"></i> Classes <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>
+    <a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-clipboard-check"></i> Attendance <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>-->
   </nav>
 </div>
 
@@ -78,7 +82,7 @@
     <div class="row g-3 mb-4">
       <div class="col-md-3">
         <div class="stat-card">
-          <div class="stat-label">Total Students</div>
+          <div class="stat-label">Total Users</div>
           <div class="stat-value" id="stat-total">—</div>
           <div class="stat-sub">across all schools</div>
         </div>
@@ -109,15 +113,15 @@
     <!-- USER TABLE CARD -->
     <div class="card shadow-sm">
       <div class="card-header d-flex align-items-center justify-content-between">
-        <span><i class="bi bi-people me-2"></i>All Students</span>
+        <span><i class="bi bi-people me-2"></i>All Users</span>
         <button class="btn btn-primary btn-sm" onclick="openCreateModal()">
-          <i class="bi bi-plus-lg me-1"></i> New Student
+          <i class="bi bi-plus-lg me-1"></i> New User
         </button>
       </div>
       <div class="card-body">
         <!-- FILTERS -->
         <div class="row g-2 mb-3">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="input-group input-group-sm">
               <span class="input-group-text"><i class="bi bi-search"></i></span>
               <input type="text" class="form-control" id="search-input" placeholder="Search name, email, ID..." oninput="filterTable()">
@@ -129,13 +133,20 @@
             </select>
           </div>
           <div class="col-md-2">
+            <select class="form-select form-select-sm" id="filter-role" onchange="filterTable()">
+              <option value="">All Roles</option>
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
+          <div class="col-md-2">
             <select class="form-select form-select-sm" id="filter-status" onchange="filterTable()">
               <option value="">All Status</option>
               <option value="true">Active</option>
               <option value="false">Inactive</option>
             </select>
           </div>
-          <div class="col-md-3 text-end">
+          <div class="col-md-2 text-end">
             <button class="btn btn-outline-secondary btn-sm" onclick="loadUsers()">
               <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
@@ -148,18 +159,20 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Student</th>
+                <th>User</th>
                 <th>Email</th>
                 <th>Std ID</th>
+                <th>Role</th>
                 <th>Class</th>
                 <th>School</th>
+                <th>School Venue</th>
                 <th>Mobile</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="user-tbody">
-              <tr><td colspan="9" class="text-center text-muted py-4">Loading...</td></tr>
+              <tr><td colspan="11" class="text-center text-muted py-4">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -175,26 +188,37 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="userModalTitle">New Student</h5>
+        <h5 class="modal-title" id="userModalTitle">New User</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-name" placeholder="Student full name">
+            <input type="text" class="form-control" id="f-name" placeholder="Full name">
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
-            <input type="email" class="form-control" id="f-email" placeholder="student@example.com">
+            <input type="email" class="form-control" id="f-email" placeholder="user@example.com">
           </div>
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Student ID <span class="text-danger">*</span></label>
+            <label class="form-label fw-semibold">Student / Staff ID <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="f-std" placeholder="e.g. STD001">
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Mobile <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="f-mobile" placeholder="10-digit mobile number">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Role</label>
+            <select class="form-select" id="f-role">
+              <option value="student">Student</option>
+              <option value="faculty">Faculty</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Class</label>
+            <input type="text" class="form-control" id="f-class" placeholder="e.g. Grade 10-A">
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">School Name <span class="text-danger">*</span></label>
@@ -205,19 +229,20 @@
             <input type="text" class="form-control" id="f-school-id" placeholder="e.g. SCH001">
           </div>
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Class <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" id="f-class" placeholder="e.g. Grade 10-A">
+            <label class="form-label fw-semibold">School Venue</label>
+            <input type="text" class="form-control" id="f-venue" placeholder="e.g. Main Campus, Block B">
           </div>
           <div class="col-md-6">
             <label class="form-label fw-semibold">Date of Birth</label>
             <input type="date" class="form-control" id="f-dob">
           </div>
           <div class="col-md-6">
-            <label class="form-label fw-semibold">Password</label>
+            <label class="form-label fw-semibold" id="f-password-label">Password <span class="text-danger">*</span></label>
             <div class="input-group">
-              <input type="password" class="form-control" id="f-password" placeholder="Leave blank to keep existing">
+              <input type="password" class="form-control" id="f-password" placeholder="Set a password">
               <button class="btn btn-outline-secondary" type="button" onclick="togglePwd()"><i class="bi bi-eye" id="pwd-eye"></i></button>
             </div>
+            <div class="form-text" id="f-password-hint" style="display:none;">Leave blank to keep the current password unchanged.</div>
           </div>
           <div class="col-md-6" id="status-toggle-wrap" style="display:none">
             <label class="form-label fw-semibold">Status</label>
@@ -244,7 +269,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Student Details</h5>
+        <h5 class="modal-title">User Details</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="view-body"></div>
@@ -350,7 +375,7 @@ const API = {
 };
 
 
-  
+
 let USERS = [];
 
 let CURRENT_ID = null;
@@ -419,7 +444,7 @@ function renderUsers(users) {
 
     tbody.innerHTML =
       `<tr>
-        <td colspan="9"
+        <td colspan="11"
         class="text-center">
         No Users
         </td>
@@ -440,9 +465,9 @@ function renderUsers(users) {
           <div class="avatar">
             ${u.name
               ?.charAt(0)
-              ?.toUpperCase()}
+              ?.toUpperCase() || "?"}
           </div>
-          ${u.name}
+          ${u.name || ""}
         </div>
       </td>
 
@@ -450,9 +475,13 @@ function renderUsers(users) {
 
       <td>${u.std_id || ""}</td>
 
+      <td><span class="badge-role">${u.user_role || "—"}</span></td>
+
       <td>${u.class_name || ""}</td>
 
       <td>${u.school_name || ""}</td>
+
+      <td>${u.school_venue || ""}</td>
 
       <td>${u.mobile || ""}</td>
 
@@ -530,9 +559,21 @@ function updateStats() {
     [...new Set(
       USERS.map(
         x => x.school_name
-      )
+      ).filter(Boolean)
     )].length;
 
+}
+
+function clearModalError() {
+  const el = document.getElementById("modal-error");
+  el.classList.add("d-none");
+  el.innerHTML = "";
+}
+
+function showModalError(msg) {
+  const el = document.getElementById("modal-error");
+  el.innerHTML = msg;
+  el.classList.remove("d-none");
 }
 
 function openCreateModal() {
@@ -544,7 +585,7 @@ function openCreateModal() {
       "userModalTitle"
     )
     .innerHTML =
-    "New Student";
+    "New User";
 
   document
     .querySelectorAll(
@@ -554,72 +595,85 @@ function openCreateModal() {
       x => x.value = ""
     );
 
-  document
-    .getElementById(
-      "f-status"
-    ).checked = true;
+  document.getElementById("f-role").value = "student";
+  document.getElementById("f-status").checked = true;
+  document.getElementById("status-toggle-wrap").style.display = "none";
 
+  // Password is required for new users
+  document.getElementById("f-password-label").innerHTML = 'Password <span class="text-danger">*</span>';
+  document.getElementById("f-password").placeholder = "Set a password";
+  document.getElementById("f-password-hint").style.display = "none";
+
+  clearModalError();
   userModal.show();
 
 }
 
 async function saveUser() {
 
+  clearModalError();
+
+  const name = document.getElementById("f-name").value.trim();
+  const email_id = document.getElementById("f-email").value.trim();
+  const std_id = document.getElementById("f-std").value.trim();
+  const mobile = document.getElementById("f-mobile").value.trim();
+  const school_name = document.getElementById("f-school").value.trim();
+  const password = document.getElementById("f-password").value; // do NOT trim — passwords can have meaningful whitespace
+
+  if (!name || !email_id || !std_id || !mobile || !school_name) {
+    showModalError("Please fill in Name, Email, ID, Mobile and School Name.");
+    return;
+  }
+  if (!CURRENT_ID && !password) {
+    showModalError("Password is required for new users.");
+    return;
+  }
+
   const data = {
 
-    name:
-      document.getElementById(
-        "f-name"
-      ).value,
-
-    email_id:
-      document.getElementById(
-        "f-email"
-      ).value,
-
-    std_id:
-      document.getElementById(
-        "f-std"
-      ).value,
-
-    mobile:
-      document.getElementById(
-        "f-mobile"
-      ).value,
-
-    school_name:
-      document.getElementById(
-        "f-school"
-      ).value,
+    name,
+    email_id,
+    std_id,
+    mobile,
+    school_name,
 
     school_id:
       document.getElementById(
         "f-school-id"
-      ).value,
+      ).value.trim(),
+
+    school_venue:
+      document.getElementById(
+        "f-venue"
+      ).value.trim(),
 
     class_name:
       document.getElementById(
         "f-class"
-      ).value,
+      ).value.trim(),
 
     dob:
       document.getElementById(
         "f-dob"
       ).value,
 
-    password:
+    user_role:
       document.getElementById(
-        "f-password"
+        "f-role"
       ).value,
 
     active_status:
       document.getElementById(
         "f-status"
-      ).checked,
-
-    user_role:
-      "student"
+      ).checked
   };
+
+  // Only include the password field at all if the admin actually typed
+  // something. On edit, an empty password field means "leave it as is" —
+  // the backend never touches the password column unless this key is present.
+  if (password) {
+    data.password = password;
+  }
 
   try {
 
@@ -656,10 +710,7 @@ async function saveUser() {
 
   } catch (err) {
 
-    showToast(
-      err.message,
-      "danger"
-    );
+    showModalError(err.message);
 
   } finally {
 
@@ -680,6 +731,10 @@ async function editUser(
 
   CURRENT_ID =
     user.user_id;
+
+  document.getElementById(
+    "userModalTitle"
+  ).innerHTML = "Edit User";
 
   document.getElementById(
     "f-name"
@@ -712,25 +767,42 @@ async function editUser(
     user.school_id || "";
 
   document.getElementById(
+    "f-venue"
+  ).value =
+    user.school_venue || "";
+
+  document.getElementById(
     "f-dob"
   ).value =
     user.dob || "";
-  
- document.getElementById(
+
+  document.getElementById(
     "f-class"
   ).value =
     user.class_name || "";
-  
+
+  document.getElementById(
+    "f-role"
+  ).value =
+    user.user_role || "student";
+
   document.getElementById(
     "f-status"
   ).checked =
-    user.active_status;
+    !!user.active_status;
 
   document.getElementById(
     "status-toggle-wrap"
   ).style.display =
     "block";
 
+  // Password is optional on edit — leaving it blank keeps the existing one.
+  document.getElementById("f-password").value = "";
+  document.getElementById("f-password-label").innerHTML = "Password";
+  document.getElementById("f-password").placeholder = "Leave blank to keep existing password";
+  document.getElementById("f-password-hint").style.display = "block";
+
+  clearModalError();
   userModal.show();
 
 }
@@ -745,11 +817,18 @@ async function deleteUser(
     )
   ) return;
 
-  await API.deleteUser(
-    user_id
-  );
-
-  loadUsers();
+  try {
+    showLoading(true);
+    await API.deleteUser(
+      user_id
+    );
+    showToast("User Deleted", "success");
+    loadUsers();
+  } catch (err) {
+    showToast(err.message, "danger");
+  } finally {
+    showLoading(false);
+  }
 }
 
 async function viewUser(
@@ -768,26 +847,82 @@ async function viewUser(
 
   <tr>
     <th>Name</th>
-    <td>${user.name}</td>
+    <td>${user.name || ""}</td>
   </tr>
 
   <tr>
     <th>Email</th>
-    <td>${user.email_id}</td>
+    <td>${user.email_id || ""}</td>
   </tr>
 
   <tr>
-    <th>Student ID</th>
-    <td>${user.std_id}</td>
+    <th>ID</th>
+    <td>${user.std_id || ""}</td>
+  </tr>
+
+  <tr>
+    <th>Role</th>
+    <td><span class="badge-role">${user.user_role || "—"}</span></td>
   </tr>
 
   <tr>
     <th>Mobile</th>
-    <td>${user.mobile}</td>
+    <td>${user.mobile || ""}</td>
+  </tr>
+
+  <tr>
+    <th>Class</th>
+    <td>${user.class_name || ""}</td>
+  </tr>
+
+  <tr>
+    <th>School</th>
+    <td>${user.school_name || ""}</td>
+  </tr>
+
+  <tr>
+    <th>School ID</th>
+    <td>${user.school_id || ""}</td>
+  </tr>
+
+  <tr>
+    <th>School Venue</th>
+    <td>${user.school_venue || ""}</td>
+  </tr>
+
+  <tr>
+    <th>Date of Birth</th>
+    <td>${user.dob || ""}</td>
+  </tr>
+
+  <tr>
+    <th>Status</th>
+    <td>
+      ${
+        user.active_status
+          ? '<span class="badge-active">Active</span>'
+          : '<span class="badge-inactive">Inactive</span>'
+      }
+    </td>
+  </tr>
+
+  <tr>
+    <th>Created</th>
+    <td>${user.created_at || ""}</td>
+  </tr>
+
+  <tr>
+    <th>Updated</th>
+    <td>${user.updated_at ? new Date(user.updated_at).toLocaleString() : ""}</td>
   </tr>
 
   </table>
   `;
+
+  document.getElementById("view-edit-btn").onclick = () => {
+    viewModal.hide();
+    editUser(user.user_id);
+  };
 
   viewModal.show();
 }
@@ -798,13 +933,16 @@ function loadSchoolFilter() {
     [...new Set(
       USERS.map(
         x => x.school_name
-      )
+      ).filter(Boolean)
     )];
 
   const select =
     document.getElementById(
       "filter-school"
     );
+
+  const current = select.value;
+  select.innerHTML = `<option value="">All Schools</option>`;
 
   schools.forEach(s => {
 
@@ -814,6 +952,8 @@ function loadSchoolFilter() {
       </option>`;
 
   });
+
+  if (schools.includes(current)) select.value = current;
 
 }
 
@@ -827,13 +967,32 @@ function filterTable() {
       .value
       .toLowerCase();
 
+  const school =
+    document.getElementById("filter-school").value;
+
+  const role =
+    document.getElementById("filter-role").value;
+
+  const status =
+    document.getElementById("filter-status").value;
+
   renderUsers(
-    USERS.filter(u =>
-      JSON.stringify(u)
-        .toLowerCase()
-        .includes(q)
-    )
+    USERS.filter(u => {
+      if (school && u.school_name !== school) return false;
+      if (role && u.user_role !== role) return false;
+      if (status && String(!!u.active_status) !== status) return false;
+      if (q && !JSON.stringify(u).toLowerCase().includes(q)) return false;
+      return true;
+    })
   );
+}
+
+function togglePwd() {
+  const input = document.getElementById("f-password");
+  const eye = document.getElementById("pwd-eye");
+  const show = input.type === "password";
+  input.type = show ? "text" : "password";
+  eye.className = show ? "bi bi-eye-slash" : "bi bi-eye";
 }
 
 function showLoading(v) {
@@ -850,8 +1009,13 @@ function showLoading(v) {
 }
 
 function showToast(
-  msg
+  msg,
+  variant = "primary"
 ) {
+
+  const toastEl = document.getElementById("main-toast");
+  toastEl.classList.remove("text-bg-primary", "text-bg-success", "text-bg-danger");
+  toastEl.classList.add(`text-bg-${variant}`);
 
   document
     .getElementById(
@@ -860,11 +1024,14 @@ function showToast(
     .innerHTML = msg;
 
   new bootstrap.Toast(
-    document.getElementById(
-      "main-toast"
-    )
+    toastEl
   ).show();
 
+}
+
+function showSection() {
+  // Only one section exists today; reserved for when Classes/Attendance
+  // sidebar items go live.
 }
 
 </script>
