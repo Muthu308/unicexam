@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reports — Attendance Register</title>
+<link rel="stylesheet" href="styles.css" />
+<style>
+  main { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+  .card { width: 100%; box-sizing: border-box; }
+
+  /* ---- Tabs ---- */
+  .view-tabs { display: flex; gap: 8px; margin: 18px 0 12px; border-bottom: 1px solid #e2e2e2; flex-wrap: wrap; }
+  .view-tab {
+    background: none; border: none; padding: 10px 18px; font-size: 0.95rem;
+    font-weight: 600; color: #777; cursor: pointer; border-bottom: 3px solid transparent;
+  }
+  .view-tab.active { color: #1a1a1a; border-bottom: 3px solid #4f46e5; }
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
+  /* ---- Filter bar ---- */
+  .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+  .filter-bar input[type="text"], .filter-bar input[type="search"] {
+    flex: 1; min-width: 180px; font-size: 0.88rem; padding: 7px 10px;
+  }
+  .filter-bar select { font-size: 0.88rem; padding: 7px 10px; }
+  .filter-bar .clear-filters-btn {
+    font-size: 0.82rem; padding: 7px 12px; border-radius: 6px; border: 1px solid #ddd;
+    background: #fff; color: #555; cursor: pointer; white-space: nowrap;
+  }
+  .filter-summary { font-size: 0.8rem; color: #888; margin: -4px 0 12px; }
+
+  /* ---- Tables ---- */
+  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.report-table { width: 100%; min-width: 820px; border-collapse: collapse; font-size: 0.9rem; }
+  table.report-table th, table.report-table td {
+    padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; vertical-align: middle;
+  }
+  table.report-table th {
+    background: #fafafa; font-size: 0.78rem; text-transform: uppercase;
+    letter-spacing: 0.03em; color: #666; white-space: nowrap; cursor: pointer;
+    user-select: none;
+  }
+  table.report-table th.sortable:hover { color: #4f46e5; }
+  table.report-table th .sort-arrow { font-size: 0.7rem; margin-left: 3px; opacity: 0.6; }
+  .role-pill, .status-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.76rem; font-weight: 600;
+  }
+  .role-pill.role-faculty { background: #eef1fd; color: #3730a3; }
+  .role-pill.role-student { background: #e6f7ec; color: #1a7a3a; }
+  .count-badge {
+    display: inline-block; min-width: 26px; text-align: center; padding: 2px 7px;
+    border-radius: 6px; font-size: 0.82rem; font-weight: 600;
+  }
+  .count-present { background: #e6f7ec; color: #1a7a3a; }
+  .count-absent { background: #fdeaea; color: #b3261e; }
+  .count-late { background: #fff6e0; color: #8a6100; }
+  .pct-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+  .pct-bar-track { flex: 1; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
+  .pct-bar-fill { height: 100%; background: #34a853; border-radius: 4px; }
+  .pct-bar-fill.low { background: #ea4335; }
+  .pct-bar-fill.mid { background: #f4b400; }
+  .pct-text { font-size: 0.78rem; color: #555; white-space: nowrap; }
+
+  .summary-cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .summary-card {
+    flex: 1; min-width: 140px; border: 1px solid #eee; border-radius: 10px; padding: 12px 14px; background: #fafafa;
+  }
+  .summary-card .num { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; }
+  .summary-card .label { font-size: 0.78rem; color: #777; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  @media (max-width: 720px) {
+    .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .tabs { flex-wrap: wrap; }
+    main { padding: 0 10px; }
+    .view-tab { padding: 8px 12px; font-size: 0.88rem; }
+    table.report-table { min-width: 680px; }
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <div class="eyebrow">Class Register</div>
+      <h1>Reports</h1>
+    </div>
+    <nav class="tabs">
+      <a href="index.html">Home</a>
+      <a href="admin.html">Admin</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="student.html">Student</a>
+      <a href="reports.html" class="active">Reports</a>
+    </nav>
+  </div>
+
+  <main>
+    <div class="card">
+      <h2>Scope</h2>
+      <label for="schoolId">School ID (optional filter)</label>
+      <input type="text" id="schoolId" placeholder="e.g. SCH001 — leave blank for all schools" />
+      <button type="button" id="loadAllBtn">Load data</button>
+      <div class="hint" id="loadStatus"></div>
+    </div>
+
+    <div class="view-tabs">
+      <button type="button" class="view-tab active" data-view="users">Faculty &amp; Students</button>
+      <button type="button" class="view-tab" data-view="attendance">Attendance Summary</button>
+    </div>
+
+    <!-- ===================== USERS TAB ===================== -->
+    <div class="view-panel active" id="panelUsers">
+      <div class="card">
+        <h2>User management</h2>
+        <div class="filter-bar">
+          <input type="search" id="userSearch" placeholder="Search name, ID, email, mobile…" />
+          <select id="userRoleFilter">
+            <option value="">All roles</option>
+            <option value="faculty">Faculty</option>
+            <option value="student">Student</option>
+          </select>
+          <select id="userClassFilter"><option value="">All classes</option></select>
+          <button type="button" class="clear-filters-btn" id="clearUserFilters">Clear</button>
+        </div>
+        <div class="filter-summary" id="userFilterSummary"></div>
+        <div class="table-scroll">
+          <div id="userTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== ATTENDANCE SUMMARY TAB ===================== -->
+    <div class="view-panel" id="panelAttendance">
+      <div class="card">
+        <h2>Class-wise attendance summary</h2>
+        <div class="hint">
+          Counts every submitted attendance record per class. One row per student per class —
+          a student enrolled in multiple classes gets a row for each.
+        </div>
+
+        <div class="filter-bar" style="margin-top:12px;">
+          <input type="search" id="summarySearch" placeholder="Search student name or ID…" />
+          <select id="summaryClassFilter"><option value="">All classes</option></select>
+          <input type="text" id="summaryDateFrom" placeholder="From date (YYYY-MM-DD)" style="max-width:170px;" />
+          <input type="text" id="summaryDateTo" placeholder="To date (YYYY-MM-DD)" style="max-width:170px;" />
+          <button type="button" class="clear-filters-btn" id="clearSummaryFilters">Clear</button>
+        </div>
+
+        <div class="summary-cards" id="summaryCards"></div>
+
+        <div class="table-scroll">
+          <div id="summaryTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <p class="footer-note">Backend: Hasura GraphQL + Vercel serverless functions</p>
+
+  <script src="config.js"></script>
+  <script>
+    const API = window.API_BASE || "";
+
+    let allUsers = [];          // faculty + students combined, tagged with .user_role
+    let allClasses = [];        // classes for the chosen school
+    let summaryRows = [];       // flattened per (class, student) attendance summary rows
+    let userSort = { key: "name", dir: 1 };
+    let summarySort = { key: "name", dir: 1 };
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str ?? "";
+      return div.innerHTML;
+    }
+
+    // ---- Tab switching ----
+    document.querySelectorAll(".view-tab").forEach((btn) => {
+      btn.addEventListener("click", () => switchToTab(btn.dataset.view));
+    });
+    function switchToTab(view) {
+      document.querySelectorAll(".view-tab").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+      document.getElementById("panelUsers").classList.toggle("active", view === "users");
+      document.getElementById("panelAttendance").classList.toggle("active", view === "attendance");
+    }
+
+    document.getElementById("loadAllBtn").addEventListener("click", loadEverything);
+
+    async function loadEverything() {
+      const schoolId = document.getElementById("schoolId").value.trim();
+      const status = document.getElementById("loadStatus");
+      status.textContent = "Loading users and classes…";
+
+      document.getElementById("userTableWrap").className = "empty";
+      document.getElementById("userTableWrap").textContent = "Loading…";
+      document.getElementById("summaryTableWrap").className = "empty";
+      document.getElementById("summaryTableWrap").textContent = "Loading…";
+
+      try {
+        const qs = schoolId ? `&school_id=${encodeURIComponent(schoolId)}` : "";
+        const classQs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
+
+        const [facRes, stuRes, classRes] = await Promise.all([
+          fetch(`${API}/api/users?role=faculty${qs}`),
+          fetch(`${API}/api/users?role=student${qs}`),
+          fetch(`${API}/api/classes${classQs}`),
+        ]);
+        const faculty = await facRes.json();
+        const students = await stuRes.json();
+        allClasses = await classRes.json();
+        if (!Array.isArray(allClasses)) allClasses = [];
+
+        allUsers = [
+          ...(Array.isArray(faculty) ? faculty : []),
+          ...(Array.isArray(students) ? students : []),
+        ];
+
+        populateUserClassFilter();
+        renderUserTable();
+        populateSummaryClassFilter();
+
+        status.textContent = `Loaded ${allUsers.length} users and ${allClasses.length} classes.`;
+
+        // Attendance records require one fetch per class — do this after the
+        // quick stuff above has rendered so the page feels responsive.
+        status.textContent += " Fetching attendance history for each class…";
+        await buildAttendanceSummary();
+        status.textContent = `Loaded ${allUsers.length} users, ${allClasses.length} classes, ${summaryRows.length} attendance summary rows.`;
+      } catch (err) {
+        status.textContent = "Error loading data: " + err.message;
+      }
+    }
+
+    // ---------------------------------------------------------------
+    // USERS TAB
+    // ---------------------------------------------------------------
+
+    function populateUserClassFilter() {
+      const sel = document.getElementById("userClassFilter");
+      const current = sel.value;
+      const classNames = [...new Set(allUsers.map((u) => u.class_name).filter(Boolean))].sort();
+      sel.innerHTML =
+        `<option value="">All classes</option>` +
+        classNames.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+      if (classNames.includes(current)) sel.value = current;
+    }
+
+    function getFilteredUsers() {
+      const q = document.getElementById("userSearch").value.trim().toLowerCase();
+      const role = document.getElementById("userRoleFilter").value;
+      const className = document.getElementById("userClassFilter").value;
+
+      let rows = allUsers.filter((u) => {
+        if (role && u.user_role !== role) return false;
+        if (className && u.class_name !== className) return false;
+        if (q) {
+          const hay = [u.name, u.std_id, u.email_id, u.mobile, u.school_name, u.school_id]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      rows.sort((a, b) => {
+        const va = (a[userSort.key] ?? "").toString().toLowerCase();
+        const vb = (b[userSort.key] ?? "").toString().toLowerCase();
+        return va < vb ? -1 * userSort.dir : va > vb ? 1 * userSort.dir : 0;
+      });
+
+      return rows;
+    }
+
+    function renderUserTable() {
+      const wrap = document.getElementById("userTableWrap");
+      const summary = document.getElementById("userFilterSummary");
+      const filtered = getFilteredUsers();
+
+      const anyFilter =
+        document.getElementById("userSearch").value.trim() ||
+        document.getElementById("userRoleFilter").value ||
+        document.getElementById("userClassFilter").value;
+
+      summary.textContent = anyFilter
+        ? `Showing ${filtered.length} of ${allUsers.length} users`
+        : allUsers.length
+        ? `${allUsers.length} users total`
+        : "";
+
+      if (allUsers.length === 0) {
+        wrap.className = "empty";
+        wrap.textContent = "No users found — click \"Load data\" above, or check the School ID.";
+        return;
+      }
+      if (filtered.length === 0) {
+        wrap.className = "empty";
+        wrap.textContent = "No users match your filters.";
+        return;
+      }
+
+      const arrow = (key) => (userSort.key === key ? (userSort.dir === 1 ? "▲" : "▼") : "");
+      wrap.className = "";
+      wrap.innerHTML = `
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th class="sortable" data-key="name">Name <span class="sort-arrow">${arrow("name")}</span></th>
+              <th class="sortable" data-key="std_id">ID <span class="sort-arrow">${arrow("std_id")}</span></th>
+              <th class="sortable" data-key="user_role">Role <span class="sort-arrow">${arrow("user_role")}</span></th>
+              <th class="sortable" data-key="class_name">Class <span class="sort-arrow">${arrow("class_name")}</span></th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th class="sortable" data-key="school_name">School <span class="sort-arrow">${arrow("school_name")}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered
+              .map(
+                (u) => `
+              <tr>
+                <td>${escapeHtml(u.name)}</td>
+                <td class="mono">${escapeHtml(u.std_id || u.user_id)}</td>
+                <td><span class="role-pill role-${escapeHtml(u.user_role)}">${escapeHtml(u.user_role)}</span></td>
+                <td>${escapeHtml(u.class_name || "—")}</td>
+                <td>${escapeHtml(u.email_id || "—")}</td>
+                <td>${escapeHtml(u.mobile || "—")}</td>
+                <td>${escapeHtml(u.school_name || u.school_id || "—")}</td>
+              </tr>`
+              )
+              .join("")}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.key;
+          userSort.dir = userSort.key === key ? -userSort.dir : 1;
+          userSort.key = key;
+          renderUserTable();
+        });
+      });
+    }
+
+    document.getElementById("userSearch").addEventListener("input", renderUserTable);
+    document.getElementById("userRoleFilter").addEventListener("change", renderUserTable);
+    document.getElementById("userClassFilter").addEventListener("change", renderUserTable);
+    document.getElementById("clearUserFilters").addEventListener("click", () => {
+      document.getElementById("userSearch").value = "";
+      document.getElementById("userRoleFilter").value = "";
+      document.getElementById("userClassFilter").value = "";
+      renderUserTable();
+    });
+
+    // ---------------------------------------------------------------
+    // ATTENDANCE SUMMARY TAB
+    // ---------------------------------------------------------------
+
+    function populateSummaryClassFilter() {
+      const sel = document.getElementById("summaryClassFilter");
+      const current = sel.value;
+      sel.innerHTML =
+        `<option value="">All classes</option>` +
+        allClasses
+          .map(
+            (c) =>
+              `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})</option>`
+          )
+          .join("");
+      if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+    }
+
+    // Builds studentNameMap once (across all users) for quick name lookup.
+    function studentNameFor(sid) {
+      const u = allUsers.find((x) => x.std_id === sid);
+      return u ? u.name : "";
+    }
+
+    async function buildAttendanceSummary() {
+      summaryRows = [];
+      if (allClasses.length === 0) {
+        renderSummaryTable();
+        return;
+      }
+
+      const results = await Promise.all(
+        allClasses.map(async (cls) => {
+          try {
+            const res = await fetch(`${API}/api/attendance?class_id=${cls.id}`);
+            const records = await res.json();
+            return { cls, records: Array.isArray(records) ? records : [] };
+          } catch (err) {
+            return { cls, records: [] };
+          }
+        })
+      );
+
+      results.forEach(({ cls, records }) => {
+        // tally[student_id] = { Present, Absent, Late, Reason, total }
+        const tally = {};
+        const uniqueIds = Array.from(new Set(cls.student_ids || []));
+        uniqueIds.forEach((sid) => {
+          tally[sid] = { Present: 0, Absent: 0, Late: 0, Reason: 0, total: 0, dates: [] };
+        });
+
+        records.forEach((r) => {
+          const dateStr = new Date(r.marked_at).toISOString().slice(0, 10);
+          (r.attendance_data || []).forEach((a) => {
+            if (!tally[a.student_id]) {
+              tally[a.student_id] = { Present: 0, Absent: 0, Late: 0, Reason: 0, total: 0, dates: [] };
+            }
+            const t = tally[a.student_id];
+            if (t[a.status] !== undefined) t[a.status]++;
+            t.total++;
+            t.dates.push(dateStr);
+          });
+        });
+
+        Object.entries(tally).forEach(([sid, t]) => {
+          summaryRows.push({
+            class_id: cls.id,
+            class_label: `#${cls.id} — ${cls.subject}${cls.class_date ? " (" + cls.class_date + ")" : ""}`,
+            subject: cls.subject,
+            session: cls.session,
+            student_id: sid,
+            name: studentNameFor(sid),
+            present: t.Present,
+            absent: t.Absent,
+            late: t.Late,
+            reason: t.Reason,
+            total: t.total,
+            lastDate: t.dates.sort().slice(-1)[0] || null,
+          });
+        });
+      });
+
+      renderSummaryTable();
+    }
+
+    function getFilteredSummaryRows() {
+      const q = document.getElementById("summarySearch").value.trim().toLowerCase();
+      const classId = document.getElementById("summaryClassFilter").value;
+      const dateFrom = document.getElementById("summaryDateFrom").value.trim();
+      const dateTo = document.getElementById("summaryDateTo").value.trim();
+
+      let rows = summaryRows.filter((r) => {
+        if (classId && String(r.class_id) !== String(classId)) return false;
+        if (q) {
+          const hay = `${r.student_id} ${r.name}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        if ((dateFrom || dateTo) && r.lastDate) {
+          if (dateFrom && r.lastDate < dateFrom) return false;
+          if (dateTo && r.lastDate > dateTo) return false;
+        }
+        return true;
+      });
+
+      rows.sort((a, b) => {
+        const va = (a[summarySort.key] ?? "").toString().toLowerCase();
+        const vb = (b[summarySort.key] ?? "").toString().toLowerCase();
+        if (typeof a[summarySort.key] === "number") {
+          return (a[summarySort.key] - b[summarySort.key]) * summarySort.dir;
+        }
+        return va < vb ? -1 * summarySort.dir : va > vb ? 1 * summarySort.dir : 0;
+      });
+
+      return rows;
+    }
+
+    function renderSummaryCards(rows) {
+      const cards = document.getElementById("summaryCards");
+      if (rows.length === 0) {
+        cards.innerHTML = "";
+        return;
+      }
+      const totalPresent = rows.reduce((s, r) => s + r.present, 0);
+      const totalAbsent = rows.reduce((s, r) => s + r.absent, 0);
+      const totalLate = rows.reduce((s, r) => s + r.late, 0);
+      const totalMarked = rows.reduce((s, r) => s + r.total, 0);
+      const overallPct = totalMarked ? Math.round((totalPresent / totalMarked) * 100) : 0;
+
+      cards.innerHTML = `
+        <div class="summary-card"><div class="num">${rows.length}</div><div class="label">Rows shown</div></div>
+        <div class="summary-card"><div class="num">${totalPresent}</div><div class="label">Present marks</div></div>
+        <div class="summary-card"><div class="num">${totalAbsent}</div><div class="label">Absent marks</div></div>
+        <div class="summary-card"><div class="num">${totalLate}</div><div class="label">Late marks</div></div>
+        <div class="summary-card"><div class="num">${overallPct}%</div><div class="label">Overall attendance</div></div>
+      `;
+    }
+
+    function renderSummaryTable() {
+      const wrap = document.getElementById("summaryTableWrap");
+      const filtered = getFilteredSummaryRows();
+      renderSummaryCards(filtered);
+
+      if (allClasses.length === 0) {
+        wrap.className = "empty";
+        wrap.textContent = "No classes found — click \"Load data\" above, or check the School ID.";
+        return;
+      }
+      if (summaryRows.length === 0) {
+        wrap.className = "empty";
+        wrap.textContent = "No attendance has been submitted for these classes yet.";
+        return;
+      }
+      if (filtered.length === 0) {
+        wrap.className = "empty";
+        wrap.textContent = "No rows match your filters.";
+        return;
+      }
+
+      const arrow = (key) => (summarySort.key === key ? (summarySort.dir === 1 ? "▲" : "▼") : "");
+      wrap.className = "";
+      wrap.innerHTML = `
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th class="sortable" data-key="name">Student <span class="sort-arrow">${arrow("name")}</span></th>
+              <th class="sortable" data-key="student_id">ID <span class="sort-arrow">${arrow("student_id")}</span></th>
+              <th class="sortable" data-key="class_label">Class <span class="sort-arrow">${arrow("class_label")}</span></th>
+              <th class="sortable" data-key="present">Present <span class="sort-arrow">${arrow("present")}</span></th>
+              <th class="sortable" data-key="absent">Absent <span class="sort-arrow">${arrow("absent")}</span></th>
+              <th class="sortable" data-key="late">Late <span class="sort-arrow">${arrow("late")}</span></th>
+              <th class="sortable" data-key="total">Total <span class="sort-arrow">${arrow("total")}</span></th>
+              <th>Attendance %</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filtered
+              .map((r) => {
+                const pct = r.total ? Math.round((r.present / r.total) * 100) : 0;
+                const barClass = pct >= 75 ? "" : pct >= 50 ? "mid" : "low";
+                return `
+              <tr>
+                <td>${escapeHtml(r.name || "—")}</td>
+                <td class="mono">${escapeHtml(r.student_id)}</td>
+                <td>${escapeHtml(r.class_label)}</td>
+                <td><span class="count-badge count-present">${r.present}</span></td>
+                <td><span class="count-badge count-absent">${r.absent}</span></td>
+                <td><span class="count-badge count-late">${r.late}</span></td>
+                <td>${r.total}</td>
+                <td>
+                  <div class="pct-bar-wrap">
+                    <div class="pct-bar-track"><div class="pct-bar-fill ${barClass}" style="width:${pct}%;"></div></div>
+                    <span class="pct-text">${pct}%</span>
+                  </div>
+                </td>
+              </tr>`;
+              })
+              .join("")}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.key;
+          summarySort.dir = summarySort.key === key ? -summarySort.dir : 1;
+          summarySort.key = key;
+          renderSummaryTable();
+        });
+      });
+    }
+
+    document.getElementById("summarySearch").addEventListener("input", renderSummaryTable);
+    document.getElementById("summaryClassFilter").addEventListener("change", renderSummaryTable);
+    document.getElementById("summaryDateFrom").addEventListener("input", renderSummaryTable);
+    document.getElementById("summaryDateTo").addEventListener("input", renderSummaryTable);
+    document.getElementById("clearSummaryFilters").addEventListener("click", () => {
+      document.getElementById("summarySearch").value = "";
+      document.getElementById("summaryClassFilter").value = "";
+      document.getElementById("summaryDateFrom").value = "";
+      document.getElementById("summaryDateTo").value = "";
+      renderSummaryTable();
+    });
+  </script>
+</body>
+</html>
