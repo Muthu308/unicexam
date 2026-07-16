@@ -189,6 +189,28 @@
     let editingRecordId = null; // set when editing an existing history record
     // state[student_id] = { status, reason, in_time, out_time, assignment_submitted, assignment_submission_link }
     let state = {};
+    let studentNameMap = {}; // std_id -> name, best-effort lookup
+    let studentNameMapSchoolId = undefined; // which school_id the map above was loaded for
+
+    async function loadStudentNames(schoolId) {
+      const key = schoolId || "";
+      if (studentNameMapSchoolId === key) return; // already loaded for this school
+      try {
+        const qs = schoolId ? `&school_id=${encodeURIComponent(schoolId)}` : "";
+        const res = await fetch(`${API}/api/users?role=student${qs}`);
+        const students = await res.json();
+        const map = {};
+        (Array.isArray(students) ? students : []).forEach((s) => {
+          if (s.std_id) map[s.std_id] = s.name;
+        });
+        studentNameMap = map;
+        studentNameMapSchoolId = key;
+      } catch (err) {
+        // Name lookup is best-effort — fall back to showing just the ID
+        studentNameMap = {};
+        studentNameMapSchoolId = key;
+      }
+    }
 
     function escapeHtml(str) {
       const div = document.createElement("div");
@@ -240,10 +262,16 @@
       document.getElementById("submitAttendance").textContent = "Submit attendance";
     }
 
-    function renderRoster(cls, prefillData) {
+    async function renderRoster(cls, prefillData) {
       currentClass = cls;
       state = {};
-      (cls.student_ids || []).forEach((sid) => {
+
+      // De-duplicate student IDs (a class roster may have the same id listed twice)
+      const uniqueIds = Array.from(new Set(cls.student_ids || []));
+
+      await loadStudentNames(cls.school_id);
+
+      uniqueIds.forEach((sid) => {
         state[sid] = {
           status: "Present",
           reason: "",
@@ -271,7 +299,7 @@
       }
 
       document.getElementById("classMeta").textContent =
-        `${cls.class_date || "No date set"} ${cls.start_time || ""}${cls.end_time ? "–" + cls.end_time : ""}  •  Topic: ${cls.topic || "—"}  •  Faculty: ${cls.faculty_name}  •  ${(cls.student_ids || []).length} students`;
+        `${cls.class_date || "No date set"} ${cls.start_time || ""}${cls.end_time ? "–" + cls.end_time : ""}  •  Topic: ${cls.topic || "—"}  •  Faculty: ${cls.faculty_name}  •  ${uniqueIds.length} students`;
 
       const links = [];
       if (cls.syllabus_link) links.push(`<a href="${escapeHtml(cls.syllabus_link)}" target="_blank">Syllabus</a>`);
@@ -292,24 +320,24 @@
             </tr>
           </thead>
           <tbody>
-            ${(cls.student_ids || [])
+            ${uniqueIds
               .map((sid) => {
                 const s = state[sid];
                 const isLate = s.status === "Late";
-                const showReason = s.status === "Reason" || s.status === "Late";
+                const showReason = s.status === "Absent" || s.status === "Late";
+                const name = studentNameMap[sid];
                 return `
               <tr data-sid="${escapeHtml(sid)}">
-                <td class="mono">${escapeHtml(sid)}</td>
+                <td class="mono">${escapeHtml(sid)}${name ? `<br><span class="hint" style="text-transform:none;">${escapeHtml(name)}</span>` : ""}</td>
                 <td>
                   <div class="status-choices">
                     <button type="button" data-status="Present" class="${s.status === "Present" ? "chosen-Present" : ""}">Present</button>
                     <button type="button" data-status="Absent" class="${s.status === "Absent" ? "chosen-Absent" : ""}">Absent</button>
                     <button type="button" data-status="Late" class="late-btn ${s.status === "Late" ? "chosen-Late" : ""}" ${s.status === "Present" || s.status === "Late" ? "" : "disabled"}>Late</button>
-                    <button type="button" data-status="Reason" class="${s.status === "Reason" ? "chosen-Reason" : ""}">Reason</button>
                   </div>
                 </td>
                 <td>
-                  <input type="text" class="reason-input" placeholder="${isLate ? "Reason for being late" : "Reason"}"
+                  <input type="text" class="reason-input" placeholder="${isLate ? "Reason for being late (optional)" : "Reason (optional)"}"
                     style="display:${showReason ? "block" : "none"};" value="${escapeHtml(s.reason)}" />
                 </td>
                 <td>
@@ -356,9 +384,9 @@
             row.querySelectorAll(".status-choices button").forEach((b) => (b.className = b === lateBtn ? "late-btn" : ""));
             btn.className = status === "Late" ? "late-btn chosen-Late" : `chosen-${status}`;
 
-            const showReason = status === "Reason" || status === "Late";
+            const showReason = status === "Absent" || status === "Late";
             reasonInput.style.display = showReason ? "block" : "none";
-            reasonInput.placeholder = status === "Late" ? "Reason for being late" : "Reason";
+            reasonInput.placeholder = status === "Late" ? "Reason for being late (optional)" : "Reason (optional)";
             if (!showReason) {
               state[sid].reason = "";
               reasonInput.value = "";
@@ -421,7 +449,7 @@
       const attendance_data = Object.entries(state).map(([student_id, v]) => ({
         student_id,
         status: v.status,
-        reason: v.status === "Reason" || v.status === "Late" ? v.reason : "",
+        reason: v.status === "Absent" || v.status === "Late" ? v.reason : "",
         in_time: v.status === "Late" ? v.in_time : "",
         out_time: v.status === "Late" ? v.out_time : "",
         assignment_submitted: v.assignment_submitted,
