@@ -72,11 +72,51 @@
   .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { min-width: 760px; }
 
+  /* ---- Filter bar for existing classes ---- */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .filter-bar input[type="text"],
+  .filter-bar input[type="search"] {
+    flex: 1;
+    min-width: 180px;
+    font-size: 0.88rem;
+    padding: 7px 10px;
+  }
+  .filter-bar select {
+    font-size: 0.88rem;
+    padding: 7px 10px;
+  }
+  .filter-bar .date-range-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: #666;
+  }
+  .filter-bar .date-range-group input { width: 130px; font-size: 0.85rem; padding: 6px 8px; }
+  .filter-bar .clear-filters-btn {
+    font-size: 0.82rem;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .filter-summary { font-size: 0.8rem; color: #888; margin: -4px 0 12px; }
+
   @media (max-width: 720px) {
     .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
     .tabs { flex-wrap: wrap; }
     main { padding: 0 10px; }
     .view-tab { padding: 8px 12px; font-size: 0.88rem; }
+    .filter-bar input[type="text"], .filter-bar select { min-width: 140px; }
   }
 </style>
 </head>
@@ -174,6 +214,21 @@
     <div class="view-panel" id="panelExistingClasses">
       <div class="card">
         <h2>Existing classes</h2>
+
+        <div class="filter-bar">
+          <input type="search" id="filterSearch" placeholder="Search subject, topic, session, faculty…" />
+          <select id="filterFaculty"><option value="">All faculty</option></select>
+          <select id="filterSubject"><option value="">All subjects</option></select>
+          <div class="date-range-group">
+            <span>Date</span>
+            <input type="text" id="filterDateFrom" placeholder="From (YYYY-MM-DD)" />
+            <span>–</span>
+            <input type="text" id="filterDateTo" placeholder="To (YYYY-MM-DD)" />
+          </div>
+          <button type="button" class="clear-filters-btn" id="clearFilters">Clear filters</button>
+        </div>
+        <div class="filter-summary" id="filterSummary"></div>
+
         <div class="table-scroll">
           <div id="classList" class="empty">Loading…</div>
         </div>
@@ -304,6 +359,10 @@
       if (chosen) document.getElementById("facultyText").value = chosen.name;
     });
 
+    // ---------------------------------------------------------------
+    // Existing classes: fetch + filter bar (search / faculty / subject / date range)
+    // ---------------------------------------------------------------
+
     async function loadClasses() {
       const list = document.getElementById("classList");
       const schoolId = document.getElementById("schoolId").value.trim();
@@ -313,57 +372,157 @@
         const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
         const res = await fetch(`${API}/api/classes${qs}`);
         classes = await res.json();
-        if (!Array.isArray(classes) || classes.length === 0) {
-          list.className = "empty";
-          list.textContent = "No classes yet — add one above.";
-          return;
-        }
-        const table = document.createElement("table");
-        table.innerHTML = `
-          <thead>
-            <tr>
-              <th>ID</th><th>Date / Time</th><th>Session</th><th>Subject</th><th>Topic</th>
-              <th>Faculty</th><th>Students</th><th>Links</th><th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${classes
-              .map(
-                (c) => `
-              <tr>
-                <td class="mono">${c.id}</td>
-                <td>${escapeHtml(c.class_date || "—")} ${escapeHtml(c.start_time || "")}${c.end_time ? "–" + escapeHtml(c.end_time) : ""}</td>
-                <td>${escapeHtml(c.session)}</td>
-                <td>${escapeHtml(c.subject)}</td>
-                <td>${escapeHtml(c.topic || "—")}</td>
-                <td>${escapeHtml(c.faculty_name)}</td>
-                <td class="mono">${(c.student_ids || []).join(", ")}</td>
-                <td>
-                  ${c.syllabus_link ? `<a href="${escapeHtml(c.syllabus_link)}" target="_blank">syllabus</a>` : ""}
-                  ${c.notes_link ? ` · <a href="${escapeHtml(c.notes_link)}" target="_blank">notes</a>` : ""}
-                  ${c.video_link ? ` · <a href="${escapeHtml(c.video_link)}" target="_blank">notes</a>` : ""}
-                  ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
-                </td>
-                <td>
-                  <button class="edit-btn" onclick="editClass(${c.id})">
-                    ✏️ Edit
-                  </button>
-
-                  <button class="delete-btn" onclick="deleteClass(${c.id})">
-                    🗑 Delete
-                  </button>
-                </td>
-              </tr>`
-              )
-              .join("")}
-          </tbody>`;
-        list.innerHTML = "";
-        list.appendChild(table);
+        if (!Array.isArray(classes)) classes = [];
+        populateFilterOptions();
+        renderClassTable();
       } catch (err) {
         list.className = "msg err";
         list.textContent = "Could not load classes: " + err.message;
       }
     }
+
+    function populateFilterOptions() {
+      const facultySel = document.getElementById("filterFaculty");
+      const subjectSel = document.getElementById("filterSubject");
+      const currentFaculty = facultySel.value;
+      const currentSubject = subjectSel.value;
+
+      const faculties = [...new Set(classes.map((c) => c.faculty_name).filter(Boolean))].sort((a, b) =>
+        a.localeCompare(b)
+      );
+      const subjects = [...new Set(classes.map((c) => c.subject).filter(Boolean))].sort((a, b) =>
+        a.localeCompare(b)
+      );
+
+      facultySel.innerHTML =
+        `<option value="">All faculty</option>` +
+        faculties.map((f) => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("");
+      subjectSel.innerHTML =
+        `<option value="">All subjects</option>` +
+        subjects.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+
+      // Preserve selection if the value still exists after refresh
+      if (faculties.includes(currentFaculty)) facultySel.value = currentFaculty;
+      if (subjects.includes(currentSubject)) subjectSel.value = currentSubject;
+    }
+
+    function getFilteredClasses() {
+      const q = document.getElementById("filterSearch").value.trim().toLowerCase();
+      const faculty = document.getElementById("filterFaculty").value;
+      const subject = document.getElementById("filterSubject").value;
+      const dateFrom = document.getElementById("filterDateFrom").value.trim();
+      const dateTo = document.getElementById("filterDateTo").value.trim();
+
+      return classes.filter((c) => {
+        if (faculty && c.faculty_name !== faculty) return false;
+        if (subject && c.subject !== subject) return false;
+        if (dateFrom && (!c.class_date || c.class_date < dateFrom)) return false;
+        if (dateTo && (!c.class_date || c.class_date > dateTo)) return false;
+        if (q) {
+          const haystack = [
+            c.session,
+            c.subject,
+            c.topic,
+            c.faculty_name,
+            c.class_date,
+            c.school_id,
+            ...(c.student_ids || []),
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          if (!haystack.includes(q)) return false;
+        }
+        return true;
+      });
+    }
+
+    function renderClassTable() {
+      const list = document.getElementById("classList");
+      const summary = document.getElementById("filterSummary");
+      const filtered = getFilteredClasses();
+
+      const anyFilterActive =
+        document.getElementById("filterSearch").value.trim() ||
+        document.getElementById("filterFaculty").value ||
+        document.getElementById("filterSubject").value ||
+        document.getElementById("filterDateFrom").value.trim() ||
+        document.getElementById("filterDateTo").value.trim();
+
+      summary.textContent = anyFilterActive
+        ? `Showing ${filtered.length} of ${classes.length} classes`
+        : classes.length
+        ? `${classes.length} classes total`
+        : "";
+
+      if (classes.length === 0) {
+        list.className = "empty";
+        list.textContent = "No classes yet — add one above.";
+        return;
+      }
+      if (filtered.length === 0) {
+        list.className = "empty";
+        list.textContent = "No classes match your filters.";
+        return;
+      }
+
+      const table = document.createElement("table");
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>ID</th><th>Date / Time</th><th>Session</th><th>Subject</th><th>Topic</th>
+            <th>Faculty</th><th>Students</th><th>Links</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered
+            .map(
+              (c) => `
+            <tr>
+              <td class="mono">${c.id}</td>
+              <td>${escapeHtml(c.class_date || "—")} ${escapeHtml(c.start_time || "")}${c.end_time ? "–" + escapeHtml(c.end_time) : ""}</td>
+              <td>${escapeHtml(c.session)}</td>
+              <td>${escapeHtml(c.subject)}</td>
+              <td>${escapeHtml(c.topic || "—")}</td>
+              <td>${escapeHtml(c.faculty_name)}</td>
+              <td class="mono">${(c.student_ids || []).join(", ")}</td>
+              <td>
+                ${c.syllabus_link ? `<a href="${escapeHtml(c.syllabus_link)}" target="_blank">syllabus</a>` : ""}
+                ${c.notes_link ? ` · <a href="${escapeHtml(c.notes_link)}" target="_blank">notes</a>` : ""}
+                ${c.video_link ? ` · <a href="${escapeHtml(c.video_link)}" target="_blank">video</a>` : ""}
+                ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
+              </td>
+              <td>
+                <button class="edit-btn" onclick="editClass(${c.id})">
+                  ✏️ Edit
+                </button>
+
+                <button class="delete-btn" onclick="deleteClass(${c.id})">
+                  🗑 Delete
+                </button>
+              </td>
+            </tr>`
+            )
+            .join("")}
+        </tbody>`;
+      list.className = "";
+      list.innerHTML = "";
+      list.appendChild(table);
+    }
+
+    document.getElementById("filterSearch").addEventListener("input", renderClassTable);
+    document.getElementById("filterFaculty").addEventListener("change", renderClassTable);
+    document.getElementById("filterSubject").addEventListener("change", renderClassTable);
+    document.getElementById("filterDateFrom").addEventListener("input", renderClassTable);
+    document.getElementById("filterDateTo").addEventListener("input", renderClassTable);
+    document.getElementById("clearFilters").addEventListener("click", () => {
+      document.getElementById("filterSearch").value = "";
+      document.getElementById("filterFaculty").value = "";
+      document.getElementById("filterSubject").value = "";
+      document.getElementById("filterDateFrom").value = "";
+      document.getElementById("filterDateTo").value = "";
+      renderClassTable();
+    });
 
     async function editClass(id) {
       const c = classes.find((x) => Number(x.id) === Number(id));
