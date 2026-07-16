@@ -173,6 +173,7 @@ body{background:#f0f4fb;color:#1e293b}
 .att-present{background:#dcfce7;color:#15803d}
 .att-absent{background:#fee2e2;color:#b91c1c}
 .att-reason{background:#fef9c3;color:#92400e}
+.att-late{background:#fff3cd;color:#8a6100}
 .att-day-group{margin-bottom:20px}
 .att-day-hdr{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .att-day-hdr h3{font-size:13px;font-weight:600;color:#0e1e4a}
@@ -180,6 +181,23 @@ body{background:#f0f4fb;color:#1e293b}
 .att-links a{color:#185FA5;font-weight:500;text-decoration:none;font-size:11px}
 .att-links a:hover{text-decoration:underline}
 .att-empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
+
+/* Upcoming classes */
+.upcoming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.upcoming-card{background:#fff;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);border:1px solid #edf1f7;display:flex;gap:12px;padding:12px;transition:.2s}
+.upcoming-card:hover{box-shadow:0 4px 14px rgba(14,30,74,.10)}
+.upcoming-card.today{border-color:#f0b800;background:linear-gradient(135deg,#fffbeb,#fff)}
+.upcoming-date{flex-shrink:0;width:52px;height:52px;border-radius:10px;background:#eff6ff;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #bfdbfe}
+.upcoming-date .ud-day{font-size:17px;font-weight:800;color:#1d4ed8;line-height:1}
+.upcoming-date .ud-month{font-size:9px;color:#1d4ed8;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.upcoming-body{flex:1;min-width:0}
+.upcoming-subject{font-size:13px;font-weight:700;color:#0e1e4a}
+.upcoming-topic{font-size:11.5px;color:#64748b;margin-top:1px}
+.upcoming-meta{font-size:10.5px;color:#94a3b8;margin-top:6px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.upcoming-links{margin-top:6px;font-size:10.5px;display:flex;gap:8px;flex-wrap:wrap}
+.upcoming-links a{color:#185FA5;font-weight:500;text-decoration:none}
+.upcoming-links a:hover{text-decoration:underline}
+.upcoming-today-tag{display:inline-block;background:#f0b800;color:#0e1e4a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
 
 /* Section box */
 .sec-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
@@ -354,6 +372,13 @@ th.total-group{background:#7c3aed !important}
 
   <!-- ATTENDANCE -->
   <div class="page" id="page-attendance">
+    <div class="sec-box">
+      <h2><i class="ti ti-calendar-time"></i> Upcoming Classes</h2>
+      <div id="upcomingClassesContent">
+        <div class="att-empty">Loading upcoming classes…</div>
+      </div>
+    </div>
+
     <div class="cards-row" id="attSummaryCards">
       <div class="sc"><h3>Loading</h3><p>—</p></div>
     </div>
@@ -1589,6 +1614,7 @@ function initTableSort(){
 
 const ATTEND_API = "";
 let attendanceRecords = [];
+let upcomingClasses = [];
 
 async function loadAttendance(){
   const box = $("attendanceContent");
@@ -1601,11 +1627,86 @@ async function loadAttendance(){
     attendanceRecords = Array.isArray(records) ? records : [];
     populateAttendanceFilters();
     renderAttendanceView();
+    loadUpcomingClasses();
   }catch(err){
     console.error(err);
     box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load attendance: ${err.message}</div>`;
     $("attSummaryCards").innerHTML = `<div class="sc r"><h3>Attendance</h3><p style="font-size:13px">Unavailable</p></div>`;
+    loadUpcomingClasses();
   }
+}
+
+/* ══════════════════════════════════════════════
+   UPCOMING CLASSES
+══════════════════════════════════════════════ */
+async function loadUpcomingClasses(){
+  const box = $("upcomingClassesContent");
+  try{
+    const res = await fetch(`/api/classes`);
+    const classes = await res.json();
+    if(!res.ok) throw new Error((classes && classes.error) || "Failed to load classes");
+
+    const todayStr = new Date().toISOString().slice(0,10);
+    const attendedClassIds = new Set(
+      attendanceRecords.map(r => r.class_id != null ? String(r.class_id) : null).filter(Boolean)
+    );
+
+    upcomingClasses = (Array.isArray(classes) ? classes : [])
+      .filter(c => (c.student_ids || []).map(String).includes(String(user.std_id)))
+      .filter(c => !c.class_date || c.class_date >= todayStr)
+      .filter(c => !attendedClassIds.has(String(c.id)))
+      .sort((a,b) => (a.class_date || "").localeCompare(b.class_date || "") || (a.start_time || "").localeCompare(b.start_time || ""));
+
+    renderUpcomingClasses(todayStr);
+  }catch(err){
+    console.error(err);
+    box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load upcoming classes: ${err.message}</div>`;
+  }
+}
+
+function renderUpcomingClasses(todayStr){
+  const box = $("upcomingClassesContent");
+  todayStr = todayStr || new Date().toISOString().slice(0,10);
+
+  if(!upcomingClasses.length){
+    box.innerHTML = `<div class="att-empty">No upcoming classes scheduled.</div>`;
+    return;
+  }
+
+  box.innerHTML = `<div class="upcoming-grid">` + upcomingClasses.map(c => {
+    const links = [];
+    if(c.syllabus_link) links.push(`<a href="${c.syllabus_link}" target="_blank">Syllabus</a>`);
+    if(c.notes_link) links.push(`<a href="${c.notes_link}" target="_blank">Notes</a>`);
+    if(c.video_link) links.push(`<a href="${c.video_link}" target="_blank">Video</a>`);
+    if(c.assignment_link) links.push(`<a href="${c.assignment_link}" target="_blank">Assignment</a>`);
+
+    const isToday = c.class_date === todayStr;
+    let dayNum = "—", monthLbl = "";
+    if(c.class_date){
+      const d = new Date(c.class_date + "T00:00:00");
+      if(!isNaN(d)){
+        dayNum = d.getDate();
+        monthLbl = d.toLocaleDateString('en-IN',{month:'short'});
+      }
+    }
+
+    return `
+      <div class="upcoming-card${isToday?' today':''}">
+        <div class="upcoming-date">
+          <div class="ud-day">${dayNum}</div>
+          <div class="ud-month">${monthLbl || "—"}</div>
+        </div>
+        <div class="upcoming-body">
+          <div class="upcoming-subject">${c.subject || "—"}${isToday?'<span class="upcoming-today-tag">Today</span>':''}</div>
+          <div class="upcoming-topic">${c.topic || ""}</div>
+          <div class="upcoming-meta">
+            <i class="ti ti-clock"></i> ${c.start_time || "—"}${c.end_time ? "–"+c.end_time : ""}
+            &nbsp;·&nbsp; <i class="ti ti-user"></i> ${c.faculty_name || "—"}
+          </div>
+          ${links.length ? `<div class="upcoming-links">${links.join(" · ")}</div>` : ""}
+        </div>
+      </div>`;
+  }).join("") + `</div>`;
 }
 
 function populateAttendanceFilters(){
@@ -1631,6 +1732,7 @@ function resetAttendanceFilters(){
 function attStatusPill(status){
   if(status === "Present") return `<span class="att-pill att-present"><i class="ti ti-check" style="font-size:12px"></i> Present</span>`;
   if(status === "Absent") return `<span class="att-pill att-absent"><i class="ti ti-x" style="font-size:12px"></i> Absent</span>`;
+  if(status === "Late") return `<span class="att-pill att-late"><i class="ti ti-clock" style="font-size:12px"></i> Late</span>`;
   if(status === "Reason") return `<span class="att-pill att-reason"><i class="ti ti-message-circle" style="font-size:12px"></i> Reason</span>`;
   return `<span class="att-pill" style="background:#f1f5f9;color:#64748b">—</span>`;
 }
@@ -1648,7 +1750,8 @@ function renderAttendanceView(){
   const total = filtered.length;
   const present = filtered.filter(r => r.status === "Present").length;
   const absent = filtered.filter(r => r.status === "Absent").length;
-  const reason = filtered.filter(r => r.status === "Reason").length;
+  const late = filtered.filter(r => r.status === "Late").length;
+  const otherCount = filtered.filter(r => r.status && !["Present","Absent","Late"].includes(r.status)).length;
   const assignmentsDone = filtered.filter(r => r.assignment_submitted).length;
   const pct = total ? Math.round((present/total)*100) : 0;
 
@@ -1656,9 +1759,10 @@ function renderAttendanceView(){
     <div class="sc b"><h3>Total Classes</h3><p>${total}</p></div>
     <div class="sc g"><h3>Present</h3><p>${present}</p></div>
     <div class="sc r"><h3>Absent</h3><p>${absent}</p></div>
-    <div class="sc a"><h3>Reason</h3><p>${reason}</p></div>
+    <div class="sc a"><h3>Late</h3><p>${late}</p></div>
     <div class="sc p"><h3>Attendance %</h3><p>${pct}%</p></div>
-    <div class="sc"><h3>Assignments Done</h3><p>${assignmentsDone}/${total}</p></div>`;
+    <div class="sc"><h3>Assignments Done</h3><p>${assignmentsDone}/${total}</p></div>
+    ${otherCount ? `<div class="sc"><h3>Other</h3><p>${otherCount}</p></div>` : ""}`;
 
   if(!total){
     box.innerHTML = `<div class="att-empty">${attendanceRecords.length ? "No classes match this filter." : "No attendance records found yet."}</div>`;
@@ -1682,14 +1786,19 @@ function renderAttendanceView(){
       const assignmentStatus = r.assignment_submitted
         ? `Submitted${r.assignment_submission_link ? ` — <a href="${r.assignment_submission_link}" target="_blank">your link</a>` : ""}`
         : `<span style="color:#94a3b8">Not submitted</span>`;
+      const inOut = r.status === "Late"
+        ? `${r.in_time || "—"} / ${r.out_time || "—"}`
+        : `<span style="color:#cbd5e1">—</span>`;
       return `
         <tr>
+          <td>${r.class_date || day || "—"}</td>
           <td>${r.start_time || "—"}${r.end_time ? "–"+r.end_time : ""}</td>
           <td>${r.subject || "—"}</td>
           <td>${r.topic || "—"}</td>
           <td>${r.faculty_name || "—"}</td>
           <td>${attStatusPill(r.status)}</td>
           <td>${r.reason || "—"}</td>
+          <td>${inOut}</td>
           <td>${assignmentStatus}</td>
           <td class="att-links">${links.join(" · ") || "—"}</td>
         </tr>`;
@@ -1704,7 +1813,7 @@ function renderAttendanceView(){
         <div class="tbl-wrap">
           <table>
             <thead>
-              <tr><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>Assignment</th><th>Links</th></tr>
+              <tr><th>Date</th><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Assignment</th><th>Links</th></tr>
             </thead>
             <tbody>${rows}</tbody>
           </table>
