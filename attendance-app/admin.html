@@ -131,6 +131,7 @@
       <a href="admin.html" class="active">Admin</a>
       <a href="faculty.html">Faculty</a>
      <!-- <a href="student.html">Student</a>-->
+      <a href="reports.html">Reports</a>
     </nav>
   </div>
 
@@ -352,7 +353,11 @@
       }
     }
 
-    document.getElementById("refreshPeople").addEventListener("click", loadPeople);
+    document.getElementById("refreshPeople").addEventListener("click", async () => {
+      await loadPeople();
+      populateFilterOptions();
+      renderClassTable();
+    });
 
     document.getElementById("facultySelect").addEventListener("change", (e) => {
       const chosen = facultyOptions.find((f) => String(f.user_id) === e.target.value);
@@ -387,7 +392,12 @@
       const currentFaculty = facultySel.value;
       const currentSubject = subjectSel.value;
 
-      const faculties = [...new Set(classes.map((c) => c.faculty_name).filter(Boolean))].sort((a, b) =>
+      // Faculty options come from the real user_student table (/api/users?role=faculty)
+      // — loaded into facultyOptions by loadPeople() — merged with any free-typed
+      // faculty_name values that appear on classes but aren't in that table yet.
+      const realFacultyNames = (Array.isArray(facultyOptions) ? facultyOptions : []).map((f) => f.name).filter(Boolean);
+      const classFacultyNames = classes.map((c) => c.faculty_name).filter(Boolean);
+      const faculties = [...new Set([...realFacultyNames, ...classFacultyNames])].sort((a, b) =>
         a.localeCompare(b)
       );
       const subjects = [...new Set(classes.map((c) => c.subject).filter(Boolean))].sort((a, b) =>
@@ -662,8 +672,10 @@
       }
     }
 
-    loadPeople();
-    loadClasses();
+    (async () => {
+      await loadPeople();
+      await loadClasses();
+    })();
   </script>
 </body>
 </html>
