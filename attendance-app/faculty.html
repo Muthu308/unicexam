@@ -117,6 +117,38 @@
     font-size: 0.85rem;
   }
 
+  /* ---- Filter / search bars ---- */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .filter-bar input[type="text"],
+  .filter-bar input[type="search"] {
+    flex: 1;
+    min-width: 180px;
+    font-size: 0.88rem;
+    padding: 7px 10px;
+  }
+  .filter-bar select {
+    font-size: 0.88rem;
+    padding: 7px 10px;
+  }
+  .filter-bar .clear-filters-btn {
+    font-size: 0.82rem;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .filter-hint { font-size: 0.78rem; color: #888; margin: -6px 0 10px; }
+  .no-results-row td { text-align: center; color: #888; padding: 18px 10px; }
+
   /* ---- Mobile responsiveness ---- */
   @media (max-width: 720px) {
     .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
@@ -125,6 +157,7 @@
     .view-tab { padding: 8px 12px; font-size: 0.88rem; }
     table.roster-table, table.history-table { min-width: 640px; }
     .reason-input, .assign-link { width: 110px; }
+    .filter-bar input[type="text"], .filter-bar select { min-width: 140px; }
   }
 </style>
 </head>
@@ -164,6 +197,19 @@
       <div class="card" id="rosterCard" style="display:none;">
         <h2>Mark attendance &amp; assignment status</h2>
         <div id="editingBanner"></div>
+
+        <div class="filter-bar">
+          <input type="search" id="rosterSearch" placeholder="Search student name or ID…" />
+          <select id="rosterStatusFilter">
+            <option value="">All statuses</option>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+            <option value="Late">Late</option>
+          </select>
+          <button type="button" class="clear-filters-btn" id="clearRosterFilters">Clear</button>
+        </div>
+        <div class="filter-hint" id="rosterFilterHint"></div>
+
         <div class="table-scroll">
           <div id="roster"></div>
         </div>
@@ -175,6 +221,14 @@
     <div class="view-panel" id="panelHistory">
       <div class="card" id="historyCard" style="display:none;">
         <h2>Previous submissions for this class</h2>
+
+        <div class="filter-bar">
+          <input type="search" id="historySearch" placeholder="Search student name, ID or status…" />
+          <input type="text" id="historyDateFrom" placeholder="From date (YYYY-MM-DD)" style="max-width:170px;" />
+          <input type="text" id="historyDateTo" placeholder="To date (YYYY-MM-DD)" style="max-width:170px;" />
+          <button type="button" class="clear-filters-btn" id="clearHistoryFilters">Clear</button>
+        </div>
+
         <div id="history"></div>
       </div>
     </div>
@@ -191,6 +245,7 @@
     let state = {};
     let studentNameMap = {}; // std_id -> name, best-effort lookup
     let studentNameMapSchoolId = undefined; // which school_id the map above was loaded for
+    let currentRosterIds = []; // ordered unique ids for currently rendered roster
 
     async function loadStudentNames(schoolId) {
       const key = schoolId || "";
@@ -268,6 +323,7 @@
 
       // De-duplicate student IDs (a class roster may have the same id listed twice)
       const uniqueIds = Array.from(new Set(cls.student_ids || []));
+      currentRosterIds = uniqueIds;
 
       await loadStudentNames(cls.school_id);
 
@@ -307,7 +363,27 @@
       if (cls.assignment_link) links.push(`<a href="${escapeHtml(cls.assignment_link)}" target="_blank">Assignment</a>`);
       document.getElementById("classLinks").innerHTML = links.join(" · ");
 
+      document.getElementById("rosterSearch").value = "";
+      document.getElementById("rosterStatusFilter").value = "";
+
+      renderRosterTable(uniqueIds);
+
+      document.getElementById("rosterCard").style.display = "block";
+      document.getElementById("attendanceMsg").textContent = "";
+      document.getElementById("viewTabs").style.display = "flex";
+      loadHistory(cls.id);
+    }
+
+    // Renders the roster table for the given list of student ids (used by filters),
+    // wiring up all event listeners. state[] values are preserved across re-renders.
+    function renderRosterTable(idsToShow) {
       const roster = document.getElementById("roster");
+
+      if (idsToShow.length === 0) {
+        roster.innerHTML = `<div class="empty" style="padding:16px;">No students match your search.</div>`;
+        return;
+      }
+
       roster.innerHTML = `
         <table class="roster-table">
           <thead>
@@ -320,7 +396,7 @@
             </tr>
           </thead>
           <tbody>
-            ${uniqueIds
+            ${idsToShow
               .map((sid) => {
                 const s = state[sid];
                 const isLate = s.status === "Late";
@@ -420,12 +496,38 @@
         });
         link.addEventListener("input", () => (state[sid].assignment_submission_link = link.value));
       });
-
-      document.getElementById("rosterCard").style.display = "block";
-      document.getElementById("attendanceMsg").textContent = "";
-      document.getElementById("viewTabs").style.display = "flex";
-      loadHistory(cls.id);
     }
+
+    // Applies the roster search box + status filter on top of currentRosterIds
+    function applyRosterFilters() {
+      const q = document.getElementById("rosterSearch").value.trim().toLowerCase();
+      const statusFilter = document.getElementById("rosterStatusFilter").value;
+
+      const filtered = currentRosterIds.filter((sid) => {
+        if (statusFilter && state[sid]?.status !== statusFilter) return false;
+        if (q) {
+          const name = (studentNameMap[sid] || "").toLowerCase();
+          if (!sid.toLowerCase().includes(q) && !name.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const hint = document.getElementById("rosterFilterHint");
+      hint.textContent =
+        q || statusFilter
+          ? `Showing ${filtered.length} of ${currentRosterIds.length} students`
+          : "";
+
+      renderRosterTable(filtered);
+    }
+
+    document.getElementById("rosterSearch").addEventListener("input", applyRosterFilters);
+    document.getElementById("rosterStatusFilter").addEventListener("change", applyRosterFilters);
+    document.getElementById("clearRosterFilters").addEventListener("click", () => {
+      document.getElementById("rosterSearch").value = "";
+      document.getElementById("rosterStatusFilter").value = "";
+      applyRosterFilters();
+    });
 
     document.getElementById("classSelect").addEventListener("change", (e) => {
       const id = e.target.value;
@@ -460,11 +562,17 @@
       msg.textContent = "";
       try {
         const isEdit = !!editingRecordId;
-        const url = isEdit ? `${API}/api/attendance/${editingRecordId}` : `${API}/api/attendance`;
-        const res = await fetch(url, {
+        // NOTE: api/attendance.js is a single serverless function — it reads
+        // id / class_id from the request BODY, not from a URL path segment.
+        // Always POST/PUT/DELETE to /api/attendance itself.
+        const res = await fetch(`${API}/api/attendance`, {
           method: isEdit ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ class_id: currentClass.id, attendance_data }),
+          body: JSON.stringify(
+            isEdit
+              ? { id: editingRecordId, attendance_data }
+              : { class_id: currentClass.id, attendance_data }
+          ),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to submit attendance");
@@ -502,7 +610,12 @@
     async function deleteRecord(recordId) {
       if (!confirm(`Delete attendance submission #${recordId}? This cannot be undone.`)) return;
       try {
-        const res = await fetch(`${API}/api/attendance/${recordId}`, { method: "DELETE" });
+        // Same fix as submitAttendance: id goes in the body, not the URL path.
+        const res = await fetch(`${API}/api/attendance`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: recordId }),
+        });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           throw new Error(data.error || "Failed to delete record");
@@ -523,18 +636,75 @@
         const res = await fetch(`${API}/api/attendance?class_id=${classId}`);
         const records = await res.json();
         if (!Array.isArray(records) || records.length === 0) {
+          window.__historyRecords = [];
           box.className = "empty";
           box.textContent = "No attendance submitted yet for this class.";
           return;
         }
 
         window.__historyRecords = records;
+        renderHistoryRecords();
+      } catch (err) {
+        box.className = "msg err";
+        box.textContent = "Could not load history: " + err.message;
+      }
+    }
 
-        box.innerHTML = records
-          .map((r) => {
-            const dateStr = new Date(r.marked_at).toLocaleDateString();
-            const timeStr = new Date(r.marked_at).toLocaleTimeString();
-            return `
+    // Applies the history search box + date range, then renders the filtered
+    // set of records (each record's attendance_data rows are also filtered
+    // by the search term, so a search for a student only shows their row).
+    function renderHistoryRecords() {
+      const box = document.getElementById("history");
+      const allRecords = window.__historyRecords || [];
+
+      if (allRecords.length === 0) {
+        box.className = "empty";
+        box.textContent = "No attendance submitted yet for this class.";
+        return;
+      }
+
+      const q = document.getElementById("historySearch").value.trim().toLowerCase();
+      const fromDate = document.getElementById("historyDateFrom").value.trim();
+      const toDate = document.getElementById("historyDateTo").value.trim();
+
+      let records = allRecords;
+
+      if (fromDate || toDate) {
+        records = records.filter((r) => {
+          const d = new Date(r.marked_at);
+          const ymd = d.toISOString().slice(0, 10);
+          if (fromDate && ymd < fromDate) return false;
+          if (toDate && ymd > toDate) return false;
+          return true;
+        });
+      }
+
+      if (q) {
+        records = records
+          .map((r) => ({
+            ...r,
+            attendance_data: r.attendance_data.filter(
+              (a) =>
+                a.student_id.toLowerCase().includes(q) ||
+                (studentNameMap[a.student_id] || "").toLowerCase().includes(q) ||
+                a.status.toLowerCase().includes(q)
+            ),
+          }))
+          .filter((r) => r.attendance_data.length > 0);
+      }
+
+      if (records.length === 0) {
+        box.className = "empty";
+        box.textContent = "No matching attendance records.";
+        return;
+      }
+
+      box.className = "";
+      box.innerHTML = records
+        .map((r) => {
+          const dateStr = new Date(r.marked_at).toLocaleDateString();
+          const timeStr = new Date(r.marked_at).toLocaleTimeString();
+          return `
           <div style="margin-bottom:18px;">
             <div class="hint mono" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
               <span>${dateStr} ${timeStr} — record #${r.id}</span>
@@ -548,39 +718,46 @@
                 <thead><tr><th>Date</th><th>Student</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Assignment</th></tr></thead>
                 <tbody>
                   ${r.attendance_data
-                    .map(
-                      (a) => `
+                    .map((a) => {
+                      const name = studentNameMap[a.student_id];
+                      return `
                     <tr>
                       <td class="mono">${dateStr}</td>
-                      <td class="mono">${escapeHtml(a.student_id)}</td>
+                      <td class="mono">${escapeHtml(a.student_id)}${name ? `<br><span class="hint" style="text-transform:none;">${escapeHtml(name)}</span>` : ""}</td>
                       <td><span class="status-pill status-${a.status}">${a.status}</span></td>
                       <td>${escapeHtml(a.reason || "—")}</td>
                       <td>${a.status === "Late" ? `${escapeHtml(a.in_time || "—")} / ${escapeHtml(a.out_time || "—")}` : "—"}</td>
                       <td>${a.assignment_submitted ? `Submitted${a.assignment_submission_link ? ` — <a href="${escapeHtml(a.assignment_submission_link)}" target="_blank">link</a>` : ""}` : "Not submitted"}</td>
-                    </tr>`
-                    )
+                    </tr>`;
+                    })
                     .join("")}
                 </tbody>
               </table>
             </div>
           </div>`;
-          })
-          .join("");
+        })
+        .join("");
 
-        box.querySelectorAll(".edit-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const record = (window.__historyRecords || []).find((r) => String(r.id) === String(btn.dataset.recordId));
-            if (record) startEditRecord(record);
-          });
+      box.querySelectorAll(".edit-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const record = (window.__historyRecords || []).find((r) => String(r.id) === String(btn.dataset.recordId));
+          if (record) startEditRecord(record);
         });
-        box.querySelectorAll(".delete-btn").forEach((btn) => {
-          btn.addEventListener("click", () => deleteRecord(btn.dataset.recordId));
-        });
-      } catch (err) {
-        box.className = "msg err";
-        box.textContent = "Could not load history: " + err.message;
-      }
+      });
+      box.querySelectorAll(".delete-btn").forEach((btn) => {
+        btn.addEventListener("click", () => deleteRecord(btn.dataset.recordId));
+      });
     }
+
+    document.getElementById("historySearch").addEventListener("input", renderHistoryRecords);
+    document.getElementById("historyDateFrom").addEventListener("input", renderHistoryRecords);
+    document.getElementById("historyDateTo").addEventListener("input", renderHistoryRecords);
+    document.getElementById("clearHistoryFilters").addEventListener("click", () => {
+      document.getElementById("historySearch").value = "";
+      document.getElementById("historyDateFrom").value = "";
+      document.getElementById("historyDateTo").value = "";
+      renderHistoryRecords();
+    });
 
     loadClasses();
   </script>
