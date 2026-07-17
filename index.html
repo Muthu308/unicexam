@@ -278,7 +278,7 @@ footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
       <i class="ti ti-login" aria-hidden="true"></i> Login
     </button>
     <button class="tab-btn" onclick="showTab('register',this)" role="tab">
-      <i class="ti ti-user-plus" aria-hidden="true"></i> Register
+      <i class="ti ti-user-plus" aria-hidden="true"></i> Enrolment
     </button>
   </nav>
 </header>
@@ -641,7 +641,7 @@ footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
               <input type="text" id="reg_name" placeholder="Your full name" required>
             </div>
             <div class="form-row">
-              <label class="form-label">Email</label>
+              <label class="form-label">Email ID</label>
               <input type="email" id="reg_email" placeholder="email@example.com" required autocomplete="email">
             </div>
             <div class="form-row">
@@ -656,7 +656,50 @@ footer{background:var(--navy-dark);padding:14px 16px;margin-top:auto}
               <label class="form-label">Class</label>
               <select id="reg_class" required>
                 <option value="">Select class</option>
-                <option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option><option>Dropper</option><option>Engineering</option>
+                 <!-- School Classes -->
+    <option value="Class 6">Class 6</option>
+    <option value="Class 7">Class 7</option>
+    <option value="Class 8">Class 8</option>
+
+    <!-- Class 9 -->
+    <option value="Class 9 CBSE">Class 9 - CBSE</option>
+    <option value="Class 9 State Board">Class 9 - State Board</option>
+    <option value="Class 9 ICSE">Class 9 - ICSE</option>
+
+    <!-- Class 10 -->
+    <option value="Class 10 CBSE">Class 10 - CBSE</option>
+    <option value="Class 10 State Board">Class 10 - State Board</option>
+    <option value="Class 10 ICSE">Class 10 - ICSE</option>
+
+    <!-- Class 11 -->
+    <option value="Class 11 CBSE PCM">Class 11 - CBSE (PCM)</option>
+    <option value="Class 11 CBSE PCB">Class 11 - CBSE (PCB)</option>
+    <option value="Class 11 CBSE Commerce">Class 11 - CBSE (Commerce)</option>
+    <option value="Class 11 State Board">Class 11 - State Board</option>
+
+    <!-- Class 12 -->
+    <option value="Class 12 CBSE PCM">Class 12 - CBSE (PCM)</option>
+    <option value="Class 12 CBSE PCB">Class 12 - CBSE (PCB)</option>
+    <option value="Class 12 CBSE Commerce">Class 12 - CBSE (Commerce)</option>
+    <option value="Class 12 State Board">Class 12 - State Board</option>
+
+    <!-- Competitive Exams -->
+    <option value="JEE Foundation">JEE Foundation</option>
+    <option value="JEE Main">JEE Main</option>
+    <option value="JEE Advanced">JEE Advanced</option>
+    <option value="NEET Foundation">NEET Foundation</option>
+    <option value="NEET UG">NEET UG</option>
+
+    <!-- Dropper -->
+    <option value="JEE Dropper">JEE Dropper</option>
+    <option value="NEET Dropper">NEET Dropper</option>
+
+    <!-- Higher Education -->
+    <option value="Engineering">Engineering</option>
+    <option value="Diploma">Diploma</option>
+    <option value="B.Sc">B.Sc</option>
+    <option value="BCA">BCA</option>
+    <option value="B.Com">B.Com</option>
               </select>
             </div>
             <div class="form-row">
@@ -735,6 +778,7 @@ const TEAM = [
     members:[
       {name:"Mr. Muthu Raj",role:"IT Team",tag:"Full Stack Developer | Data Analyst",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"},
       {name:"Mr. Muthuramalingam",role:"Academic Coordinator",tag:"Admin",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"},
+      {name:"Ms. Suganthi",role:"Academic Coordinator",tag:"Admin",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"},
       
       //{name:"Ms. Revathi S",role:"Content & Video Team",tag:"YouTube",bg:"#FAEEDA",text:"#7a5500",tagBg:"#854F0B",tagColor:"#fff"}
     ]
