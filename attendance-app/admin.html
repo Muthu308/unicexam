@@ -291,13 +291,13 @@
     ══════════════════════════════════════════════ */
  (function requireSession() {
 
-    const roles = ["superadmin", "admin", "faculty"];
+    const roles = ["superadmin", "admin", "faculty", "student"];
 
     let session = null;
     let sessionKey = null;
 
     for (const role of roles) {
-        const data = localStorage.getItem(user_role);
+        const data = localStorage.getItem(role);
 
         if (data) {
             try {
