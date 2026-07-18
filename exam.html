@@ -433,7 +433,59 @@ th {
     font-size:22px;
     cursor:pointer;
 }
+.exam-container{
+    width:95%;
+    margin:25px auto;
+}
 
+.exam-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.exam-table th{
+    background:#0d47a1;
+    color:#fff;
+    padding:14px;
+}
+
+.exam-table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+.exam-table tr:hover{
+    background:#f8f9fa;
+}
+
+.start-btn{
+
+    background:#28a745;
+    color:white;
+    border:none;
+    padding:8px 20px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.start-btn:hover{
+
+    background:#1f8b38;
+}
+
+.closed-btn{
+
+    background:#999;
+    color:white;
+    padding:8px 20px;
+    border-radius:6px;
+}
+    
 </style>
 </head>
 
@@ -468,13 +520,38 @@ th {
         ℹ️ Please select an exam below and click <b>Start Exam</b>
     </div>
 
-    <div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
+    <!--<div id="examList" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;"></div>
 
     <div id="examInfo"></div>
 
     <button id="startBtn" onclick="startExam()" disabled>
         Start Exam
-    </button>
+    </button>-->
+
+    <div class="exam-container">
+
+<h3>Available Examinations</h3>
+
+<table class="exam-table">
+
+<thead>
+<tr>
+<th>#</th>
+<th>Exam Name</th>
+<th>Duration</th>
+<th>Questions</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="examTableBody">
+
+</tbody>
+
+</table>
+
+</div>
 
 </div>
 
@@ -578,6 +655,144 @@ let examConfig = {};
 let allExams = [];
 let selectedExam = null;
 
+function openExamModal(index){
+
+selectedExam=allExams[index];
+
+document.getElementById("modalExamName").innerHTML=
+selectedExam.exam_name;
+
+let html="<ul>";
+
+selectedExam.instructions.forEach(x=>{
+
+html+="<li>"+x+"</li>";
+
+});
+
+html+="</ul>";
+
+document.getElementById("instructionArea").innerHTML=html;
+
+document.getElementById("examPassword").value="";
+
+document.getElementById("agree").checked=false;
+
+document.getElementById("beginExam").disabled=true;
+
+document.getElementById("examModal").style.display="flex";
+
+}
+
+document.addEventListener("change",function(e){
+
+if(e.target.id=="agree"){
+
+document.getElementById("beginExam").disabled=
+
+!e.target.checked;
+
+}
+
+});
+
+function closeModal(){
+
+document.getElementById("examModal").style.display="none";
+
+}
+
+function validatePassword(){
+
+let pwd=document.getElementById("examPassword").value;
+
+if(pwd!=selectedExam.password){
+
+alert("Invalid Password");
+
+return;
+
+}
+
+closeModal();
+
+startExam();
+
+}    
+
+      fetch("/exam_config.json")
+.then(res=>res.json())
+.then(data=>{
+
+allExams=data;
+
+let html="";
+
+data.forEach((exam,index)=>{
+
+html+=`
+
+<tr>
+
+<td>${index+1}</td>
+
+<td>
+<b>${exam.exam_name}</b><br>
+<small>${exam.exam_module}</small>
+</td>
+
+<td>${Math.floor(exam.duration/60)} Min</td>
+
+<td>${exam.total_questions || "-"}</td>
+
+<td>
+
+${
+exam.status=="yes"
+
+?
+
+'<span style="color:green;font-weight:bold;">Active</span>'
+
+:
+
+'<span style="color:red;font-weight:bold;">Closed</span>'
+
+}
+
+</td>
+
+<td>
+
+${
+exam.status=="yes"
+
+?
+
+`<button
+class="start-btn"
+onclick="openExamModal(${index})">
+Start
+</button>`
+
+:
+
+'<span class="closed-btn">Closed</span>'
+
+}
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("examTableBody").innerHTML=html;
+
+});
+/*
 fetch("/exam_config.json")
 .then(res => res.json())
 .then(data => {
@@ -614,6 +829,8 @@ fetch("/exam_config.json")
     document.getElementById("examList").innerHTML = html;
 });
 
+
+  
     function selectExam(index){
 
     selectedExam = allExams[index];
@@ -638,7 +855,7 @@ fetch("/exam_config.json")
 
     document.getElementById("startBtn").disabled = (selectedExam.status !== "yes");
 }
-
+*/
 // LOAD QUESTIONS
 //fetch("questions_updated.json")
 //.then(res=>res.json())
@@ -656,9 +873,9 @@ function startExam(){
         alert("Enter your Roll Number/ID"); return;
     }
 
-    if(!selectedExam){
-        alert("Select exam first"); return;
-    }
+   // if(!selectedExam){
+   //     alert("Select exam first"); return;
+   // }
 
     if(selectedExam.status !== "yes"){
         alert("Exam not active"); return;
@@ -1333,5 +1550,58 @@ function submitExam(){
 }
 </script>
 
+<div class="modal" id="examModal">
+
+<div class="modal-content">
+
+<span class="close"
+onclick="closeModal()">
+&times;
+</span>
+
+<h2 id="modalExamName"></h2>
+
+<div id="instructionArea"></div>
+
+<hr>
+
+<label>
+
+Exam Password
+
+</label>
+
+<input
+type="password"
+id="examPassword"
+class="form-control">
+
+<br>
+
+<label>
+
+<input
+type="checkbox"
+id="agree">
+
+I have read all instructions.
+
+</label>
+
+<br><br>
+
+<button
+id="beginExam"
+onclick="validatePassword()"
+disabled>
+
+Start Examination
+
+</button>
+
+</div>
+
+</div>
+    
 </body>
 </html>
