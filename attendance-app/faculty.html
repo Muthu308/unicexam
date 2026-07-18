@@ -272,7 +272,7 @@
     let sessionKey = null;
 
     for (const role of roles) {
-        const data = localStorage.getItem(user_role);
+        const data = localStorage.getItem(role);
 
         if (data) {
             try {
@@ -293,20 +293,16 @@
 
 })();
 
-document.getElementById("adminNameLabel").textContent =
+    document.getElementById("facultyNameLabel").textContent =
     window.__session.name || "User";
 
-document.getElementById("adminLogoutLink").addEventListener("click", function (e) {
-
+document.getElementById("facultyLogoutLink").addEventListener("click", function (e) {
     e.preventDefault();
 
     if (confirm("Are you sure you want to logout?")) {
-
         localStorage.removeItem(window.__sessionKey);
-
         window.location.href = "index.html";
     }
-
 });
 
     const API = window.API_BASE || "";
