@@ -183,8 +183,8 @@ body{background:#f0f4fb;color:#1e293b}
 .att-empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
 
 /* Upcoming classes */
-.upcoming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.upcoming-card{background:#fff;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);border:1px solid #edf1f7;display:flex;gap:12px;padding:12px;transition:.2s}
+.upcoming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.upcoming-card{background:#fff;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.06);border:1px solid #edf1f7;display:flex;gap:12px;padding:12px;transition:.2s;position:relative}
 .upcoming-card:hover{box-shadow:0 4px 14px rgba(14,30,74,.10)}
 .upcoming-card.today{border-color:#f0b800;background:linear-gradient(135deg,#fffbeb,#fff)}
 .upcoming-date{flex-shrink:0;width:52px;height:52px;border-radius:10px;background:#eff6ff;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #bfdbfe}
@@ -199,7 +199,31 @@ body{background:#f0f4fb;color:#1e293b}
 .upcoming-links a:hover{text-decoration:underline}
 .upcoming-today-tag{display:inline-block;background:#f0b800;color:#0e1e4a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
 
-/* Section box */
+/* Class status banner (Cancelled / Postponed / Completed / Prepone) */
+.class-status-banner{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:7px;margin-top:7px}
+.class-status-banner.cancelled{background:#fee2e2;color:#b91c1c}
+.class-status-banner.postponed{background:#fef3c7;color:#92400e}
+.class-status-banner.completed{background:#e0e7ff;color:#3730a3}
+.class-status-banner.prepone{background:#dcfce7;color:#15803d}
+.upcoming-card.blocked{opacity:.75}
+.upcoming-card.blocked::after{content:"";position:absolute;inset:0;border-radius:12px;pointer-events:none}
+.cs-pill{display:inline-flex;align-items:center;gap:3px;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px}
+.cs-pill.cancelled{background:#fee2e2;color:#b91c1c}
+.cs-pill.postponed{background:#fef3c7;color:#92400e}
+.cs-pill.completed{background:#e0e7ff;color:#3730a3}
+.cs-pill.prepone{background:#dcfce7;color:#15803d}
+
+/* Resource links (assignment / worksheet / homework) */
+.resource-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.resource-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;padding:5px 10px;border-radius:7px;text-decoration:none;border:1px solid transparent;transition:.15s}
+.resource-chip.assignment{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+.resource-chip.worksheet{background:#f0fdf4;color:#15803d;border-color:#bbf7d0}
+.resource-chip.homework{background:#fdf2f8;color:#9d174d;border-color:#fbcfe8}
+.resource-chip.syllabus{background:#fffbeb;color:#92400e;border-color:#fde68a}
+.resource-chip:hover{filter:brightness(.95)}
+.resource-chip i{font-size:12px}
+
+  /* Section box */
 .sec-box{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 5px rgba(0,0,0,.06);margin-bottom:18px}
 .sec-box h2{font-size:14px;font-weight:600;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
 .sec-box h2 i{font-size:17px;color:#f0b800}
@@ -319,8 +343,10 @@ th.total-group{background:#7c3aed !important}
   <nav class="sb-nav">
     <div class="nav-label">Main</div>
     <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
+    <button class="nav-item" onclick="showPage('upcoming',this)"><i class="ti ti-calendar-time"></i> Upcoming Classes</button>
     <button class="nav-item" onclick="showPage('attendance',this)"><i class="ti ti-calendar-check"></i> Attendance</button>
-    <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
+   <div class="nav-label">Academics</div>
+ <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
     <button class="nav-item" onclick="showPage('questionwise',this)"><i class="ti ti-list-numbers"></i> Question-wise Results</button>
     <button class="nav-item" onclick="showPage('summary',this)"><i class="ti ti-trending-up"></i> Performance Summary</button>
     <button class="nav-item" onclick="showPage('analysis',this)"><i class="ti ti-clipboard-list"></i> Exam Analysis</button>
@@ -341,6 +367,7 @@ th.total-group{background:#7c3aed !important}
   </div>
 
   <!-- PROFILE -->
+<!-- PROFILE -->
   <div class="page active" id="page-profile">
     <div class="pc-wrap">
       <div class="pc-hero">
@@ -351,6 +378,15 @@ th.total-group{background:#7c3aed !important}
           <div class="pc-badge"><i class="ti ti-circle-check" style="font-size:12px"></i> Active</div>
         </div>
       </div>
+
+      <!-- Quick stats strip on profile (at-a-glance progress) -->
+      <div class="cards-row" id="profileQuickStats">
+        <div class="sc b"><h3>Exams Taken</h3><p>—</p></div>
+        <div class="sc a"><h3>Avg %</h3><p>—</p></div>
+        <div class="sc g"><h3>Attendance %</h3><p>—</p></div>
+        <div class="sc p"><h3>Upcoming Classes</h3><p>—</p></div>
+      </div>
+
       <div class="pc-grid">
         <div class="pc-section">
           <div class="pc-sec-hdr"><i class="ti ti-user"></i><span>Personal information</span></div>
@@ -367,18 +403,36 @@ th.total-group{background:#7c3aed !important}
           <div class="pc-row"><div class="pc-lbl"><i class="ti ti-circle-check"></i>Status</div><div class="pc-val"><span class="pc-status"><i class="ti ti-point-filled" style="font-size:10px"></i> Active</span></div></div>
         </div>
       </div>
+
+      <!-- Next class + next test, at a glance -->
+      <div class="pc-grid" style="margin-top:18px">
+        <div class="pc-section">
+          <div class="pc-sec-hdr"><i class="ti ti-calendar-time"></i><span>Next class</span></div>
+          <div id="profileNextClass" style="padding:16px 18px;font-size:12.5px;color:#94a3b8">Loading…</div>
+        </div>
+        <div class="pc-section">
+          <div class="pc-sec-hdr"><i class="ti ti-clipboard-text"></i><span>Next test</span></div>
+          <div id="profileNextTest" style="padding:16px 18px;font-size:12.5px;color:#94a3b8">Loading…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPCOMING CLASSES (own tab) -->
+  <div class="page" id="page-upcoming">
+    <div class="sec-box">
+      <h2><i class="ti ti-calendar-time"></i> Upcoming Classes</h2>
+      <p style="font-size:12px;color:#64748b;margin:-6px 0 14px">
+        Your scheduled classes, resource links, and live status (cancelled / postponed / prepone) all in one place.
+      </p>
+      <div id="upcomingClassesContent">
+        <div class="att-empty">Loading upcoming classes…</div>
+      </div>
     </div>
   </div>
 
   <!-- ATTENDANCE -->
   <div class="page" id="page-attendance">
-    <div class="sec-box">
-      <h2><i class="ti ti-calendar-time"></i> Upcoming Classes</h2>
-      <div id="upcomingClassesContent">
-        <div class="att-empty">Loading upcoming classes…</div>
-      </div>
-    </div>
-
     <div class="cards-row" id="attSummaryCards">
       <div class="sc"><h3>Loading</h3><p>—</p></div>
     </div>
@@ -405,7 +459,7 @@ th.total-group{background:#7c3aed !important}
       </div>
     </div>
   </div>
-
+  
   <!-- EXAM RESULTS -->
   <div class="page" id="page-results">
     <div class="sec-box">
@@ -831,6 +885,53 @@ async function loadStudentResults(){
   }
 }
 
+ function classStatusPill(status){
+  const info = classStatusInfo(status);
+  if(!info) return "";
+  return `<span class="cs-pill ${info.cls}"><i class="ti ${info.icon}"></i> ${status}</span>`;
+}
+  
+/* ══ Profile quick stats (exams / avg% / attendance% / upcoming count) ══ */
+function update(){
+  const box = $("profileQuickStats");
+  if(!box) return;
+  const total = allResults.length;
+  const avgPct = total ? (allResults.reduce((s,r)=>s+Number(r.percentage),0)/total).toFixed(1) : "—";
+  const attTotal = attendanceRecords.length;
+  const attPresent = attendanceRecords.filter(r=>r.status==="Present").length;
+  const attPct = attTotal ? Math.round((attPresent/attTotal)*100) : "—";
+  const upcomingCount = upcomingClasses.length;
+  //const pendingTasks = allTasks.filter(t => ["pending","overdue"].includes(taskStatusOf(t))).length;<div class="sc r"><h3>Pending Tasks</h3><p>${pendingTasks}</p></div>
+  box.innerHTML = `
+    <div class="sc b"><h3>Exams Taken</h3><p>${total}</p></div>
+    <div class="sc a"><h3>Avg %</h3><p>${avgPct}${avgPct!=="—"?"%":""}</p></div>
+    <div class="sc g"><h3>Attendance %</h3><p>${attPct}${attPct!=="—"?"%":""}</p></div>
+    <div class="sc p"><h3>Upcoming Classes</h3><p>${upcomingCount}</p></div>
+    `;
+
+  const nextClassBox = $("profileNextClass");
+  if(nextClassBox){
+    const nc = upcomingClasses[0];
+    nextClassBox.innerHTML = nc
+      ? `<div style="font-weight:700;color:#0e1e4a;font-size:13px">${nc.subject||"—"}</div>
+         <div style="color:#64748b;margin-top:2px">${nc.class_date||"—"} · ${nc.start_time||"—"}${nc.end_time?"–"+nc.end_time:""}</div>
+         <div style="color:#94a3b8;margin-top:2px">${nc.topic||""}</div>
+         ${nc.class_status?classStatusPill(nc.class_status):""}`
+      : `No upcoming classes scheduled.`;
+  }
+  const nextTestBox = $("profileNextTest");
+  if(nextTestBox){
+    const nt = testSchedules[0];
+    nextTestBox.innerHTML = nt
+      ? `<div style="font-weight:700;color:#0e1e4a;font-size:13px">${nt.test_name||"—"}</div>
+         <div style="color:#64748b;margin-top:2px">${nt.test_date||"—"} · ${nt.start_time||"—"}</div>
+         ${nt.syllabus_link?`<a href="${nt.syllabus_link}" target="_blank" style="color:#185FA5;font-weight:500;font-size:11.5px">View syllabus →</a>`:""}`
+      : `No test scheduled yet.`;
+  }
+}
+
+
+  
 /* ══ Performance Summary ══ */
 function buildSummary(){
   const total=allResults.length;
