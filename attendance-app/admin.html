@@ -111,6 +111,21 @@
   }
   .filter-summary { font-size: 0.8rem; color: #888; margin: -4px 0 12px; }
 
+  /* ---- Class status badges ---- */
+  .class-status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .class-status-scheduled { background: #e6f7ec; color: #1a7a3a; }
+  .class-status-cancelled { background: #fdeaea; color: #b3261e; }
+  .class-status-postponed { background: #fff6e0; color: #8a6100; }
+  .class-status-prepone { background: #eef1fd; color: #3730a3; }
+  .class-status-completed { background: #eceef1; color: #444; }
+
   @media (max-width: 720px) {
     .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
     .tabs { flex-wrap: wrap; }
@@ -133,13 +148,14 @@
       <a href="reports.html">Reports Class-Attendance</a>
       <a href="https://unicexamschool.vercel.app/upadmin.html">Exam Reports</a>
       <a href="https://unicexamschool.vercel.app/result-summary.html">Summary Exam Result</a>
+      <a href="#" id="adminLogoutLink" style="margin-left:auto;">Logout (<span id="adminNameLabel">Admin</span>)</a>
     </nav>
   </div>
 
   <main>
     <div class="view-tabs">
       <button type="button" class="view-tab active" data-view="addClass">Add / Edit Class</button>
-      <button type="button" class="view-tab" data-view="existingClasses">Existing Classes</button>
+      <button type="button" class="view-tab" data-view="existingClasses">Class Directory</button>
     </div>
 
     <div class="view-panel active" id="panelAddClass">
@@ -150,10 +166,13 @@
           <input type="text" id="session" placeholder="e.g. 2026-Sem1-BatchA" required />
 
           <label for="subject">Subject</label>
-          <input type="text" id="subject" placeholder="e.g. Data Structures" required />
+          <input type="text" id="subject" list="subjectOptions" placeholder="Search or pick a subject, or type your own…" autocomplete="off" required />
+          <datalist id="subjectOptions"></datalist>
 
           <label for="topic">Topic</label>
-          <input type="text" id="topic" placeholder="e.g. Binary Search Trees" />
+          <input type="text" id="topic" list="topicOptions" placeholder="Search or pick a topic, or type your own…" autocomplete="off" />
+          <datalist id="topicOptions"></datalist>
+          <div class="hint" id="topicSourceHint"></div>
 
           <div class="roster-row" style="grid-template-columns: repeat(3, 1fr); gap: 16px;">
             <div>
@@ -168,7 +187,17 @@
               <label for="endTime">End time (optional)</label>
               <input type="text" id="endTime" placeholder="HH:MM (24h)" />
             </div>
-          </div>          
+          </div>
+
+          <label for="classStatus">Class status</label>
+          <select id="classStatus">
+            <option value="Scheduled">Scheduled</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Postponed">Postponed</option>
+            <option value="Prepone">Prepone (moved earlier)</option>
+            <option value="Completed">Completed / Over</option>
+          </select>
+          <div class="hint">Use this to mark a class as cancelled, postponed, moved earlier (prepone), or completed once it's over.</div>
 
           <label for="facultySelect">Faculty name — pick from list…</label>
           <select id="facultySelect">
@@ -217,12 +246,20 @@
 
     <div class="view-panel" id="panelExistingClasses">
       <div class="card">
-        <h2>Existing classes</h2>
+        <h2>Class Directory</h2>
 
         <div class="filter-bar">
           <input type="search" id="filterSearch" placeholder="Search subject, topic, session, faculty…" />
           <select id="filterFaculty"><option value="">All faculty</option></select>
           <select id="filterSubject"><option value="">All subjects</option></select>
+          <select id="filterStatus">
+            <option value="">All statuses</option>
+            <option value="Scheduled">Scheduled</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Postponed">Postponed</option>
+            <option value="Prepone">Prepone</option>
+            <option value="Completed">Completed / Over</option>
+          </select>
           <div class="date-range-group">
             <span>Date</span>
             <input type="text" id="filterDateFrom" placeholder="From (YYYY-MM-DD)" />
@@ -244,6 +281,59 @@
 
   <script src="config.js"></script>
   <script>
+    /* ══════════════════════════════════════════════
+       SESSION GUARD
+       Assumes the login page (index.html) stores the
+       logged-in admin as:
+         localStorage.setItem("admin", JSON.stringify({name, user_id, ...}))
+       If nothing is there, bounce to login before anything
+       on this page runs or fetches data.
+    ══════════════════════════════════════════════ */
+ (function requireSession() {
+
+    const roles = ["superadmin", "admin", "faculty", "student"];
+
+    let session = null;
+    let sessionKey = null;
+
+    for (const role of roles) {
+        const data = localStorage.getItem(role);
+
+        if (data) {
+            try {
+                session = JSON.parse(data);
+                sessionKey = role;
+                break;
+            } catch (e) {}
+        }
+    }
+
+    if (!session) {
+        window.location.href = "index.html";
+        throw new Error("No active session.");
+    }
+
+    window.__session = session;
+    window.__sessionKey = sessionKey;
+
+})();
+
+document.getElementById("adminNameLabel").textContent =
+    window.__session.name || "User";
+
+document.getElementById("adminLogoutLink").addEventListener("click", function (e) {
+
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to logout?")) {
+
+        localStorage.removeItem(window.__sessionKey);
+
+        window.location.href = "index.html";
+    }
+
+});
+
     const API = window.API_BASE || "";
     let facultyOptions = [];
     let studentOptions = [];
@@ -258,6 +348,55 @@
 
     function parsePastedIds(raw) {
       return raw.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
+    }
+
+    // ---- Subject / Topic searchable dropdowns (NEET/JEE syllabus, backed by topics.json) ----
+    let subjectTopicData = { subjects: [], topics: {} };
+
+    async function loadSubjectTopicOptions() {
+      try {
+        const res = await fetch("../topics.json");
+        subjectTopicData = await res.json();
+      } catch (err) {
+        subjectTopicData = { subjects: [], topics: {} };
+      }
+
+      const subjectList = document.getElementById("subjectOptions");
+      subjectList.innerHTML = (subjectTopicData.subjects || [])
+        .map((s) => `<option value="${escapeHtml(s)}"></option>`)
+        .join("");
+
+      populateTopicOptions(""); // start with the full topic list until a subject is picked
+    }
+
+    function populateTopicOptions(subjectValue) {
+      const topicList = document.getElementById("topicOptions");
+      const hint = document.getElementById("topicSourceHint");
+      const topicsBySubject = subjectTopicData.topics || {};
+
+      const matchedKey = Object.keys(topicsBySubject).find(
+        (k) => k.toLowerCase() === (subjectValue || "").trim().toLowerCase()
+      );
+
+      const topics = matchedKey
+        ? topicsBySubject[matchedKey]
+        : Object.values(topicsBySubject).flat();
+
+      topicList.innerHTML = [...new Set(topics)]
+        .map((t) => `<option value="${escapeHtml(t)}"></option>`)
+        .join("");
+
+      hint.textContent = matchedKey
+        ? `Showing ${topics.length} standard ${matchedKey} topics — or type your own.`
+        : "Pick a subject above to narrow this list, or just type any topic.";
+    }
+
+    document.getElementById("subject").addEventListener("input", (e) => populateTopicOptions(e.target.value));
+
+    function classStatusBadge(status) {
+      const s = status || "Scheduled";
+      const cls = "class-status-" + s.toLowerCase();
+      return `<span class="class-status-badge ${cls}">${escapeHtml(s === "Completed" ? "Completed / Over" : s)}</span>`;
     }
 
     // ---- Tab switching ----
@@ -368,7 +507,7 @@
     });
 
     // ---------------------------------------------------------------
-    // Existing classes: fetch + filter bar (search / faculty / subject / date range)
+    // Existing classes: fetch + filter bar (search / faculty / subject / status / date range)
     // ---------------------------------------------------------------
 
     async function loadClasses() {
@@ -423,12 +562,14 @@
       const q = document.getElementById("filterSearch").value.trim().toLowerCase();
       const faculty = document.getElementById("filterFaculty").value;
       const subject = document.getElementById("filterSubject").value;
+      const status = document.getElementById("filterStatus").value;
       const dateFrom = document.getElementById("filterDateFrom").value.trim();
       const dateTo = document.getElementById("filterDateTo").value.trim();
 
       return classes.filter((c) => {
         if (faculty && c.faculty_name !== faculty) return false;
         if (subject && c.subject !== subject) return false;
+        if (status && (c.class_status || "Scheduled") !== status) return false;
         if (dateFrom && (!c.class_date || c.class_date < dateFrom)) return false;
         if (dateTo && (!c.class_date || c.class_date > dateTo)) return false;
         if (q) {
@@ -459,6 +600,7 @@
         document.getElementById("filterSearch").value.trim() ||
         document.getElementById("filterFaculty").value ||
         document.getElementById("filterSubject").value ||
+        document.getElementById("filterStatus").value ||
         document.getElementById("filterDateFrom").value.trim() ||
         document.getElementById("filterDateTo").value.trim();
 
@@ -484,7 +626,7 @@
         <thead>
           <tr>
             <th>ID</th><th>Date / Time</th><th>Session</th><th>Subject</th><th>Topic</th>
-            <th>Faculty</th><th>Students</th><th>Links</th><th>Action</th>
+            <th>Status</th><th>Faculty</th><th>Students</th><th>Links</th><th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -497,6 +639,7 @@
               <td>${escapeHtml(c.session)}</td>
               <td>${escapeHtml(c.subject)}</td>
               <td>${escapeHtml(c.topic || "—")}</td>
+              <td>${classStatusBadge(c.class_status)}</td>
               <td>${escapeHtml(c.faculty_name)}</td>
               <td class="mono">${(c.student_ids || []).join(", ")}</td>
               <td>
@@ -526,16 +669,27 @@
     document.getElementById("filterSearch").addEventListener("input", renderClassTable);
     document.getElementById("filterFaculty").addEventListener("change", renderClassTable);
     document.getElementById("filterSubject").addEventListener("change", renderClassTable);
+    document.getElementById("filterStatus").addEventListener("change", renderClassTable);
     document.getElementById("filterDateFrom").addEventListener("input", renderClassTable);
     document.getElementById("filterDateTo").addEventListener("input", renderClassTable);
     document.getElementById("clearFilters").addEventListener("click", () => {
       document.getElementById("filterSearch").value = "";
       document.getElementById("filterFaculty").value = "";
       document.getElementById("filterSubject").value = "";
+      document.getElementById("filterStatus").value = "";
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
       renderClassTable();
     });
+
+    function resetClassForm() {
+      document.getElementById("classForm").reset();
+      document.getElementById("classStatus").value = "Scheduled";
+      editingClassId = null;
+      document.getElementById("submitBtn").textContent = "Save class";
+      document.getElementById("cancelEditBtn").style.display = "none";
+      renderStudentCheckboxes([]);
+    }
 
     async function editClass(id) {
       const c = classes.find((x) => Number(x.id) === Number(id));
@@ -545,11 +699,13 @@
 
       document.getElementById("session").value = c.session || "";
       document.getElementById("subject").value = c.subject || "";
+      populateTopicOptions(c.subject || "");
       document.getElementById("topic").value = c.topic || "";
 
       document.getElementById("classDate").value = c.class_date || "";
       document.getElementById("startTime").value = c.start_time || "";
       document.getElementById("endTime").value = c.end_time || "";
+      document.getElementById("classStatus").value = c.class_status || "Scheduled";
 
       document.getElementById("schoolId").value = c.school_id || "";
       document.getElementById("facultyText").value = c.faculty_name || "";
@@ -580,13 +736,7 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    document.getElementById("cancelEditBtn").addEventListener("click", () => {
-      editingClassId = null;
-      document.getElementById("classForm").reset();
-      document.getElementById("submitBtn").textContent = "Save class";
-      document.getElementById("cancelEditBtn").style.display = "none";
-      renderStudentCheckboxes([]);
-    });
+    document.getElementById("cancelEditBtn").addEventListener("click", resetClassForm);
 
     document.getElementById("classForm").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -611,6 +761,7 @@
         class_date: document.getElementById("classDate").value.trim() || null,
         start_time: document.getElementById("startTime").value.trim() || null,
         end_time: document.getElementById("endTime").value.trim() || null,
+        class_status: document.getElementById("classStatus").value || "Scheduled",
         faculty_user_id,
         faculty_name,
         student_ids,
@@ -646,9 +797,7 @@
 
         msg.className = "msg ok";
         msg.textContent = editingClassId ? "Class updated successfully." : `Saved — class #${data.id} created.`;
-        editingClassId = null;
-        document.getElementById("submitBtn").textContent = "Save class";
-        document.getElementById("cancelEditBtn").style.display = "none";
+        resetClassForm();
         loadClasses();
       } catch (err) {
         msg.className = "msg err";
@@ -676,6 +825,7 @@
     }
 
     (async () => {
+      await loadSubjectTopicOptions();
       await loadPeople();
       await loadClasses();
     })();
