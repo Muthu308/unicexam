@@ -213,7 +213,10 @@ export default async function handler(req, res) {
       }
 
       // Always bump updated_at server-side on any update.
-      fields.updated_at = new Date().toISOString();
+    //  fields.updated_at = new Date().toISOString();
+      fields.updated_at = new Date().toLocaleString("sv-SE", {
+  timeZone: "Asia/Kolkata",
+}).replace(" ", "T");
 
       const mutation = `
         mutation UpdateUser($user_id: Int!, $set: user_student_set_input!) {
