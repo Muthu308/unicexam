@@ -117,6 +117,19 @@
     font-size: 0.85rem;
   }
 
+  /* ---- Class status banner (blocks attendance when needed) ---- */
+  .class-status-banner {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .class-status-banner.cancelled { background: #fdeaea; color: #b3261e; border: 1px solid #f3c5c2; }
+  .class-status-banner.postponed { background: #fff6e0; color: #8a6100; border: 1px solid #f4dfa0; }
+  .class-status-banner.prepone { background: #eef1fd; color: #3730a3; border: 1px solid #c7c9f7; }
+  .class-status-banner.completed { background: #eceef1; color: #444; border: 1px solid #dcdfe4; }
+
   /* ---- Filter / search bars ---- */
   .filter-bar {
     display: flex;
@@ -174,6 +187,7 @@
       <a href="reports.html">Reports Class-Attendance</a>
       <a href="https://unicexamschool.vercel.app/upadmin.html">Exam Reports</a>
       <a href="https://unicexamschool.vercel.app/result-summary.html">Summary Exam Result</a>
+      <a href="#" id="facultyLogoutLink" style="margin-left:auto;">Logout (<span id="facultyNameLabel">Faculty</span>)</a>
      <!-- <a href="student.html">Student</a>-->
     </nav>
   </div>
@@ -188,6 +202,7 @@
         <option value="">Loading classes…</option>
       </select>
       <div id="classMeta" class="hint"></div>
+      <div id="classStatusBanner"></div>
       <div id="classLinks" class="hint"></div>
     </div>
 
@@ -241,6 +256,59 @@
 
   <script src="config.js"></script>
   <script>
+    /* ══════════════════════════════════════════════
+       SESSION GUARD
+       Assumes the login page (index.html) stores the
+       logged-in faculty member as:
+         localStorage.setItem("faculty", JSON.stringify({name, user_id, school_id, ...}))
+       If nothing is there, bounce to login before anything
+       on this page runs or fetches data.
+    ══════════════════════════════════════════════ */
+(function requireSession() {
+
+    const roles = ["superadmin", "admin", "faculty", "student"];
+
+    let session = null;
+    let sessionKey = null;
+
+    for (const role of roles) {
+        const data = localStorage.getItem(role);
+
+        if (data) {
+            try {
+                session = JSON.parse(data);
+                sessionKey = role;
+                break;
+            } catch (e) {}
+        }
+    }
+
+    if (!session) {
+        window.location.href = "index.html";
+        throw new Error("No active session.");
+    }
+
+    window.__session = session;
+    window.__sessionKey = sessionKey;
+
+})();
+
+document.getElementById("adminNameLabel").textContent =
+    window.__session.name || "User";
+
+document.getElementById("adminLogoutLink").addEventListener("click", function (e) {
+
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to logout?")) {
+
+        localStorage.removeItem(window.__sessionKey);
+
+        window.location.href = "index.html";
+    }
+
+});
+
     const API = window.API_BASE || "";
     let currentClass = null;
     let editingRecordId = null; // set when editing an existing history record
@@ -276,6 +344,34 @@
       return div.innerHTML;
     }
 
+    // ---- Class status banner + submit lock ----
+    // Cancelled / Postponed / Completed classes shouldn't have attendance taken.
+    // Prepone (moved earlier) is just informational — attendance is still allowed.
+    function classStatusInfo(status) {
+      switch (status) {
+        case "Cancelled": return { blocks: true, cls: "cancelled", text: "This class has been CANCELLED. Attendance can't be submitted for it." };
+        case "Postponed": return { blocks: true, cls: "postponed", text: "This class has been POSTPONED. Attendance can't be submitted until it's rescheduled." };
+        case "Completed": return { blocks: false, cls: "completed", text: "This class is marked COMPLETED / OVER." };
+        case "Prepone": return { blocks: false, cls: "prepone", text: "This class has been moved EARLIER (prepone) — check the new date/time above." };
+        default: return null;
+      }
+    }
+
+    function renderClassStatusBanner(cls) {
+      const info = classStatusInfo(cls.class_status);
+      const banner = document.getElementById("classStatusBanner");
+      const submitBtn = document.getElementById("submitAttendance");
+      if (!info) {
+        banner.innerHTML = "";
+        submitBtn.disabled = false;
+        submitBtn.title = "";
+        return;
+      }
+      banner.innerHTML = `<div class="class-status-banner ${info.cls}">${info.text}</div>`;
+      submitBtn.disabled = info.blocks;
+      submitBtn.title = info.blocks ? "Attendance is disabled while this class is " + cls.class_status.toLowerCase() + "." : "";
+    }
+
     // ---- Tab switching ----
     document.querySelectorAll(".view-tab").forEach((btn) => {
       btn.addEventListener("click", () => switchToTab(btn.dataset.view));
@@ -303,7 +399,7 @@
           classes
             .map(
               (c) =>
-                `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})</option>`
+                `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})${c.class_status && c.class_status !== "Scheduled" ? " — " + escapeHtml(c.class_status) : ""}</option>`
             )
             .join("");
         select.dataset.classes = JSON.stringify(classes);
@@ -359,6 +455,8 @@
 
       document.getElementById("classMeta").textContent =
         `${cls.class_date || "No date set"} ${cls.start_time || ""}${cls.end_time ? "–" + cls.end_time : ""}  •  Topic: ${cls.topic || "—"}  •  Faculty: ${cls.faculty_name}  •  ${uniqueIds.length} students`;
+
+      renderClassStatusBanner(cls);
 
       const links = [];
       if (cls.syllabus_link) links.push(`<a href="${escapeHtml(cls.syllabus_link)}" target="_blank">Syllabus</a>`);
@@ -539,6 +637,7 @@
         document.getElementById("rosterCard").style.display = "none";
         document.getElementById("historyCard").style.display = "none";
         document.getElementById("viewTabs").style.display = "none";
+        document.getElementById("classStatusBanner").innerHTML = "";
         return;
       }
       const classes = JSON.parse(e.target.dataset.classes || "[]");
@@ -584,8 +683,21 @@
         msg.textContent = isEdit
           ? `Attendance record #${editingRecordId} updated.`
           : `Attendance saved for class #${currentClass.id} at ${new Date(data.marked_at).toLocaleString()}.`;
+
+        const wasEdit = isEdit;
         clearEditingState();
         loadHistory(currentClass.id);
+
+        // Once a fresh (non-edit) submission succeeds, reset the roster form
+        // back to defaults so the next class doesn't inherit stale selections,
+        // and so re-opening this same class starts clean rather than showing
+        // what was just submitted.
+        if (!wasEdit) {
+          const cls = currentClass;
+          await renderRoster(cls);
+          msg.className = "msg ok";
+          msg.textContent = `Attendance saved for class #${cls.id}. Form has been reset.`;
+        }
       } catch (err) {
         msg.className = "msg err";
         msg.textContent = err.message;
