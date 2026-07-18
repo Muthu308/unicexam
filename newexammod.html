@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIC Academy Exam</title>
+
+<style>
+/* RESET */
+body {
+    margin: 0;
+    font-family: Arial;
+    padding-bottom: 70px; /* space for footer (desktop) */
+}
+
+/* HEADER */
+.header {
+    background: #0d1b2a;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo { font-weight: bold; }
+.tagline { font-size: 12px; }
+
+/* LAYOUT */
+.container {
+    display: flex;
+}
+
+.left {
+    width: 70%;
+    padding: 10px;
+    overflow: auto;
+    scrollbar-width: thin;
+    padding-bottom: 50px;
+}
+
+.right {
+    width: 30%;
+    background: #f1f1f1;
+    padding: 10px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    .container {
+        flex-direction: column;
+    }
+
+    .left, .right {
+        width: 100%;
+    }
+
+    body {
+        padding-bottom: 0; /* remove fixed footer space */
+    }
+}
+
+/* PALETTE */
+.palette {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 5px;
+    border: 1px solid #ccc;
+}
+
+.palette button {
+    height: 35px;
+    border: none;
+    border-radius: 5px;
+}
+
+/* COLORS (NTA STYLE) */
+.answered { background: #2ecc71; color: white; }
+.not-answered { background: #e74c3c; color: white; }
+.visited { background: #f39c12; color: white; }
+.current { background: #8e44ad; color: white; }
+.review { background: #3498db; color: white; }
+
+/* FOOTER CONTROLS (DESKTOP) */
+.footer-controls {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    z-index: 1000;
+}
+
+/* MOBILE FIX (VERY IMPORTANT) */
+@media(max-width:768px){
+
+    .footer-controls {
+        position: relative;   /* remove fixed */
+        bottom: auto;
+        width: 100%;
+        margin-top: 10px;
+        border-top: none;
+    }
+
+    .footer-controls button {
+        width: 45%;
+        margin: 5px 2%;
+    }
+}
+
+/* BUTTONS */
+button {
+    margin: 5px;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* IMAGE STYLING */
+.question-image-container {
+    max-width: 720px;
+    margin: 2px;
+}
+
+.question-image {
+    max-width: 100%;
+    height: auto;              /* maintain ratio */
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 2px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* IMAGE HOVER (OPTIONAL ZOOM EFFECT) */
+.question-image:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+    cursor: zoom-in;
+}
+
+/* PREVIEW */
+.preview-container {
+    padding: 10px;
+}
+
+.preview-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* SCROLL IMPROVEMENT */
+.left::-webkit-scrollbar {
+    width: 6px;
+}
+.left::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 5px;
+}
+.question-header {
+    background:#ecf0f1;
+    padding:6px 10px;
+    font-weight:bold;
+    border-left:5px solid #3498db;
+    margin-bottom:10px;
+}
+.exam-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    width: 260px;
+    background: white;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.exam-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+.exam-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.exam-info {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.exam-status {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.active {
+    color: green;
+}
+
+.closed {
+    color: red;
+}
+.exam-card.selected {
+    border: 2px solid #3498db;
+}
+#examInfo {
+    max-width: 720px;
+    margin: 20px auto;              /* center */
+    padding: 15px 20px;
+    background: #f8fbff;            /* light blue */
+    border-left: 5px solid #3498db;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+#examInfo h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+#examInfo ul {
+    padding-left: 20px;
+}
+
+#examInfo li {
+    margin-bottom: 6px;
+    color: #333;
+}
+.question-card{
+    background:#fff;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
+
+.option-card{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    margin:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option-card:hover{
+    background:#e9f3ff;
+    border-color:#0d6efd;
+}
+
+.nat-container{
+    max-width:300px;
+    margin:auto;
+}
+
+.nat-wrapper{
+    width:170px;
+    background:#ececec;
+    padding:10px;
+    border-radius:4px;
+    border:1px solid #cfcfcf;
+}
+
+.nat-display{
+    width:100%;
+    height:32px;
+    font-size:20px;
+    font-weight:bold;
+    text-align:right;
+    padding-right:8px;
+    border:1px solid #999;
+    margin-bottom:10px;
+    background:white;
+}
+
+.nat-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:6px;
+    margin-top:8px;
+}
+
+.nat-btn{
+    height:40px;
+    font-size:22px;
+    font-weight:bold;
+    border:1px solid #666;
+    border-radius:6px;
+    background:#f2f2f2;
+    cursor:pointer;
+    box-shadow: inset 0 1px 0 #fff, 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.nat-btn:hover{
+    background:#ddd;
+}
+
+.wide-btn{
+    width:100%;
+    margin-bottom:8px;
+    font-size:16px;
+}
+
+.arrow-row{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+    margin-bottom:10px;
+    justify-content:center;
+}
+
+.small-btn{
+    width:55px;
+}
+
+table {
+    width: 95%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #f1f1f1;
+}
+
+/* ================= BUTTON ================= */
+.start-exam-btn{
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin: 20px auto;
+}
+
+.start-exam-btn:hover:not(:disabled){
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.start-exam-btn:disabled{
+    background: #b5b5b5;
+    cursor: not-allowed;
+}
+
+/* ================= MODAL ================= */
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    justify-content:center;
+    align-items:center;
+    z-index:2000;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-content{
+    background:white;
+    padding:20px;
+    width:90%;
+    max-width:500px;
+    border-radius:10px;
+    position:relative;
+}
+
+.close{
+    position:absolute;
+    right:10px;
+    top:5px;
+    font-size:22px;
+    cursor:pointer;
+}
+.exam-container{
+    width:95%;
+    margin:25px auto;
+}
+
+.exam-table{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.exam-table th{
+    background:#0d47a1;
+    color:#fff;
+    padding:14px;
+}
+
+.exam-table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+    text-align:center;
+}
+
+.exam-table tr:hover{
+    background:#f8f9fa;
+}
+
+.start-btn{
+    background:#28a745;
+    color:white;
+    border:none;
+    padding:8px 20px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.start-btn:hover{
+    background:#1f8b38;
+}
+
+.closed-btn{
+    background:#999;
+    color:white;
+    padding:8px 20px;
+    border-radius:6px;
+}
+
+/* ================= ACCESSIBILITY ================= */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.option-card:focus-within {
+    outline: 3px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* ================= TIMER WARNING ================= */
+#timer.time-warning {
+    color: #ff6b6b;
+    font-weight: bold;
+    animation: pulse-timer 1s infinite;
+}
+
+@keyframes pulse-timer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ================= OVERALL PROGRESS ================= */
+.overall-progress-wrap {
+    background: #e9ecef;
+    border-radius: 8px;
+    height: 18px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.overall-progress-bar {
+    background: #2ecc71;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.overall-progress-label {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    text-align: center;
+    font-size: 12px;
+    line-height: 18px;
+    font-weight: bold;
+    color: #222;
+}
+
+/* ================= ERROR / RETRY ================= */
+.load-error {
+    max-width: 420px;
+    margin: 20px auto;
+    background: #fdecea;
+    color: #611a15;
+    border-left: 5px solid #e74c3c;
+    padding: 12px 16px;
+    border-radius: 6px;
+    text-align: left;
+}
+
+.retry-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+/* ================= CONFIRM / RESUME MODALS ================= */
+.confirm-summary {
+    background: #f8fbff;
+    border-left: 5px solid #3498db;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin: 10px 0;
+    text-align: left;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.btn-confirm-yes {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-confirm-no {
+    background: #999;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#submitBtn:disabled {
+    background: #7c88d6 !important;
+    cursor: not-allowed;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <div class="header">
+        <div>
+            <div class="logo">UNIC ACADEMY (since 2013)</div>
+            <div class="tagline">Clarity - Confidence - Results</div>
+        </div>
+        <div id="candidate">{{ page === 'exam' ? (studentName + ' | ' + student_id) : '' }}</div>
+        <div>⏱ <span id="timer" aria-live="polite" :class="{'time-warning': timerWarning}">{{ formattedTime }}</span></div>
+    </div>
+
+    <!-- ===================== LOGIN PAGE ===================== -->
+    <div id="loginPage" v-if="page === 'login'" style="text-align:center;margin-top:40px;">
+
+        <h2>Login</h2>
+
+        <input v-model="studentName" placeholder="Enter Your Name" style="padding:8px;width:200px;"><br><br>
+        <input v-model="student_id" placeholder="Enter Student ID" style="padding:8px;width:200px;"><br><br>
+
+        <!-- ALERT MESSAGE -->
+        <div style="background:#e8f4fd;color:#0b5394;padding:10px;border-radius:6px;max-width:400px;margin:10px auto;">
+            ℹ️ Please select an exam below and click <b>Start Exam</b>
+        </div>
+
+        <div class="load-error" v-if="catalogError">
+            ⚠️ Could not load the exam list. Please check your connection and try again.
+            <br>
+            <button class="retry-btn" @click="fetchCatalog">Retry</button>
+        </div>
+
+        <div class="exam-container" v-if="!catalogError">
+            <h3>Available Examinations</h3>
+
+            <table class="exam-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Exam Name</th>
+                        <th>Duration</th>
+                        <th>Questions</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(exam, index) in allExams" :key="index">
+                        <td>{{ index + 1 }}</td>
+                        <td>
+                            <b>{{ exam.exam_name }}</b><br>
+                            <small>{{ exam.exam_module }}</small>
+                        </td>
+                        <td>{{ Math.floor(exam.duration/60) }} Min</td>
+                        <td>{{ exam.total_questions || "-" }}</td>
+                        <td>
+                            <span v-if="exam.status === 'yes'" style="color:green;font-weight:bold;">Active</span>
+                            <span v-else style="color:red;font-weight:bold;">Closed</span>
+                        </td>
+                        <td>
+                            <button v-if="exam.status === 'yes'" class="start-btn" @click="openExamModal(index)">Start</button>
+                            <span v-else class="closed-btn">Closed</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===================== QUESTION PAPER LOADING / ERROR ===================== -->
+    <div v-if="questionLoadError" class="load-error" style="margin-top:40px;">
+        ⚠️ Failed to load the question paper. Please check your connection and try again.
+        <br>
+        <button class="retry-btn" @click="loadQuestions">Retry</button>
+    </div>
+
+    <!-- ===================== RESUME EXAM PROMPT ===================== -->
+    <div class="modal" :class="{show: showResumeModal}">
+        <div class="modal-content" style="text-align:center;">
+            <h2>Resume Previous Attempt?</h2>
+            <p>We found saved progress for this exam. Would you like to continue where you left off, or start over?</p>
+            <div class="confirm-actions">
+                <button class="btn-confirm-yes" @click="resumeExam(true)">Resume</button>
+                <button class="btn-confirm-no" @click="resumeExam(false)">Start Over</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== SUBMIT CONFIRMATION ===================== -->
+    <div class="modal" :class="{show: confirmingSubmit}">
+        <div class="modal-content" style="text-align:center;">
+            <h2>Submit Exam?</h2>
+            <div class="confirm-summary">
+                <div>✅ Answered: <b>{{ overallProgress.answered }}</b> / {{ overallProgress.total }}</div>
+                <div>❌ Unanswered: <b>{{ overallProgress.total - overallProgress.answered }}</b></div>
+            </div>
+            <p v-if="overallProgress.answered < overallProgress.total">
+                You still have unanswered questions. This cannot be undone once submitted.
+            </p>
+            <p v-else>All questions answered. This cannot be undone once submitted.</p>
+            <div class="confirm-actions">
+                <button class="btn-confirm-yes" :disabled="submitting" @click="doSubmit">
+                    {{ submitting ? 'Submitting...' : 'Yes, Submit' }}
+                </button>
+                <button class="btn-confirm-no" :disabled="submitting" @click="confirmingSubmit = false">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== EXAM PAGE ===================== -->
+    <div id="examPage" v-if="page === 'exam'">
+        <div class="container">
+
+            <div class="left">
+                <div class="overall-progress-wrap" v-if="!previewMode">
+                    <div class="overall-progress-bar" :style="{width: overallProgress.percent + '%'}"></div>
+                    <div class="overall-progress-label">{{ overallProgress.answered }} / {{ overallProgress.total }} answered</div>
+                </div>
+
+                <div id="sectionProgress" style="background:#ecf0f1;padding:8px;margin-bottom:10px;font-weight:bold;">
+                    <span :style="{color: progressColor}" v-if="!previewMode">
+                        {{ currentSectionName }} | Attempted: {{ sectionProgress.attempted }}/{{ sectionProgress.total }}
+                    </span>
+                </div>
+
+                <div id="questionArea">
+
+                    <!-- PREVIEW MODE -->
+                    <div class="preview-container" v-if="previewMode">
+                        <h2>Preview</h2>
+                        <div class="preview-item" v-for="(q, i) in questions" :key="'prev'+i">
+                            <b>{{ q.section || 'General' }}- Q{{ i+1 }}:</b>
+                            {{ formatPreviewAnswer(i) }}<br>
+                            <div class="question-image-container" v-if="q.image_base64">
+                                <img class="question-image" :src="'data:image/jpeg;base64,' + q.image_base64">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QUESTION MODE -->
+                    <template v-else-if="currentQuestion">
+                        <div class="question-header">
+                            <b>{{ currentQuestion.section || 'General' }} - Question {{ current + 1 }}</b>
+                        </div>
+
+                        <div class="question-image-container" v-if="currentQuestion.image_base64">
+                            <img class="question-image" :src="'data:image/jpeg;base64,' + currentQuestion.image_base64">
+                        </div>
+
+                        <div class="question-card">
+
+                            <!-- MCQ -->
+                            <template v-if="currentQuestion.type === 'MCQ'">
+                                <label class="option-card" v-for="opt in currentQuestion.options" :key="opt">
+                                    <input type="radio" :name="'q'+current"
+                                        :checked="answers[currentKey] === opt"
+                                        @change="saveAnswer(opt)">
+                                    {{ opt }} )
+                                </label>
+                            </template>
+
+                            <!-- MSQ -->
+                            <template v-if="currentQuestion.type === 'MSQ'">
+                                <label class="option-card" v-for="opt in currentQuestion.options" :key="opt">
+                                    <input type="checkbox"
+                                        :checked="(answers[currentKey] || '').split(';').includes(opt)"
+                                        @change="saveMSQ(opt, $event.target.checked)">
+                                    {{ opt }}
+                                </label>
+                            </template>
+
+                            <!-- NAT -->
+                            <div class="nat-wrapper" v-if="currentQuestion.type === 'NAT'">
+                                <input type="text" id="natDisplay" class="nat-display"
+                                    :value="natValue" readonly autocomplete="off" autocorrect="off"
+                                    autocapitalize="off" spellcheck="false" inputmode="none"
+                                    @keydown.prevent @keypress.prevent @keyup.prevent
+                                    @paste.prevent @drop.prevent @contextmenu.prevent
+                                    @focus="$event.target.blur()">
+
+                                <button type="button" class="nat-btn wide-btn" @click="deleteNAT">Backspace</button>
+
+                                <div class="nat-grid">
+                                    <button type="button" class="nat-btn" v-for="n in ['7','8','9','4','5','6','1','2','3']" :key="n" @click="addNAT(n)">{{ n }}</button>
+                                    <button type="button" class="nat-btn" @click="addNAT('0')">0</button>
+                                    <button type="button" class="nat-btn" @click="addNAT('.')">.</button>
+                                    <button type="button" class="nat-btn" @click="addNAT('-')">-</button>
+                                </div>
+
+                                <button type="button" class="nat-btn wide-btn" @click="clearNAT">Clear All</button>
+                            </div>
+
+                            <!-- SA -->
+                            <textarea class="form-control mt-3" v-if="currentQuestion.type === 'SA'"
+                                :value="answers[currentKey] || ''"
+                                @change="saveAnswer($event.target.value)"
+                                placeholder="Write your answer here..."></textarea>
+
+                        </div>
+                    </template>
+                </div>
+
+                <div>
+                    <button @click="prevQ">⬅ Prev</button>
+                    <button @click="clearResponse">Clear</button>
+                    <button @click="markReview">Mark Review</button>
+                    <button @click="nextQ">Next ➡</button>
+                </div>
+            </div>
+
+            <div class="right">
+                <button @click="showPreview">👁 Show Question Paper and Preview your Answer</button>
+                <hr>
+                <div class="palette" id="palette">
+                    <button v-for="(q, i) in questions" :key="i"
+                        :class="paletteClass(i)"
+                        @click="showQuestion(i)">
+                        {{ i + 1 }}
+                    </button>
+                </div>
+                <hr>
+
+                <button id="submitBtn" @click="requestSubmit" :disabled="submitting"
+                    style="width:60%; background:blue; color:white; font-weight:bold;">
+                    🚀 Submit Exam
+                </button>
+
+                <hr>
+
+                <div>
+                    <h4>Exam Status Color reference</h4>
+                    <p style="background:#2ecc71;color:white;padding:2px;">Answered</p>
+                    <p style="background:#e74c3c;color:white;padding:2px;">Not Answered</p>
+                    <p style="background:#8e44ad;color:white;padding:2px;">Current</p>
+                    <p style="background:#3498db;color:white;padding:2px;">Review</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================== EXAM INSTRUCTIONS MODAL ===================== -->
+    <div class="modal" :class="{show: modalOpen}">
+        <div class="modal-content">
+            <span class="close" @click="closeModal">&times;</span>
+
+            <h2 id="modalExamName">{{ selectedExam ? selectedExam.exam_name : '' }}</h2>
+
+            <div id="instructionArea">
+                <ul>
+                    <li v-for="(ins, i) in (selectedExam ? selectedExam.instructions : [])" :key="i">{{ ins }}</li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <label>Exam Password</label>
+            <input type="password" id="examPassword" class="form-control" v-model="examPassword">
+
+            <br>
+
+            <label>
+                <input type="checkbox" id="agree" v-model="agreed">
+                I have read all instructions.
+            </label>
+
+            <br><br>
+
+            <button id="beginExam" :disabled="!agreed" @click="validatePassword">Start Examination</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script>
+const { createApp } = Vue;
+
+// NOTE: answerKeys is only used for a live "accuracy" hint while the student
+// is taking the exam. Loading real answer keys to the browser is a security
+// risk (a student could read them from devtools/network tab), so this stays
+// an empty object unless your backend deliberately serves a safe/partial
+// keyset. Left as {} by default so the app never throws a ReferenceError.
+let answerKeys = {};
+
+createApp({
+    data(){
+        return {
+            page: 'login',
+
+            // login inputs
+            studentName: '',
+            student_id: '',
+
+            // exam catalog
+            allExams: [],
+            selectedExam: null,
+            selectedIndex: null,
+            exam_module: '',
+
+            // modal
+            modalOpen: false,
+            examPassword: '',
+            agreed: false,
+
+            // exam runtime
+            questions: [],
+            current: 0,
+            answers: {},
+            review: {},
+            visited: {},
+            timeSpent: {},
+
+            start_time: new Date().toISOString(),
+            startTime: Date.now(),
+            hiddenStart: null,
+
+            timeLeft: 0,
+            timerInterval: null,
+
+            previewMode: false,
+            isSubmitted: false,
+            submitting: false,
+
+            // NAT keypad
+            natValue: '',
+            cursorPosition: 0,
+
+            // error / retry
+            catalogError: false,
+            questionLoadError: false,
+
+            // resume flow
+            showResumeModal: false,
+            pendingSavedData: null,
+
+            // submit confirmation
+            confirmingSubmit: false,
+        };
+    },
+
+    computed: {
+        currentKey(){
+            return 'q' + (this.current + 1);
+        },
+        currentQuestion(){
+            return this.questions[this.current] || null;
+        },
+        currentSectionName(){
+            return this.currentQuestion ? (this.currentQuestion.section || 'General') : '';
+        },
+        formattedTime(){
+            if(this.page !== 'exam') return '';
+            let min = Math.floor(this.timeLeft / 60);
+            let sec = this.timeLeft % 60;
+            return min + ':' + (sec < 10 ? '0' : '') + sec;
+        },
+        sectionProgress(){
+            let currentSection = this.currentSectionName || 'General';
+
+            let sectionQuestions = this.questions.filter(q => (q.section || 'General') === currentSection);
+            let total = sectionQuestions.length;
+
+            let attempted = 0;
+            let correct = 0;
+
+            sectionQuestions.forEach(q => {
+                let originalIndex = this.questions.findIndex(qq => qq === q);
+                let key = 'q' + (originalIndex + 1);
+
+                let val = this.answers[key];
+                if(val !== undefined && val !== null && val !== ''){
+                    attempted++;
+
+                    if(typeof answerKeys !== 'undefined'){
+                        let correctAns = answerKeys[this.exam_module]?.[key];
+                        if(correctAns && val === correctAns) correct++;
+                    }
+                }
+            });
+
+            return { total, attempted, correct };
+        },
+        progressColor(){
+            let { attempted, correct } = this.sectionProgress;
+            let accuracy = attempted > 0 ? ((correct / attempted) * 100) : 0;
+            return accuracy >= 70 ? 'green' : accuracy >= 40 ? 'orange' : 'red';
+        },
+        overallProgress(){
+            let total = this.questions.length;
+            let answered = Object.keys(this.answers).filter(k => {
+                let v = this.answers[k];
+                return v !== undefined && v !== null && v !== '';
+            }).length;
+            let percent = total > 0 ? Math.round((answered / total) * 100) : 0;
+            return { total, answered, percent };
+        },
+        timerWarning(){
+            return this.page === 'exam' && this.timeLeft > 0 && this.timeLeft <= 300; // last 5 minutes
+        }
+    },
+
+    mounted(){
+        this.fetchCatalog();
+
+        document.addEventListener('visibilitychange', () => {
+            if(document.hidden){
+                this.hiddenStart = Date.now();
+            } else if(this.hiddenStart){
+                let hiddenDuration = Date.now() - this.hiddenStart;
+                this.startTime += hiddenDuration;
+                this.hiddenStart = null;
+            }
+        });
+    },
+
+    methods: {
+        // ============ CATALOG LOADING ============
+        fetchCatalog(){
+            this.catalogError = false;
+            fetch('/exam_config.json')
+                .then(res => {
+                    if(!res.ok) throw new Error('Bad response');
+                    return res.json();
+                })
+                .then(data => {
+                    this.allExams = data;
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.catalogError = true;
+                });
+        },
+
+        // ============ EXAM SELECTION / MODAL ============
+        openExamModal(index){
+            this.selectedIndex = index;
+            this.selectedExam = this.allExams[index];
+            this.exam_module = this.selectedExam.exam_module;
+            this.timeLeft = this.selectedExam.duration;
+
+            this.examPassword = '';
+            this.agreed = false;
+            this.modalOpen = true;
+        },
+
+        closeModal(){
+            this.modalOpen = false;
+        },
+
+        validatePassword(){
+            if(this.examPassword !== this.selectedExam.password){
+                alert('Invalid Password');
+                return;
+            }
+            this.closeModal();
+            this.startExam();
+        },
+
+        // ============ LOGIN / START ============
+        startExam(){
+            this.questionLoadError = false;
+
+            if(!this.student_id){
+                alert('Enter your Roll Number/ID');
+                return;
+            }
+
+            if(this.selectedExam.status !== 'yes'){
+                alert('Exam not active');
+                return;
+            }
+
+            let key = this.student_id + '_' + this.exam_module;
+            let saved = JSON.parse(localStorage.getItem(key));
+
+            if(saved && Object.keys(saved.answers || {}).length > 0){
+                // Saved progress exists — ask the student before overwriting it
+                this.pendingSavedData = saved;
+                this.showResumeModal = true;
+                return;
+            }
+
+            this.loadQuestions();
+        },
+
+        resumeExam(shouldResume){
+            this.showResumeModal = false;
+
+            if(shouldResume && this.pendingSavedData){
+                let saved = this.pendingSavedData;
+                this.answers = saved.answers || {};
+                this.review = saved.review || {};
+                this.visited = saved.visited || {};
+                this.timeSpent = saved.timeSpent || {};
+                this.current = saved.current || 0;
+                this.start_time = saved.start_time || this.start_time;
+
+                let t = localStorage.getItem(this.student_id + '_time');
+                if(t) this.timeLeft = Number(t);
+            } else {
+                // Start fresh — clear any old saved progress for this exam
+                let key = this.student_id + '_' + this.exam_module;
+                localStorage.removeItem(key);
+                localStorage.removeItem(this.student_id + '_time');
+                this.answers = {};
+                this.review = {};
+                this.visited = {};
+                this.timeSpent = {};
+                this.current = 0;
+                this.timeLeft = this.selectedExam.duration;
+            }
+
+            this.pendingSavedData = null;
+            this.loadQuestions();
+        },
+
+        loadQuestions(){
+            this.questionLoadError = false;
+
+            fetch(this.selectedExam.question_file)
+                .then(res => {
+                    if(!res.ok) throw new Error('Bad response');
+                    return res.json();
+                })
+                .then(qData => {
+                    this.questions = qData;
+                    this.page = 'exam';
+                    this.showQuestion(this.current || 0);
+                    this.startTimer();
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.questionLoadError = true;
+                });
+        },
+
+        // ============ TIMER ============
+        startTimer(){
+            this.timerInterval = setInterval(() => {
+                this.timeLeft--;
+                localStorage.setItem(this.student_id + '_time', this.timeLeft);
+
+                if(this.timeLeft <= 0){
+                    clearInterval(this.timerInterval);
+                    alert('⏰ Time Up! Submitting your exam...');
+                    this.submitExam();
+                }
+            }, 1000);
+        },
+
+        // ============ SAVE / LOAD (localStorage) ============
+        saveData(){
+            let key = this.student_id + '_' + this.exam_module;
+            localStorage.setItem(key, JSON.stringify({
+                answers: this.answers,
+                review: this.review,
+                visited: this.visited,
+                timeSpent: this.timeSpent,
+                current: this.current,
+                start_time: this.start_time
+            }));
+        },
+
+        // ============ NAVIGATION ============
+        showQuestion(i){
+            this.saveTime();
+            this.previewMode = false;
+            this.current = i;
+            this.visited[i] = true;
+
+            let key = 'q' + (i + 1);
+            let val = this.answers[key];
+            this.natValue = (val !== undefined && val !== null) ? String(val) : '';
+            this.cursorPosition = this.natValue.length;
+
+            this.startTime = Date.now();
+        },
+
+        nextQ(){
+            this.saveTime();
+            this.saveData();
+            if(this.current < this.questions.length - 1) this.showQuestion(this.current + 1);
+        },
+
+        prevQ(){
+            if(this.current > 0) this.showQuestion(this.current - 1);
+        },
+
+        markReview(){
+            this.review[this.current] = true;
+            this.saveData();
+            this.nextQ();
+        },
+
+        clearResponse(){
+            delete this.answers[this.currentKey];
+            this.saveData();
+            this.showQuestion(this.current);
+        },
+
+        // ============ ANSWER SAVING ============
+        saveAnswer(val){
+            this.answers[this.currentKey] = val;
+            this.saveData();
+        },
+
+        saveMSQ(val, checked){
+            let key = this.currentKey;
+            let arr = this.answers[key] ? this.answers[key].split(';') : [];
+            if(checked){
+                if(!arr.includes(val)) arr.push(val);
+            } else {
+                arr = arr.filter(v => v !== val);
+            }
+
+            if(arr.length === 0) delete this.answers[key];
+            else this.answers[key] = arr.join(';');
+
+            this.saveData();
+        },
+
+        saveNAT(val){
+            let key = this.currentKey;
+            if(val === '' || val === null){
+                delete this.answers[key];
+            } else {
+                this.answers[key] = parseFloat(val);
+            }
+            this.saveData();
+        },
+
+        // ============ NAT KEYPAD ============
+        addNAT(value){
+            let current = this.natValue;
+
+            if(value === '.' && current.includes('.')) return;
+
+            if(value === '-'){
+                if(current.includes('-')) return;
+                current = '-' + current;
+                this.natValue = current;
+                this.cursorPosition = current.length;
+                this.saveNAT(current);
+                return;
+            }
+
+            const before = current.slice(0, this.cursorPosition);
+            const after = current.slice(this.cursorPosition);
+            this.natValue = before + value + after;
+            this.cursorPosition++;
+            this.saveNAT(this.natValue);
+        },
+
+        deleteNAT(){
+            if(this.cursorPosition <= 0) return;
+            let current = this.natValue;
+            this.natValue = current.slice(0, this.cursorPosition - 1) + current.slice(this.cursorPosition);
+            this.cursorPosition--;
+            this.saveNAT(this.natValue);
+        },
+
+        clearNAT(){
+            this.natValue = '';
+            this.cursorPosition = 0;
+            this.saveNAT('');
+        },
+
+        // ============ TIME TRACKING ============
+        saveTime(){
+            let spent = Math.floor((Date.now() - this.startTime) / 1000);
+            this.timeSpent[this.current] = (this.timeSpent[this.current] || 0) + spent;
+        },
+
+        // ============ PALETTE ============
+        paletteClass(i){
+            let key = 'q' + (i + 1);
+            let val = this.answers[key];
+
+            if(i === this.current) return 'current';
+            if(this.review[i]) return 'review';
+            if(val !== undefined && val !== null && val !== '') return 'answered';
+            if(this.visited[i]) return 'not-answered';
+            return '';
+        },
+
+        // ============ PREVIEW ============
+        showPreview(){
+            this.saveTime();
+            this.previewMode = true;
+        },
+
+        formatPreviewAnswer(i){
+            let key = 'q' + (i + 1);
+            let val = this.answers[key];
+            let ans = (val !== undefined && val !== null && val !== '') ? val : 'Not Answered';
+            return JSON.stringify(ans);
+        },
+
+        // ============ SUBMIT ============
+        requestSubmit(){
+            if(this.isSubmitted || this.submitting) return;
+            this.saveTime(); // lock in time spent on current question before showing the summary
+            this.confirmingSubmit = true;
+        },
+
+        doSubmit(){
+            if(this.isSubmitted || this.submitting) return;
+            this.submitting = true;
+
+            let end_time = new Date().toISOString();
+
+            const responses = {};
+            this.questions.forEach((q, i) => {
+                let key = 'q' + (i + 1);
+                if(!this.visited[i]){
+                    responses[key] = 'NV';
+                } else if(this.answers[key] === undefined || this.answers[key] === null || this.answers[key] === ''){
+                    responses[key] = 'N';
+                } else {
+                    responses[key] = this.answers[key];
+                }
+            });
+
+            const data = {
+                email: this.student_id,
+                name: this.studentName,
+                s_id: this.student_id,
+                exam_module: this.exam_module,
+                start_time: this.start_time,
+                end_time: end_time,
+                time_spent: this.timeSpent
+            };
+
+            const variables = {
+                correct: JSON.stringify(data.time_spent),
+                marks: data.end_time + data.start_time,
+                responses: JSON.stringify(responses),
+                email: data.email,
+                s_id: data.s_id,
+                exam_module: data.exam_module,
+                name: data.name
+            };
+
+            fetch('/api/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ variables })
+            })
+            .then(res => res.json())
+            .then(result => {
+                if(result.errors){
+                    alert('❌ Error submitting form');
+                    this.submitting = false;
+                    // isSubmitted stays false so the student can retry
+                } else {
+                    this.isSubmitted = true;
+                    alert('✅ Submitted Successfully');
+                    localStorage.clear();
+                    document.body.innerHTML = "<h2 style='text-align:center'>Exam Submitted ✅</h2>";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Submission failed. Please check your connection and try again.');
+                this.submitting = false;
+                // isSubmitted stays false so the student can retry
+            });
+        }
+    }
+}).mount('#app');
+</script>
+
+</body>
+</html>
