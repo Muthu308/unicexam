@@ -875,7 +875,7 @@ createApp({
             visited: {},
             timeSpent: {},
 
-            start_time: new Date().toISOString(),
+            start_time: '', // set on mounted() using formatDateTime
             startTime: Date.now(),
             hiddenStart: null,
 
@@ -965,6 +965,7 @@ createApp({
     },
 
     mounted(){
+        this.start_time = this.formatDateTime(new Date());
         this.fetchCatalog();
 
         document.addEventListener('visibilitychange', () => {
@@ -979,6 +980,24 @@ createApp({
     },
 
     methods: {
+        // ============ HELPERS ============
+        formatDateTime(date){
+            let pad = n => String(n).padStart(2, '0');
+
+            let year = date.getFullYear();
+            let month = pad(date.getMonth() + 1);
+            let day = pad(date.getDate());
+
+            let hours = date.getHours();
+            let minutes = pad(date.getMinutes());
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            if(hours === 0) hours = 12;
+
+            return `${year}-${month}-${day} ${pad(hours)}:${minutes} ${ampm}`;
+        },
+
         // ============ CATALOG LOADING ============
         fetchCatalog(){
             this.catalogError = false;
@@ -1045,6 +1064,7 @@ createApp({
                 return;
             }
 
+            this.start_time = this.formatDateTime(new Date());
             this.loadQuestions();
         },
 
@@ -1073,6 +1093,7 @@ createApp({
                 this.timeSpent = {};
                 this.current = 0;
                 this.timeLeft = this.selectedExam.duration;
+                this.start_time = this.formatDateTime(new Date());
             }
 
             this.pendingSavedData = null;
@@ -1272,7 +1293,7 @@ createApp({
             if(this.isSubmitted || this.submitting) return;
             this.submitting = true;
 
-            let end_time = new Date().toISOString();
+            let end_time = this.formatDateTime(new Date());
 
             const responses = {};
             this.questions.forEach((q, i) => {
@@ -1293,12 +1314,16 @@ createApp({
                 exam_module: this.exam_module,
                 start_time: this.start_time,
                 end_time: end_time,
-                time_spent: this.timeSpent
+                time_spent: this.timeSpent,
+                total_questions: this.questions.length,
+                answered_count: this.overallProgress.answered
             };
 
             const variables = {
                 correct: JSON.stringify(data.time_spent),
                 marks: data.end_time + data.start_time,
+                total_questions: data.total_questions,
+                answered_count: data.answered_count,
                 responses: JSON.stringify(responses),
                 email: data.email,
                 s_id: data.s_id,
