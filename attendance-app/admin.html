@@ -291,7 +291,7 @@
     ══════════════════════════════════════════════ */
  (function requireSession() {
 
-    const roles = ["superadmin", "admin", "faculty", "student"];
+    const roles = ["superadmin", "admin", "faculty"];
 
     let session = null;
     let sessionKey = null;
@@ -355,7 +355,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
 
     async function loadSubjectTopicOptions() {
       try {
-        const res = await fetch(`${API}/topics.json`);
+        const res = await fetch(`${API}/topic.json`);
         subjectTopicData = await res.json();
       } catch (err) {
         subjectTopicData = { subjects: [], topics: {} };
