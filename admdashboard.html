@@ -429,6 +429,7 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
     loadUsers();
+    loadCurrentUser();
   }
 );
 
@@ -463,7 +464,7 @@ async function loadUsers() {
   }
 
 }
-const CURRENT_USER = JSON.parse(localStorage.getItem("currentUser"));
+const CURRENT_USER = JSON.parse(localStorage.getItem("currentUser")) || {};
 function renderUsers(users) {
 
   const tbody =
@@ -525,7 +526,6 @@ function renderUsers(users) {
       </td>
 
       <td>
-      <td>
 
 <button
 class="btn btn-icon btn-outline-primary"
@@ -534,8 +534,8 @@ onclick="viewUser(${u.user_id})">
 </button>
 
 ${
-CURRENT_USER.user_role === "admin" ||
-CURRENT_USER.user_id == u.user_id
+CURRENT_USER?.user_role === "admin" ||
+CURRENT_USER?.user_id == u.user_id
 ? `
 <button
 class="btn btn-icon btn-outline-warning"
@@ -547,7 +547,7 @@ onclick="editUser(${u.user_id})">
 }
 
 ${
-CURRENT_USER.user_role === "admin"
+CURRENT_USER?.user_role === "admin"
 ? `
 <button
 class="btn btn-icon btn-outline-danger"
@@ -573,6 +573,29 @@ onclick="deleteUser(${u.user_id})">
 
 }
 
+function loadCurrentUser(){
+
+    const user = JSON.parse(
+        localStorage.getItem("currentUser")
+    );
+
+    if(!user) return;
+
+    document.getElementById("currentName").innerText =
+        user.name || "User";
+
+    document.getElementById("currentEmail").innerText =
+        user.email_id || "";
+
+    document.getElementById("currentRole").innerText =
+        user.user_role || "";
+
+    document.getElementById("currentAvatar").innerText =
+        (user.name || "U")
+        .charAt(0)
+        .toUpperCase();
+}
+  
 function updateStats() {
 
   document.getElementById(
