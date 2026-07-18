@@ -273,9 +273,7 @@
 
     for (const role of roles) {
         const data = localStorage.getItem(role);
-      console.log(data);
-
-        if (data) {
+       if (data) {
             try {
                 session = JSON.parse(data);
                 sessionKey = role;
