@@ -538,6 +538,7 @@ th {
 <tr>
 <th>#</th>
 <th>Exam Name</th>
+<th>Exam Date and Time</th>
 <th>Duration</th>
 <th>Questions</th>
 <th>Status</th>
@@ -741,9 +742,9 @@ html+=`
 
 <td>
 <b>${exam.exam_name}</b><br>
-<small>${exam.exam_module}</small>
+<small>${exam.exam_module.replace(/UNIC_TEXT/g, '').trim()}</small>
 </td>
-
+<td>${exam.start_time || "Not Scheduled"}</td>
 <td>${Math.floor(exam.duration/60)} Min</td>
 
 <td>${exam.total_questions || "-"}</td>
