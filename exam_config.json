@@ -4,6 +4,7 @@
   "exam_module": "UNIC_TEST_PCM07",
   "status": "yes",
   "duration": 5400,
+   "password":"jee123",
   "question_file": "/unic_text_14-07-2026.json",
   "start_time": "2026-07-13 07:15 AM",
   "instructions": [
