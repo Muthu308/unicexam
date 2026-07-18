@@ -878,6 +878,7 @@ async function loadStudentResults(){
 
     buildSummary();
     populateQwDropdown();
+    updateProfileQuickStats();
 
   }catch(err){
     console.error(err);
@@ -892,7 +893,7 @@ async function loadStudentResults(){
 }
   
 /* ══ Profile quick stats (exams / avg% / attendance% / upcoming count) ══ */
-function update(){
+function updateProfileQuickStats()(){
   const box = $("profileQuickStats");
   if(!box) return;
   const total = allResults.length;
@@ -1729,6 +1730,7 @@ async function loadAttendance(){
     populateAttendanceFilters();
     renderAttendanceView();
     loadUpcomingClasses();
+    updateProfileQuickStats();
   }catch(err){
     console.error(err);
     box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load attendance: ${err.message}</div>`;
@@ -1742,12 +1744,18 @@ async function loadAttendance(){
 ══════════════════════════════════════════════ */
 async function loadUpcomingClasses(){
   const box = $("upcomingClassesContent");
+
   try{
     const res = await fetch(`/api/classes`);
     const classes = await res.json();
+
     if(!res.ok) throw new Error((classes && classes.error) || "Failed to load classes");
 
-    const todayStr = new Date().toISOString().slice(0,10);
+    // Indian Standard Time date
+    const todayStr = new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Kolkata"
+    });
+
     const attendedClassIds = new Set(
       attendanceRecords.map(r => r.class_id != null ? String(r.class_id) : null).filter(Boolean)
     );
@@ -1756,61 +1764,124 @@ async function loadUpcomingClasses(){
       .filter(c => (c.student_ids || []).map(String).includes(String(user.std_id)))
       .filter(c => !c.class_date || c.class_date >= todayStr)
       .filter(c => !attendedClassIds.has(String(c.id)))
-      .sort((a,b) => (a.class_date || "").localeCompare(b.class_date || "") || (a.start_time || "").localeCompare(b.start_time || ""));
+      .sort((a,b) => 
+        (a.class_date || "").localeCompare(b.class_date || "") ||
+        (a.start_time || "").localeCompare(b.start_time || "")
+      );
 
     renderUpcomingClasses(todayStr);
+    updateProfileQuickStats();
+
   }catch(err){
     console.error(err);
-    box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load upcoming classes: ${err.message}</div>`;
+    box.innerHTML = `
+      <div class="att-empty" style="color:#dc2626">
+        Could not load upcoming classes: ${err.message}
+      </div>`;
   }
 }
 
+
 function renderUpcomingClasses(todayStr){
+
   const box = $("upcomingClassesContent");
-  todayStr = todayStr || new Date().toISOString().slice(0,10);
+
+  // Indian Standard Time fallback
+  todayStr = todayStr || new Date().toLocaleDateString("en-CA", {
+    timeZone: "Asia/Kolkata"
+  });
+
 
   if(!upcomingClasses.length){
-    box.innerHTML = `<div class="att-empty">No upcoming classes scheduled.</div>`;
+    box.innerHTML = `
+      <div class="att-empty">
+        No upcoming classes scheduled.
+      </div>`;
     return;
   }
 
+
   box.innerHTML = `<div class="upcoming-grid">` + upcomingClasses.map(c => {
+
     const links = [];
-    if(c.syllabus_link) links.push(`<a href="${c.syllabus_link}" target="_blank">Syllabus</a>`);
-    if(c.notes_link) links.push(`<a href="${c.notes_link}" target="_blank">Notes</a>`);
-    if(c.video_link) links.push(`<a href="${c.video_link}" target="_blank">Video</a>`);
-    if(c.assignment_link) links.push(`<a href="${c.assignment_link}" target="_blank">Assignment</a>`);
+
+    if(c.syllabus_link) 
+      links.push(`<a href="${c.syllabus_link}" target="_blank">Syllabus</a>`);
+
+    if(c.notes_link) 
+      links.push(`<a href="${c.notes_link}" target="_blank">Notes</a>`);
+
+    if(c.video_link) 
+      links.push(`<a href="${c.video_link}" target="_blank">Video</a>`);
+
+    if(c.assignment_link) 
+      links.push(`<a href="${c.assignment_link}" target="_blank">Assignment</a>`);
+
 
     const isToday = c.class_date === todayStr;
+
     let dayNum = "—", monthLbl = "";
+
+
     if(c.class_date){
-      const d = new Date(c.class_date + "T00:00:00");
+
+      // Avoid timezone shift
+      const d = new Date(c.class_date + "T00:00:00+05:30");
+
       if(!isNaN(d)){
+
         dayNum = d.getDate();
-        monthLbl = d.toLocaleDateString('en-IN',{month:'short'});
+
+        monthLbl = d.toLocaleDateString("en-IN", {
+          month:"short",
+          timeZone:"Asia/Kolkata"
+        });
+
       }
     }
 
+
     return `
       <div class="upcoming-card${isToday?' today':''}">
+
         <div class="upcoming-date">
           <div class="ud-day">${dayNum}</div>
           <div class="ud-month">${monthLbl || "—"}</div>
         </div>
+
         <div class="upcoming-body">
-          <div class="upcoming-subject">${c.subject || "—"}${isToday?'<span class="upcoming-today-tag">Today</span>':''}</div>
-          <div class="upcoming-topic">${c.topic || ""}</div>
-          <div class="upcoming-meta">
-            <i class="ti ti-clock"></i> ${c.start_time || "—"}${c.end_time ? "–"+c.end_time : ""}
-            &nbsp;·&nbsp; <i class="ti ti-user"></i> ${c.faculty_name || "—"}
+
+          <div class="upcoming-subject">
+            ${c.subject || "—"}
+            ${isToday ? '<span class="upcoming-today-tag">Today</span>' : ''}
           </div>
-          ${links.length ? `<div class="upcoming-links">${links.join(" · ")}</div>` : ""}
+
+          <div class="upcoming-topic">
+            ${c.topic || ""}
+          </div>
+
+          <div class="upcoming-meta">
+            <i class="ti ti-clock"></i>
+            ${c.start_time || "—"}
+            ${c.end_time ? "–" + c.end_time : ""}
+            &nbsp;·&nbsp;
+            <i class="ti ti-user"></i>
+            ${c.faculty_name || "—"}
+          </div>
+
+          ${
+            links.length 
+            ? `<div class="upcoming-links">${links.join(" · ")}</div>` 
+            : ""
+          }
+
         </div>
+
       </div>`;
+
   }).join("") + `</div>`;
 }
-
-function populateAttendanceFilters(){
+  function populateAttendanceFilters(){
   const dates = [...new Set(attendanceRecords.map(r => r.class_date).filter(Boolean))]
     .sort((a,b) => new Date(b) - new Date(a));
   const subjects = [...new Set(attendanceRecords.map(r => r.subject).filter(Boolean))]
