@@ -658,6 +658,9 @@ let selectedExam = null;
 function openExamModal(index){
 
 selectedExam=allExams[index];
+exam_module = selectedExam.exam_module;
+timeLeft = selectedExam.duration;
+examConfig = selectedExam;
 
 document.getElementById("modalExamName").innerHTML=
 selectedExam.exam_name;
