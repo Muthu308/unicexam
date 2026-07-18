@@ -43,6 +43,25 @@
     .avatar { width: 34px; height: 34px; border-radius: 50%; background: #dbeafe; color: #1d4ed8; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
     .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9999; display: flex; align-items: center; justify-content: center; }
     .toast-container { position: fixed; top: 16px; right: 16px; z-index: 99999; }
+    .current-user-card{
+    background:#fff;
+    border-radius:12px;
+    padding:8px 14px;
+    border:1px solid #e5e7eb;
+}
+
+.avatar-lg{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:#2563eb;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    font-weight:bold;
+}
   </style>
 </head>
 <body>
@@ -68,11 +87,21 @@
   <!-- TOPBAR -->
   <div class="topbar d-flex align-items-center justify-content-between">
     <span id="page-title" class="fw-semibold" style="font-size:15px">User Management</span>
-    <div class="d-flex align-items-center gap-2">
-      <i class="bi bi-person-circle fs-5 text-secondary"></i>
-      <span class="text-secondary" style="font-size:13px">Admin</span>
-      <span class="badge" style="background:#dbeafe;color:#1d4ed8;font-size:11px">admin</span>
+    
+  <div class="current-user-card d-flex align-items-center">
+    <div class="avatar-lg" id="currentAvatar">A</div>
+
+    <div class="ms-3">
+        <div class="fw-bold" id="currentName">Admin User</div>
+        <div class="small text-muted" id="currentEmail">
+            
+        </div>
+
+        <span class="badge bg-primary mt-1" id="currentRole">
+          
+        </span>
     </div>
+</div>
   </div>
 
   <!-- BODY -->
@@ -277,9 +306,9 @@
       <div class="modal-body" id="view-body"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="view-edit-btn">
+        <!--<button type="button" class="btn btn-primary" id="view-edit-btn">
           <i class="bi bi-pencil me-1"></i> Edit
-        </button>
+        </button>-->
       </div>
     </div>
   </div>
@@ -434,7 +463,7 @@ async function loadUsers() {
   }
 
 }
-
+const CURRENT_USER = JSON.parse(localStorage.getItem("currentUser"));
 function renderUsers(users) {
 
   const tbody =
@@ -496,30 +525,40 @@ function renderUsers(users) {
       </td>
 
       <td>
+      <td>
 
-      <button
-      class="btn btn-icon btn-outline-primary"
-      onclick="viewUser(${u.user_id})">
+<button
+class="btn btn-icon btn-outline-primary"
+onclick="viewUser(${u.user_id})">
+<i class="bi bi-eye"></i>
+</button>
 
-      <i class="bi bi-eye"></i>
+${
+CURRENT_USER.user_role === "admin" ||
+CURRENT_USER.user_id == u.user_id
+? `
+<button
+class="btn btn-icon btn-outline-warning"
+onclick="editUser(${u.user_id})">
+<i class="bi bi-pencil"></i>
+</button>
+`
+: ""
+}
 
-      </button>
+${
+CURRENT_USER.user_role === "admin"
+? `
+<button
+class="btn btn-icon btn-outline-danger"
+onclick="deleteUser(${u.user_id})">
+<i class="bi bi-trash"></i>
+</button>
+`
+: ""
+}
 
-      <button
-      class="btn btn-icon btn-outline-warning"
-      onclick="editUser(${u.user_id})">
-
-      <i class="bi bi-pencil"></i>
-
-      </button>
-
-      <button
-      class="btn btn-icon btn-outline-danger"
-      onclick="deleteUser(${u.user_id})">
-
-      <i class="bi bi-trash"></i>
-
-      </button>
+</td>
 
       </td>
 
