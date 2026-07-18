@@ -355,7 +355,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
 
     async function loadSubjectTopicOptions() {
       try {
-        const res = await fetch("../topics.json");
+        const res = await fetch(`${API}/topics.json`);
         subjectTopicData = await res.json();
       } catch (err) {
         subjectTopicData = { subjects: [], topics: {} };
