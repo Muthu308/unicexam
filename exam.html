@@ -743,10 +743,8 @@ html+=`
 <td>
 <b>${exam.exam_name}</b><br>
 <small>${exam.exam_module
-    .replace(/^UNIC_TEXT_/, '')
-    .replace(/^TEST_/, '')
-    .replace(/([A-Z]+)(\d+)$/, '$1 $2')
-    .trim()}</small>
+  .replace(/^UNIC_TEST_/, '')
+  .replace(/([A-Z]+)\s*(\d+)$/, '$1 $2')}</small>
 </td>
 <td>${exam.start_time || "Not Scheduled"}</td>
 <td>${Math.floor(exam.duration/60)} Min</td>
