@@ -299,6 +299,7 @@
   "exam_module": "UNIC_TEST_PCM02",
   "status": "no",
   "duration": 5400,
+"total_questions": "45",
   "question_file": "/unic_text_19-05-2026.json",
   "start_time": "2026-05-20 10:00 AM",
   "instructions": [
