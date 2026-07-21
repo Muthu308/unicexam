@@ -1731,7 +1731,7 @@ function closeLightbox(){
   $("imgLightbox").classList.remove("open");
   $("lbImg").src="";
 }
-$("imgLightbox").addEventListener("click",e=>{if(e.target===$("imgLightbox"))closeLightbox();});
+$("imgLightbox")?.addEventListener("click",e=>{if(e.target===$("imgLightbox"))closeLightbox();});
 
 /* ── Table sort ── */
 function initTableSort(){
@@ -1815,14 +1815,21 @@ function closeFeedbackModal(){
 function renderStars(){
   document.querySelectorAll("#starRow i").forEach(el=>{
     const v = Number(el.dataset.v);
-    el.classList.toggle("filled", v <= selectedStars);
-    el.className = `ti ${v<=selectedStars?'ti-star-filled':'ti-star'}${v<=selectedStars?' filled':''}`;
+    const isFilled = v <= selectedStars;
+    el.classList.toggle("filled", isFilled);
+    el.classList.toggle("ti-star-filled", isFilled);
+    el.classList.toggle("ti-star", !isFilled);
   });
 }
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.querySelectorAll("#starRow i").forEach(el=>{
-    el.addEventListener("click", ()=>{ selectedStars = Number(el.dataset.v); renderStars(); });
-  });
+// Event delegation on the modal itself: works immediately (no need to
+// wait for DOMContentLoaded) and keeps working even if some other
+// element on the page is missing and throws elsewhere in the script —
+// a single listener here can't be silently skipped by an unrelated error.
+$("feedbackModal")?.addEventListener("click", (e)=>{
+  const star = e.target.closest("#starRow i");
+  if(!star) return;
+  selectedStars = Number(star.dataset.v);
+  renderStars();
 });
 async function submitClassFeedback(){
   if(!activeFeedbackClass){ closeFeedbackModal(); return; }
