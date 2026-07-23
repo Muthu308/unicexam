@@ -10,7 +10,8 @@
     body { background: #f4f6fb; font-size: 14px; }
     .sidebar {
       width: 220px; min-height: 100vh; background: #1a2236;
-      position: fixed; top: 0; left: 0; z-index: 100;
+      position: fixed; top: 0; left: 0; z-index: 200;
+      transition: transform .28s;
     }
     .sidebar .logo { padding: 22px 20px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
     .sidebar .logo-title { color: #fff; font-size: 16px; font-weight: 600; }
@@ -22,10 +23,15 @@
     .sidebar .nav-link:hover { color: #fff; background: rgba(255,255,255,.05); }
     .sidebar .nav-link.active { color: #fff; background: rgba(59,130,246,.15); border-left-color: #3b82f6; }
     .sidebar .nav-link i { font-size: 16px; width: 18px; }
-    .main-content { margin-left: 220px; }
+    .sidebar .nav-section-label {
+      color: rgba(255,255,255,.28); font-size: 9.5px; letter-spacing: 1.1px;
+      text-transform: uppercase; padding: 12px 20px 4px; font-weight: 600;
+    }
+    .main-content { margin-left: 220px; transition: margin-left .28s; }
     .topbar {
       background: #fff; border-bottom: 1px solid #e5e7eb;
       padding: 12px 24px; position: sticky; top: 0; z-index: 99;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
     }
     .page-body { padding: 24px; }
     .stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px 20px; }
@@ -44,78 +50,79 @@
     .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9999; display: flex; align-items: center; justify-content: center; }
     .toast-container { position: fixed; top: 16px; right: 16px; z-index: 99999; }
     .current-user-card{
-    background:#fff;
-    border-radius:12px;
-    padding:8px 14px;
-    border:1px solid #e5e7eb;
-}
+      background:#fff; border-radius:12px; padding:8px 14px; border:1px solid #e5e7eb;
+    }
+    .avatar-lg{
+      width:40px; height:40px; border-radius:50%; background:#2563eb; color:#fff;
+      display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; flex-shrink:0;
+    }
 
-.avatar-lg{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    background:#2563eb;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    font-weight:bold;
-}
+    /* ---- Mobile sidebar toggle (same pattern as the other app pages) ---- */
+    .mob-toggle {
+      display: none; position: fixed; top: 12px; left: 12px; z-index: 300;
+      background: #1a2236; border: none; color: #fff; width: 36px; height: 36px;
+      border-radius: 8px; font-size: 18px; cursor: pointer; align-items: center; justify-content: center;
+    }
+    #sidebarOverlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 190; display: none; }
+    #sidebarOverlay.show { display: block; }
+
+    @media (max-width: 860px) {
+      .mob-toggle { display: flex; }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .topbar { padding-left: 56px; }
+      .current-user-card .small, .current-user-card .badge { display: none; }
+      .page-body { padding: 14px; }
+      .row.g-3.mb-4 > div { min-width: 45%; }
+    }
   </style>
 </head>
 <body>
 
+<button class="mob-toggle" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
+<div id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <!-- SIDEBAR -->
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
   <div class="logo">
     <div class="logo-title"><i class="bi bi-mortarboard-fill me-2"></i>UNIC Academy</div>
     <div class="logo-sub">Since 2012  ·  Tirunelveli, Chennai<br>Management Portal</div>
   </div>
   <nav class="mt-2">
-    <a class="nav-link active" href="#" onclick="showSection('users')"><i class="bi bi-people"></i> User Management</a>
-    <a class="nav-link active" href="https://unicexamschool.vercel.app/attendance-app/admin.html"><i class="bi bi-people"></i> Class Register</a>
-    <a class="nav-link active" href="https://unicexamschool.vercel.app/attendance-app/faculty.html"><i class="bi bi-people"></i> Attendance</a>
-    <a class="nav-link active" href="https://unicexamschool.vercel.app/attendance-app/reports.html" ><i class="bi bi-people"></i> Reports</a>
-    <!--<a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-calendar-check"></i> Classes <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>
-    <a class="nav-link text-muted" href="#" style="opacity:.5;cursor:not-allowed"><i class="bi bi-clipboard-check"></i> Attendance <span class="badge bg-secondary ms-auto" style="font-size:10px">Soon</span></a>-->
+    <div class="nav-section-label">Manage</div>
+    <a class="nav-link active" href="adminuserman.html"><i class="bi bi-people"></i> User Management</a>
+    <a class="nav-link" href="admin.html"><i class="bi bi-journal-bookmark"></i> Class Register</a>
+    <a class="nav-link" href="faculty.html"><i class="bi bi-clipboard-check"></i> Attendance</a>
+    <a class="nav-link" href="reports.html"><i class="bi bi-bar-chart"></i> Reports</a>
+    <div class="nav-section-label">Work</div>
+    <a class="nav-link" href="test-schedule-admin.html"><i class="bi bi-calendar2-week"></i> Test Schedule</a>
+    <a class="nav-link" href="task-tracking-admin.html"><i class="bi bi-check2-square"></i> Task Tracking</a>
   </nav>
 </div>
 
 <!-- MAIN -->
 <div class="main-content">
   <!-- TOPBAR -->
-  <div class="topbar d-flex align-items-center justify-content-between">
+  <div class="topbar">
     <span id="page-title" class="fw-semibold" style="font-size:15px">User Management</span>
-    
-<div class="d-flex align-items-center gap-3">
 
-<div class="current-user-card d-flex align-items-center">
+    <div class="d-flex align-items-center gap-3">
 
-    <div class="avatar-lg" id="currentAvatar">A</div>
-
-    <div class="ms-3">
-        <div class="fw-bold" id="currentName">
-            Admin User
+      <div class="current-user-card d-flex align-items-center">
+        <div class="avatar-lg" id="currentAvatar">A</div>
+        <div class="ms-3">
+          <div class="fw-bold" id="currentName">Admin User</div>
+          <div class="small text-muted" id="currentEmail"></div>
+          <span class="badge bg-primary mt-1" id="currentRole"></span>
         </div>
+      </div>
 
-        <div class="small text-muted" id="currentEmail"></div>
+      <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
 
-        <span class="badge bg-primary mt-1" id="currentRole"></span>
     </div>
-
-</div>
-
-
-<button class="btn btn-outline-danger btn-sm"
-onclick="logout()">
-
-<i class="bi bi-box-arrow-right"></i>
-Logout
-
-</button>
-
-</div>
   </div>
 
   <!-- BODY -->
@@ -178,8 +185,9 @@ Logout
           <div class="col-md-2">
             <select class="form-select form-select-sm" id="filter-role" onchange="filterTable()">
               <option value="">All Roles</option>
-              <option value="student">Student</option>
+              <option value="admin">Admin</option>
               <option value="faculty">Faculty</option>
+              <option value="student">Student</option>
             </select>
           </div>
           <div class="col-md-2">
@@ -257,8 +265,7 @@ Logout
             <select class="form-select" id="f-role">
               <option value="admin">Admin</option>
               <option value="faculty">Faculty</option>
-              <option value="student">Student</option>              
-              
+              <option value="student">Student</option>
             </select>
           </div>
           <div class="col-md-6">
@@ -320,9 +327,6 @@ Logout
       <div class="modal-body" id="view-body"></div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <!--<button type="button" class="btn btn-primary" id="view-edit-btn">
-          <i class="bi bi-pencil me-1"></i> Edit
-        </button>-->
       </div>
     </div>
   </div>
@@ -346,6 +350,59 @@ Logout
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+(function requireSession() {
+  const allowedRoles = ["superadmin", "admin", "faculty"];
+
+  const data = localStorage.getItem("student");
+
+  if (!data) {
+    window.location.href = "index.html";
+    throw new Error("No active session — redirecting to login.");
+  }
+
+  let session;
+
+  try {
+    session = JSON.parse(data);
+  } catch (e) {
+    localStorage.removeItem("student");
+    window.location.href = "index.html";
+    throw new Error("Invalid session data.");
+  }
+
+  if (!allowedRoles.includes(session.user_role)) {
+    window.location.href = "index.html";
+    throw new Error("Unauthorized user role.");
+  }
+
+  window.__session = session;
+  window.__sessionKey = session.user_role;
+})();
+
+const CURRENT_USER = window.__session;
+
+function logout() {
+  if (confirm("Are you sure you want to logout?")) {
+    localStorage.removeItem(window.__sessionKey);
+    window.location.href = "index.html";
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("sidebarOverlay").classList.toggle("show");
+}
+
+function loadCurrentUser() {
+  const user = CURRENT_USER;
+  if (!user) return;
+  document.getElementById("currentName").innerText = user.name || "User";
+  document.getElementById("currentEmail").innerText = user.email_id || "";
+  document.getElementById("currentRole").innerText = user.user_role || window.__sessionKey || "";
+  document.getElementById("currentAvatar").innerText = (user.name || "U").charAt(0).toUpperCase();
+}
+
 const API = {
 
   async request(action, payload = {}) {
@@ -419,33 +476,16 @@ const API = {
 
 };
 
-
-
 let USERS = [];
-
 let CURRENT_ID = null;
 
-const userModal =
-  new bootstrap.Modal(
-    document.getElementById(
-      "userModal"
-    )
-  );
+const userModal = new bootstrap.Modal(document.getElementById("userModal"));
+const viewModal = new bootstrap.Modal(document.getElementById("viewModal"));
 
-const viewModal =
-  new bootstrap.Modal(
-    document.getElementById(
-      "viewModal"
-    )
-  );
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-    loadUsers();
-    loadCurrentUser();
-  }
-);
+document.addEventListener("DOMContentLoaded", () => {
+  loadCurrentUser();
+  loadUsers();
+});
 
 async function loadUsers() {
 
@@ -478,7 +518,19 @@ async function loadUsers() {
   }
 
 }
-const CURRENT_USER = JSON.parse(localStorage.getItem("student")) || {};
+
+// Only an admin/superadmin can edit or delete other users' accounts.
+// Faculty sessions can still edit their own row (matched by user_id),
+// but can't touch anyone else's, and can't delete at all.
+function canEdit(u) {
+  const role = CURRENT_USER?.user_role || window.__sessionKey;
+  return role === "admin" || role === "superadmin" || CURRENT_USER?.user_id == u.user_id;
+}
+function canDelete() {
+  const role = CURRENT_USER?.user_role || window.__sessionKey;
+  return role === "admin" || role === "superadmin";
+}
+
 function renderUsers(users) {
 
   const tbody =
@@ -548,8 +600,7 @@ onclick="viewUser(${u.user_id})">
 </button>
 
 ${
-CURRENT_USER?.user_role === "admin" ||
-CURRENT_USER?.user_id == u.user_id
+canEdit(u)
 ? `
 <button
 class="btn btn-icon btn-outline-warning"
@@ -561,7 +612,7 @@ onclick="editUser(${u.user_id})">
 }
 
 ${
-CURRENT_USER?.user_role === "admin"
+canDelete()
 ? `
 <button
 class="btn btn-icon btn-outline-danger"
@@ -574,8 +625,6 @@ onclick="deleteUser(${u.user_id})">
 
 </td>
 
-      </td>
-
     </tr>
 
   `).join("");
@@ -587,29 +636,6 @@ onclick="deleteUser(${u.user_id})">
 
 }
 
-function loadCurrentUser(){
-
-    const user = JSON.parse(
-        localStorage.getItem("student")
-    );
-
-    if(!user) return;
-
-    document.getElementById("currentName").innerText =
-        user.name || "User";
-
-    document.getElementById("currentEmail").innerText =
-        user.email_id || "";
-
-    document.getElementById("currentRole").innerText =
-        user.user_role || "";
-
-    document.getElementById("currentAvatar").innerText =
-        (user.name || "U")
-        .charAt(0)
-        .toUpperCase();
-}
-  
 function updateStats() {
 
   document.getElementById(
@@ -802,6 +828,11 @@ async function editUser(
   user_id
 ) {
 
+  if (!canEdit({ user_id })) {
+    showToast("You don't have permission to edit this user.", "danger");
+    return;
+  }
+
   const user =
     await API.getUser(
       user_id
@@ -888,6 +919,11 @@ async function editUser(
 async function deleteUser(
   user_id
 ) {
+
+  if (!canDelete()) {
+    showToast("You don't have permission to delete users.", "danger");
+    return;
+  }
 
   if (
     !confirm(
@@ -997,11 +1033,6 @@ async function viewUser(
   </table>
   `;
 
-  document.getElementById("view-edit-btn").onclick = () => {
-    viewModal.hide();
-    editUser(user.user_id);
-  };
-
   viewModal.show();
 }
 
@@ -1104,22 +1135,6 @@ function showToast(
   new bootstrap.Toast(
     toastEl
   ).show();
-
-}
-
-function showSection() {
-  // Only one section exists today; reserved for when Classes/Attendance
-  // sidebar items go live.
-}
-function logout(){
-
-    if(confirm("Are you sure you want to logout?")){
-
-        localStorage.removeItem("student");
-
-        window.location.href = "index.html";
-
-    }
 
 }
 </script>
