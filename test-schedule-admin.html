@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIC Academy – Admin · Test Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#f0f4fb;color:#1e293b;padding:24px}
+.wrap{max-width:1180px;margin:0 auto}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.hdr h1{font-size:19px;color:#0e1e4a;font-weight:700;display:flex;align-items:center;gap:8px}
+.hdr h1 i{color:#f0b800}
+.hdr p{font-size:12px;color:#94a3b8;margin-top:2px}
+.grid{display:grid;grid-template-columns:440px 1fr;gap:18px}
+@media(max-width:960px){.grid{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.card h2{font-size:14px;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.card h2 i{color:#185FA5}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.field input,.field textarea,.field select{width:100%;padding:9px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;color:#1e293b;outline:none}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#0e1e4a}
+.field textarea{min-height:70px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chip-select{display:flex;flex-wrap:wrap;gap:6px}
+.chip-opt{padding:6px 12px;border-radius:20px;border:1.5px solid #dde3f0;font-size:12px;cursor:pointer;user-select:none;transition:.15s}
+.chip-opt.sel{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
+
+/* Target picker — who this test is for */
+.target-toggle{display:flex;gap:6px;margin-bottom:10px}
+.target-toggle button{flex:1;padding:8px;border-radius:8px;border:1.5px solid #dde3f0;background:#fff;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:#64748b;cursor:pointer}
+.target-toggle button.active{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
+.student-search-wrap{position:relative}
+.student-search-wrap input{width:100%}
+.student-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid #dde3f0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:50;max-height:220px;overflow-y:auto;display:none}
+.student-dd.open{display:block}
+.student-dd-item{padding:9px 14px;font-size:12.5px;cursor:pointer;display:flex;justify-content:space-between}
+.student-dd-item:hover{background:#eff6ff}
+.selected-students{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.student-chip{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:11.5px;font-weight:500;padding:5px 10px;border-radius:20px}
+.student-chip button{background:none;border:none;cursor:pointer;color:#1d4ed8;display:flex}
+
+.btn{padding:10px 18px;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn.primary{background:#0e1e4a;color:#fff}
+.btn.primary:hover{background:#1a3060}
+.btn.secondary{background:#f1f5f9;color:#475569}
+.btn-row{display:flex;gap:8px;margin-top:6px}
+.msg{font-size:12px;padding:8px 12px;border-radius:8px;margin-top:10px;display:none}
+.msg.ok{background:#dcfce7;color:#15803d;display:block}
+.msg.err{background:#fee2e2;color:#b91c1c;display:block}
+
+.list-toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.list-toolbar input[type="search"]{flex:1;min-width:160px;padding:8px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;outline:none}
+.list-toolbar select{padding:8px 10px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px}
+.list-count{font-size:11.5px;color:#94a3b8;margin-bottom:8px}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{background:#0e1e4a;color:#fff;padding:9px 10px;text-align:left;font-weight:500;font-size:11.5px}
+tbody td{padding:9px 10px;border-bottom:1px solid #f1f5f9}
+tbody tr:hover{background:#f8fafc}
+.badge{padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600}
+.badge.up{background:#dcfce7;color:#15803d}
+.badge.past{background:#f1f5f9;color:#64748b}
+.badge.today{background:#fff6e0;color:#8a6100}
+.icon-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:15px;padding:4px}
+.icon-btn:hover{color:#dc2626}
+.empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div>
+      <h1><i class="ti ti-clipboard-text"></i> Test Schedule — Admin</h1>
+      <p>Create and manage upcoming tests. Assign to a whole batch or specific students — they see it instantly in their "Test Schedule" tab.</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2><i class="ti ti-plus"></i> Create / Edit Test</h2>
+      <input type="hidden" id="editId">
+
+      <div class="field">
+        <label>Assign to</label>
+        <div class="target-toggle">
+          <button type="button" class="active" id="modeBatchBtn" onclick="setTargetMode('batch')">Whole batch</button>
+          <button type="button" id="modeStudentsBtn" onclick="setTargetMode('students')">Specific student(s)</button>
+        </div>
+
+        <div id="batchPicker">
+          <select id="f_class">
+            <option value="">Loading batches…</option>
+          </select>
+        </div>
+
+        <div id="studentPicker" style="display:none">
+          <div class="student-search-wrap">
+            <input type="text" id="studentSearch" placeholder="Search student by name or ID…" autocomplete="off"
+              oninput="filterStudentDropdown(this.value)" onfocus="filterStudentDropdown(this.value)">
+            <div class="student-dd" id="studentDD"></div>
+          </div>
+          <div class="selected-students" id="selectedStudents"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Test name</label>
+        <input type="text" id="f_test_name" placeholder="e.g. PCM Test 5">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Test date</label>
+          <input type="date" id="f_test_date">
+        </div>
+        <div class="field">
+          <label>Start time</label>
+          <input type="time" id="f_start_time">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Duration (minutes)</label>
+          <input type="number" id="f_duration" placeholder="180">
+        </div>
+        <div class="field">
+          <label>Total marks</label>
+          <input type="number" id="f_total_marks" placeholder="300">
+        </div>
+      </div>
+      <div class="field">
+        <label>Subjects covered</label>
+        <div class="chip-select" id="subjChips">
+          <div class="chip-opt" data-s="Physics">Physics</div>
+          <div class="chip-opt" data-s="Chemistry">Chemistry</div>
+          <div class="chip-opt" data-s="Mathematics">Mathematics</div>
+          <div class="chip-opt" data-s="Biology">Biology</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Syllabus link</label>
+        <input type="url" id="f_syllabus" placeholder="https://…">
+      </div>
+      <div class="field">
+        <label>Description / notes</label>
+        <textarea id="f_desc" placeholder="Chapters covered, instructions, etc."></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="saveTest()"><i class="ti ti-device-floppy"></i> Save Test</button>
+        <button class="btn secondary" onclick="resetForm()"><i class="ti ti-x"></i> Clear</button>
+      </div>
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2><i class="ti ti-list"></i> All Scheduled Tests</h2>
+      <div class="list-toolbar">
+        <input type="search" id="testSearch" placeholder="Search test name or subject…" oninput="renderTestList()">
+        <select id="testTimeFilter" onchange="renderTestList()">
+          <option value="all">All</option>
+          <option value="upcoming">Upcoming only</option>
+          <option value="past">Past only</option>
+        </select>
+      </div>
+      <div class="list-count" id="testListCount"></div>
+      <div id="testListWrap">
+        <div class="empty">Loading…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let selectedSubjects = new Set();
+let allTests = [];
+let allStudents = [];
+let allBatches = [];
+let selectedStudentIds = new Set();
+let targetMode = "batch";
+
+document.querySelectorAll(".chip-opt").forEach(el=>{
+  el.addEventListener("click", ()=>{
+    const s = el.dataset.s;
+    if(selectedSubjects.has(s)){ selectedSubjects.delete(s); el.classList.remove("sel"); }
+    else { selectedSubjects.add(s); el.classList.add("sel"); }
+  });
+});
+
+function setTargetMode(mode){
+  targetMode = mode;
+  $("modeBatchBtn").classList.toggle("active", mode==="batch");
+  $("modeStudentsBtn").classList.toggle("active", mode==="students");
+  $("batchPicker").style.display = mode==="batch" ? "block" : "none";
+  $("studentPicker").style.display = mode==="students" ? "block" : "none";
+}
+
+/* ── Student search / multi-select (same pattern as Task Tracking) ── */
+async function loadBatchesAndStudents(){
+  try{
+    const [bRes, sRes] = await Promise.all([
+      fetch("/api/admin/batches"),
+      fetch("/api/admin/students")
+    ]);
+    allBatches = await bRes.json();
+    allStudents = await sRes.json();
+    $("f_class").innerHTML = `<option value="">Select a batch…</option>` +
+      (Array.isArray(allBatches)?allBatches:[]).map(b=>`<option value="${b.id}">${b.name}${b.student_count!=null?` (${b.student_count})`:""}</option>`).join("");
+  }catch(e){
+    $("f_class").innerHTML = `<option value="">Select a batch…</option>`;
+    console.warn("Could not load batches/students", e);
+  }
+}
+
+function filterStudentDropdown(val){
+  const dd = $("studentDD");
+  const q = (val||"").toLowerCase().trim();
+  const list = !q ? allStudents : allStudents.filter(s =>
+    (s.name||"").toLowerCase().includes(q) || String(s.std_id).toLowerCase().includes(q));
+  if(!list.length){
+    dd.innerHTML = `<div class="student-dd-item" style="color:#94a3b8">No students found</div>`;
+  }else{
+    dd.innerHTML = list.slice(0,30).map(s => `
+      <div class="student-dd-item" onclick="addStudent('${s.std_id}')">
+        <span>${s.name}</span><span style="color:#94a3b8">${s.std_id}</span>
+      </div>`).join("");
+  }
+  dd.classList.add("open");
+}
+document.addEventListener("click", e=>{
+  if(!$("studentPicker")?.contains(e.target)) $("studentDD")?.classList.remove("open");
+});
+
+function addStudent(stdId){
+  const s = allStudents.find(x=>String(x.std_id)===String(stdId));
+  if(!s) return;
+  selectedStudentIds.add(String(stdId));
+  $("studentSearch").value = "";
+  $("studentDD").classList.remove("open");
+  renderSelectedStudents();
+}
+function removeStudent(stdId){
+  selectedStudentIds.delete(String(stdId));
+  renderSelectedStudents();
+}
+function renderSelectedStudents(){
+  const box = $("selectedStudents");
+  box.innerHTML = [...selectedStudentIds].map(id=>{
+    const s = allStudents.find(x=>String(x.std_id)===id);
+    return `<span class="student-chip">${s?s.name:id} (${id}) <button onclick="removeStudent('${id}')"><i class="ti ti-x" style="font-size:11px"></i></button></span>`;
+  }).join("");
+}
+
+function resetForm(){
+  $("editId").value = "";
+  $("f_test_name").value = "";
+  $("f_test_date").value = "";
+  $("f_start_time").value = "";
+  $("f_duration").value = "";
+  $("f_total_marks").value = "";
+  $("f_syllabus").value = "";
+  $("f_desc").value = "";
+  $("f_class").value = "";
+  selectedSubjects.clear();
+  document.querySelectorAll(".chip-opt").forEach(el=>el.classList.remove("sel"));
+  selectedStudentIds.clear();
+  renderSelectedStudents();
+  setTargetMode("batch");
+  $("formMsg").className = "msg";
+}
+
+async function saveTest(){
+  const test_name = $("f_test_name").value.trim();
+  const test_date = $("f_test_date").value;
+  if(!test_name || !test_date){
+    $("formMsg").className = "msg err";
+    $("formMsg").textContent = "Test name and date are required.";
+    return;
+  }
+  if(targetMode === "batch" && !$("f_class").value){
+    $("formMsg").className = "msg err";
+    $("formMsg").textContent = "Select a batch, or switch to \"Specific student(s)\".";
+    return;
+  }
+  if(targetMode === "students" && selectedStudentIds.size === 0){
+    $("formMsg").className = "msg err";
+    $("formMsg").textContent = "Select at least one student, or switch to \"Whole batch\".";
+    return;
+  }
+
+  const payload = {
+    id: $("editId").value || undefined,
+    test_name,
+    test_date,
+    start_time: $("f_start_time").value,
+    duration_minutes: Number($("f_duration").value) || null,
+    total_marks: Number($("f_total_marks").value) || null,
+    subjects: [...selectedSubjects],
+    syllabus_link: $("f_syllabus").value.trim(),
+    description: $("f_desc").value.trim(),
+    target_mode: targetMode,
+    batch_id: targetMode === "batch" ? ($("f_class").value || null) : null,
+    student_ids: targetMode === "students" ? [...selectedStudentIds] : []
+  };
+  try{
+    const res = await fetch("/api/admin/test-schedules", {
+      method: payload.id ? "PUT" : "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Save failed");
+    $("formMsg").className = "msg ok";
+    $("formMsg").textContent = "Saved successfully.";
+    resetForm();
+    loadTests();
+  }catch(e){
+    $("formMsg").className = "msg err";
+    $("formMsg").textContent = "Could not save test. " + e.message;
+  }
+}
+
+function editTest(id){
+  const t = allTests.find(x=>String(x.id)===String(id));
+  if(!t) return;
+  $("editId").value = t.id;
+  $("f_test_name").value = t.test_name||"";
+  $("f_test_date").value = t.test_date||"";
+  $("f_start_time").value = t.start_time||"";
+  $("f_duration").value = t.duration_minutes||"";
+  $("f_total_marks").value = t.total_marks||"";
+  $("f_syllabus").value = t.syllabus_link||"";
+  $("f_desc").value = t.description||"";
+  selectedSubjects = new Set(t.subjects||[]);
+  document.querySelectorAll(".chip-opt").forEach(el=>el.classList.toggle("sel", selectedSubjects.has(el.dataset.s)));
+
+  if(t.target_mode === "students"){
+    setTargetMode("students");
+    selectedStudentIds = new Set((t.student_ids||[]).map(String));
+    renderSelectedStudents();
+  } else {
+    setTargetMode("batch");
+    $("f_class").value = t.batch_id || "";
+  }
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+async function deleteTest(id){
+  if(!confirm("Delete this test schedule?")) return;
+  try{
+    const res = await fetch(`/api/admin/test-schedules/${id}`, { method:"DELETE" });
+    if(!res.ok) throw new Error("Delete failed");
+    loadTests();
+  }catch(e){ alert("Could not delete: " + e.message); }
+}
+
+async function loadTests(){
+  const box = $("testListWrap");
+  try{
+    const res = await fetch("/api/admin/test-schedules");
+    const rows = await res.json();
+    if(!res.ok) throw new Error("Failed to load");
+    allTests = (Array.isArray(rows)?rows:[]).sort((a,b)=>(b.test_date||"").localeCompare(a.test_date||""));
+    renderTestList();
+  }catch(e){
+    box.innerHTML = `<div class="empty" style="color:#dc2626">Could not load tests: ${e.message}</div>`;
+  }
+}
+
+function renderTestList(){
+  const box = $("testListWrap");
+  const countLabel = $("testListCount");
+
+  if(!allTests.length){
+    box.innerHTML = `<div class="empty">No tests scheduled yet. Create one on the left.</div>`;
+    countLabel.textContent = "";
+    return;
+  }
+
+  const todayStr = new Date().toISOString().slice(0,10);
+  const q = ($("testSearch").value||"").toLowerCase().trim();
+  const timeFilter = $("testTimeFilter").value;
+
+  const filtered = allTests.filter(t=>{
+    if(timeFilter === "upcoming" && !(t.test_date >= todayStr)) return false;
+    if(timeFilter === "past" && !(t.test_date < todayStr)) return false;
+    if(q){
+      const hay = [t.test_name, ...(t.subjects||[]), t.target_label].filter(Boolean).join(" ").toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  countLabel.textContent = `Showing ${filtered.length} of ${allTests.length} tests`;
+
+  if(!filtered.length){
+    box.innerHTML = `<div class="empty">No tests match your search/filter.</div>`;
+    return;
+  }
+
+  box.innerHTML = `<table><thead><tr><th>Test</th><th>Date</th><th>Subjects</th><th>Assigned to</th><th></th></tr></thead><tbody>
+    ${filtered.map(t=>{
+      const statusCls = t.test_date>todayStr ? 'up' : t.test_date===todayStr ? 'today' : 'past';
+      const statusTxt = t.test_date>todayStr ? 'Upcoming' : t.test_date===todayStr ? 'Today' : 'Past';
+      return `
+      <tr>
+        <td><strong>${t.test_name}</strong>${t.syllabus_link?` · <a href="${t.syllabus_link}" target="_blank" style="color:#185FA5;font-size:11px">syllabus</a>`:""}
+          ${t.total_marks?`<br><span style="color:#94a3b8;font-size:11px">${t.total_marks} marks${t.duration_minutes?` · ${t.duration_minutes} min`:""}</span>`:""}
+        </td>
+        <td>${t.test_date||"—"} <span class="badge ${statusCls}">${statusTxt}</span></td>
+        <td>${(t.subjects||[]).join(", ")||"—"}</td>
+        <td>${t.target_label || (t.batch_name || (t.batch_id?"Batch #"+t.batch_id:"All students"))}</td>
+        <td>
+          <button class="icon-btn" onclick="editTest('${t.id}')" title="Edit"><i class="ti ti-edit"></i></button>
+          <button class="icon-btn" onclick="deleteTest('${t.id}')" title="Delete"><i class="ti ti-trash"></i></button>
+        </td>
+      </tr>`;
+    }).join("")}
+  </tbody></table>`;
+}
+
+loadBatchesAndStudents();
+loadTests();
+</script>
+</body>
+</html>
