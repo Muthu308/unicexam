@@ -201,6 +201,32 @@ export default async function handler(req, res) {
     // =====================================================
     if (req.method === "PUT") {
 
+      const {
+        id,
+        session,
+        subject,
+        topic,
+        faculty_name,
+        faculty_user_id,
+        student_ids = [],
+        school_id,
+        class_date,
+        start_time,
+        end_time,
+        syllabus_link,
+        notes_link,
+        video_link,
+        assignment_link,
+        class_status,
+        who_updated,
+      } = req.body || {};
+
+            if (!id) {
+        return res.status(400).json({
+          error: "Class id is required",
+        });
+      }
+
       if (session === undefined && subject === undefined && faculty_name === undefined) {
   // Status-only update
   const mutation = `
@@ -235,31 +261,6 @@ export default async function handler(req, res) {
 
   return res.status(200).json(data.update_classes_by_pk);
 }
-      const {
-        id,
-        session,
-        subject,
-        topic,
-        faculty_name,
-        faculty_user_id,
-        student_ids = [],
-        school_id,
-        class_date,
-        start_time,
-        end_time,
-        syllabus_link,
-        notes_link,
-        video_link,
-        assignment_link,
-        class_status,
-        who_updated,
-      } = req.body || {};
-
-      if (!id) {
-        return res.status(400).json({
-          error: "Class id is required",
-        });
-      }
 
       const mutation = `
         mutation UpdateClass(
