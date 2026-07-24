@@ -207,14 +207,14 @@ export default async function handler(req, res) {
     mutation UpdateClassStatus(
       $id: Int!
       $class_status: String
-      $class_status_reason: String
+      $reason_remarks: String
       $who_updated: String
     ) {
       update_classes_by_pk(
         pk_columns: { id: $id }
         _set: {
           class_status: $class_status
-          reason_remarks: $class_status_reason
+          reason_remarks: $reason_remarks
           who_updated: $who_updated
         }
       ) {
