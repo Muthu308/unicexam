@@ -43,6 +43,7 @@ export default async function handler(req, res) {
         video_link,
         assignment_link = null,
         class_status,
+        who_updated,
       } = req.body || {};
 
       if (!session || !subject || !faculty_name) {
@@ -74,6 +75,7 @@ export default async function handler(req, res) {
           $video_link: String
           $assignment_link: String
           $class_status: String
+          $who_updated: String
         ) {
           insert_classes_one(
             object: {
@@ -92,6 +94,7 @@ export default async function handler(req, res) {
               video_link: $video_link
               assignment_link: $assignment_link
               class_status: $class_status
+              who_updated: $who_updated
             }
           ) {
             id
@@ -111,6 +114,7 @@ export default async function handler(req, res) {
             assignment_link
             created_at
             class_status
+            who_updated
           }
         }
       `;
@@ -134,6 +138,7 @@ export default async function handler(req, res) {
         video_link,
         assignment_link,
         class_status,
+        who_updated
       });
 
       return res.status(201).json(data.insert_classes_one);
@@ -259,7 +264,7 @@ export default async function handler(req, res) {
               video_link:$video_link
               assignment_link:$assignment_link
               class_status:$class_status
-              $who_updated:$who_updated
+              who_updated:$who_updated
             }
           ) {
             id
