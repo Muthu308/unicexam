@@ -769,6 +769,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
         notes_link: document.getElementById("notesLink").value.trim() || null,
         video_link: document.getElementById("videoLink").value.trim() || null,
         assignment_link: document.getElementById("assignmentLink").value.trim() || null,
+        who_updated: window.__session.name,
       };
 
       if (!payload.faculty_name) {
