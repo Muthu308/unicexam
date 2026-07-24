@@ -200,6 +200,41 @@ export default async function handler(req, res) {
     // UPDATE CLASS
     // =====================================================
     if (req.method === "PUT") {
+
+      if (session === undefined && subject === undefined && faculty_name === undefined) {
+  // Status-only update
+  const mutation = `
+    mutation UpdateClassStatus(
+      $id: Int!
+      $class_status: String
+      $class_status_reason: String
+      $who_updated: String
+    ) {
+      update_classes_by_pk(
+        pk_columns: { id: $id }
+        _set: {
+          class_status: $class_status
+          reason_remarks: $class_status_reason
+          who_updated: $who_updated
+        }
+      ) {
+        id
+        class_status
+        reason_remarks
+        who_updated
+      }
+    }
+  `;
+
+  const data = await hasuraRequest(mutation, {
+    id: Number(id),
+    class_status,
+    class_status_reason,
+    who_updated,
+  });
+
+  return res.status(200).json(data.update_classes_by_pk);
+}
       const {
         id,
         session,
