@@ -311,7 +311,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
 
     if (confirm("Are you sure you want to logout?")) {
         localStorage.removeItem(window.__sessionKey);
-        window.location.href = "index.html";
+        window.location.href = "/../index.html";
     }
 });
 
@@ -407,9 +407,11 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         wrap.style.display = "flex";
         wrap.innerHTML = `
           <button type="button" class="cancel-btn" id="cancelClassBtn">Cancel this class</button>
-          <button type="button" class="postpone-btn" id="postponeClassBtn">Postpone this class</button>`;
-        document.getElementById("cancelClassBtn").addEventListener("click", () => updateClassStatus(cls, "Cancelled"));
-        document.getElementById("postponeClassBtn").addEventListener("click", () => updateClassStatus(cls, "Postponed"));
+          <button type="button" class="postpone-btn" id="postponeClassBtn">Postpone this class</button>
+          <button type="button" class="postpone-btn" id="completeClassBtn">Completed this class</button>`;          
+         document.getElementById("cancelClassBtn").addEventListener("click", () => updateClassStatus(cls, "Cancelled"));
+         document.getElementById("postponeClassBtn").addEventListener("click", () => updateClassStatus(cls, "Postponed"));
+         document.getElementById("completeClassBtn").addEventListener("click", () => updateClassStatus(cls, "Completed"));
       } else {
         // Prepone / Completed — no faculty quick-actions for these; Admin manages them.
         wrap.style.display = "none";
