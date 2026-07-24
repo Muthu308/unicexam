@@ -379,9 +379,9 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         submitBtn.title = info.blocks ? "Attendance is disabled while this class is " + cls.class_status.toLowerCase() + "." : "";
       }
 
-      if (cls.class_status_reason && (cls.class_status === "Cancelled" || cls.class_status === "Postponed")) {
+      if (cls.reason_remarks && (cls.class_status === "Cancelled" || cls.class_status === "Postponed")) {
         reasonBox.style.display = "block";
-        reasonBox.textContent = `Reason: ${cls.class_status_reason}`;
+        reasonBox.textContent = `Reason: ${cls.reason_remarks}`;
       } else {
         reasonBox.style.display = "none";
         reasonBox.textContent = "";
@@ -439,14 +439,15 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           body: JSON.stringify({
             id: cls.id,
             class_status: newStatus,
-            class_status_reason: reason || null,
+            reason_remarks: reason || null,
+            who_updated: window.__session.name,
           }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to update class status");
 
         cls.class_status = newStatus;
-        cls.class_status_reason = reason || null;
+        cls.reason_remarks = reason || null;
         currentClass = cls;
         renderClassStatusBanner(cls);
 
@@ -456,7 +457,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         const idx = classes.findIndex((c) => String(c.id) === String(cls.id));
         if (idx !== -1) {
           classes[idx].class_status = newStatus;
-          classes[idx].class_status_reason = reason || null;
+          classes[idx].reason_remarks = reason || null;
           select.dataset.classes = JSON.stringify(classes);
           const opt = select.querySelector(`option[value="${cls.id}"]`);
           if (opt) {
