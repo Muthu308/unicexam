@@ -255,7 +255,7 @@ export default async function handler(req, res) {
   const data = await hasuraRequest(mutation, {
     id: Number(id),
     class_status,
-    class_status_reason,
+    reason_remarks,
     who_updated,
   });
 
