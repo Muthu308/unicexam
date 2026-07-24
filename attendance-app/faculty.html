@@ -130,6 +130,25 @@
   .class-status-banner.prepone { background: #eef1fd; color: #3730a3; border: 1px solid #c7c9f7; }
   .class-status-banner.completed { background: #eceef1; color: #444; border: 1px solid #dcdfe4; }
 
+  /* ---- Quick class-status actions (faculty: Cancel / Postpone only) ---- */
+  .class-status-actions { display: flex; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+  .class-status-actions button {
+    font-size: 0.82rem;
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .class-status-actions .cancel-btn { color: #b3261e; border-color: #f3c5c2; }
+  .class-status-actions .cancel-btn:hover { background: #fdeaea; }
+  .class-status-actions .postpone-btn { color: #8a6100; border-color: #f4dfa0; }
+  .class-status-actions .postpone-btn:hover { background: #fff6e0; }
+  .class-status-actions .reinstate-btn { color: #1a7a3a; border-color: #b7e4c7; }
+  .class-status-actions .reinstate-btn:hover { background: #e6f7ec; }
+  .class-status-reason { font-size: 0.8rem; color: #666; margin: -6px 0 10px; font-style: italic; }
+
   /* ---- Filter / search bars ---- */
   .filter-bar {
     display: flex;
@@ -203,6 +222,8 @@
       </select>
       <div id="classMeta" class="hint"></div>
       <div id="classStatusBanner"></div>
+      <div id="classStatusReason" class="class-status-reason" style="display:none;"></div>
+      <div class="class-status-actions" id="classStatusActions" style="display:none;"></div>
       <div id="classLinks" class="hint"></div>
     </div>
 
@@ -256,41 +277,31 @@
 
   <script src="config.js"></script>
   <script>
-    /* ══════════════════════════════════════════════
-       SESSION GUARD
-       Assumes the login page (index.html) stores the
-       logged-in faculty member as:
-         localStorage.setItem("faculty", JSON.stringify({name, user_id, school_id, ...}))
-       If nothing is there, bounce to login before anything
-       on this page runs or fetches data.
-    ══════════════════════════════════════════════ */
+
 (function requireSession() {
 
-    const roles = ["superadmin", "admin", "faculty", "student"];
+   const allowedRoles = ["superadmin", "admin", "faculty"];
+  const data = localStorage.getItem("student");
+  if (!data) {
+    window.location.href = "index.html";
+    throw new Error("No active session — redirecting to login.");
+  }
+  let session;
+  try {
+    session = JSON.parse(data);
+  } catch (e) {
+    localStorage.removeItem("student");
+    window.location.href = "index.html";
+    throw new Error("Invalid session data.");
+  }
+  if (!allowedRoles.includes(session.user_role)) {
+    window.location.href = "index.html";
+    throw new Error("Unauthorized user role.");
+  }
+  window.__session = session;
+  window.__sessionKey = session.user_role; 
 
-    let session = null;
-    let sessionKey = null;
-
-    for (const role of roles) {
-        const data = localStorage.getItem(role);
-       if (data) {
-            try {
-                session = JSON.parse(data);
-                sessionKey = role;
-                break;
-            } catch (e) {}
-        }
-    }
-
-    if (!session) {
-        window.location.href = "index.html";
-        throw new Error("No active session.");
-    }
-
-    window.__session = session;
-    window.__sessionKey = sessionKey;
-
-})();
+})();    
 
     document.getElementById("facultyNameLabel").textContent =
     window.__session.name || "User";
@@ -356,15 +367,105 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
       const info = classStatusInfo(cls.class_status);
       const banner = document.getElementById("classStatusBanner");
       const submitBtn = document.getElementById("submitAttendance");
+      const reasonBox = document.getElementById("classStatusReason");
+
       if (!info) {
         banner.innerHTML = "";
         submitBtn.disabled = false;
         submitBtn.title = "";
-        return;
+      } else {
+        banner.innerHTML = `<div class="class-status-banner ${info.cls}">${info.text}</div>`;
+        submitBtn.disabled = info.blocks;
+        submitBtn.title = info.blocks ? "Attendance is disabled while this class is " + cls.class_status.toLowerCase() + "." : "";
       }
-      banner.innerHTML = `<div class="class-status-banner ${info.cls}">${info.text}</div>`;
-      submitBtn.disabled = info.blocks;
-      submitBtn.title = info.blocks ? "Attendance is disabled while this class is " + cls.class_status.toLowerCase() + "." : "";
+
+      if (cls.class_status_reason && (cls.class_status === "Cancelled" || cls.class_status === "Postponed")) {
+        reasonBox.style.display = "block";
+        reasonBox.textContent = `Reason: ${cls.class_status_reason}`;
+      } else {
+        reasonBox.style.display = "none";
+        reasonBox.textContent = "";
+      }
+
+      renderClassStatusActions(cls);
+    }
+
+    // Faculty can only take two direct actions on a class's status: Cancel it,
+    // or Postpone it — both require a reason. (Prepone / Completed / general
+    // status editing stays an Admin-only capability on the Add Class page.)
+    // If the class is already Cancelled/Postponed, faculty can reinstate it
+    // back to Scheduled (e.g. correcting a mistake), also with a reason.
+    function renderClassStatusActions(cls) {
+      const wrap = document.getElementById("classStatusActions");
+      const status = cls.class_status || "Scheduled";
+
+      if (status === "Cancelled" || status === "Postponed") {
+        wrap.style.display = "flex";
+        wrap.innerHTML = `<button type="button" class="reinstate-btn" id="reinstateClassBtn">Reinstate class (back to Scheduled)</button>`;
+        document.getElementById("reinstateClassBtn").addEventListener("click", () => updateClassStatus(cls, "Scheduled"));
+      } else if (status === "Scheduled") {
+        wrap.style.display = "flex";
+        wrap.innerHTML = `
+          <button type="button" class="cancel-btn" id="cancelClassBtn">Cancel this class</button>
+          <button type="button" class="postpone-btn" id="postponeClassBtn">Postpone this class</button>`;
+        document.getElementById("cancelClassBtn").addEventListener("click", () => updateClassStatus(cls, "Cancelled"));
+        document.getElementById("postponeClassBtn").addEventListener("click", () => updateClassStatus(cls, "Postponed"));
+      } else {
+        // Prepone / Completed — no faculty quick-actions for these; Admin manages them.
+        wrap.style.display = "none";
+        wrap.innerHTML = "";
+      }
+    }
+
+    async function updateClassStatus(cls, newStatus) {
+      let reason = "";
+      if (newStatus === "Cancelled" || newStatus === "Postponed") {
+        reason = window.prompt(`Reason for marking this class as ${newStatus} (required):`, "");
+        if (reason === null) return; // cancelled the prompt
+        reason = reason.trim();
+        if (!reason) {
+          alert("A reason is required.");
+          return;
+        }
+      } else {
+        reason = window.prompt("Optional note for reinstating this class (leave blank to skip):", "") || "";
+        reason = reason.trim();
+      }
+
+      try {
+        const res = await fetch(`${API}/api/classes`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: cls.id,
+            class_status: newStatus,
+            class_status_reason: reason || null,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Failed to update class status");
+
+        cls.class_status = newStatus;
+        cls.class_status_reason = reason || null;
+        currentClass = cls;
+        renderClassStatusBanner(cls);
+
+        // Reflect the change in the class dropdown label too, without a full reload
+        const select = document.getElementById("classSelect");
+        const classes = JSON.parse(select.dataset.classes || "[]");
+        const idx = classes.findIndex((c) => String(c.id) === String(cls.id));
+        if (idx !== -1) {
+          classes[idx].class_status = newStatus;
+          classes[idx].class_status_reason = reason || null;
+          select.dataset.classes = JSON.stringify(classes);
+          const opt = select.querySelector(`option[value="${cls.id}"]`);
+          if (opt) {
+            opt.textContent = `#${cls.id} — ${cls.subject} (${cls.class_date || cls.session})${newStatus !== "Scheduled" ? " — " + newStatus : ""}`;
+          }
+        }
+      } catch (err) {
+        alert("Could not update class status: " + err.message);
+      }
     }
 
     // ---- Tab switching ----
@@ -633,6 +734,8 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         document.getElementById("historyCard").style.display = "none";
         document.getElementById("viewTabs").style.display = "none";
         document.getElementById("classStatusBanner").innerHTML = "";
+        document.getElementById("classStatusReason").style.display = "none";
+        document.getElementById("classStatusActions").style.display = "none";
         return;
       }
       const classes = JSON.parse(e.target.dataset.classes || "[]");
