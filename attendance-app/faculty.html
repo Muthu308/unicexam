@@ -148,6 +148,16 @@
   .class-status-actions .reinstate-btn { color: #1a7a3a; border-color: #b7e4c7; }
   .class-status-actions .reinstate-btn:hover { background: #e6f7ec; }
   .class-status-reason { font-size: 0.8rem; color: #666; margin: -6px 0 10px; font-style: italic; }
+  .class-status-actions .complete-btn {
+  color: #0f5132;
+  border-color: #badbcc;
+  background: #d1e7dd;
+}
+
+.class-status-actions .complete-btn:hover {
+  background: #b7ddc8;
+  border-color: #8fd19e;
+}
 
   /* ---- Filter / search bars ---- */
   .filter-bar {
@@ -408,7 +418,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         wrap.innerHTML = `
           <button type="button" class="cancel-btn" id="cancelClassBtn">Cancel this class</button>
           <button type="button" class="postpone-btn" id="postponeClassBtn">Postpone this class</button>
-          <button type="button" class="postpone-btn" id="completeClassBtn">Completed this class</button>`;          
+          <button type="button" class="complete-btn" id="completeClassBtn">Completed this class</button>`;          
          document.getElementById("cancelClassBtn").addEventListener("click", () => updateClassStatus(cls, "Cancelled"));
          document.getElementById("postponeClassBtn").addEventListener("click", () => updateClassStatus(cls, "Postponed"));
          document.getElementById("completeClassBtn").addEventListener("click", () => updateClassStatus(cls, "Completed"));
@@ -430,7 +440,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           return;
         }
       } else {
-        reason = window.prompt("Optional note for reinstating this class (leave blank to skip):", "") || "";
+        reason = window.prompt("Note for this class (optional):", "") || "";
         reason = reason.trim();
       }
 
