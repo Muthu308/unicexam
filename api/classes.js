@@ -219,6 +219,7 @@ export default async function handler(req, res) {
         assignment_link,
         class_status,
         who_updated,
+        reason_remarks,
       } = req.body || {};
 
             if (!id) {
