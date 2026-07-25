@@ -16,15 +16,16 @@ export default async function handler(req, res) {
   try {
     // =====================================================
     // GET FEEDBACK
-    //   - /api/class-feedback            -> all feedback (with joins, for admin)
-    //   - /api/class-feedback?student_id=X -> feedback for one student
+    //   - /api/classfeedback              -> all feedback (with joins, for admin)
+    //   - /api/classfeedback?student_id=X -> feedback for one student
     // =====================================================
     if (req.method === "GET") {
       const { student_id } = req.query;
 
-      // No student_id -> return all feedback with class info,
-      // then manually join student names (no Hasura relationship exists
-      // between class_feedback and user_students, so we do it here).
+      // No student_id -> return all feedback, then manually join
+      // class info and student names in JS. No Hasura relationships
+      // exist between class_feedback and classes / user_students,
+      // so both joins are done here instead of via nested GraphQL fields.
       if (!student_id) {
         const query = `
           query {
@@ -35,7 +36,22 @@ export default async function handler(req, res) {
               rating
               feedback_text
               created_at
-              class {
+            }
+          }
+        `;
+        const data = await hasuraRequest(query);
+        const feedback = data.class_feedback || [];
+
+        // Collect distinct ids referenced in the feedback rows
+        const classIds = [...new Set(feedback.map(f => f.class_id).filter(Boolean))];
+        const stdIds = [...new Set(feedback.map(f => f.std_id).filter(Boolean))];
+
+        // ---- Fetch classes ----
+        let classesById = {};
+        if (classIds.length) {
+          const classQuery = `
+            query GetClasses($ids: [Int!]) {
+              classes(where: { id: { _in: $ids } }) {
                 id
                 subject
                 class_date
@@ -45,14 +61,14 @@ export default async function handler(req, res) {
                 topic
               }
             }
-          }
-        `;
-        const data = await hasuraRequest(query);
-        const feedback = data.class_feedback || [];
+          `;
+          const classData = await hasuraRequest(classQuery, { ids: classIds });
+          classesById = Object.fromEntries(
+            (classData.classes || []).map(c => [c.id, c])
+          );
+        }
 
-        // Collect the distinct student ids referenced in the feedback rows
-        const stdIds = [...new Set(feedback.map(f => f.std_id).filter(Boolean))];
-
+        // ---- Fetch students ----
         let studentsById = {};
         if (stdIds.length) {
           const studentQuery = `
@@ -69,10 +85,11 @@ export default async function handler(req, res) {
           );
         }
 
-        // Merge student info onto each feedback row, keeping the same
-        // shape (`user_student`) the frontend already expects.
+        // Merge both onto each feedback row, keeping the same shapes
+        // (`class`, `user_student`) the frontend already expects.
         const merged = feedback.map(f => ({
           ...f,
+          class: classesById[f.class_id] || null,
           user_student: studentsById[f.std_id] || null,
         }));
 
