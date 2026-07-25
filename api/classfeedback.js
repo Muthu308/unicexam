@@ -35,7 +35,7 @@ export default async function handler(req, res) {
               rating
               feedback_text
               created_at
-              classes {
+              class {
                 id
                 subject
                 class_date
