@@ -73,7 +73,7 @@ export default async function handler(req, res) {
         if (stdIds.length) {
           const studentQuery = `
             query GetStudents($ids: [String!]) {
-              user_students(where: { std_id: { _in: $ids } }) {
+              user_student(where: { std_id: { _in: $ids } }) {
                 std_id
                 name
               }
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
           `;
           const studentData = await hasuraRequest(studentQuery, { ids: stdIds });
           studentsById = Object.fromEntries(
-            (studentData.user_students || []).map(s => [s.std_id, s])
+            (studentData.user_student || []).map(s => [s.std_id, s])
           );
         }
 
