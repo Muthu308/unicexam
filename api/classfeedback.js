@@ -45,8 +45,7 @@ export default async function handler(req, res) {
             std_id
             rating
             feedback_text
-            created_at
-            updated_at
+            created_at            
           }
         }
       `;
@@ -91,8 +90,7 @@ export default async function handler(req, res) {
               constraint: class_feedback_class_id_std_id_key
               update_columns: [
                 rating
-                feedback_text
-                updated_at
+                feedback_text                
               ]
             }
           ) {
@@ -101,8 +99,7 @@ export default async function handler(req, res) {
             std_id
             rating
             feedback_text
-            created_at
-            updated_at
+            created_at            
           }
         }
       `;
@@ -112,8 +109,7 @@ export default async function handler(req, res) {
           class_id: Number(class_id),
           std_id: student_id,
           rating: Number(rating),
-          feedback_text: feedback_text || null,
-          updated_at: new Date().toISOString(),
+          feedback_text: feedback_text || null,         
         },
       });
 
