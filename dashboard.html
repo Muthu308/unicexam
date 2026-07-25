@@ -223,6 +223,7 @@ body{background:#f0f4fb;color:#1e293b}
   color: #e2e8f0;
   cursor: pointer;
 }
+
 .star-row i.filled{color:#f0b800}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(14,30,74,.55);z-index:9999;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
@@ -1951,8 +1952,8 @@ function closeFeedbackModal() {
     star.style.opacity = "1";
   });
   activeFeedbackClass = null;
+  selectedStars = 0;
 }
-  
   
 function renderStars() {
     document.querySelectorAll("#starRow i").forEach(star => {
@@ -1960,13 +1961,14 @@ function renderStars() {
 
         if (value <= selectedStars) {
             star.classList.remove("ti-star");
-            star.classList.add("ti-star-filled");
+            star.classList.add("ti-star-filled", "filled");
         } else {
-            star.classList.remove("ti-star-filled");
+            star.classList.remove("ti-star-filled", "filled");
             star.classList.add("ti-star");
         }
     });
 }
+
   
 $("feedbackModal")?.addEventListener("click", (e) => {
   if ($("feedbackText").disabled) return;
