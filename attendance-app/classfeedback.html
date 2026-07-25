@@ -154,7 +154,17 @@
 
   <main>
 <h3> Class Feedback</h3>
-  <div>
+
+  <div class="filter-bar">
+    <input type="search" id="feedbackSearch" placeholder="Search by student, name, faculty or feedback text..." />
+    <select id="subjectFilter">
+      <option value="">All Subjects</option>
+    </select>
+    <button type="button" class="clear-filters-btn" id="clearFiltersBtn">Clear Filters</button>
+  </div>
+  <div class="filter-summary" id="filterSummary"></div>
+
+  <div class="table-scroll">
 <table id="feedbackTable">
 <thead>
 <tr>
@@ -232,14 +242,21 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
 });
 
     const API = window.API_BASE || "";
-   async function loadFeedback(){
 
-    const res = await fetch(`${API}/api/classfeedback`);
-    const rows = await res.json();
-
+    let allFeedback = [];          // full dataset from the API, loaded once
     const tbody = document.getElementById("feedbackBody");
+    const searchInput = document.getElementById("feedbackSearch");
+    const subjectSelect = document.getElementById("subjectFilter");
+    const clearBtn = document.getElementById("clearFiltersBtn");
+    const filterSummary = document.getElementById("filterSummary");
 
-    tbody.innerHTML = rows.map(r=>`
+    function renderRows(rows){
+      if (!rows.length){
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:#888;padding:16px;">No feedback found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r=>`
 
 <tr>
 <td>${r.user_student?.std_id ?? r.std_id}</td>
@@ -261,9 +278,67 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
 </tr>
 
 `).join("");
+    }
 
-}
-loadFeedback();
+    function populateSubjectFilter(rows){
+      const subjects = [...new Set(
+        rows.map(r => r.class?.subject).filter(Boolean)
+      )].sort((a,b)=> a.localeCompare(b));
+
+      subjectSelect.innerHTML = `<option value="">All Subjects</option>` +
+        subjects.map(s => `<option value="${s}">${s}</option>`).join("");
+    }
+
+    function applyFilters(){
+      const term = searchInput.value.trim().toLowerCase();
+      const subject = subjectSelect.value;
+
+      const filtered = allFeedback.filter(r => {
+        const matchesSubject = !subject || r.class?.subject === subject;
+
+        if (!matchesSubject) return false;
+        if (!term) return true;
+
+        const haystack = [
+          r.user_student?.std_id ?? r.std_id,
+          r.user_student?.name,
+          r.class?.subject,
+          r.class?.faculty_name,
+          r.class?.batch_name,
+          r.feedback_text
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        return haystack.includes(term);
+      });
+
+      renderRows(filtered);
+
+      filterSummary.textContent =
+        `Showing ${filtered.length} of ${allFeedback.length} feedback entries`;
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+    subjectSelect.addEventListener("change", applyFilters);
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      subjectSelect.value = "";
+      applyFilters();
+    });
+
+    async function loadFeedback(){
+      const res = await fetch(`${API}/api/classfeedback`);
+      const rows = await res.json();
+
+      allFeedback = Array.isArray(rows) ? rows : [];
+
+      populateSubjectFilter(allFeedback);
+      renderRows(allFeedback);
+
+      filterSummary.textContent =
+        `Showing ${allFeedback.length} of ${allFeedback.length} feedback entries`;
+    }
+
+    loadFeedback();
   </script>
 </body>
 </html>
