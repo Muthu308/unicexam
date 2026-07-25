@@ -443,7 +443,7 @@ th.total-group{background:#7c3aed !important}
     <span class="badge-active">&#10003; Active</span>
   </div>
 
-  <!-- PROFILE -->
+
 <!-- PROFILE -->
   <div class="page active" id="page-profile">
     <div class="pc-wrap">
@@ -654,6 +654,46 @@ th.total-group{background:#7c3aed !important}
   </div>
 </div>
 
+
+<!-- Feedback / Rating Modal -->
+<div class="modal-overlay" id="feedbackModal">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close-x" onclick="closeFeedbackModal()"><i class="ti ti-x"></i></button>
+    <h3>Rate this class</h3>
+    <p class="sub" id="feedbackModalSub">—</p>
+    <div class="star-row" id="starRow">
+      <i class="ti ti-star" data-v="1"></i>
+      <i class="ti ti-star" data-v="2"></i>
+      <i class="ti ti-star" data-v="3"></i>
+      <i class="ti ti-star" data-v="4"></i>
+      <i class="ti ti-star" data-v="5"></i>
+    </div>
+    <textarea id="feedbackText" placeholder="Optional: tell us what worked well or what could improve…"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeFeedbackModal()">Cancel</button>
+      <button class="modal-btn submit" onclick="submitClassFeedback()">Submit feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- Task Submission Modal -->
+<div class="modal-overlay" id="taskSubmitModal">
+  <div class="modal-box" style="position:relative;max-width:480px">
+    <button class="modal-close-x" onclick="closeTaskSubmitModal()"><i class="ti ti-x"></i></button>
+    <h3 id="taskSubmitTitle">Submit your work</h3>
+    <p class="sub" id="taskSubmitSub">—</p>
+    <div class="field" style="margin-top:6px">
+      <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px">Submission link <span style="font-weight:400;text-transform:none;color:#94a3b8">(Drive / photo / doc URL)</span></label>
+      <input type="url" id="taskSubmitLink" placeholder="https://…" style="width:100%;padding:9px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;outline:none">
+    </div>
+    <textarea id="taskSubmitText" placeholder="Optional: type your answer, notes, or working here…" style="margin-top:10px"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeTaskSubmitModal()">Cancel</button>
+      <button class="modal-btn submit" onclick="submitTaskResponse()">Submit work</button>
+    </div>
+  </div>
+</div>
+  
 <script>
 /* ── Helpers ── */
 const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val || "—"; };
