@@ -1953,12 +1953,12 @@ function closeFeedbackModal() {
   });
   activeFeedbackClass = null;
   selectedStars = 0;
+  renderStars();
 }
   
 function renderStars() {
     document.querySelectorAll("#starRow i").forEach(star => {
         const value = Number(star.dataset.v);
-
         if (value <= selectedStars) {
             star.classList.remove("ti-star");
             star.classList.add("ti-star-filled", "filled");
