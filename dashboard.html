@@ -213,6 +213,83 @@ body{background:#f0f4fb;color:#1e293b}
 .cs-pill.completed{background:#e0e7ff;color:#3730a3}
 .cs-pill.prepone{background:#dcfce7;color:#15803d}
 
+/* Class rating & feedback */
+.rate-btn{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:5px 10px;border-radius:7px;background:#0e1e4a;color:#fff;border:none;cursor:pointer;margin-top:8px}
+.rate-btn:hover{background:#1a3060}
+.rate-btn.done{background:#dcfce7;color:#15803d}
+.star-row{display:flex;gap:4px;font-size:24px;color:#e2e8f0;cursor:pointer}
+.star-row i.filled{color:#f0b800}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(14,30,74,.55);z-index:9999;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:22px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-box h3{font-size:15px;color:#0e1e4a;margin-bottom:4px}
+.modal-box p.sub{font-size:11.5px;color:#94a3b8;margin-bottom:14px}
+.modal-box textarea{width:100%;border:1.5px solid #dde3f0;border-radius:8px;padding:10px;font-family:'Poppins',sans-serif;font-size:12.5px;resize:vertical;min-height:80px;outline:none;margin-top:12px}
+.modal-box textarea:focus{border-color:#0e1e4a}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.modal-btn{padding:9px 18px;border-radius:8px;border:none;font-family:'Poppins',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer}
+.modal-btn.cancel{background:#f1f5f9;color:#64748b}
+.modal-btn.submit{background:#0e1e4a;color:#fff}
+.modal-btn.submit:hover{background:#1a3060}
+.modal-close-x{position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;color:#94a3b8;cursor:pointer}
+
+  /* Test schedule */
+.test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.test-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(14,30,74,.07);border:1px solid #e8edf5;overflow:hidden;transition:.2s}
+.test-card:hover{box-shadow:0 6px 18px rgba(14,30,74,.12)}
+.test-card-hdr{background:linear-gradient(135deg,#0e1e4a,#185FA5);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.test-card-hdr h4{color:#fff;font-size:13px;font-weight:700;margin:0}
+.test-days-pill{background:rgba(240,184,0,.2);border:1px solid rgba(240,184,0,.45);color:#f0b800;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.test-card-body{padding:12px 14px}
+.test-meta-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#64748b;margin-bottom:6px}
+.test-meta-row i{color:#185FA5;font-size:13px}
+.test-subjects{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.test-subj-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;background:#f1f5f9;color:#475569}
+.test-desc{font-size:11.5px;color:#64748b;margin:6px 0;line-height:1.5}
+.test-empty{padding:40px;text-align:center;color:#94a3b8;font-size:12.5px}
+
+/* Nav pending-count badge */
+.nav-count{margin-left:auto;background:#dc2626;color:#fff;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:20px;line-height:1.5}
+.nav-item{position:relative}
+
+/* Task Tracking */
+.task-filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.task-filter-pill{padding:7px 15px;border-radius:20px;border:1.5px solid #dde3f0;font-size:12px;font-weight:500;cursor:pointer;color:#64748b;background:#fff;transition:.15s;user-select:none}
+.task-filter-pill.active{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
+.task-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.task-card{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(14,30,74,.07);border:1px solid #e8edf5;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+.task-card:hover{box-shadow:0 6px 18px rgba(14,30,74,.12)}
+.task-card.overdue{border-color:#fecaca}
+.task-card-hdr{padding:12px 14px 0}
+.task-type-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.task-type-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:20px}
+.task-type-tag.assignment{background:#dbeafe;color:#1d4ed8}
+.task-type-tag.homework{background:#fce7f3;color:#9d174d}
+.task-type-tag.worksheet{background:#dcfce7;color:#15803d}
+.task-status-tag{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:20px}
+.task-status-tag.pending{background:#fef9c3;color:#92400e}
+.task-status-tag.submitted{background:#e0e7ff;color:#3730a3}
+.task-status-tag.graded{background:#dcfce7;color:#15803d}
+.task-status-tag.overdue{background:#fee2e2;color:#b91c1c}
+.task-card h4{font-size:13.5px;color:#0e1e4a;font-weight:700;margin-bottom:3px}
+.task-card .task-subject{font-size:11px;color:#185FA5;font-weight:600;margin-bottom:6px}
+.task-card-body{padding:0 14px 14px;flex:1;display:flex;flex-direction:column}
+.task-desc{font-size:11.5px;color:#64748b;line-height:1.5;margin-bottom:8px}
+.task-meta-row{display:flex;align-items:center;gap:6px;font-size:11px;color:#94a3b8;margin-bottom:4px}
+.task-meta-row i{font-size:13px;color:#185FA5}
+.task-meta-row.due-warn{color:#dc2626;font-weight:600}
+.task-meta-row.due-warn i{color:#dc2626}
+.task-attach{margin:8px 0}
+.task-actions{margin-top:auto;padding-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.task-grade-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11.5px;color:#15803d}
+.task-grade-box .tg-marks{font-weight:800;font-size:14px}
+.task-submission-preview{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:8px 10px;margin-top:8px;font-size:11.5px;color:#475569}
+.task-submission-preview b{color:#0e1e4a}
+.submit-btn{background:#0e1e4a;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-family:'Poppins',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.submit-btn:hover{background:#1a3060}
+.submit-btn.edit{background:#f1f5f9;color:#475569}
+.submit-btn.edit:hover{background:#e2e8f0}
+  
 /* Resource links (assignment / worksheet / homework) */
 .resource-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .resource-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;padding:5px 10px;border-radius:7px;text-decoration:none;border:1px solid transparent;transition:.15s}
@@ -1731,6 +1808,7 @@ async function loadAttendance(){
     renderAttendanceView();
     loadUpcomingClasses();
     updateProfileQuickStats();
+    await loadStudentFeedback();
   }catch(err){
     console.error(err);
     box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load attendance: ${err.message}</div>`;
@@ -1780,6 +1858,76 @@ async function loadUpcomingClasses(){
       </div>`;
   }
 }
+
+
+/* ══════════════════════════════════════════════
+   CLASS FEEDBACK / RATING
+══════════════════════════════════════════════ */
+async function loadStudentFeedback(){
+  try{
+    const res = await fetch(`/api/classfeedback?student_id=${encodeURIComponent(user.std_id)}`);
+    const rows = await res.json();
+    if(!res.ok) return;
+    studentFeedback = {};
+    (Array.isArray(rows)?rows:[]).forEach(r => { studentFeedback[String(r.class_id)] = r; });
+  }catch(e){ console.warn("Feedback load failed:", e); }
+}
+
+let activeFeedbackClass = null;
+let selectedStars = 0;
+
+function openFeedbackModal(classId, subject, dateLbl){
+  activeFeedbackClass = classId;
+  selectedStars = studentFeedback[String(classId)]?.rating || 0;
+  $("feedbackModalSub").textContent = `${subject || "Class"} · ${dateLbl || ""}`;
+  $("feedbackText").value = studentFeedback[String(classId)]?.feedback_text || "";
+  renderStars();
+  $("feedbackModal").classList.add("open");
+}
+function closeFeedbackModal(){
+  $("feedbackModal").classList.remove("open");
+  activeFeedbackClass = null;
+}
+function renderStars(){
+  document.querySelectorAll("#starRow i").forEach(el=>{
+    const v = Number(el.dataset.v);
+    const isFilled = v <= selectedStars;
+    el.classList.toggle("filled", isFilled);
+    el.classList.toggle("ti-star-filled", isFilled);
+    el.classList.toggle("ti-star", !isFilled);
+  });
+}
+$("feedbackModal")?.addEventListener("click", (e)=>{
+  const star = e.target.closest("#starRow i");
+  if(!star) return;
+  selectedStars = Number(star.dataset.v);
+  renderStars();
+});
+async function submitClassFeedback(){
+  if(!activeFeedbackClass){ closeFeedbackModal(); return; }
+  if(!selectedStars){ alert("Please select a star rating."); return; }
+  const payload = {
+    student_id: user.std_id,
+    class_id: activeFeedbackClass,
+    rating: selectedStars,
+    feedback_text: $("feedbackText").value.trim()
+  };
+  try{
+    const res = await fetch("/api/classfeedback", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error("Failed to submit");
+    studentFeedback[String(activeFeedbackClass)] = { ...payload };
+    closeFeedbackModal();
+    renderUpcomingClasses();
+    renderAttendanceView();
+  }catch(e){
+    alert("Could not submit feedback. Please try again.");
+    console.error(e);
+  }
+}  
 
 
 function renderUpcomingClasses(todayStr){
@@ -1961,6 +2109,12 @@ function renderAttendanceView(){
       const inOut = r.status === "Late"
         ? `${r.in_time || "—"} / ${r.out_time || "—"}`
         : `<span style="color:#cbd5e1">—</span>`;
+      const fb = r.class_id != null ? studentFeedback[String(r.class_id)] : null;
+      const rateBtn = r.class_id != null
+        ? `<button class="rate-btn ${fb?'done':''}" onclick="openFeedbackModal('${r.class_id}','${(r.subject||'').replace(/'/g,"\\'")}','${r.class_date||day}')">
+            <i class="ti ${fb?'ti-star-filled':'ti-star'}"></i> ${fb?`Rated ${fb.rating}★`:'Rate & Feedback'}
+           </button>`
+        : "";
       return `
         <tr>
           <td>${r.class_date || day || "—"}</td>
@@ -1970,9 +2124,9 @@ function renderAttendanceView(){
           <td>${r.faculty_name || "—"}</td>
           <td>${attStatusPill(r.status)}</td>
           <td>${r.reason || "—"}</td>
-          <td>${inOut}</td>
-          <td>${assignmentStatus}</td>
+          <td>${inOut}</td>         
           <td class="att-links">${links.join(" · ") || "—"}</td>
+          <td>${rateBtn}</td>
         </tr>`;
     }).join("");
 
@@ -1985,7 +2139,7 @@ function renderAttendanceView(){
         <div class="tbl-wrap">
           <table>
             <thead>
-              <tr><th>Date</th><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Assignment</th><th>Links</th></tr>
+              <tr><th>Date</th><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Links</th><th>Feedback</th></tr>
             </thead>
             <tbody>${rows}</tbody>
           </table>
