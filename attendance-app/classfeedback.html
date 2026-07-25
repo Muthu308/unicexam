@@ -234,7 +234,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
     const API = window.API_BASE || "";
    async function loadFeedback(){
 
-    const res = await fetch(`${API}/api/adminclassfeedback`);
+    const res = await fetch(`${API}/api/classfeedback`);
     const rows = await res.json();
 
     const tbody = document.getElementById("feedbackBody");
