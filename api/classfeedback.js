@@ -22,7 +22,9 @@ export default async function handler(req, res) {
     if (req.method === "GET") {
       const { student_id } = req.query;
 
-      // No student_id -> return all feedback with class + student info
+      // No student_id -> return all feedback with class info,
+      // then manually join student names (no Hasura relationship exists
+      // between class_feedback and user_students, so we do it here).
       if (!student_id) {
         const query = `
           query {
@@ -33,10 +35,6 @@ export default async function handler(req, res) {
               rating
               feedback_text
               created_at
-              user_student {
-                std_id
-                name
-              }
               class {
                 id
                 subject
@@ -50,7 +48,35 @@ export default async function handler(req, res) {
           }
         `;
         const data = await hasuraRequest(query);
-        return res.status(200).json(data.class_feedback);
+        const feedback = data.class_feedback || [];
+
+        // Collect the distinct student ids referenced in the feedback rows
+        const stdIds = [...new Set(feedback.map(f => f.std_id).filter(Boolean))];
+
+        let studentsById = {};
+        if (stdIds.length) {
+          const studentQuery = `
+            query GetStudents($ids: [String!]) {
+              user_students(where: { std_id: { _in: $ids } }) {
+                std_id
+                name
+              }
+            }
+          `;
+          const studentData = await hasuraRequest(studentQuery, { ids: stdIds });
+          studentsById = Object.fromEntries(
+            (studentData.user_students || []).map(s => [s.std_id, s])
+          );
+        }
+
+        // Merge student info onto each feedback row, keeping the same
+        // shape (`user_student`) the frontend already expects.
+        const merged = feedback.map(f => ({
+          ...f,
+          user_student: studentsById[f.std_id] || null,
+        }));
+
+        return res.status(200).json(merged);
       }
 
       // student_id provided -> return that student's feedback only
