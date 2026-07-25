@@ -218,6 +218,11 @@ body{background:#f0f4fb;color:#1e293b}
 .rate-btn:hover{background:#1a3060}
 .rate-btn.done{background:#dcfce7;color:#15803d}
 .star-row{display:flex;gap:4px;font-size:24px;color:#e2e8f0;cursor:pointer}
+  .star-row i {
+  font-size: 24px;
+  color: #e2e8f0;
+  cursor: pointer;
+}
 .star-row i.filled{color:#f0b800}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(14,30,74,.55);z-index:9999;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
@@ -1930,13 +1935,15 @@ function closeFeedbackModal(){
   $("feedbackModal").classList.remove("open");
   activeFeedbackClass = null;
 }
-function renderStars(){
-  document.querySelectorAll("#starRow i").forEach(el=>{
+function renderStars() {
+  document.querySelectorAll("#starRow i").forEach(el => {
     const v = Number(el.dataset.v);
-    const isFilled = v <= selectedStars;
-    el.classList.toggle("filled", isFilled);
-    el.classList.toggle("ti-star-filled", isFilled);
-    el.classList.toggle("ti-star", !isFilled);
+
+    if (v <= selectedStars) {
+      el.className = "ti ti-star-filled filled";
+    } else {
+      el.className = "ti ti-star";
+    }
   });
 }
 $("feedbackModal")?.addEventListener("click", (e)=>{
