@@ -694,7 +694,7 @@ th.total-group{background:#7c3aed !important}
     <textarea id="taskSubmitText" placeholder="Optional: type your answer, notes, or working here…" style="margin-top:10px"></textarea>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeTaskSubmitModal()">Cancel</button>
-      <button class="modal-btn submit" onclick="submitTaskResponse()">Submit work</button>
+      <button id="feedbackSubmitBtn"   class="modal-btn submit"   onclick="submitClassFeedback()">Submit feedback</button>
     </div>
   </div>
 </div>
@@ -1923,35 +1923,59 @@ async function loadStudentFeedback(){
 let activeFeedbackClass = null;
 let selectedStars = 0;
 
-function openFeedbackModal(classId, subject, dateLbl){
+function openFeedbackModal(classId, subject, dateLbl) {
   activeFeedbackClass = classId;
-  selectedStars = studentFeedback[String(classId)]?.rating || 0;
+  const feedback = studentFeedback[String(classId)];
+  selectedStars = feedback?.rating || 0;
   $("feedbackModalSub").textContent = `${subject || "Class"} · ${dateLbl || ""}`;
-  $("feedbackText").value = studentFeedback[String(classId)]?.feedback_text || "";
+  $("feedbackText").value = feedback?.feedback_text || "";
   renderStars();
+  const alreadyRated = !!feedback;
+  // Disable stars
+  document.querySelectorAll("#starRow i").forEach(star => {
+    star.style.pointerEvents = alreadyRated ? "none" : "auto";
+    star.style.opacity = alreadyRated ? "0.8" : "1";
+  });
+  // Disable textbox
+  $("feedbackText").disabled = alreadyRated;
+  // Hide submit button
+  $("feedbackSubmitBtn").style.display = alreadyRated ? "none" : "inline-block";
   $("feedbackModal").classList.add("open");
 }
-function closeFeedbackModal(){
+function closeFeedbackModal() {
   $("feedbackModal").classList.remove("open");
+  $("feedbackText").disabled = false;
+  $("feedbackSubmitBtn").style.display = "inline-block";
+  document.querySelectorAll("#starRow i").forEach(star => {
+    star.style.pointerEvents = "auto";
+    star.style.opacity = "1";
+  });
   activeFeedbackClass = null;
 }
+  
+  
 function renderStars() {
-  document.querySelectorAll("#starRow i").forEach(el => {
-    const v = Number(el.dataset.v);
+    document.querySelectorAll("#starRow i").forEach(star => {
+        const value = Number(star.dataset.v);
 
-    if (v <= selectedStars) {
-      el.className = "ti ti-star-filled filled";
-    } else {
-      el.className = "ti ti-star";
-    }
-  });
+        if (value <= selectedStars) {
+            star.classList.remove("ti-star");
+            star.classList.add("ti-star-filled");
+        } else {
+            star.classList.remove("ti-star-filled");
+            star.classList.add("ti-star");
+        }
+    });
 }
-$("feedbackModal")?.addEventListener("click", (e)=>{
+  
+$("feedbackModal")?.addEventListener("click", (e) => {
+  if ($("feedbackText").disabled) return;
   const star = e.target.closest("#starRow i");
-  if(!star) return;
+  if (!star) return;
   selectedStars = Number(star.dataset.v);
   renderStars();
-});
+}); 
+  
 async function submitClassFeedback(){
   if(!activeFeedbackClass){ closeFeedbackModal(); return; }
   if(!selectedStars){ alert("Please select a star rating."); return; }
@@ -2161,7 +2185,7 @@ function renderAttendanceView(){
       const fb = r.class_id != null ? studentFeedback[String(r.class_id)] : null;
       const rateBtn = r.class_id != null
         ? `<button class="rate-btn ${fb?'done':''}" onclick="openFeedbackModal('${r.class_id}','${(r.subject||'').replace(/'/g,"\\'")}','${r.class_date||day}')">
-            <i class="ti ${fb?'ti-star-filled':'ti-star'}"></i> ${fb?`Rated ${fb.rating}★`:'Rate & Feedback'}
+            <i class="ti ${fb?'ti-star-filled':'ti-star'}"></i> ${fb?`Rated ${fb.rating} ★`:'Rate & Feedback'}
            </button>`
         : "";
       return `
