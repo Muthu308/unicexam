@@ -1,0 +1,139 @@
+
+import { hasuraRequest } from "./hasura.js";
+
+function setCors(res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,POST,OPTIONS"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
+export default async function handler(req, res) {
+  setCors(res);
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  try {
+    // =====================================================
+    // GET FEEDBACK
+    // =====================================================
+    if (req.method === "GET") {
+      const { student_id } = req.query;
+
+      if (!student_id) {
+        return res.status(400).json({
+          error: "student_id is required",
+        });
+      }
+
+      const query = `
+        query GetFeedback($std_id: String!) {
+          class_feedback(
+            where: {
+              std_id: { _eq: $std_id }
+            }
+            order_by: {
+              created_at: desc
+            }
+          ) {
+            id
+            class_id
+            std_id
+            rating
+            feedback_text
+            created_at
+            updated_at
+          }
+        }
+      `;
+
+      const data = await hasuraRequest(query, {
+        std_id: student_id,
+      });
+
+      return res.status(200).json(data.class_feedback || []);
+    }
+
+    // =====================================================
+    // SAVE / UPDATE FEEDBACK
+    // =====================================================
+    if (req.method === "POST") {
+      const {
+        student_id,
+        class_id,
+        rating,
+        feedback_text,
+      } = req.body || {};
+
+      if (!student_id || !class_id || !rating) {
+        return res.status(400).json({
+          error: "student_id, class_id and rating are required",
+        });
+      }
+
+      if (Number(rating) < 1 || Number(rating) > 5) {
+        return res.status(400).json({
+          error: "rating must be between 1 and 5",
+        });
+      }
+
+      const mutation = `
+        mutation UpsertFeedback(
+          $obj: class_feedback_insert_input!
+        ) {
+          insert_class_feedback_one(
+            object: $obj
+            on_conflict: {
+              constraint: class_feedback_class_id_std_id_key
+              update_columns: [
+                rating
+                feedback_text
+                updated_at
+              ]
+            }
+          ) {
+            id
+            class_id
+            std_id
+            rating
+            feedback_text
+            created_at
+            updated_at
+          }
+        }
+      `;
+
+      const data = await hasuraRequest(mutation, {
+        obj: {
+          class_id: Number(class_id),
+          std_id: student_id,
+          rating: Number(rating),
+          feedback_text: feedback_text || null,
+          updated_at: new Date().toISOString(),
+        },
+      });
+
+      return res.status(201).json(data.insert_class_feedback_one);
+    }
+
+    // =====================================================
+    // METHOD NOT ALLOWED
+    // =====================================================
+    res.setHeader("Allow", "GET,POST,OPTIONS");
+
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
+
+  } catch (err) {
+    console.error("Class Feedback API Error:", err);
+
+    return res.status(500).json({
+      error: err.message || "Internal Server Error",
+    });
+  }
+}
