@@ -2179,9 +2179,9 @@ function renderStars() {
         const value = Number(star.dataset.v);
         if (value <= selectedStars) {
             star.classList.remove("ti-star");
-            star.classList.add("ti-star-filled", "filled");
+            star.classList.add("ti-star", "filled");
         } else {
-            star.classList.remove("ti-star-filled", "filled");
+            star.classList.remove("ti-star", "filled");
             star.classList.add("ti-star");
         }
     });
