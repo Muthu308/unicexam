@@ -35,14 +35,14 @@ export default async function handler(req, res) {
               rating
               feedback_text
               created_at
-              class {
+              classes {
                 id
                 subject
                 class_date
                 start_time
                 end_time
                 faculty_name
-                batch_name
+                topic
               }
             }
           }
