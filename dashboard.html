@@ -1852,11 +1852,12 @@ async function loadAttendance(){
     if(!res.ok) throw new Error(records.error || "Failed to load attendance");
 
     attendanceRecords = Array.isArray(records) ? records : [];
+    await loadStudentFeedback();
     populateAttendanceFilters();
     renderAttendanceView();
     loadUpcomingClasses();
     updateProfileQuickStats();
-    await loadStudentFeedback();
+    
   }catch(err){
     console.error(err);
     box.innerHTML = `<div class="att-empty" style="color:#dc2626">Could not load attendance: ${err.message}</div>`;
@@ -1906,104 +1907,6 @@ async function loadUpcomingClasses(){
       </div>`;
   }
 }
-
-
-/* ══════════════════════════════════════════════
-   CLASS FEEDBACK / RATING
-══════════════════════════════════════════════ */
-async function loadStudentFeedback(){
-  try{
-    const res = await fetch(`/api/classfeedback?student_id=${encodeURIComponent(user.std_id)}`);
-    const rows = await res.json();
-    if(!res.ok) return;
-    studentFeedback = {};
-    (Array.isArray(rows)?rows:[]).forEach(r => { studentFeedback[String(r.class_id)] = r; });
-  }catch(e){ console.warn("Feedback load failed:", e); }
-}
-
-let activeFeedbackClass = null;
-let selectedStars = 0;
-
-function openFeedbackModal(classId, subject, dateLbl) {
-  activeFeedbackClass = classId;
-  const feedback = studentFeedback[String(classId)];
-  selectedStars = feedback?.rating || 0;
-  $("feedbackModalSub").textContent = `${subject || "Class"} · ${dateLbl || ""}`;
-  $("feedbackText").value = feedback?.feedback_text || "";
-  renderStars();
-  const alreadyRated = !!feedback;
-  // Disable stars
-  document.querySelectorAll("#starRow i").forEach(star => {
-    star.style.pointerEvents = alreadyRated ? "none" : "auto";
-    star.style.opacity = alreadyRated ? "0.8" : "1";
-  });
-  // Disable textbox
-  $("feedbackText").disabled = alreadyRated;
-  // Hide submit button
-  $("feedbackSubmitBtn").style.display = alreadyRated ? "none" : "inline-block";
-  $("feedbackModal").classList.add("open");
-}
-function closeFeedbackModal() {
-  $("feedbackModal").classList.remove("open");
-  $("feedbackText").disabled = false;
-  $("feedbackSubmitBtn").style.display = "inline-block";
-  document.querySelectorAll("#starRow i").forEach(star => {
-    star.style.pointerEvents = "auto";
-    star.style.opacity = "1";
-  });
-  activeFeedbackClass = null;
-  selectedStars = 0;
-  renderStars();
-}
-  
-function renderStars() {
-    document.querySelectorAll("#starRow i").forEach(star => {
-        const value = Number(star.dataset.v);
-        if (value <= selectedStars) {
-            star.classList.remove("ti-star");
-            star.classList.add("ti-star-filled", "filled");
-        } else {
-            star.classList.remove("ti-star-filled", "filled");
-            star.classList.add("ti-star");
-        }
-    });
-}
-
-  
-$("feedbackModal")?.addEventListener("click", (e) => {
-  if ($("feedbackText").disabled) return;
-  const star = e.target.closest("#starRow i");
-  if (!star) return;
-  selectedStars = Number(star.dataset.v);
-  renderStars();
-}); 
-  
-async function submitClassFeedback(){
-  if(!activeFeedbackClass){ closeFeedbackModal(); return; }
-  if(!selectedStars){ alert("Please select a star rating."); return; }
-  const payload = {
-    student_id: user.std_id,
-    class_id: activeFeedbackClass,
-    rating: selectedStars,
-    feedback_text: $("feedbackText").value.trim()
-  };
-  try{
-    const res = await fetch("/api/classfeedback", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    if(!res.ok) throw new Error("Failed to submit");
-    studentFeedback[String(activeFeedbackClass)] = { ...payload };
-    closeFeedbackModal();
-    renderUpcomingClasses();
-    renderAttendanceView();
-  }catch(e){
-    alert("Could not submit feedback. Please try again.");
-    console.error(e);
-  }
-}  
-
 
 function renderUpcomingClasses(todayStr){
 
@@ -2222,6 +2125,103 @@ function renderAttendanceView(){
       </div>`;
   }).join("");
 }
+
+  /* ══════════════════════════════════════════════
+   CLASS FEEDBACK / RATING
+══════════════════════════════════════════════ */
+async function loadStudentFeedback(){
+  try{
+    const res = await fetch(`/api/classfeedback?student_id=${encodeURIComponent(user.std_id)}`);
+    const rows = await res.json();
+    if(!res.ok) return;
+    studentFeedback = {};
+    (Array.isArray(rows)?rows:[]).forEach(r => { studentFeedback[String(r.class_id)] = r; });
+  }catch(e){ console.warn("Feedback load failed:", e); }
+}
+
+let activeFeedbackClass = null;
+let selectedStars = 0;
+
+function openFeedbackModal(classId, subject, dateLbl) {
+  activeFeedbackClass = classId;
+  const feedback = studentFeedback[String(classId)];
+  selectedStars = Number(feedback?.rating || 0);
+  $("feedbackModalSub").textContent = `${subject || "Class"} · ${dateLbl || ""}`;
+  $("feedbackText").value = feedback?.feedback_text || "";
+  renderStars();
+  const alreadyRated = !!feedback;
+  // Disable stars
+  document.querySelectorAll("#starRow i").forEach(star => {
+    star.style.pointerEvents = alreadyRated ? "none" : "auto";
+    star.style.opacity = alreadyRated ? "0.8" : "1";
+  });
+  // Disable textbox
+  $("feedbackText").disabled = alreadyRated;
+  // Hide submit button
+  $("feedbackSubmitBtn").style.display = alreadyRated ? "none" : "inline-block";
+  $("feedbackModal").classList.add("open");
+}
+function closeFeedbackModal() {
+  $("feedbackModal").classList.remove("open");
+  $("feedbackText").disabled = false;
+  $("feedbackSubmitBtn").style.display = "inline-block";
+  document.querySelectorAll("#starRow i").forEach(star => {
+    star.style.pointerEvents = "auto";
+    star.style.opacity = "1";
+  });
+  activeFeedbackClass = null;
+  selectedStars = 0;
+  renderStars();
+}
+  
+function renderStars() {
+    document.querySelectorAll("#starRow i").forEach(star => {
+        const value = Number(star.dataset.v);
+        if (value <= selectedStars) {
+            star.classList.remove("ti-star");
+            star.classList.add("ti-star-filled", "filled");
+        } else {
+            star.classList.remove("ti-star-filled", "filled");
+            star.classList.add("ti-star");
+        }
+    });
+}
+
+  
+$("feedbackModal")?.addEventListener("click", (e) => {
+  if ($("feedbackText").disabled) return;
+  const star = e.target.closest("#starRow i");
+  if (!star) return;
+  selectedStars = Number(star.dataset.v);
+  renderStars();
+}); 
+  
+async function submitClassFeedback(){
+  if(!activeFeedbackClass){ closeFeedbackModal(); return; }
+  if(!selectedStars){ alert("Please select a star rating."); return; }
+  const payload = {
+    student_id: user.std_id,
+    class_id: activeFeedbackClass,
+    rating: selectedStars,
+    feedback_text: $("feedbackText").value.trim()
+  };
+  try{
+    const res = await fetch("/api/classfeedback", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error("Failed to submit");
+    studentFeedback[String(activeFeedbackClass)] = { ...payload };
+    closeFeedbackModal();
+    renderUpcomingClasses();
+    renderAttendanceView();
+  }catch(e){
+    alert("Could not submit feedback. Please try again.");
+    console.error(e);
+  }
+}  
+  
 
 /* ── Bootstrap ── */
 const user = JSON.parse(localStorage.getItem("student"));
