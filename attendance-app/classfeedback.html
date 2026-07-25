@@ -171,6 +171,7 @@
     <th>Student ID</th>
     <th>Name</th>
     <th>Subject</th>
+    <th>Topic</th>
     <th>Date</th>
     <th>Faculty</th>
     <th>Rating</th>
@@ -263,11 +264,11 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
 
 <td>${r.user_student?.name ?? "-"}</td>
 
-<td>${r.classes?.subject ?? "-"}</td>
+<td>${r.class?.subject ?? "-"}</td>
+<td>${r.class?.topic ?? "-"}</td>
+<td>${r.class?.class_date ?? "-"}</td>
 
-<td>${r.classes?.class_date ?? "-"}</td>
-
-<td>${r.classes?.faculty_name ?? "-"}</td>
+<td>${r.class?.faculty_name ?? "-"}</td>
 
 <td>${"⭐".repeat(r.rating)}</td>
 
@@ -302,9 +303,9 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
         const haystack = [
           r.user_student?.std_id ?? r.std_id,
           r.user_student?.name,
-          r.classes?.subject,
-          r.classes?.faculty_name,
-          r.classes?.topic,
+          r.class?.subject,
+          r.class?.faculty_name,
+          r.class?.topic,
           r.feedback_text
         ].filter(Boolean).join(" ").toLowerCase();
 
