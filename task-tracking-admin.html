@@ -10,10 +10,12 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f0f4fb;color:#1e293b;padding:24px}
 .wrap{max-width:1180px;margin:0 auto}
-.hdr{margin-bottom:18px}
+.hdr{margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 .hdr h1{font-size:19px;color:#0e1e4a;font-weight:700;display:flex;align-items:center;gap:8px}
 .hdr h1 i{color:#f0b800}
 .hdr p{font-size:12px;color:#94a3b8;margin-top:2px}
+.hdr-right{font-size:12px;color:#64748b;text-align:right}
+.hdr-right a{color:#b91c1c;cursor:pointer;text-decoration:none;font-weight:600}
 .grid{display:grid;grid-template-columns:440px 1fr;gap:18px}
 @media(max-width:960px){.grid{grid-template-columns:1fr}}
 .card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
@@ -25,8 +27,9 @@ body{background:#f0f4fb;color:#1e293b;padding:24px}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:#0e1e4a}
 .field textarea{min-height:70px;resize:vertical}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:#94a3b8;margin-top:4px}
 
-/* Target picker — mirrors "who is this class for" pattern */
+/* Target picker */
 .target-toggle{display:flex;gap:6px;margin-bottom:10px}
 .target-toggle button{flex:1;padding:8px;border-radius:8px;border:1.5px solid #dde3f0;background:#fff;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:#64748b;cursor:pointer}
 .target-toggle button.active{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
@@ -63,38 +66,50 @@ table{width:100%;border-collapse:collapse;font-size:12.5px}
 thead th{background:#0e1e4a;color:#fff;padding:9px 10px;text-align:left;font-weight:500;font-size:11.5px}
 tbody td{padding:9px 10px;border-bottom:1px solid #f1f5f9;vertical-align:top}
 tbody tr:hover{background:#f8fafc}
+tbody tr.task-row{cursor:pointer}
 .badge{padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
 .badge.pending{background:#fef9c3;color:#92400e}
 .badge.submitted{background:#e0e7ff;color:#3730a3}
 .badge.graded{background:#dcfce7;color:#15803d}
-.badge.overdue{background:#fee2e2;color:#b91c1c}
+.badge.notsubmitted{background:#f1f5f9;color:#64748b}
 .icon-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:15px;padding:4px}
-.icon-btn:hover{color:#dc2626}
+.icon-btn:hover{color:#185FA5}
+.icon-btn.danger:hover{color:#dc2626}
 .empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
-.expand-row{display:none}
-.expand-row.open{display:table-row}
 .sub-panel{background:#f8fafc;border-radius:8px;padding:10px 12px;font-size:11.5px}
 .sub-panel .grade-form{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
 .sub-panel .grade-form input{width:90px;padding:6px 9px;border:1px solid #dde3f0;border-radius:6px;font-size:12px}
+.sub-panel .grade-form input.fb{width:auto;flex:1;min-width:120px}
 .sub-panel .grade-form button{padding:6px 12px;border:none;border-radius:6px;background:#0e1e4a;color:#fff;font-size:11.5px;cursor:pointer}
+.sub-row td{padding-left:20px;border-bottom:1px solid #eef2f7}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="hdr">
-    <h1><i class="ti ti-checklist"></i> Task Tracking — Admin</h1>
-    <p>Assign an assignment, worksheet, or homework to one student, several students, or a whole batch — exactly the same way you'd add a class to their schedule. It shows up in their "Task Tracking" tab immediately.</p>
+    <div>
+      <h1><i class="ti ti-checklist"></i> Task Tracking — Admin</h1>
+      <p>Assign an assignment, worksheet, or homework to one student, several students, a whole class, or a whole school. Grade submissions from the list on the right.</p>
+    </div>
+    <div class="hdr-right" id="whoBox"></div>
   </div>
 
   <div class="grid">
     <div class="card">
-      <h2><i class="ti ti-plus"></i> Assign a Task</h2>
+      <h2><i class="ti ti-plus"></i> <span id="formTitle">Assign a Task</span></h2>
+
+      <div class="field">
+        <label>School ID (optional filter)</label>
+        <input type="text" id="f_school_filter" placeholder="e.g. SCH001 — narrows students/classes below">
+        <div class="hint">Leave blank to search across every school.</div>
+      </div>
 
       <div class="field">
         <label>Assign to</label>
         <div class="target-toggle">
-          <button type="button" class="active" id="modeStudentsBtn" onclick="setTargetMode('students')">Specific student(s)</button>
-          <button type="button" id="modeBatchBtn" onclick="setTargetMode('batch')">Whole batch</button>
+          <button type="button" class="active" id="modeStudentsBtn" onclick="setTargetMode('students')">Student(s)</button>
+          <button type="button" id="modeClassBtn" onclick="setTargetMode('class')">Whole class</button>
+          <button type="button" id="modeSchoolBtn" onclick="setTargetMode('school')">Whole school</button>
         </div>
 
         <div id="studentPicker">
@@ -106,10 +121,18 @@ tbody tr:hover{background:#f8fafc}
           <div class="selected-students" id="selectedStudents"></div>
         </div>
 
-        <div id="batchPicker" style="display:none">
-          <select id="f_batch_only">
-            <option value="">Select a batch…</option>
+        <div id="classPicker" style="display:none">
+          <select id="f_class_name">
+            <option value="">Select a class…</option>
           </select>
+          <div class="hint" id="classAudienceHint"></div>
+        </div>
+
+        <div id="schoolPicker" style="display:none">
+          <select id="f_school_only">
+            <option value="">Select a school…</option>
+          </select>
+          <div class="hint" id="schoolAudienceHint"></div>
         </div>
       </div>
 
@@ -131,7 +154,7 @@ tbody tr:hover{background:#f8fafc}
           <label>Subject</label>
           <select id="f_subject">
             <option value="">Select subject…</option>
-            <option>Physics</option><option>Chemistry</option><option>Mathematics</option>
+            <option>Physics</option><option>Chemistry</option><option>Mathematics</option><option>Biology</option>
           </select>
         </div>
         <div class="field">
@@ -159,7 +182,7 @@ tbody tr:hover{background:#f8fafc}
       </div>
 
       <div class="btn-row">
-        <button class="btn primary" onclick="assignTask()"><i class="ti ti-send"></i> Assign Task</button>
+        <button class="btn primary" id="submitTaskBtn" onclick="assignTask()"><i class="ti ti-send"></i> Assign Task</button>
         <button class="btn secondary" onclick="resetTaskForm()"><i class="ti ti-x"></i> Clear</button>
       </div>
       <div class="msg" id="formMsg"></div>
@@ -172,7 +195,7 @@ tbody tr:hover{background:#f8fafc}
       </div>
       <div class="task-filter-tabs">
         <button class="active" data-f="all" onclick="setAdminTaskFilter('all',this)">All</button>
-        <button data-f="pending" onclick="setAdminTaskFilter('pending',this)">Pending</button>
+        <button data-f="pending" onclick="setAdminTaskFilter('pending',this)">Not submitted</button>
         <button data-f="submitted" onclick="setAdminTaskFilter('submitted',this)">Submitted</button>
         <button data-f="graded" onclick="setAdminTaskFilter('graded',this)">Graded</button>
       </div>
@@ -181,91 +204,225 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
+<script src="config.js"></script>
 <script>
-const $ = id => document.getElementById(id);
-let allStudents = [];
-let allBatches = [];
+/* ══════════════════════════════════════════════════════════════════
+   BACKEND CONTRACT this page expects (adjust server-side to match):
+
+   Students (SAME endpoint/shape as admin.html):
+     GET  /api/users?role=student[&school_id=]
+       -> [{ std_id, name, school_id, class_name }, ...]
+
+   Classes (SAME endpoint as admin.html, used only to build the
+   "whole class" dropdown — we read the distinct `session` values):
+     GET  /api/classes[?school_id=]
+       -> [{ session, school_id, ... }, ...]
+
+   Tasks table columns used verbatim:
+     id, title, task_type, subject, total_marks, due_date, due_time,
+     attachment_link, description, target_mode, target_class_name,
+     who_create_at, created_at, target_school_id (jsonb)
+
+   Because `tasks` has no student_ids/batch_id column, the jsonb
+   `target_school_id` column is reused as a generic "audience" array:
+     - target_mode = "students" -> target_school_id = ["STD1001", ...]  (std_ids)
+     - target_mode = "class"    -> target_class_name = "LYMA.20"
+                                    target_school_id = ["SCH001"] (optional scope) or null
+     - target_mode = "school"   -> target_school_id = ["SCH001", ...]  (school ids)
+
+     GET    /api/tasks[?school_id=]        -> [{...task columns}]
+     POST   /api/tasks                      body: task columns (no id/created_at)
+     PUT    /api/tasks                      body: task columns + id
+     DELETE /api/tasks                      body: { id }
+
+   task_submissions table columns used verbatim:
+     id, task_id, std_id, submission_link, submission_text,
+     submitted_at, marks_obtained, feedback, graded_at
+
+     GET /api/task_submissions?task_id=ID   -> [{...submission columns, student_name?}]
+     PUT /api/task_submissions              body: { task_id, std_id, marks_obtained, feedback }
+                                             -> server UPSERTS by (task_id, std_id) and
+                                                stamps graded_at = now()
+══════════════════════════════════════════════════════════════════ */
+
+const API = window.API_BASE || "";
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
+/* ---- Session (mirrors admin.html) ---- */
+(function requireSession() {
+  const roles = ["superadmin", "admin", "faculty", "student"];
+  let session = null, sessionKey = null;
+  for (const role of roles) {
+    const data = localStorage.getItem(role);
+    if (data) { try { session = JSON.parse(data); sessionKey = role; break; } catch (e) {} }
+  }
+  if (!session) { window.location.href = "index.html"; throw new Error("No active session."); }
+  window.__session = session;
+  window.__sessionKey = sessionKey;
+})();
+$("whoBox").innerHTML = `Signed in as <strong>${escapeHtml(window.__session.name || "Admin")}</strong> · <a onclick="if(confirm('Logout?')){localStorage.removeItem(window.__sessionKey);window.location.href='index.html';}">Logout</a>`;
+
+/* ---- State ---- */
+let studentDirectory = [];   // full, unfiltered — used for name lookups + audience math
+let studentPickerList = [];  // scoped by the school filter box, used for the search dropdown
+let allClasses = [];
 let selectedStudentIds = new Set();
-let targetMode = "students";
+let targetMode = "students"; // 'students' | 'class' | 'school'
 let selectedType = "Assignment";
 let adminTasks = [];
+let submissionsByTask = {};  // task_id -> array (cache, loaded lazily on expand)
 let adminTaskFilter = "all";
+let editingTaskId = null;
+let expandedTaskId = null;
 
-document.querySelectorAll(".type-chip").forEach(el=>{
-  el.addEventListener("click", ()=>{
-    document.querySelectorAll(".type-chip").forEach(c=>c.classList.remove("sel"));
+document.querySelectorAll(".type-chip").forEach((el) => {
+  el.addEventListener("click", () => {
+    document.querySelectorAll(".type-chip").forEach((c) => c.classList.remove("sel"));
     el.classList.add("sel");
     selectedType = el.dataset.t;
   });
 });
 
-function setTargetMode(mode){
+function setTargetMode(mode) {
   targetMode = mode;
-  $("modeStudentsBtn").classList.toggle("active", mode==="students");
-  $("modeBatchBtn").classList.toggle("active", mode==="batch");
-  $("studentPicker").style.display = mode==="students" ? "block" : "none";
-  $("batchPicker").style.display = mode==="batch" ? "block" : "none";
+  $("modeStudentsBtn").classList.toggle("active", mode === "students");
+  $("modeClassBtn").classList.toggle("active", mode === "class");
+  $("modeSchoolBtn").classList.toggle("active", mode === "school");
+  $("studentPicker").style.display = mode === "students" ? "block" : "none";
+  $("classPicker").style.display = mode === "class" ? "block" : "none";
+  $("schoolPicker").style.display = mode === "school" ? "block" : "none";
+  if (mode === "class") updateClassAudienceHint();
+  if (mode === "school") updateSchoolAudienceHint();
 }
 
-/* ── Student search / multi-select (mirrors picking who a class is for) ── */
-async function loadStudentsAndBatches(){
-  try{
-    const [sRes, bRes] = await Promise.all([
-      fetch("/api/students"),
-      fetch("/api/batches")
-    ]);
-    allStudents = await sRes.json();
-    allBatches = await bRes.json();
-    $("f_batch_only").innerHTML = `<option value="">Select a batch…</option>` +
-      allBatches.map(b=>`<option value="${b.id}">${b.name}${b.student_count!=null?` (${b.student_count})`:""}</option>`).join("");
-  }catch(e){
-    console.warn("Could not load students/batches", e);
+/* ---- Load students: SAME pattern as admin.html's loadPeople() ---- */
+async function loadStudentDirectory() {
+  try {
+    const res = await fetch(`${API}/api/users?role=student`);
+    studentDirectory = await res.json();
+    if (!Array.isArray(studentDirectory)) studentDirectory = [];
+  } catch (err) {
+    studentDirectory = [];
   }
 }
 
-function filterStudentDropdown(val){
+async function loadStudentPicker() {
+  const schoolId = $("f_school_filter").value.trim();
+  const qs = schoolId ? `&school_id=${encodeURIComponent(schoolId)}` : "";
+  try {
+    const res = await fetch(`${API}/api/users?role=student${qs}`);
+    studentPickerList = await res.json();
+    if (!Array.isArray(studentPickerList)) studentPickerList = [];
+  } catch (err) {
+    studentPickerList = [];
+  }
+  populateSchoolSelect();
+}
+
+async function loadClassesForTargeting() {
+  const schoolId = $("f_school_filter").value.trim();
+  const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
+  try {
+    const res = await fetch(`${API}/api/classes${qs}`);
+    allClasses = await res.json();
+    if (!Array.isArray(allClasses)) allClasses = [];
+  } catch (err) {
+    allClasses = [];
+  }
+  populateClassSelect();
+}
+
+function populateClassSelect() {
+  const sel = $("f_class_name");
+  const current = sel.value;
+  const names = [...new Set(allClasses.map((c) => c.session).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = `<option value="">Select a class…</option>` +
+    names.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("");
+  if (names.includes(current)) sel.value = current;
+}
+
+function populateSchoolSelect() {
+  const sel = $("f_school_only");
+  const current = sel.value;
+  const ids = [...new Set(studentDirectory.map((s) => s.school_id).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = `<option value="">Select a school…</option>` +
+    ids.map((id) => `<option value="${escapeHtml(id)}">${escapeHtml(id)}</option>`).join("");
+  if (ids.includes(current)) sel.value = current;
+}
+
+$("f_school_filter").addEventListener("change", async () => {
+  await loadStudentPicker();
+  await loadClassesForTargeting();
+});
+$("f_class_name").addEventListener("change", updateClassAudienceHint);
+$("f_school_only").addEventListener("change", updateSchoolAudienceHint);
+
+function updateClassAudienceHint() {
+  const cls = $("f_class_name").value;
+  const count = cls ? studentDirectory.filter((s) => s.class_name === cls).length : 0;
+  $("classAudienceHint").textContent = cls ? `${count} student(s) currently in ${cls}.` : "";
+}
+function updateSchoolAudienceHint() {
+  const sch = $("f_school_only").value;
+  const count = sch ? studentDirectory.filter((s) => s.school_id === sch).length : 0;
+  $("schoolAudienceHint").textContent = sch ? `${count} student(s) at ${sch}.` : "";
+}
+
+/* ---- Student search / multi-select ---- */
+function filterStudentDropdown(val) {
   const dd = $("studentDD");
-  const q = (val||"").toLowerCase().trim();
-  const list = !q ? allStudents : allStudents.filter(s =>
-    (s.name||"").toLowerCase().includes(q) || String(s.std_id).toLowerCase().includes(q));
-  if(!list.length){
-    dd.innerHTML = `<div class="student-dd-item" style="color:#94a3b8">No students found</div>`;
-  }else{
-    dd.innerHTML = list.slice(0,30).map(s => `
-      <div class="student-dd-item" onclick="addStudent('${s.std_id}')">
-        <span>${s.name}</span><span style="color:#94a3b8">${s.std_id}</span>
+  const q = (val || "").toLowerCase().trim();
+  const list = !q ? studentPickerList : studentPickerList.filter((s) =>
+    (s.name || "").toLowerCase().includes(q) || String(s.std_id).toLowerCase().includes(q));
+  dd.innerHTML = !list.length
+    ? `<div class="student-dd-item" style="color:#94a3b8">No students found</div>`
+    : list.slice(0, 30).map((s) => `
+      <div class="student-dd-item" onclick="addStudent('${escapeHtml(s.std_id)}')">
+        <span>${escapeHtml(s.name)}</span><span style="color:#94a3b8">${escapeHtml(s.std_id)}</span>
       </div>`).join("");
-  }
   dd.classList.add("open");
 }
-document.addEventListener("click", e=>{
-  if(!$("studentPicker")?.contains(e.target)) $("studentDD")?.classList.remove("open");
+document.addEventListener("click", (e) => {
+  if (!$("studentPicker")?.contains(e.target)) $("studentDD")?.classList.remove("open");
 });
 
-function addStudent(stdId){
-  const s = allStudents.find(x=>String(x.std_id)===String(stdId));
-  if(!s) return;
+function addStudent(stdId) {
   selectedStudentIds.add(String(stdId));
   $("studentSearch").value = "";
   $("studentDD").classList.remove("open");
   renderSelectedStudents();
 }
-function removeStudent(stdId){
+function removeStudent(stdId) {
   selectedStudentIds.delete(String(stdId));
   renderSelectedStudents();
 }
-function renderSelectedStudents(){
+function findStudent(stdId) {
+  return studentDirectory.find((x) => String(x.std_id) === String(stdId)) ||
+         studentPickerList.find((x) => String(x.std_id) === String(stdId));
+}
+function renderSelectedStudents() {
   const box = $("selectedStudents");
-  box.innerHTML = [...selectedStudentIds].map(id=>{
-    const s = allStudents.find(x=>String(x.std_id)===id);
-    return `<span class="student-chip">${s?s.name:id} (${id}) <button onclick="removeStudent('${id}')"><i class="ti ti-x" style="font-size:11px"></i></button></span>`;
+  box.innerHTML = [...selectedStudentIds].map((id) => {
+    const s = findStudent(id);
+    return `<span class="student-chip">${escapeHtml(s ? s.name : id)} (${escapeHtml(id)}) <button onclick="removeStudent('${escapeHtml(id)}')"><i class="ti ti-x" style="font-size:11px"></i></button></span>`;
   }).join("");
 }
 
-function resetTaskForm(){
+/* ---- Form reset / mode ---- */
+function resetTaskForm() {
+  editingTaskId = null;
+  $("formTitle").textContent = "Assign a Task";
+  $("submitTaskBtn").innerHTML = `<i class="ti ti-send"></i> Assign Task`;
   selectedStudentIds.clear();
   renderSelectedStudents();
-  $("f_batch_only").value = "";
+  $("f_class_name").value = "";
+  $("f_school_only").value = "";
   $("f_title").value = "";
   $("f_subject").value = "";
   $("f_marks").value = "";
@@ -274,152 +431,301 @@ function resetTaskForm(){
   $("f_attach").value = "";
   $("f_desc").value = "";
   $("formMsg").className = "msg";
-  document.querySelectorAll(".type-chip").forEach(c=>c.classList.remove("sel"));
+  document.querySelectorAll(".type-chip").forEach((c) => c.classList.remove("sel"));
   document.querySelector('.type-chip[data-t="Assignment"]').classList.add("sel");
   selectedType = "Assignment";
+  setTargetMode("students");
 }
 
-async function assignTask(){
+function showMsg(type, text) {
+  $("formMsg").className = `msg ${type}`;
+  $("formMsg").textContent = text;
+}
+
+/* ---- Create / Update task ---- */
+async function assignTask() {
   const title = $("f_title").value.trim();
-  const due_date = $("f_due_date").value;
-  if(!title){ showMsg("err","Title is required."); return; }
-  if(targetMode === "students" && selectedStudentIds.size === 0){
-    showMsg("err","Select at least one student, or switch to \"Whole batch\"."); return;
-  }
-  if(targetMode === "batch" && !$("f_batch_only").value){
-    showMsg("err","Select a batch."); return;
+  if (!title) { showMsg("err", "Title is required."); return; }
+
+  let target_class_name = null;
+  let target_school_id = null;
+
+  if (targetMode === "students") {
+    if (selectedStudentIds.size === 0) { showMsg("err", "Select at least one student, or switch target mode."); return; }
+    target_school_id = [...selectedStudentIds];
+  } else if (targetMode === "class") {
+    const cls = $("f_class_name").value;
+    if (!cls) { showMsg("err", "Select a class."); return; }
+    target_class_name = cls;
+    const schoolFilter = $("f_school_filter").value.trim();
+    if (schoolFilter) target_school_id = [schoolFilter];
+  } else if (targetMode === "school") {
+    const sch = $("f_school_only").value;
+    if (!sch) { showMsg("err", "Select a school."); return; }
+    target_school_id = [sch];
   }
 
   const payload = {
     title,
     task_type: selectedType,
-    subject: $("f_subject").value,
-    total_marks: Number($("f_marks").value) || null,
-    due_date: due_date || null,
+    subject: $("f_subject").value || null,
+    total_marks: $("f_marks").value ? Number($("f_marks").value) : null,
+    due_date: $("f_due_date").value || null,
     due_time: $("f_due_time").value || null,
-    attachment_link: $("f_attach").value.trim(),
-    description: $("f_desc").value.trim(),
+    attachment_link: $("f_attach").value.trim() || null,
+    description: $("f_desc").value.trim() || null,
     target_mode: targetMode,
-    student_ids: targetMode === "students" ? [...selectedStudentIds] : [],
-    batch_id: targetMode === "batch" ? $("f_batch_only").value : null
+    target_class_name,
+    target_school_id,
+    who_create_at: window.__session.name || null,
   };
 
-  try{
-    const res = await fetch("/api/tasks", {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
+  const btn = $("submitTaskBtn");
+  btn.disabled = true;
+  try {
+    if (editingTaskId) payload.id = editingTaskId;
+    const res = await fetch(`${API}/api/tasks`, {
+      method: editingTaskId ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Save failed");
-    showMsg("ok","Task assigned successfully.");
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Save failed");
+    showMsg("ok", editingTaskId ? "Task updated successfully." : "Task assigned successfully.");
     resetTaskForm();
     loadAdminTasks();
-  }catch(e){
-    showMsg("err","Could not assign task. " + e.message);
+  } catch (e) {
+    showMsg("err", "Could not save task. " + e.message);
+  } finally {
+    btn.disabled = false;
   }
 }
-function showMsg(type, text){
-  $("formMsg").className = `msg ${type}`;
-  $("formMsg").textContent = text;
+
+/* ---- Edit ---- */
+async function editTask(taskId) {
+  const t = adminTasks.find((x) => Number(x.id) === Number(taskId));
+  if (!t) return;
+  editingTaskId = t.id;
+  $("formTitle").textContent = `Edit Task #${t.id}`;
+  $("submitTaskBtn").innerHTML = `<i class="ti ti-check"></i> Update Task`;
+
+  $("f_title").value = t.title || "";
+  $("f_subject").value = t.subject || "";
+  $("f_marks").value = t.total_marks ?? "";
+  $("f_due_date").value = t.due_date || "";
+  $("f_due_time").value = t.due_time || "";
+  $("f_attach").value = t.attachment_link || "";
+  $("f_desc").value = t.description || "";
+
+  document.querySelectorAll(".type-chip").forEach((c) => c.classList.toggle("sel", c.dataset.t === (t.task_type || "Assignment")));
+  selectedType = t.task_type || "Assignment";
+
+  const audience = Array.isArray(t.target_school_id) ? t.target_school_id : [];
+
+  if (t.target_mode === "class") {
+    setTargetMode("class");
+    if (audience[0]) $("f_school_filter").value = audience[0];
+    await loadStudentPicker();
+    await loadClassesForTargeting();
+    $("f_class_name").value = t.target_class_name || "";
+    updateClassAudienceHint();
+  } else if (t.target_mode === "school") {
+    setTargetMode("school");
+    $("f_school_only").value = audience[0] || "";
+    updateSchoolAudienceHint();
+  } else {
+    setTargetMode("students");
+    selectedStudentIds = new Set(audience.map(String));
+    renderSelectedStudents();
+  }
+
+  document.getElementById("formTitle").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* ── Task list + submission review/grading ── */
-function setAdminTaskFilter(f, el){
+/* ---- Delete ---- */
+async function deleteAdminTask(taskId) {
+  if (!confirm("Delete this task for all assigned students?")) return;
+  try {
+    const res = await fetch(`${API}/api/tasks`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: taskId }),
+    });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Delete failed");
+    if (editingTaskId === taskId) resetTaskForm();
+    loadAdminTasks();
+  } catch (e) {
+    alert("Could not delete: " + e.message);
+  }
+}
+
+/* ---- Task list ---- */
+function setAdminTaskFilter(f, el) {
   adminTaskFilter = f;
-  document.querySelectorAll(".task-filter-tabs button").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".task-filter-tabs button").forEach((b) => b.classList.remove("active"));
   el.classList.add("active");
   renderAdminTaskList();
 }
 
-async function loadAdminTasks(){
+async function loadAdminTasks() {
   const box = $("taskListWrap");
-  try{
-    const res = await fetch("/api/tasks");
+  try {
+    const res = await fetch(`${API}/api/tasks`);
     const rows = await res.json();
-    if(!res.ok) throw new Error("Failed to load");
+    if (!res.ok) throw new Error("Failed to load");
     adminTasks = Array.isArray(rows) ? rows : [];
     renderAdminTaskList();
-  }catch(e){
-    box.innerHTML = `<div class="empty" style="color:#dc2626">Could not load tasks: ${e.message}</div>`;
+  } catch (e) {
+    box.innerHTML = `<div class="empty" style="color:#dc2626">Could not load tasks: ${escapeHtml(e.message)}</div>`;
   }
 }
 
-function submissionStatus(sub){
-  if(!sub) return "pending";
-  if(sub.marks_obtained != null) return "graded";
+// Who a task's audience actually is, computed from target_mode / target_class_name / target_school_id
+function audienceForTask(t) {
+  const scope = Array.isArray(t.target_school_id) ? t.target_school_id : [];
+  if (t.target_mode === "class") {
+    return studentDirectory.filter((s) => s.class_name === t.target_class_name && (!scope.length || scope.includes(s.school_id)));
+  }
+  if (t.target_mode === "school") {
+    return studentDirectory.filter((s) => scope.includes(s.school_id));
+  }
+  // students mode: scope IS the list of std_ids
+  return scope.map((id) => findStudent(id) || { std_id: id, name: id });
+}
+
+function submissionStatus(sub) {
+  if (!sub) return "notsubmitted";
+  if (sub.marks_obtained != null) return "graded";
   return "submitted";
 }
 
-function renderAdminTaskList(){
+function renderAdminTaskList() {
   const box = $("taskListWrap");
-  if(!adminTasks.length){ box.innerHTML = `<div class="empty">No tasks assigned yet.</div>`; return; }
+  if (!adminTasks.length) { box.innerHTML = `<div class="empty">No tasks assigned yet.</div>`; return; }
 
-  const q = ($("taskSearch").value||"").toLowerCase().trim();
+  const q = ($("taskSearch").value || "").toLowerCase().trim();
   const tasksToShow = q
-    ? adminTasks.filter(t => [t.title, t.subject, t.task_type].filter(Boolean).join(" ").toLowerCase().includes(q))
+    ? adminTasks.filter((t) => [t.title, t.subject, t.task_type].filter(Boolean).join(" ").toLowerCase().includes(q))
     : adminTasks;
 
-  if(!tasksToShow.length){ box.innerHTML = `<div class="empty">No tasks match your search.</div>`; return; }
+  if (!tasksToShow.length) { box.innerHTML = `<div class="empty">No tasks match your search.</div>`; return; }
 
-  box.innerHTML = `<table><thead><tr><th>Task</th><th>Target</th><th>Due</th><th>Submissions</th><th></th></tr></thead><tbody>` +
-    tasksToShow.map(t => {
-      const subs = t.submissions || [];
-      const filteredSubs = adminTaskFilter === "all" ? subs : subs.filter(s => submissionStatus(s) === adminTaskFilter);
-      const pending = t.assigned_count - subs.length;
-      const graded = subs.filter(s=>s.marks_obtained!=null).length;
-      const rowsHtml = filteredSubs.map(s => `
-        <tr>
-          <td style="padding-left:20px">${s.student_name||s.std_id} <span style="color:#94a3b8">(${s.std_id})</span></td>
-          <td colspan="3">
-            <span class="badge ${submissionStatus(s)}">${submissionStatus(s)}</span>
-            ${s.submission_link?` · <a href="${s.submission_link}" target="_blank" style="color:#185FA5">link</a>`:""}
-            ${s.submission_text?` · "${s.submission_text.slice(0,60)}${s.submission_text.length>60?'…':''}"`:""}
-            <div class="grade-form">
-              <input type="number" placeholder="Marks" id="marks_${t.id}_${s.std_id}" value="${s.marks_obtained??''}">
-              <input type="text" placeholder="Feedback (optional)" id="fb_${t.id}_${s.std_id}" value="${s.feedback||''}" style="flex:1;min-width:120px">
-              <button onclick="gradeSubmission('${t.id}','${s.std_id}')">Save grade</button>
-            </div>
-          </td>
-        </tr>`).join("");
+  box.innerHTML = `<table><thead><tr><th></th><th>Task</th><th>Target</th><th>Due</th><th>Progress</th><th></th></tr></thead><tbody>` +
+    tasksToShow.map((t) => {
+      const audience = audienceForTask(t);
+      const subs = submissionsByTask[t.id] || [];
+      const submittedCount = subs.filter((s) => s.submitted_at || s.marks_obtained != null).length;
+      const gradedCount = subs.filter((s) => s.marks_obtained != null).length;
+      const targetLabel = t.target_mode === "class" ? `Class: ${escapeHtml(t.target_class_name || "—")}`
+        : t.target_mode === "school" ? `School: ${escapeHtml((t.target_school_id || [])[0] || "—")}`
+        : `${audience.length} student(s)`;
+      const isOpen = expandedTaskId === t.id;
+
+      const expandRow = isOpen ? `
+        <tr class="sub-row"><td colspan="6">
+          ${renderSubmissionPanel(t, audience, subs)}
+        </td></tr>` : "";
 
       return `
-        <tr>
-          <td><strong>${t.title}</strong><br><span style="color:#94a3b8;font-size:11px">${t.task_type} · ${t.subject||"—"}</span></td>
-          <td>${t.target_label || (t.batch_id?"Batch":"Students")}</td>
-          <td>${t.due_date||"—"}</td>
-          <td>${subs.length}/${t.assigned_count} submitted · ${graded} graded ${pending>0?`<br><span style="color:#dc2626">${pending} pending</span>`:''}</td>
-          <td><button class="icon-btn" onclick="deleteAdminTask('${t.id}')" title="Delete"><i class="ti ti-trash"></i></button></td>
+        <tr class="task-row" onclick="toggleExpandTask(${t.id}, event)">
+          <td><i class="ti ${isOpen ? "ti-chevron-down" : "ti-chevron-right"}" style="color:#94a3b8"></i></td>
+          <td><strong>${escapeHtml(t.title)}</strong><br><span style="color:#94a3b8;font-size:11px">${escapeHtml(t.task_type)} · ${escapeHtml(t.subject || "—")}</span></td>
+          <td>${targetLabel}</td>
+          <td>${escapeHtml(t.due_date || "—")}${t.due_time ? " " + escapeHtml(t.due_time) : ""}</td>
+          <td>${submittedCount}/${audience.length} submitted · ${gradedCount} graded</td>
+          <td onclick="event.stopPropagation()">
+            <button class="icon-btn" onclick="editTask(${t.id})" title="Edit"><i class="ti ti-edit"></i></button>
+            <button class="icon-btn danger" onclick="deleteAdminTask(${t.id})" title="Delete"><i class="ti ti-trash"></i></button>
+          </td>
         </tr>
-        ${filteredSubs.length ? `<tr><td colspan="5" style="padding:0"><table style="width:100%">${rowsHtml}</table></td></tr>` : (adminTaskFilter !== "all" ? `<tr><td colspan="5" style="padding:6px 10px;color:#94a3b8;font-size:11.5px">No ${adminTaskFilter} submissions for this task.</td></tr>` : "")}
+        ${expandRow}
       `;
     }).join("") + `</tbody></table>`;
 }
 
-async function gradeSubmission(taskId, stdId){
-  const marks = Number($(`marks_${taskId}_${stdId}`).value);
+async function toggleExpandTask(taskId, evt) {
+  if (evt && evt.target.closest("button")) return;
+  if (expandedTaskId === taskId) {
+    expandedTaskId = null;
+    renderAdminTaskList();
+    return;
+  }
+  expandedTaskId = taskId;
+  if (!submissionsByTask[taskId]) {
+    await loadSubmissionsForTask(taskId);
+  }
+  renderAdminTaskList();
+}
+
+async function loadSubmissionsForTask(taskId) {
+  try {
+    const res = await fetch(`${API}/api/task_submissions?task_id=${encodeURIComponent(taskId)}`);
+    const rows = await res.json();
+    submissionsByTask[taskId] = Array.isArray(rows) ? rows : [];
+  } catch (e) {
+    submissionsByTask[taskId] = [];
+  }
+}
+
+function renderSubmissionPanel(t, audience, subs) {
+  const subByStd = {};
+  subs.forEach((s) => { subByStd[String(s.std_id)] = s; });
+
+  let rows = audience.map((stu) => {
+    const sub = subByStd[String(stu.std_id)];
+    const status = submissionStatus(sub);
+    const filtered = adminTaskFilter === "all" || adminTaskFilter === status ||
+      (adminTaskFilter === "pending" && status === "notsubmitted");
+    if (!filtered) return "";
+    return `
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #eef2f7;flex-wrap:wrap">
+        <div style="min-width:170px">${escapeHtml(stu.name || stu.std_id)} <span style="color:#94a3b8">(${escapeHtml(stu.std_id)})</span></div>
+        <span class="badge ${status}">${status === "notsubmitted" ? "not submitted" : status}</span>
+        ${sub && sub.submission_link ? ` <a href="${escapeHtml(sub.submission_link)}" target="_blank" style="color:#185FA5">link</a>` : ""}
+        ${sub && sub.submission_text ? ` <span>"${escapeHtml(sub.submission_text.slice(0, 60))}${sub.submission_text.length > 60 ? "…" : ""}"</span>` : ""}
+        <div class="grade-form">
+          <input type="number" placeholder="Marks" id="marks_${t.id}_${escapeHtml(stu.std_id)}" value="${sub && sub.marks_obtained != null ? sub.marks_obtained : ""}">
+          <input type="text" class="fb" placeholder="Feedback (optional)" id="fb_${t.id}_${escapeHtml(stu.std_id)}" value="${sub && sub.feedback ? escapeHtml(sub.feedback) : ""}">
+          <button onclick="gradeSubmission(${t.id}, '${escapeHtml(stu.std_id)}')">Save grade</button>
+        </div>
+      </div>`;
+  }).join("");
+
+  if (!rows.trim()) rows = `<div class="empty">No students match this filter for this task.</div>`;
+
+  return `<div class="sub-panel">${rows}</div>`;
+}
+
+async function gradeSubmission(taskId, stdId) {
+  const marksInput = $(`marks_${taskId}_${stdId}`).value;
   const feedback = $(`fb_${taskId}_${stdId}`).value.trim();
-  try{
-    const res = await fetch(`/api/tasks/${taskId}/submissions/${stdId}`, {
+  const payload = {
+    task_id: taskId,
+    std_id: stdId,
+    marks_obtained: marksInput === "" ? null : Number(marksInput),
+    feedback: feedback || null,
+  };
+  try {
+    const res = await fetch(`${API}/api/task_submissions`, {
       method: "PUT",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ marks_obtained: marks, feedback })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    if(!res.ok) throw new Error("Grade save failed");
-    loadAdminTasks();
-  }catch(e){ alert("Could not save grade: " + e.message); }
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Grade save failed");
+    await loadSubmissionsForTask(taskId);
+    renderAdminTaskList();
+  } catch (e) {
+    alert("Could not save grade: " + e.message);
+  }
 }
 
-async function deleteAdminTask(taskId){
-  if(!confirm("Delete this task for all assigned students?")) return;
-  try{
-    const res = await fetch(`/api/admin/tasks/${taskId}`, { method:"DELETE" });
-    if(!res.ok) throw new Error("Delete failed");
-    loadAdminTasks();
-  }catch(e){ alert("Could not delete: " + e.message); }
-}
-
-loadStudentsAndBatches();
-loadAdminTasks();
+/* ---- Boot ---- */
+(async () => {
+  await loadStudentDirectory();
+  await loadStudentPicker();
+  await loadClassesForTargeting();
+  await loadAdminTasks();
+})();
 </script>
 </body>
 </html>
