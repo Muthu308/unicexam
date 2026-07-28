@@ -9,6 +9,55 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f0f4fb;color:#1e293b;padding:24px}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 28px 40px 18px;
+  border-bottom: 2px solid var(--green-deep);
+  background: var(--paper);
+}
+
+.topbar h1 {
+  font-size: 1.5rem;
+  letter-spacing: 0.03em;
+  margin: 0;
+  color: var(--green-deep);
+}
+
+.topbar .eyebrow {
+  font-family: "Courier New", monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+
+nav.tabs {
+  display: flex;
+  gap: 6px;
+}
+
+nav.tabs a {
+  font-family: "Courier New", monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--ink-soft);
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+
+nav.tabs a.active,
+nav.tabs a:hover {
+  color: var(--green-deep);
+  border-color: var(--green);
+  background: rgba(45, 95, 76, 0.08);
+}
+  
 .wrap{max-width:1180px;margin:0 auto}
 .hdr{margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
 .hdr h1{font-size:19px;color:#0e1e4a;font-weight:700;display:flex;align-items:center;gap:8px}
