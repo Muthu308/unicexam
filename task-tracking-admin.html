@@ -304,7 +304,7 @@ function setTargetMode(mode) {
 /* ---- Load students: SAME pattern as admin.html's loadPeople() ---- */
 async function loadStudentDirectory() {
   try {
-    const res = await fetch(`${API}/api/users?role=student`);
+    const res = await fetch(`/api/users?role=student`);
     studentDirectory = await res.json();
     if (!Array.isArray(studentDirectory)) studentDirectory = [];
   } catch (err) {
@@ -484,7 +484,7 @@ async function assignTask() {
   btn.disabled = true;
   try {
     if (editingTaskId) payload.id = editingTaskId;
-    const res = await fetch(`${API}/api/tasks`, {
+    const res = await fetch(`/api/fetch_response`, {
       method: editingTaskId ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -546,7 +546,7 @@ async function editTask(taskId) {
 async function deleteAdminTask(taskId) {
   if (!confirm("Delete this task for all assigned students?")) return;
   try {
-    const res = await fetch(`${API}/api/tasks`, {
+    const res = await fetch(`/api/fetch_response`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: taskId }),
@@ -570,7 +570,7 @@ function setAdminTaskFilter(f, el) {
 async function loadAdminTasks() {
   const box = $("taskListWrap");
   try {
-    const res = await fetch(`${API}/api/tasks`);
+    const res = await fetch(`/api/fetch_response`);
     const rows = await res.json();
     if (!res.ok) throw new Error("Failed to load");
     adminTasks = Array.isArray(rows) ? rows : [];
@@ -659,7 +659,7 @@ async function toggleExpandTask(taskId, evt) {
 
 async function loadSubmissionsForTask(taskId) {
   try {
-    const res = await fetch(`${API}/api/task_submissions?task_id=${encodeURIComponent(taskId)}`);
+    const res = await fetch(`/api/fetch_response?type=submission&task_id=${encodeURIComponent(taskId)}`);
     const rows = await res.json();
     submissionsByTask[taskId] = Array.isArray(rows) ? rows : [];
   } catch (e) {
@@ -706,7 +706,7 @@ async function gradeSubmission(taskId, stdId) {
     feedback: feedback || null,
   };
   try {
-    const res = await fetch(`${API}/api/task_submissions`, {
+    const res = await fetch(`/api/fetch_response`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
