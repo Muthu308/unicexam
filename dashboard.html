@@ -2570,6 +2570,7 @@ setText("p_id", user.std_id);
 
 loadStudentResults().then(()=>{ initTableSort(); });
 loadAttendance();
+loadTasks();
 document.addEventListener("click", e=>{
   if(!$("qwSearchWrap")?.contains(e.target)){
     $("qwDropdown")?.classList.remove("open");
