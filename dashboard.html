@@ -2292,8 +2292,8 @@ async function loadTasks(){
     if (user.school_id) taskQs.set("school_id", user.school_id);
 
     const [tasksRes, subsRes] = await Promise.all([
-      fetch(`$/api/fetch_response?${taskQs.toString()}`),
-      fetch(`$/api/fetch_response?type=submission&std_id=${encodeURIComponent(user.std_id)}`),
+      fetch(`/api/fetch_response?${taskQs.toString()}`),
+      fetch(`/api/fetch_response?type=submission&std_id=${encodeURIComponent(user.std_id)}`),
     ]);
 
     const taskRows = await tasksRes.json();
