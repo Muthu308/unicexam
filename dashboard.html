@@ -2221,7 +2221,294 @@ async function submitClassFeedback(){
     console.error(e);
   }
 }  
-  
+
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
+/*════════════════TASK TRACKING══════════════════════════════ */
+let allTasks = [];
+let taskFilter = "all";
+
+function taskStatusOf(t){
+  const today = new Date().toISOString().slice(0,10);
+  if(t.submission && t.submission.marks_obtained != null) return "graded";
+  if(t.submission) return "submitted";
+  if(t.due_date && t.due_date < today) return "overdue";
+  return "pending";
+}
+
+async function loadTasks(){
+  const box = $("taskTrackingContent");
+  try{
+    // 1) Tasks targeted at this student — directly, via their class, or via their school.
+    const taskQs = new URLSearchParams({ std_id: user.std_id });
+    if (user.class_name) taskQs.set("class_name", user.class_name);
+    if (user.school_id) taskQs.set("school_id", user.school_id);
+
+    const [tasksRes, subsRes] = await Promise.all([
+      fetch(`$/api/fetch_response?${taskQs.toString()}`),
+      fetch(`$/api/fetch_response?type=submission&std_id=${encodeURIComponent(user.std_id)}`),
+    ]);
+
+    const taskRows = await tasksRes.json();
+    if (!tasksRes.ok) throw new Error((taskRows && taskRows.error) || "Failed to load tasks");
+
+    const subRows = await subsRes.json();
+    if (!subsRes.ok) throw new Error((subRows && subRows.error) || "Failed to load submissions");
+
+    // 2) Merge this student's submission (if any) onto each matching task.
+    const subByTaskId = {};
+    (Array.isArray(subRows) ? subRows : []).forEach((s) => { subByTaskId[String(s.task_id)] = s; });
+
+    allTasks = (Array.isArray(taskRows) ? taskRows : [])
+      .map((t) => ({ ...t, submission: subByTaskId[String(t.id)] || null }))
+      .sort((a,b) => (a.due_date||"9999-99-99").localeCompare(b.due_date||"9999-99-99"));
+
+    renderTasks();
+    updateNavTaskBadge();
+    updateProfileQuickStats();
+  }catch(err){
+    console.error(err);
+    box.innerHTML = `<div class="test-empty" style="color:#dc2626">Could not load tasks: ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function updateNavTaskBadge(){
+  const pending = allTasks.filter(t => ["pending","overdue"].includes(taskStatusOf(t))).length;
+  const badge = $("navTaskCount");
+  if(!badge) return;
+  if(pending > 0){ badge.textContent = pending; badge.style.display = "inline-block"; }
+  else{ badge.style.display = "none"; }
+}
+
+function setTaskFilter(f, el){
+  taskFilter = f;
+  document.querySelectorAll(".task-filter-pill").forEach(p=>p.classList.remove("active"));
+  el.classList.add("active");
+  renderTasks();
+}
+
+function renderTasks(){
+  const box = $("taskTrackingContent");
+
+  const filtered = taskFilter === "all" ? allTasks : allTasks.filter(t => taskStatusOf(t) === taskFilter);
+
+  if(!filtered.length){
+    box.innerHTML = `<div class="test-empty">${allTasks.length ? "No tasks match this filter." : "No tasks assigned to you yet — your teacher will assign work here as it comes up."}</div>`;
+    return;
+  }
+
+  box.innerHTML = `<div class="task-grid">` + filtered.map(t => {
+    const status = taskStatusOf(t);
+    const typeCls = (t.task_type||"assignment").toLowerCase();
+    const statusLbl = status==="graded"?"Graded":status==="submitted"?"Submitted":status==="overdue"?"Overdue":"Pending";
+
+    let dueRow = "";
+    if(t.due_date){
+      const overdue = status === "overdue";
+      dueRow = `<div class="task-meta-row${overdue?' due-warn':''}"><i class="ti ${overdue?'ti-alert-triangle':'ti-calendar-due'}"></i> Due ${escapeHtml(t.due_date)}${t.due_time?" · "+escapeHtml(t.due_time):""}</div>`;
+    }
+
+    let attach = "";
+    if(t.attachment_link){
+      attach = `<div class="task-attach"><a class="resource-chip ${typeCls==='homework'?'homework':typeCls==='worksheet'?'worksheet':'assignment'}" href="${escapeHtml(t.attachment_link)}" target="_blank"><i class="ti ti-paperclip"></i> View Task File</a></div>`;
+    }
+
+    let submissionBlock = "";
+    if(t.submission){
+      submissionBlock = `<div class="task-submission-preview">
+        <b>Your submission:</b> ${t.submission.submission_text ? escapeHtml(t.submission.submission_text.slice(0,120))+(t.submission.submission_text.length>120?"…":"") : "(link only)"}
+        ${t.submission.submission_link?`<br><a href="${escapeHtml(t.submission.submission_link)}" target="_blank" style="color:#185FA5">View submitted link →</a>`:""}
+        <br><span style="color:#94a3b8">Submitted ${t.submission.submitted_at ? new Date(t.submission.submitted_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}) : ""}</span>
+      </div>`;
+    }
+    if(status === "graded"){
+      submissionBlock += `<div class="task-grade-box">
+        <span class="tg-marks">${t.submission.marks_obtained}${t.total_marks?"/"+t.total_marks:""}</span> marks
+        ${t.submission.feedback?`<br>${escapeHtml(t.submission.feedback)}`:""}
+      </div>`;
+    }
+
+    const actionBtn = status === "graded"
+      ? ""
+      : status === "submitted"
+        ? `<button class="submit-btn edit" onclick="openTaskSubmitModal('${t.id}')"><i class="ti ti-edit"></i> Edit submission</button>`
+        : `<button class="submit-btn" onclick="openTaskSubmitModal('${t.id}')"><i class="ti ti-send"></i> Submit work</button>`;
+
+    return `
+    <div class="task-card${status==='overdue'?' overdue':''}">
+      <div class="task-card-hdr">
+        <div class="task-type-row">
+          <span class="task-type-tag ${typeCls==='homework'?'homework':typeCls==='worksheet'?'worksheet':'assignment'}">${escapeHtml(t.task_type||"Assignment")}</span>
+          <span class="task-status-tag ${status}">${statusLbl}</span>
+        </div>
+        <h4>${escapeHtml(t.title || "Untitled task")}</h4>
+        <div class="task-subject">${escapeHtml(t.subject || "")}</div>
+      </div>
+      <div class="task-card-body">
+        ${t.description?`<div class="task-desc">${escapeHtml(t.description)}</div>`:""}
+        ${dueRow}
+        ${t.total_marks?`<div class="task-meta-row"><i class="ti ti-target-arrow"></i> ${t.total_marks} marks</div>`:""}
+        ${attach}
+        ${submissionBlock}
+        <div class="task-actions">${actionBtn}</div>
+      </div>
+    </div>`;
+  }).join("") + `</div>`;
+}
+
+let activeSubmitTaskId = null;
+function openTaskSubmitModal(taskId){
+  const t = allTasks.find(x=>String(x.id)===String(taskId));
+  if(!t) return;
+  activeSubmitTaskId = taskId;
+  $("taskSubmitTitle").textContent = t.submission ? "Edit your submission" : "Submit your work";
+  $("taskSubmitSub").textContent = `${t.title} · ${t.subject||""}`;
+  $("taskSubmitLink").value = t.submission?.submission_link || "";
+  $("taskSubmitText").value = t.submission?.submission_text || "";
+  $("taskSubmitModal").classList.add("open");
+}
+function closeTaskSubmitModal(){
+  $("taskSubmitModal").classList.remove("open");
+  activeSubmitTaskId = null;
+}
+async function submitTaskResponse(){
+  if(!activeSubmitTaskId) return;
+  const link = $("taskSubmitLink").value.trim();
+  const text = $("taskSubmitText").value.trim();
+  if(!link && !text){
+    alert("Add a submission link or write your answer before submitting.");
+    return;
+  }
+  try{
+    const res = await fetch(`/api/fetch_response?type=submission`, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({
+        task_id: activeSubmitTaskId,
+        std_id: user.std_id,
+        submission_link: link,
+        submission_text: text,
+      })
+    });
+    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Submit failed");
+    const saved = await res.json();
+    const t = allTasks.find(x=>String(x.id)===String(activeSubmitTaskId));
+    if(t) t.submission = saved;
+    closeTaskSubmitModal();
+    renderTasks();
+    updateNavTaskBadge();
+  }catch(e){
+    alert("Could not submit your work. Please try again.");
+    console.error(e);
+  }
+}
+
+/*════════════════TEST SCHEDULE══════════════════════════════ */
+let allTestSchedule = [];
+let testScheduleFilter = "all";
+
+function testStatusOf(t){
+  const today = new Date().toISOString().slice(0,10);
+  if(!t.test_date) return "upcoming";
+  if(t.test_date === today) return "today";
+  if(t.test_date < today) return "past";
+  return "upcoming";
+}
+
+async function loadTestSchedule(){
+  const box = $("testScheduleContent");
+  try{
+    const qs = new URLSearchParams({ std_id: user.std_id });
+    if (user.class_name) qs.set("class_name", user.class_name);
+    if (user.school_id) qs.set("school_id", user.school_id);
+
+    const res = await fetch(`/api/testschedules?${qs.toString()}`);
+    const rows = await res.json();
+    if (!res.ok) throw new Error((rows && rows.error) || "Failed to load test schedule");
+
+    allTestSchedule = (Array.isArray(rows) ? rows : [])
+      .sort((a,b) => (a.test_date||"9999-99-99").localeCompare(b.test_date||"9999-99-99"));
+
+    renderTestSchedule();
+    updateNavTestBadge();
+  }catch(err){
+    console.error(err);
+    box.innerHTML = `<div class="test-empty" style="color:#dc2626">Could not load test schedule: ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function updateNavTestBadge(){
+  const upcoming = allTestSchedule.filter(t => ["today","upcoming"].includes(testStatusOf(t))).length;
+  const badge = $("navTestCount");
+  if(!badge) return;
+  if(upcoming > 0){ badge.textContent = upcoming; badge.style.display = "inline-block"; }
+  else{ badge.style.display = "none"; }
+}
+
+function setTestScheduleFilter(f, el){
+  testScheduleFilter = f;
+  document.querySelectorAll(".test-filter-pill").forEach(p=>p.classList.remove("active"));
+  el.classList.add("active");
+  renderTestSchedule();
+}
+
+function renderTestSchedule(){
+  const box = $("testScheduleContent");
+
+  const filtered = testScheduleFilter === "all"
+    ? allTestSchedule
+    : testScheduleFilter === "upcoming"
+      ? allTestSchedule.filter(t => ["today","upcoming"].includes(testStatusOf(t)))
+      : allTestSchedule.filter(t => testStatusOf(t) === testScheduleFilter);
+
+  if(!filtered.length){
+    box.innerHTML = `<div class="test-empty">${allTestSchedule.length ? "No tests match this filter." : "No tests scheduled yet — check back closer to exam time."}</div>`;
+    return;
+  }
+
+  box.innerHTML = `<div class="task-grid">` + filtered.map(t => {
+    const status = testStatusOf(t);
+    const statusLbl = status==="today" ? "Today" : status==="past" ? "Past" : "Upcoming";
+
+    let dueRow = "";
+    if(t.test_date){
+      dueRow = `<div class="task-meta-row${status==='today'?' due-warn':''}"><i class="ti ${status==='today'?'ti-alert-triangle':'ti-calendar-due'}"></i> ${escapeHtml(t.test_date)}${t.start_time?" · "+escapeHtml(t.start_time):""}</div>`;
+    }
+
+    let subjectsRow = "";
+    if(t.subjects && t.subjects.length){
+      subjectsRow = `<div class="task-subject">${t.subjects.map(escapeHtml).join(", ")}</div>`;
+    }
+
+    let syllabus = "";
+    if(t.syllabus_link){
+      syllabus = `<div class="task-attach"><a class="resource-chip assignment" href="${escapeHtml(t.syllabus_link)}" target="_blank"><i class="ti ti-paperclip"></i> View Syllabus</a></div>`;
+    }
+
+    return `
+    <div class="task-card${status==='today'?' overdue':''}">
+      <div class="task-card-hdr">
+        <div class="task-type-row">
+          <span class="task-status-tag ${status}">${statusLbl}</span>
+        </div>
+        <h4>${escapeHtml(t.test_name || "Untitled test")}</h4>
+        ${subjectsRow}
+      </div>
+      <div class="task-card-body">
+        ${t.description?`<div class="task-desc">${escapeHtml(t.description)}</div>`:""}
+        ${dueRow}
+        ${t.duration_minutes?`<div class="task-meta-row"><i class="ti ti-clock"></i> ${t.duration_minutes} minutes</div>`:""}
+        ${t.total_marks?`<div class="task-meta-row"><i class="ti ti-target-arrow"></i> ${t.total_marks} marks</div>`:""}
+        ${syllabus}
+      </div>
+    </div>`;
+  }).join("") + `</div>`;
+} 
 
 /* ── Bootstrap ── */
 const user = JSON.parse(localStorage.getItem("student"));
