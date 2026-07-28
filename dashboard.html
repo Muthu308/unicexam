@@ -2420,6 +2420,7 @@ function closeTaskSubmitModal(){
 }
 async function submitTaskResponse(){
   if(!activeSubmitTaskId) return;
+  console.log(activeSubmitTaskId);
   const link = $("taskSubmitLink").value.trim();
   const text = $("taskSubmitText").value.trim();
   if(!link && !text){
