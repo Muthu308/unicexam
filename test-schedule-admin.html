@@ -25,6 +25,7 @@ body{background:#f0f4fb;color:#1e293b;padding:24px}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:#0e1e4a}
 .field textarea{min-height:70px;resize:vertical}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:#94a3b8;margin-top:4px}
 .chip-select{display:flex;flex-wrap:wrap;gap:6px}
 .chip-opt{padding:6px 12px;border-radius:20px;border:1.5px solid #dde3f0;font-size:12px;cursor:pointer;user-select:none;transition:.15s}
 .chip-opt.sel{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
@@ -75,25 +76,38 @@ tbody tr:hover{background:#f8fafc}
   <div class="hdr">
     <div>
       <h1><i class="ti ti-clipboard-text"></i> Test Schedule — Admin</h1>
-      <p>Create and manage upcoming tests. Assign to a whole batch or specific students — they see it instantly in their "Test Schedule" tab.</p>
+      <p>Create and manage upcoming tests. Assign to a whole class, a whole school, or specific students — they see it instantly in their "Test Schedule" tab.</p>
     </div>
   </div>
 
   <div class="grid">
     <div class="card">
-      <h2><i class="ti ti-plus"></i> Create / Edit Test</h2>
+      <h2><i class="ti ti-plus"></i> <span id="formTitle">Create Test</span></h2>
       <input type="hidden" id="editId">
+
+      <div class="field">
+        <label>School ID (optional filter)</label>
+        <input type="text" id="f_school_filter" placeholder="e.g. SCH001 — narrows students/classes below">
+        <div class="hint">Leave blank to search across every school.</div>
+      </div>
 
       <div class="field">
         <label>Assign to</label>
         <div class="target-toggle">
-          <button type="button" class="active" id="modeBatchBtn" onclick="setTargetMode('batch')">Whole batch</button>
+          <button type="button" class="active" id="modeBatchBtn" onclick="setTargetMode('batch')">Whole class</button>
+          <button type="button" id="modeSchoolBtn" onclick="setTargetMode('school')">Whole school</button>
           <button type="button" id="modeStudentsBtn" onclick="setTargetMode('students')">Specific student(s)</button>
         </div>
 
         <div id="batchPicker">
           <select id="f_class">
-            <option value="">Loading batches…</option>
+            <option value="">Select a class…</option>
+          </select>
+        </div>
+
+        <div id="schoolOnlyPicker" style="display:none">
+          <select id="f_school_only">
+            <option value="">Select a school…</option>
           </select>
         </div>
 
@@ -149,7 +163,7 @@ tbody tr:hover{background:#f8fafc}
         <textarea id="f_desc" placeholder="Chapters covered, instructions, etc."></textarea>
       </div>
       <div class="btn-row">
-        <button class="btn primary" onclick="saveTest()"><i class="ti ti-device-floppy"></i> Save Test</button>
+        <button class="btn primary" id="saveTestBtn" onclick="saveTest()"><i class="ti ti-device-floppy"></i> Save Test</button>
         <button class="btn secondary" onclick="resetForm()"><i class="ti ti-x"></i> Clear</button>
       </div>
       <div class="msg" id="formMsg"></div>
@@ -173,14 +187,24 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
+<script src="config.js"></script>
 <script>
+const API = window.API_BASE || "";
 const $ = id => document.getElementById(id);
+
+function escapeHtml(str){
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
 let selectedSubjects = new Set();
 let allTests = [];
-let allStudents = [];
-let allBatches = [];
+let studentDirectory = [];   // full, unfiltered — for name lookups
+let studentPickerList = [];  // scoped by the school filter box
+let allClasses = [];
 let selectedStudentIds = new Set();
-let targetMode = "batch";
+let targetMode = "batch"; // 'batch' | 'school' | 'students'
 
 document.querySelectorAll(".chip-opt").forEach(el=>{
   el.addEventListener("click", ()=>{
@@ -193,41 +217,80 @@ document.querySelectorAll(".chip-opt").forEach(el=>{
 function setTargetMode(mode){
   targetMode = mode;
   $("modeBatchBtn").classList.toggle("active", mode==="batch");
+  $("modeSchoolBtn").classList.toggle("active", mode==="school");
   $("modeStudentsBtn").classList.toggle("active", mode==="students");
   $("batchPicker").style.display = mode==="batch" ? "block" : "none";
+  $("schoolOnlyPicker").style.display = mode==="school" ? "block" : "none";
   $("studentPicker").style.display = mode==="students" ? "block" : "none";
 }
 
-/* ── Student search / multi-select (same pattern as Task Tracking) ── */
-async function loadBatchesAndStudents(){
+/* ── Students: SAME endpoint as the class register / task tracking pages ── */
+async function loadStudentDirectory(){
   try{
-    const [bRes, sRes] = await Promise.all([
-      fetch("/api/admin/batches"),
-      fetch("/api/admin/students")
-    ]);
-    allBatches = await bRes.json();
-    allStudents = await sRes.json();
-    $("f_class").innerHTML = `<option value="">Select a batch…</option>` +
-      (Array.isArray(allBatches)?allBatches:[]).map(b=>`<option value="${b.id}">${b.name}${b.student_count!=null?` (${b.student_count})`:""}</option>`).join("");
-  }catch(e){
-    $("f_class").innerHTML = `<option value="">Select a batch…</option>`;
-    console.warn("Could not load batches/students", e);
-  }
+    const res = await fetch(`${API}/api/users?role=student`);
+    studentDirectory = await res.json();
+    if(!Array.isArray(studentDirectory)) studentDirectory = [];
+  }catch(e){ studentDirectory = []; }
+  populateSchoolSelect();
 }
 
+async function loadStudentPicker(){
+  const schoolId = $("f_school_filter").value.trim();
+  const qs = schoolId ? `&school_id=${encodeURIComponent(schoolId)}` : "";
+  try{
+    const res = await fetch(`${API}/api/users?role=student${qs}`);
+    studentPickerList = await res.json();
+    if(!Array.isArray(studentPickerList)) studentPickerList = [];
+  }catch(e){ studentPickerList = []; }
+}
+
+/* ── Classes: SAME endpoint as the class register — "batch" = class session code ── */
+async function loadClassesForTargeting(){
+  const schoolId = $("f_school_filter").value.trim();
+  const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
+  try{
+    const res = await fetch(`${API}/api/classes${qs}`);
+    allClasses = await res.json();
+    if(!Array.isArray(allClasses)) allClasses = [];
+  }catch(e){ allClasses = []; }
+  populateClassSelect();
+}
+
+function populateClassSelect(){
+  const sel = $("f_class");
+  const current = sel.value;
+  const names = [...new Set(allClasses.map(c=>c.session).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  sel.innerHTML = `<option value="">Select a class…</option>` +
+    names.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("");
+  if(names.includes(current)) sel.value = current;
+}
+
+function populateSchoolSelect(){
+  const sel = $("f_school_only");
+  const current = sel.value;
+  const ids = [...new Set(studentDirectory.map(s=>s.school_id).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  sel.innerHTML = `<option value="">Select a school…</option>` +
+    ids.map(id=>`<option value="${escapeHtml(id)}">${escapeHtml(id)}</option>`).join("");
+  if(ids.includes(current)) sel.value = current;
+}
+
+$("f_school_filter").addEventListener("change", async ()=>{
+  await loadStudentPicker();
+  await loadClassesForTargeting();
+});
+
+/* ── Student search / multi-select ── */
 function filterStudentDropdown(val){
   const dd = $("studentDD");
   const q = (val||"").toLowerCase().trim();
-  const list = !q ? allStudents : allStudents.filter(s =>
+  const list = !q ? studentPickerList : studentPickerList.filter(s =>
     (s.name||"").toLowerCase().includes(q) || String(s.std_id).toLowerCase().includes(q));
-  if(!list.length){
-    dd.innerHTML = `<div class="student-dd-item" style="color:#94a3b8">No students found</div>`;
-  }else{
-    dd.innerHTML = list.slice(0,30).map(s => `
-      <div class="student-dd-item" onclick="addStudent('${s.std_id}')">
-        <span>${s.name}</span><span style="color:#94a3b8">${s.std_id}</span>
+  dd.innerHTML = !list.length
+    ? `<div class="student-dd-item" style="color:#94a3b8">No students found</div>`
+    : list.slice(0,30).map(s => `
+      <div class="student-dd-item" onclick="addStudent('${escapeHtml(s.std_id)}')">
+        <span>${escapeHtml(s.name)}</span><span style="color:#94a3b8">${escapeHtml(s.std_id)}</span>
       </div>`).join("");
-  }
   dd.classList.add("open");
 }
 document.addEventListener("click", e=>{
@@ -235,8 +298,6 @@ document.addEventListener("click", e=>{
 });
 
 function addStudent(stdId){
-  const s = allStudents.find(x=>String(x.std_id)===String(stdId));
-  if(!s) return;
   selectedStudentIds.add(String(stdId));
   $("studentSearch").value = "";
   $("studentDD").classList.remove("open");
@@ -246,16 +307,22 @@ function removeStudent(stdId){
   selectedStudentIds.delete(String(stdId));
   renderSelectedStudents();
 }
+function findStudent(stdId){
+  return studentDirectory.find(x=>String(x.std_id)===String(stdId)) ||
+         studentPickerList.find(x=>String(x.std_id)===String(stdId));
+}
 function renderSelectedStudents(){
   const box = $("selectedStudents");
   box.innerHTML = [...selectedStudentIds].map(id=>{
-    const s = allStudents.find(x=>String(x.std_id)===id);
-    return `<span class="student-chip">${s?s.name:id} (${id}) <button onclick="removeStudent('${id}')"><i class="ti ti-x" style="font-size:11px"></i></button></span>`;
+    const s = findStudent(id);
+    return `<span class="student-chip">${escapeHtml(s?s.name:id)} (${escapeHtml(id)}) <button onclick="removeStudent('${escapeHtml(id)}')"><i class="ti ti-x" style="font-size:11px"></i></button></span>`;
   }).join("");
 }
 
 function resetForm(){
   $("editId").value = "";
+  $("formTitle").textContent = "Create Test";
+  $("saveTestBtn").innerHTML = `<i class="ti ti-device-floppy"></i> Save Test`;
   $("f_test_name").value = "";
   $("f_test_date").value = "";
   $("f_start_time").value = "";
@@ -264,6 +331,7 @@ function resetForm(){
   $("f_syllabus").value = "";
   $("f_desc").value = "";
   $("f_class").value = "";
+  $("f_school_only").value = "";
   selectedSubjects.clear();
   document.querySelectorAll(".chip-opt").forEach(el=>el.classList.remove("sel"));
   selectedStudentIds.clear();
@@ -280,34 +348,45 @@ async function saveTest(){
     $("formMsg").textContent = "Test name and date are required.";
     return;
   }
-  if(targetMode === "batch" && !$("f_class").value){
-    $("formMsg").className = "msg err";
-    $("formMsg").textContent = "Select a batch, or switch to \"Specific student(s)\".";
-    return;
-  }
-  if(targetMode === "students" && selectedStudentIds.size === 0){
-    $("formMsg").className = "msg err";
-    $("formMsg").textContent = "Select at least one student, or switch to \"Whole batch\".";
-    return;
+
+  let target_class_name = null;
+  let target_school_id = null;
+
+  if(targetMode === "batch"){
+    const cls = $("f_class").value;
+    if(!cls){ $("formMsg").className="msg err"; $("formMsg").textContent="Select a class."; return; }
+    target_class_name = cls;
+    const schoolFilter = $("f_school_filter").value.trim();
+    if(schoolFilter) target_school_id = [schoolFilter];
+  } else if(targetMode === "school"){
+    const sch = $("f_school_only").value;
+    if(!sch){ $("formMsg").className="msg err"; $("formMsg").textContent="Select a school."; return; }
+    target_school_id = [sch];
+  } else if(targetMode === "students"){
+    if(selectedStudentIds.size === 0){ $("formMsg").className="msg err"; $("formMsg").textContent="Select at least one student."; return; }
+    target_school_id = [...selectedStudentIds];
   }
 
   const payload = {
-    id: $("editId").value || undefined,
     test_name,
     test_date,
-    start_time: $("f_start_time").value,
-    duration_minutes: Number($("f_duration").value) || null,
-    total_marks: Number($("f_total_marks").value) || null,
+    start_time: $("f_start_time").value || null,
+    duration_minutes: $("f_duration").value ? Number($("f_duration").value) : null,
+    total_marks: $("f_total_marks").value ? Number($("f_total_marks").value) : null,
     subjects: [...selectedSubjects],
-    syllabus_link: $("f_syllabus").value.trim(),
-    description: $("f_desc").value.trim(),
+    syllabus_link: $("f_syllabus").value.trim() || null,
+    description: $("f_desc").value.trim() || null,
     target_mode: targetMode,
-    batch_id: targetMode === "batch" ? ($("f_class").value || null) : null,
-    student_ids: targetMode === "students" ? [...selectedStudentIds] : []
+    target_class_name,
+    target_school_id,
+    who_created_at: window.__session?.name || null,
   };
+
+  const editId = $("editId").value;
   try{
-    const res = await fetch("/api/admin/test-schedules", {
-      method: payload.id ? "PUT" : "POST",
+    if(editId) payload.id = Number(editId);
+    const res = await fetch(`${API}/api/test-schedules`, {
+      method: editId ? "PUT" : "POST",
       headers: { "Content-Type":"application/json" },
       body: JSON.stringify(payload)
     });
@@ -322,10 +401,12 @@ async function saveTest(){
   }
 }
 
-function editTest(id){
+async function editTest(id){
   const t = allTests.find(x=>String(x.id)===String(id));
   if(!t) return;
   $("editId").value = t.id;
+  $("formTitle").textContent = `Edit Test #${t.id}`;
+  $("saveTestBtn").innerHTML = `<i class="ti ti-check"></i> Update Test`;
   $("f_test_name").value = t.test_name||"";
   $("f_test_date").value = t.test_date||"";
   $("f_start_time").value = t.start_time||"";
@@ -336,13 +417,21 @@ function editTest(id){
   selectedSubjects = new Set(t.subjects||[]);
   document.querySelectorAll(".chip-opt").forEach(el=>el.classList.toggle("sel", selectedSubjects.has(el.dataset.s)));
 
+  const scope = Array.isArray(t.target_school_id) ? t.target_school_id : [];
+
   if(t.target_mode === "students"){
     setTargetMode("students");
-    selectedStudentIds = new Set((t.student_ids||[]).map(String));
+    selectedStudentIds = new Set(scope.map(String));
     renderSelectedStudents();
+  } else if(t.target_mode === "school"){
+    setTargetMode("school");
+    $("f_school_only").value = scope[0] || "";
   } else {
     setTargetMode("batch");
-    $("f_class").value = t.batch_id || "";
+    if(scope[0]) $("f_school_filter").value = scope[0];
+    await loadStudentPicker();
+    await loadClassesForTargeting();
+    $("f_class").value = t.target_class_name || "";
   }
 
   window.scrollTo({top:0, behavior:"smooth"});
@@ -351,8 +440,13 @@ function editTest(id){
 async function deleteTest(id){
   if(!confirm("Delete this test schedule?")) return;
   try{
-    const res = await fetch(`/api/admin/test-schedules/${id}`, { method:"DELETE" });
-    if(!res.ok) throw new Error("Delete failed");
+    const res = await fetch(`${API}/api/test-schedules`, {
+      method: "DELETE",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({ id })
+    });
+    if(!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Delete failed");
+    if($("editId").value === String(id)) resetForm();
     loadTests();
   }catch(e){ alert("Could not delete: " + e.message); }
 }
@@ -360,14 +454,25 @@ async function deleteTest(id){
 async function loadTests(){
   const box = $("testListWrap");
   try{
-    const res = await fetch("/api/admin/test-schedules");
+    const res = await fetch(`${API}/api/test-schedules`);
     const rows = await res.json();
     if(!res.ok) throw new Error("Failed to load");
     allTests = (Array.isArray(rows)?rows:[]).sort((a,b)=>(b.test_date||"").localeCompare(a.test_date||""));
     renderTestList();
   }catch(e){
-    box.innerHTML = `<div class="empty" style="color:#dc2626">Could not load tests: ${e.message}</div>`;
+    box.innerHTML = `<div class="empty" style="color:#dc2626">Could not load tests: ${escapeHtml(e.message)}</div>`;
   }
+}
+
+function targetLabel(t){
+  if(t.target_mode === "students"){
+    const n = Array.isArray(t.target_school_id) ? t.target_school_id.length : 0;
+    return `${n} student(s)`;
+  }
+  if(t.target_mode === "school"){
+    return `School: ${escapeHtml((t.target_school_id||[])[0] || "—")}`;
+  }
+  return `Class: ${escapeHtml(t.target_class_name || "—")}`;
 }
 
 function renderTestList(){
@@ -388,7 +493,7 @@ function renderTestList(){
     if(timeFilter === "upcoming" && !(t.test_date >= todayStr)) return false;
     if(timeFilter === "past" && !(t.test_date < todayStr)) return false;
     if(q){
-      const hay = [t.test_name, ...(t.subjects||[]), t.target_label].filter(Boolean).join(" ").toLowerCase();
+      const hay = [t.test_name, ...(t.subjects||[]), t.target_class_name].filter(Boolean).join(" ").toLowerCase();
       if(!hay.includes(q)) return false;
     }
     return true;
@@ -407,12 +512,12 @@ function renderTestList(){
       const statusTxt = t.test_date>todayStr ? 'Upcoming' : t.test_date===todayStr ? 'Today' : 'Past';
       return `
       <tr>
-        <td><strong>${t.test_name}</strong>${t.syllabus_link?` · <a href="${t.syllabus_link}" target="_blank" style="color:#185FA5;font-size:11px">syllabus</a>`:""}
+        <td><strong>${escapeHtml(t.test_name)}</strong>${t.syllabus_link?` · <a href="${escapeHtml(t.syllabus_link)}" target="_blank" style="color:#185FA5;font-size:11px">syllabus</a>`:""}
           ${t.total_marks?`<br><span style="color:#94a3b8;font-size:11px">${t.total_marks} marks${t.duration_minutes?` · ${t.duration_minutes} min`:""}</span>`:""}
         </td>
-        <td>${t.test_date||"—"} <span class="badge ${statusCls}">${statusTxt}</span></td>
-        <td>${(t.subjects||[]).join(", ")||"—"}</td>
-        <td>${t.target_label || (t.batch_name || (t.batch_id?"Batch #"+t.batch_id:"All students"))}</td>
+        <td>${escapeHtml(t.test_date||"—")} <span class="badge ${statusCls}">${statusTxt}</span></td>
+        <td>${(t.subjects||[]).map(escapeHtml).join(", ")||"—"}</td>
+        <td>${targetLabel(t)}</td>
         <td>
           <button class="icon-btn" onclick="editTest('${t.id}')" title="Edit"><i class="ti ti-edit"></i></button>
           <button class="icon-btn" onclick="deleteTest('${t.id}')" title="Delete"><i class="ti ti-trash"></i></button>
@@ -422,8 +527,12 @@ function renderTestList(){
   </tbody></table>`;
 }
 
-loadBatchesAndStudents();
-loadTests();
+(async ()=>{
+  await loadStudentDirectory();
+  await loadStudentPicker();
+  await loadClassesForTargeting();
+  await loadTests();
+})();
 </script>
 </body>
 </html>
