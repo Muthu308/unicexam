@@ -770,7 +770,7 @@ async function gradeSubmission(taskId, stdId) {
     feedback: feedback || null,
   };
   try {
-    const res = await fetch(`/api/fetch_response`, {
+    const res = await fetch(`/api/fetch_response?task_id=${encodeURIComponent(taskId)}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
