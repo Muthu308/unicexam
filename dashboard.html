@@ -544,6 +544,45 @@ th.total-group{background:#7c3aed !important}
       </div>
     </div>
   </div>
+
+  <!-- TEST SCHEDULE -->
+<div class="page" id="page-testschedule">
+  <div class="sec-box">
+    <h2><i class="ti ti-clipboard-text"></i> Test Schedule</h2>
+    <p style="font-size:12px;color:#64748b;margin:-6px 0 14px">
+      Upcoming and past tests assigned to you, your class, or your school.
+    </p>
+    <div class="task-filter-bar">
+      <div class="task-filter-pill test-filter-pill active" onclick="setTestScheduleFilter('all',this)">All</div>
+      <div class="task-filter-pill test-filter-pill" onclick="setTestScheduleFilter('upcoming',this)">Upcoming</div>
+      <div class="task-filter-pill test-filter-pill" onclick="setTestScheduleFilter('today',this)">Today</div>
+      <div class="task-filter-pill test-filter-pill" onclick="setTestScheduleFilter('past',this)">Past</div>
+    </div>
+    <div id="testScheduleContent">
+      <div class="test-empty">Loading test schedule…</div>
+    </div>
+  </div>
+</div>
+
+<!-- TASK TRACKING -->
+<div class="page" id="page-tasks">
+  <div class="sec-box">
+    <h2><i class="ti ti-checklist"></i> Task Tracking</h2>
+    <p style="font-size:12px;color:#64748b;margin:-6px 0 14px">
+      Assignments, worksheets, and homework assigned to you. Submit your work and see your grade once it's reviewed.
+    </p>
+    <div class="task-filter-bar">
+      <div class="task-filter-pill active" onclick="setTaskFilter('all',this)">All</div>
+      <div class="task-filter-pill" onclick="setTaskFilter('pending',this)">Pending</div>
+      <div class="task-filter-pill" onclick="setTaskFilter('submitted',this)">Submitted</div>
+      <div class="task-filter-pill" onclick="setTaskFilter('graded',this)">Graded</div>
+      <div class="task-filter-pill" onclick="setTaskFilter('overdue',this)">Overdue</div>
+    </div>
+    <div id="taskTrackingContent">
+      <div class="test-empty">Loading tasks…</div>
+    </div>
+  </div>
+</div>
   
   <!-- EXAM RESULTS -->
   <div class="page" id="page-results">
@@ -654,47 +693,7 @@ th.total-group{background:#7c3aed !important}
 
 </div>
 
-  <!-- Insert this after </div> that closes #page-attendance, before <!-- EXAM RESULTS --> -->
-
-<!-- TEST SCHEDULE -->
-<div class="page" id="page-testschedule">
-  <div class="sec-box">
-    <h2><i class="ti ti-clipboard-text"></i> Test Schedule</h2>
-    <p style="font-size:12px;color:#64748b;margin:-6px 0 14px">
-      Upcoming and past tests assigned to you, your class, or your school.
-    </p>
-    <div class="task-filter-bar">
-      <div class="task-filter-pill test-filter-pill active" onclick="setTestScheduleFilter('all',this)">All</div>
-      <div class="task-filter-pill test-filter-pill" onclick="setTestScheduleFilter('upcoming',this)">Upcoming</div>
-      <div class="task-filter-pill test-filter-pill" onclick="setTestScheduleFilter('today',this)">Today</div>
-      <div class="task-filter-pill test-filter-pill" onclick="setTestScheduleFilter('past',this)">Past</div>
-    </div>
-    <div id="testScheduleContent">
-      <div class="test-empty">Loading test schedule…</div>
-    </div>
-  </div>
-</div>
-
-<!-- TASK TRACKING -->
-<div class="page" id="page-tasks">
-  <div class="sec-box">
-    <h2><i class="ti ti-checklist"></i> Task Tracking</h2>
-    <p style="font-size:12px;color:#64748b;margin:-6px 0 14px">
-      Assignments, worksheets, and homework assigned to you. Submit your work and see your grade once it's reviewed.
-    </p>
-    <div class="task-filter-bar">
-      <div class="task-filter-pill active" onclick="setTaskFilter('all',this)">All</div>
-      <div class="task-filter-pill" onclick="setTaskFilter('pending',this)">Pending</div>
-      <div class="task-filter-pill" onclick="setTaskFilter('submitted',this)">Submitted</div>
-      <div class="task-filter-pill" onclick="setTaskFilter('graded',this)">Graded</div>
-      <div class="task-filter-pill" onclick="setTaskFilter('overdue',this)">Overdue</div>
-    </div>
-    <div id="taskTrackingContent">
-      <div class="test-empty">Loading tasks…</div>
-    </div>
-  </div>
-</div>
-
+ 
 <!-- Lightbox -->
 <div class="lightbox" id="imgLightbox">
   <div class="lightbox-inner">
