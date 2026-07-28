@@ -737,7 +737,7 @@ th.total-group{background:#7c3aed !important}
     <textarea id="taskSubmitText" placeholder="Optional: type your answer, notes, or working here…" style="margin-top:10px"></textarea>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeTaskSubmitModal()">Cancel</button>
-      <button id="feedbackSubmitBtn"   class="modal-btn submit"   onclick="submitClassFeedback()">Submit feedback</button>
+      <button id="feedbackSubmitBtn"   class="modal-btn submit"   onclick="submitTaskResponse()">Submit Task</button>
     </div>
   </div>
 </div>
@@ -2428,7 +2428,7 @@ async function submitTaskResponse(){
     return;
   }
   try{
-    const res = await fetch(`/api/fetch_response?type=submission`, {
+    const res = await fetch(`/api/fetch_response?type=submission&task_id=${encodeURIComponent(activeSubmitTaskId)}`, {
       method: "POST",
       headers: { "Content-Type":"application/json" },
       body: JSON.stringify({
