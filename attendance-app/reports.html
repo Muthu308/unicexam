@@ -19,6 +19,18 @@
   .view-panel { display: none; }
   .view-panel.active { display: block; }
 
+  /* ---- Sub-tabs (inside Attendance Summary) ---- */
+  .subtabs { display: flex; gap: 6px; margin: 4px 0 16px; flex-wrap: wrap; }
+  .subtab {
+    background: #fff; border: 1px solid #ddd; padding: 7px 14px; border-radius: 20px;
+    font-size: 0.82rem; font-weight: 600; color: #666; cursor: pointer;
+  }
+  .subtab.active { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+  .subpanel { display: none; }
+  .subpanel.active { display: block; }
+  .subpanel h3 { font-size: 0.95rem; margin: 14px 0 8px; color: #333; }
+  .subpanel h3:first-child { margin-top: 0; }
+
   /* ---- Filter bar ---- */
   .filter-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
   .filter-bar input[type="text"], .filter-bar input[type="search"] {
@@ -105,7 +117,6 @@
     </div>
 
     <div class="view-tabs">
-     
       <button type="button" class="view-tab active" data-view="attendance">Attendance Summary</button>
        <button type="button" class="view-tab" data-view="users">Faculty &amp; Students</button>
     </div>
@@ -134,24 +145,78 @@
     <!-- ===================== ATTENDANCE SUMMARY TAB ===================== -->
     <div class="view-panel active" id="panelAttendance">
       <div class="card">
-        <h2>Class-wise attendance summary</h2>
-        <div class="hint">
-          Counts every submitted attendance record per class. One row per student per class —
-          a student enrolled in multiple classes gets a row for each.
+        <h2>Class-Attendance Reports</h2>
+
+        <div class="subtabs" id="attSubtabs">
+          <button type="button" class="subtab active" data-sub="overview">Overview</button>
+          <button type="button" class="subtab" data-sub="classwise">Class-wise</button>
+          <button type="button" class="subtab" data-sub="studentwise">Student-wise</button>
+          <button type="button" class="subtab" data-sub="detailed">Detailed</button>
         </div>
 
-        <div class="filter-bar" style="margin-top:12px;">
-          <input type="search" id="summarySearch" placeholder="Search student name or ID…" />
-          <select id="summaryClassFilter"><option value="">All classes</option></select>
-          <input type="text" id="summaryDateFrom" placeholder="From date (YYYY-MM-DD)" style="max-width:170px;" />
-          <input type="text" id="summaryDateTo" placeholder="To date (YYYY-MM-DD)" style="max-width:170px;" />
-          <button type="button" class="clear-filters-btn" id="clearSummaryFilters">Clear</button>
+        <!-- ---- OVERVIEW ---- -->
+        <div class="subpanel active" id="subOverview">
+          <div class="hint" style="margin-bottom:10px;">
+            "Conducted" = at least one attendance submission exists for that class. "Pending" = scheduled but attendance hasn't been marked yet.
+          </div>
+          <div class="summary-cards" id="overviewCards"></div>
+
+          <h3>By subject</h3>
+          <div class="table-scroll">
+            <div id="subjectTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+          </div>
+
+          <h3>By faculty</h3>
+          <div class="table-scroll">
+            <div id="facultyTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+          </div>
         </div>
 
-        <div class="summary-cards" id="summaryCards"></div>
+        <!-- ---- CLASS-WISE ---- -->
+        <div class="subpanel" id="subClasswise">
+          <div class="hint" style="margin-bottom:10px;">One row per class — present/absent/late totals across every student in that class.</div>
+          <div class="filter-bar">
+            <input type="search" id="classwiseSearch" placeholder="Search subject, session, faculty…" />
+            <select id="classwiseSubjectFilter"><option value="">All subjects</option></select>
+            <select id="classwiseFacultyFilter"><option value="">All faculty</option></select>
+            <input type="text" id="classwiseDateFrom" placeholder="From date (YYYY-MM-DD)" style="max-width:170px;" />
+            <input type="text" id="classwiseDateTo" placeholder="To date (YYYY-MM-DD)" style="max-width:170px;" />
+            <button type="button" class="clear-filters-btn" id="clearClasswiseFilters">Clear</button>
+          </div>
+          <div class="table-scroll">
+            <div id="classwiseTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+          </div>
+        </div>
 
-        <div class="table-scroll">
-          <div id="summaryTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+        <!-- ---- STUDENT-WISE ---- -->
+        <div class="subpanel" id="subStudentwise">
+          <div class="hint" style="margin-bottom:10px;">One row per student — attendance totals across all their classes (or just one, if selected below).</div>
+          <div class="filter-bar">
+            <input type="search" id="studentwiseSearch" placeholder="Search student name or ID…" />
+            <select id="studentwiseClassFilter"><option value="">All classes (overall)</option></select>
+            <button type="button" class="clear-filters-btn" id="clearStudentwiseFilters">Clear</button>
+          </div>
+          <div class="table-scroll">
+            <div id="studentwiseTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+          </div>
+        </div>
+
+        <!-- ---- DETAILED (original per class-student row) ---- -->
+        <div class="subpanel" id="subDetailed">
+          <div class="hint" style="margin-bottom:10px;">
+            One row per student per class — a student enrolled in multiple classes gets a row for each.
+          </div>
+          <div class="filter-bar">
+            <input type="search" id="summarySearch" placeholder="Search student name or ID…" />
+            <select id="summaryClassFilter"><option value="">All classes</option></select>
+            <input type="text" id="summaryDateFrom" placeholder="From date (YYYY-MM-DD)" style="max-width:170px;" />
+            <input type="text" id="summaryDateTo" placeholder="To date (YYYY-MM-DD)" style="max-width:170px;" />
+            <button type="button" class="clear-filters-btn" id="clearSummaryFilters">Clear</button>
+          </div>
+          <div class="summary-cards" id="summaryCards"></div>
+          <div class="table-scroll">
+            <div id="summaryTableWrap" class="empty">Set a School ID (optional) and click "Load data" above.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -166,8 +231,13 @@
     let allUsers = [];          // faculty + students combined, tagged with .user_role
     let allClasses = [];        // classes for the chosen school
     let summaryRows = [];       // flattened per (class, student) attendance summary rows
+    let classRecordsMap = {};   // class_id (string) -> attendance records array
     let userSort = { key: "name", dir: 1 };
     let summarySort = { key: "name", dir: 1 };
+    let subjectSort = { key: "total", dir: -1 };
+    let facultySort = { key: "total", dir: -1 };
+    let classwiseSort = { key: "subject", dir: 1 };
+    let studentwiseSort = { key: "name", dir: 1 };
 
     function escapeHtml(str) {
       const div = document.createElement("div");
@@ -175,14 +245,26 @@
       return div.innerHTML;
     }
 
-    // ---- Tab switching ----
-    document.querySelectorAll(".view-tab").forEach((btn) => {
+    // ---- Top-level tab switching ----
+    document.querySelectorAll(".view-tabs > .view-tab").forEach((btn) => {
       btn.addEventListener("click", () => switchToTab(btn.dataset.view));
     });
     function switchToTab(view) {
-      document.querySelectorAll(".view-tab").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
+      document.querySelectorAll(".view-tabs > .view-tab").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
       document.getElementById("panelUsers").classList.toggle("active", view === "users");
       document.getElementById("panelAttendance").classList.toggle("active", view === "attendance");
+    }
+
+    // ---- Attendance Summary sub-tab switching ----
+    document.querySelectorAll("#attSubtabs .subtab").forEach((btn) => {
+      btn.addEventListener("click", () => switchAttSubtab(btn.dataset.sub));
+    });
+    function switchAttSubtab(view) {
+      document.querySelectorAll("#attSubtabs .subtab").forEach((b) => b.classList.toggle("active", b.dataset.sub === view));
+      document.getElementById("subOverview").classList.toggle("active", view === "overview");
+      document.getElementById("subClasswise").classList.toggle("active", view === "classwise");
+      document.getElementById("subStudentwise").classList.toggle("active", view === "studentwise");
+      document.getElementById("subDetailed").classList.toggle("active", view === "detailed");
     }
 
     document.getElementById("loadAllBtn").addEventListener("click", loadEverything);
@@ -192,10 +274,12 @@
       const status = document.getElementById("loadStatus");
       status.textContent = "Loading users and classes…";
 
-      document.getElementById("userTableWrap").className = "empty";
-      document.getElementById("userTableWrap").textContent = "Loading…";
-      document.getElementById("summaryTableWrap").className = "empty";
-      document.getElementById("summaryTableWrap").textContent = "Loading…";
+      ["userTableWrap", "summaryTableWrap", "subjectTableWrap", "facultyTableWrap", "classwiseTableWrap", "studentwiseTableWrap"].forEach((id) => {
+        const el = document.getElementById(id);
+        el.className = "empty";
+        el.textContent = "Loading…";
+      });
+      document.getElementById("overviewCards").innerHTML = "";
 
       try {
         const qs = schoolId ? `&school_id=${encodeURIComponent(schoolId)}` : "";
@@ -218,7 +302,6 @@
 
         populateUserClassFilter();
         renderUserTable();
-        populateSummaryClassFilter();
 
         status.textContent = `Loaded ${allUsers.length} users and ${allClasses.length} classes.`;
 
@@ -354,24 +437,10 @@
     });
 
     // ---------------------------------------------------------------
-    // ATTENDANCE SUMMARY TAB
+    // ATTENDANCE DATA — fetched once per class, then reused by all
+    // four sub-tabs (Overview / Class-wise / Student-wise / Detailed)
     // ---------------------------------------------------------------
 
-    function populateSummaryClassFilter() {
-      const sel = document.getElementById("summaryClassFilter");
-      const current = sel.value;
-      sel.innerHTML =
-        `<option value="">All classes</option>` +
-        allClasses
-          .map(
-            (c) =>
-              `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})</option>`
-          )
-          .join("");
-      if ([...sel.options].some((o) => o.value === current)) sel.value = current;
-    }
-
-    // Builds studentNameMap once (across all users) for quick name lookup.
     function studentNameFor(sid) {
       const u = allUsers.find((x) => x.std_id === sid);
       return u ? u.name : "";
@@ -379,7 +448,12 @@
 
     async function buildAttendanceSummary() {
       summaryRows = [];
+      classRecordsMap = {};
+
       if (allClasses.length === 0) {
+        renderOverview();
+        renderClassWiseTable();
+        renderStudentWiseTable();
         renderSummaryTable();
         return;
       }
@@ -397,7 +471,8 @@
       );
 
       results.forEach(({ cls, records }) => {
-        // tally[student_id] = { Present, Absent, Late, Reason, total }
+        classRecordsMap[String(cls.id)] = records;
+
         const tally = {};
         const uniqueIds = Array.from(new Set(cls.student_ids || []));
         uniqueIds.forEach((sid) => {
@@ -435,7 +510,427 @@
         });
       });
 
+      // Feed all four sub-tabs from the same fetch
+      renderOverview();
+      populateClasswiseFilters();
+      renderClassWiseTable();
+      populateStudentwiseClassFilter();
+      renderStudentWiseTable();
+      populateSummaryClassFilter();
       renderSummaryTable();
+    }
+
+    function genericSort(rows, sortState) {
+      return [...rows].sort((a, b) => {
+        const va = a[sortState.key];
+        const vb = b[sortState.key];
+        if (typeof va === "number" && typeof vb === "number") return (va - vb) * sortState.dir;
+        const sa = String(va ?? "").toLowerCase();
+        const sb = String(vb ?? "").toLowerCase();
+        return sa < sb ? -1 * sortState.dir : sa > sb ? 1 * sortState.dir : 0;
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // OVERVIEW: total / conducted / pending classes, by subject & faculty
+    // ---------------------------------------------------------------
+
+    function computeOverview() {
+      const totalClasses = allClasses.length;
+      const conductedIds = new Set(
+        Object.keys(classRecordsMap).filter((id) => (classRecordsMap[id] || []).length > 0)
+      );
+      const conducted = conductedIds.size;
+      const pending = totalClasses - conducted;
+
+      const subjMap = {};
+      const facMap = {};
+      allClasses.forEach((c) => {
+        const sKey = c.subject || "—";
+        if (!subjMap[sKey]) subjMap[sKey] = { subject: sKey, total: 0, conducted: 0 };
+        subjMap[sKey].total++;
+        if (conductedIds.has(String(c.id))) subjMap[sKey].conducted++;
+
+        const fKey = c.faculty_name || "—";
+        if (!facMap[fKey]) facMap[fKey] = { faculty_name: fKey, total: 0, conducted: 0 };
+        facMap[fKey].total++;
+        if (conductedIds.has(String(c.id))) facMap[fKey].conducted++;
+      });
+
+      return {
+        totalClasses,
+        conducted,
+        pending,
+        bySubject: Object.values(subjMap),
+        byFaculty: Object.values(facMap),
+      };
+    }
+
+    function renderOverview() {
+      const ov = computeOverview();
+      const cardsBox = document.getElementById("overviewCards");
+      const conductedPct = ov.totalClasses ? Math.round((ov.conducted / ov.totalClasses) * 100) : 0;
+
+      cardsBox.innerHTML = `
+        <div class="summary-card"><div class="num">${ov.totalClasses}</div><div class="label">Total classes</div></div>
+        <div class="summary-card"><div class="num">${ov.conducted}</div><div class="label">Conducted</div></div>
+        <div class="summary-card"><div class="num">${ov.pending}</div><div class="label">Pending</div></div>
+        <div class="summary-card"><div class="num">${conductedPct}%</div><div class="label">Conducted rate</div></div>
+      `;
+
+      renderSubjectTable(ov.bySubject);
+      renderFacultyTable(ov.byFaculty);
+    }
+
+    function renderSubjectTable(rows) {
+      const wrap = document.getElementById("subjectTableWrap");
+      if (allClasses.length === 0) { wrap.className = "empty"; wrap.textContent = "No classes found — click \"Load data\" above."; return; }
+      if (!rows.length) { wrap.className = "empty"; wrap.textContent = "No subjects found."; return; }
+
+      const sorted = genericSort(rows, subjectSort);
+      const arrow = (key) => (subjectSort.key === key ? (subjectSort.dir === 1 ? "▲" : "▼") : "");
+      wrap.className = "";
+      wrap.innerHTML = `
+        <table class="report-table">
+          <thead><tr>
+            <th class="sortable" data-key="subject">Subject <span class="sort-arrow">${arrow("subject")}</span></th>
+            <th class="sortable" data-key="total">Total Classes <span class="sort-arrow">${arrow("total")}</span></th>
+            <th class="sortable" data-key="conducted">Conducted <span class="sort-arrow">${arrow("conducted")}</span></th>
+            <th>Pending</th>
+            <th>Conducted %</th>
+          </tr></thead>
+          <tbody>
+            ${sorted.map((r) => {
+              const pct = r.total ? Math.round((r.conducted / r.total) * 100) : 0;
+              const barClass = pct >= 75 ? "" : pct >= 50 ? "mid" : "low";
+              return `<tr>
+                <td>${escapeHtml(r.subject)}</td>
+                <td>${r.total}</td>
+                <td><span class="count-badge count-present">${r.conducted}</span></td>
+                <td>${r.total - r.conducted}</td>
+                <td><div class="pct-bar-wrap"><div class="pct-bar-track"><div class="pct-bar-fill ${barClass}" style="width:${pct}%;"></div></div><span class="pct-text">${pct}%</span></div></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.key;
+          subjectSort.dir = subjectSort.key === key ? -subjectSort.dir : -1;
+          subjectSort.key = key;
+          renderSubjectTable(rows);
+        });
+      });
+    }
+
+    function renderFacultyTable(rows) {
+      const wrap = document.getElementById("facultyTableWrap");
+      if (allClasses.length === 0) { wrap.className = "empty"; wrap.textContent = "No classes found — click \"Load data\" above."; return; }
+      if (!rows.length) { wrap.className = "empty"; wrap.textContent = "No faculty found."; return; }
+
+      const sorted = genericSort(rows, facultySort);
+      const arrow = (key) => (facultySort.key === key ? (facultySort.dir === 1 ? "▲" : "▼") : "");
+      wrap.className = "";
+      wrap.innerHTML = `
+        <table class="report-table">
+          <thead><tr>
+            <th class="sortable" data-key="faculty_name">Faculty <span class="sort-arrow">${arrow("faculty_name")}</span></th>
+            <th class="sortable" data-key="total">Total Classes <span class="sort-arrow">${arrow("total")}</span></th>
+            <th class="sortable" data-key="conducted">Conducted <span class="sort-arrow">${arrow("conducted")}</span></th>
+            <th>Pending</th>
+            <th>Conducted %</th>
+          </tr></thead>
+          <tbody>
+            ${sorted.map((r) => {
+              const pct = r.total ? Math.round((r.conducted / r.total) * 100) : 0;
+              const barClass = pct >= 75 ? "" : pct >= 50 ? "mid" : "low";
+              return `<tr>
+                <td>${escapeHtml(r.faculty_name)}</td>
+                <td>${r.total}</td>
+                <td><span class="count-badge count-present">${r.conducted}</span></td>
+                <td>${r.total - r.conducted}</td>
+                <td><div class="pct-bar-wrap"><div class="pct-bar-track"><div class="pct-bar-fill ${barClass}" style="width:${pct}%;"></div></div><span class="pct-text">${pct}%</span></div></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.key;
+          facultySort.dir = facultySort.key === key ? -facultySort.dir : -1;
+          facultySort.key = key;
+          renderFacultyTable(rows);
+        });
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // CLASS-WISE: one row per class, aggregated across its students
+    // ---------------------------------------------------------------
+
+    function populateClasswiseFilters() {
+      const subjSel = document.getElementById("classwiseSubjectFilter");
+      const facSel = document.getElementById("classwiseFacultyFilter");
+      const subjects = [...new Set(allClasses.map((c) => c.subject).filter(Boolean))].sort();
+      const faculties = [...new Set(allClasses.map((c) => c.faculty_name).filter(Boolean))].sort();
+      const curSubj = subjSel.value, curFac = facSel.value;
+      subjSel.innerHTML = `<option value="">All subjects</option>` + subjects.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+      facSel.innerHTML = `<option value="">All faculty</option>` + faculties.map((f) => `<option value="${escapeHtml(f)}">${escapeHtml(f)}</option>`).join("");
+      if (subjects.includes(curSubj)) subjSel.value = curSubj;
+      if (faculties.includes(curFac)) facSel.value = curFac;
+    }
+
+    function buildClassWiseRows() {
+      const map = {};
+      summaryRows.forEach((r) => {
+        if (!map[r.class_id]) {
+          const cls = allClasses.find((c) => String(c.id) === String(r.class_id));
+          map[r.class_id] = {
+            class_id: r.class_id,
+            class_label: r.class_label,
+            subject: r.subject || "—",
+            session: r.session || "",
+            class_date: cls?.class_date || "",
+            faculty_name: cls?.faculty_name || "—",
+            students: 0,
+            present: 0, absent: 0, late: 0, total: 0,
+          };
+        }
+        const m = map[r.class_id];
+        m.students++;
+        m.present += r.present;
+        m.absent += r.absent;
+        m.late += r.late;
+        m.total += r.total;
+      });
+      return Object.values(map);
+    }
+
+    function getFilteredClassWiseRows() {
+      const q = document.getElementById("classwiseSearch").value.trim().toLowerCase();
+      const subj = document.getElementById("classwiseSubjectFilter").value;
+      const fac = document.getElementById("classwiseFacultyFilter").value;
+      const dateFrom = document.getElementById("classwiseDateFrom").value.trim();
+      const dateTo = document.getElementById("classwiseDateTo").value.trim();
+
+      let rows = buildClassWiseRows().filter((r) => {
+        if (subj && r.subject !== subj) return false;
+        if (fac && r.faculty_name !== fac) return false;
+        if (dateFrom && r.class_date && r.class_date < dateFrom) return false;
+        if (dateTo && r.class_date && r.class_date > dateTo) return false;
+        if (q) {
+          const hay = `${r.subject} ${r.session} ${r.faculty_name}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      return genericSort(rows, classwiseSort);
+    }
+
+    function renderClassWiseTable() {
+      const wrap = document.getElementById("classwiseTableWrap");
+      const filtered = getFilteredClassWiseRows();
+
+      if (allClasses.length === 0) { wrap.className = "empty"; wrap.textContent = "No classes found — click \"Load data\" above, or check the School ID."; return; }
+      if (summaryRows.length === 0) { wrap.className = "empty"; wrap.textContent = "No attendance has been submitted for these classes yet."; return; }
+      if (filtered.length === 0) { wrap.className = "empty"; wrap.textContent = "No classes match your filters."; return; }
+
+      const arrow = (key) => (classwiseSort.key === key ? (classwiseSort.dir === 1 ? "▲" : "▼") : "");
+      wrap.className = "";
+      wrap.innerHTML = `
+        <table class="report-table">
+          <thead><tr>
+            <th class="sortable" data-key="subject">Subject <span class="sort-arrow">${arrow("subject")}</span></th>
+            <th class="sortable" data-key="class_date">Date <span class="sort-arrow">${arrow("class_date")}</span></th>
+            <th class="sortable" data-key="faculty_name">Faculty <span class="sort-arrow">${arrow("faculty_name")}</span></th>
+            <th class="sortable" data-key="students">Students <span class="sort-arrow">${arrow("students")}</span></th>
+            <th class="sortable" data-key="present">Present <span class="sort-arrow">${arrow("present")}</span></th>
+            <th class="sortable" data-key="absent">Absent <span class="sort-arrow">${arrow("absent")}</span></th>
+            <th class="sortable" data-key="late">Late <span class="sort-arrow">${arrow("late")}</span></th>
+            <th>Attendance %</th>
+          </tr></thead>
+          <tbody>
+            ${filtered.map((r) => {
+              const pct = r.total ? Math.round((r.present / r.total) * 100) : 0;
+              const barClass = pct >= 75 ? "" : pct >= 50 ? "mid" : "low";
+              return `<tr>
+                <td>${escapeHtml(r.subject)}<br><span class="hint">${escapeHtml(r.class_label)}</span></td>
+                <td>${escapeHtml(r.class_date || "—")}</td>
+                <td>${escapeHtml(r.faculty_name)}</td>
+                <td>${r.students}</td>
+                <td><span class="count-badge count-present">${r.present}</span></td>
+                <td><span class="count-badge count-absent">${r.absent}</span></td>
+                <td><span class="count-badge count-late">${r.late}</span></td>
+                <td><div class="pct-bar-wrap"><div class="pct-bar-track"><div class="pct-bar-fill ${barClass}" style="width:${pct}%;"></div></div><span class="pct-text">${pct}%</span></div></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.key;
+          classwiseSort.dir = classwiseSort.key === key ? -classwiseSort.dir : 1;
+          classwiseSort.key = key;
+          renderClassWiseTable();
+        });
+      });
+    }
+
+    document.getElementById("classwiseSearch").addEventListener("input", renderClassWiseTable);
+    document.getElementById("classwiseSubjectFilter").addEventListener("change", renderClassWiseTable);
+    document.getElementById("classwiseFacultyFilter").addEventListener("change", renderClassWiseTable);
+    document.getElementById("classwiseDateFrom").addEventListener("input", renderClassWiseTable);
+    document.getElementById("classwiseDateTo").addEventListener("input", renderClassWiseTable);
+    document.getElementById("clearClasswiseFilters").addEventListener("click", () => {
+      document.getElementById("classwiseSearch").value = "";
+      document.getElementById("classwiseSubjectFilter").value = "";
+      document.getElementById("classwiseFacultyFilter").value = "";
+      document.getElementById("classwiseDateFrom").value = "";
+      document.getElementById("classwiseDateTo").value = "";
+      renderClassWiseTable();
+    });
+
+    // ---------------------------------------------------------------
+    // STUDENT-WISE: one row per student, aggregated across all classes
+    // (or narrowed to a single class if selected)
+    // ---------------------------------------------------------------
+
+    function populateStudentwiseClassFilter() {
+      const sel = document.getElementById("studentwiseClassFilter");
+      const current = sel.value;
+      sel.innerHTML =
+        `<option value="">All classes (overall)</option>` +
+        allClasses
+          .map((c) => `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})</option>`)
+          .join("");
+      if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+    }
+
+    function buildStudentWiseRows() {
+      const map = {};
+      summaryRows.forEach((r) => {
+        if (!map[r.student_id]) {
+          map[r.student_id] = {
+            student_id: r.student_id,
+            name: r.name,
+            classSet: new Set(),
+            present: 0, absent: 0, late: 0, total: 0,
+          };
+        }
+        const m = map[r.student_id];
+        if (r.total > 0) m.classSet.add(r.class_id);
+        m.present += r.present;
+        m.absent += r.absent;
+        m.late += r.late;
+        m.total += r.total;
+      });
+      return Object.values(map).map((m) => ({ ...m, classes_count: m.classSet.size }));
+    }
+
+    function getFilteredStudentWiseRows() {
+      const q = document.getElementById("studentwiseSearch").value.trim().toLowerCase();
+      const classId = document.getElementById("studentwiseClassFilter").value;
+
+      let rows;
+      if (classId) {
+        rows = summaryRows
+          .filter((r) => String(r.class_id) === String(classId))
+          .map((r) => ({
+            student_id: r.student_id,
+            name: r.name,
+            classes_count: r.total > 0 ? 1 : 0,
+            present: r.present, absent: r.absent, late: r.late, total: r.total,
+          }));
+      } else {
+        rows = buildStudentWiseRows();
+      }
+
+      rows = rows.filter((r) => {
+        if (q) {
+          const hay = `${r.student_id} ${r.name}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      return genericSort(rows, studentwiseSort);
+    }
+
+    function renderStudentWiseTable() {
+      const wrap = document.getElementById("studentwiseTableWrap");
+      const filtered = getFilteredStudentWiseRows();
+
+      if (summaryRows.length === 0) { wrap.className = "empty"; wrap.textContent = "No attendance has been submitted yet."; return; }
+      if (filtered.length === 0) { wrap.className = "empty"; wrap.textContent = "No students match your filters."; return; }
+
+      const arrow = (key) => (studentwiseSort.key === key ? (studentwiseSort.dir === 1 ? "▲" : "▼") : "");
+      wrap.className = "";
+      wrap.innerHTML = `
+        <table class="report-table">
+          <thead><tr>
+            <th class="sortable" data-key="name">Student <span class="sort-arrow">${arrow("name")}</span></th>
+            <th class="sortable" data-key="student_id">ID <span class="sort-arrow">${arrow("student_id")}</span></th>
+            <th class="sortable" data-key="classes_count">Classes <span class="sort-arrow">${arrow("classes_count")}</span></th>
+            <th class="sortable" data-key="present">Present <span class="sort-arrow">${arrow("present")}</span></th>
+            <th class="sortable" data-key="absent">Absent <span class="sort-arrow">${arrow("absent")}</span></th>
+            <th class="sortable" data-key="late">Late <span class="sort-arrow">${arrow("late")}</span></th>
+            <th>Attendance %</th>
+          </tr></thead>
+          <tbody>
+            ${filtered.map((r) => {
+              const pct = r.total ? Math.round((r.present / r.total) * 100) : 0;
+              const barClass = pct >= 75 ? "" : pct >= 50 ? "mid" : "low";
+              return `<tr>
+                <td>${escapeHtml(r.name || "—")}</td>
+                <td class="mono">${escapeHtml(r.student_id)}</td>
+                <td>${r.classes_count}</td>
+                <td><span class="count-badge count-present">${r.present}</span></td>
+                <td><span class="count-badge count-absent">${r.absent}</span></td>
+                <td><span class="count-badge count-late">${r.late}</span></td>
+                <td><div class="pct-bar-wrap"><div class="pct-bar-track"><div class="pct-bar-fill ${barClass}" style="width:${pct}%;"></div></div><span class="pct-text">${pct}%</span></div></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+
+      wrap.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.key;
+          studentwiseSort.dir = studentwiseSort.key === key ? -studentwiseSort.dir : 1;
+          studentwiseSort.key = key;
+          renderStudentWiseTable();
+        });
+      });
+    }
+
+    document.getElementById("studentwiseSearch").addEventListener("input", renderStudentWiseTable);
+    document.getElementById("studentwiseClassFilter").addEventListener("change", renderStudentWiseTable);
+    document.getElementById("clearStudentwiseFilters").addEventListener("click", () => {
+      document.getElementById("studentwiseSearch").value = "";
+      document.getElementById("studentwiseClassFilter").value = "";
+      renderStudentWiseTable();
+    });
+
+    // ---------------------------------------------------------------
+    // DETAILED: original per (class, student) row — unchanged logic
+    // ---------------------------------------------------------------
+
+    function populateSummaryClassFilter() {
+      const sel = document.getElementById("summaryClassFilter");
+      const current = sel.value;
+      sel.innerHTML =
+        `<option value="">All classes</option>` +
+        allClasses
+          .map(
+            (c) =>
+              `<option value="${c.id}">#${c.id} — ${escapeHtml(c.subject)} (${escapeHtml(c.class_date || c.session)})</option>`
+          )
+          .join("");
+      if ([...sel.options].some((o) => o.value === current)) sel.value = current;
     }
 
     function getFilteredSummaryRows() {
