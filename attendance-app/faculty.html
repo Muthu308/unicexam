@@ -710,7 +710,8 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         notice.style.display = "block";
         notice.innerHTML = `
           <div class="already-marked-box">
-            <span>Attendance already submitted for this class (${records.length} record${records.length > 1 ? "s" : ""}). Use <b>Previous Attendance</b> tab to view or edit it.</span>            
+            <span>Attendance already submitted for this class (${records.length} record${records.length > 1 ? "s" : ""}). Use <b>Previous Attendance</b> tab to view or edit it.</span> 
+            <br><button type="button" id="markAnywayBtn">Mark attendance anyway</button>
           </div>`;
         document.getElementById("markAnywayBtn").addEventListener("click", () => {
           notice.style.display = "none";
@@ -724,7 +725,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         switchToTab("attendance");
       }
     }
-//<button type="button" id="markAnywayBtn">Mark attendance anyway</button>
+
     function renderRosterTable(idsToShow) {
       const roster = document.getElementById("roster");
 
