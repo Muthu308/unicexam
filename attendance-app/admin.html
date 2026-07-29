@@ -133,6 +133,40 @@
 
   .row-action-btns { display: flex; gap: 6px; white-space: nowrap; }
 
+  /* ---- Pagination ---- */
+  .pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+    border-top: 1px solid #eaeaea;
+    background: #fafafa;
+    font-size: 0.82rem;
+    color: #666;
+  }
+  .pagination-controls { display: flex; align-items: center; gap: 4px; }
+  .pagination-controls button {
+    min-width: 30px;
+    padding: 5px 9px;
+    font-size: 0.82rem;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #444;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .pagination-controls button:hover:not(:disabled) { background: #f0f0fa; border-color: #c7c9f5; }
+  .pagination-controls button.active-page {
+    background: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination-controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .pagination-ellipsis { padding: 0 4px; color: #999; }
+
   /* ---- Skeleton loading state ---- */
   .skeleton-table { width: 100%; }
   .skeleton-row {
@@ -278,6 +312,7 @@
     </div>
     <nav class="tabs">
       <a href="https://unicexamschool.vercel.app/admdashboard.html">Home</a>
+      <a href="https://unicexamschool.vercel.app/task-tracking-admin.html">Task Assignment</a>
       <a href="admin.html" class="active">Add Class</a>
       <a href="faculty.html">Attendance</a>      
       <a href="reports.html">Reports Class-Attendance</a>
