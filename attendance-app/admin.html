@@ -69,8 +69,143 @@
   }
 
   /* ---- Responsive table ---- */
-  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  table { min-width: 760px; }
+  .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #eaeaea; }
+  table { min-width: 760px; border-collapse: separate; border-spacing: 0; width: 100%; }
+  #classList table thead th {
+    position: sticky;
+    top: 0;
+    background: #f7f7fb;
+    z-index: 1;
+    text-align: left;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #666;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eaeaea;
+    white-space: nowrap;
+  }
+  #classList table th.sortable { cursor: pointer; user-select: none; }
+  #classList table th.sortable:hover { color: #333; }
+  #classList table th.sortable .sort-arrow { display: inline-block; width: 12px; opacity: 0.5; }
+  #classList table th.sortable.sort-active .sort-arrow { opacity: 1; color: #4f46e5; }
+  #classList table td {
+    padding: 10px 12px;
+    font-size: 0.87rem;
+    border-bottom: 1px solid #f1f1f4;
+    vertical-align: middle;
+  }
+  #classList table tbody tr:hover { background: #fafaff; }
+  #classList table tbody tr:last-child td { border-bottom: none; }
+  #classList table tbody tr:nth-child(even) { background: #fcfcfd; }
+  #classList table tbody tr:nth-child(even):hover { background: #fafaff; }
+
+  .students-cell { display: flex; align-items: center; gap: 6px; }
+  .students-count-chip {
+    background: #eef1fd;
+    color: #3730a3;
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 2px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .students-toggle-btn {
+    background: none;
+    border: none;
+    color: #4f46e5;
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 2px 4px;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+  .students-full-list {
+    display: none;
+    font-size: 0.78rem;
+    color: #555;
+    margin-top: 4px;
+    max-width: 220px;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .students-full-list.open { display: block; }
+
+  .row-action-btns { display: flex; gap: 6px; white-space: nowrap; }
+
+  /* ---- Skeleton loading state ---- */
+  .skeleton-table { width: 100%; }
+  .skeleton-row {
+    display: grid;
+    grid-template-columns: 0.5fr 1.2fr 0.8fr 0.9fr 0.9fr 0.8fr 0.9fr 0.9fr 0.8fr 0.8fr;
+    gap: 10px;
+    padding: 12px;
+    border-bottom: 1px solid #f1f1f4;
+    align-items: center;
+  }
+  .skeleton-cell {
+    height: 12px;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #eee 25%, #f5f5f5 37%, #eee 63%);
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease infinite;
+  }
+  @keyframes skeleton-shimmer {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+  }
+  .search-loading-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #888;
+  }
+  .search-loading-note .spinner {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    border-top-color: #4f46e5;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- Mobile: switch table to stacked cards ---- */
+  @media (max-width: 720px) {
+    .table-scroll { border: none; }
+    #classList table { min-width: 0; }
+    #classList table thead { display: none; }
+    #classList table, #classList table tbody, #classList table tr, #classList table td {
+      display: block;
+      width: 100%;
+    }
+    #classList table tr {
+      border: 1px solid #eaeaea;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 6px 4px;
+      background: #fff !important;
+    }
+    #classList table td {
+      border-bottom: none;
+      padding: 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: right;
+    }
+    #classList table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #888;
+      font-size: 0.76rem;
+      text-align: left;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .skeleton-row { grid-template-columns: 1fr; gap: 6px; }
+  }
 
   /* ---- Filter bar for existing classes ---- */
   .filter-bar {
@@ -268,10 +403,13 @@
           </div>
           <button type="button" class="clear-filters-btn" id="clearFilters">Clear filters</button>
         </div>
-        <div class="filter-summary" id="filterSummary"></div>
+        <div class="filter-summary" id="filterSummary" style="display:flex; align-items:center; gap:10px;">
+          <span id="filterSummaryText"></span>
+          <span class="search-loading-note" id="searchLoadingNote" style="display:none;"><span class="spinner"></span> searching…</span>
+        </div>
 
         <div class="table-scroll">
-          <div id="classList" class="empty">Loading…</div>
+          <div id="classList" class="empty"></div>
         </div>
       </div>
     </div>
@@ -510,11 +648,25 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
     // Existing classes: fetch + filter bar (search / faculty / subject / status / date range)
     // ---------------------------------------------------------------
 
+    function renderSkeletonRows(count) {
+      const list = document.getElementById("classList");
+      list.className = "";
+      const cols = 10;
+      let rows = "";
+      for (let r = 0; r < count; r++) {
+        let cells = "";
+        for (let c = 0; c < cols; c++) {
+          cells += `<div class="skeleton-cell" style="width:${55 + ((r * 13 + c * 7) % 40)}%;"></div>`;
+        }
+        rows += `<div class="skeleton-row">${cells}</div>`;
+      }
+      list.innerHTML = `<div class="skeleton-table">${rows}</div>`;
+    }
+
     async function loadClasses() {
       const list = document.getElementById("classList");
       const schoolId = document.getElementById("schoolId").value.trim();
-      list.className = "";
-      list.textContent = "Loading…";
+      renderSkeletonRows(6);
       try {
         const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
         const res = await fetch(`${API}/api/classes${qs}`);
@@ -558,6 +710,32 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       if (subjects.includes(currentSubject)) subjectSel.value = currentSubject;
     }
 
+    let sortState = { key: "class_date", dir: "desc" };
+
+    function sortClasses(rows) {
+      const { key, dir } = sortState;
+      const mult = dir === "asc" ? 1 : -1;
+      return [...rows].sort((a, b) => {
+        let av, bv;
+        if (key === "students") {
+          av = (a.student_ids || []).length;
+          bv = (b.student_ids || []).length;
+        } else if (key === "id") {
+          av = Number(a.id) || 0;
+          bv = Number(b.id) || 0;
+        } else if (key === "class_date") {
+          av = `${a.class_date || ""} ${a.start_time || ""}`;
+          bv = `${b.class_date || ""} ${b.start_time || ""}`;
+        } else {
+          av = (a[key] || "").toString().toLowerCase();
+          bv = (b[key] || "").toString().toLowerCase();
+        }
+        if (av < bv) return -1 * mult;
+        if (av > bv) return 1 * mult;
+        return 0;
+      });
+    }
+
     function getFilteredClasses() {
       const q = document.getElementById("filterSearch").value.trim().toLowerCase();
       const faculty = document.getElementById("filterFaculty").value;
@@ -591,10 +769,23 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       });
     }
 
+    const SORT_COLUMNS = [
+      { key: "id", label: "ID" },
+      { key: "class_date", label: "Date / Time" },
+      { key: "session", label: "Session" },
+      { key: "subject", label: "Subject" },
+      { key: "topic", label: "Topic" },
+      { key: "class_status", label: "Status" },
+      { key: "faculty_name", label: "Faculty" },
+      { key: "students", label: "Students" },
+      { key: null, label: "Links" },
+      { key: null, label: "Action" },
+    ];
+
     function renderClassTable() {
       const list = document.getElementById("classList");
-      const summary = document.getElementById("filterSummary");
-      const filtered = getFilteredClasses();
+      const summaryText = document.getElementById("filterSummaryText");
+      const filtered = sortClasses(getFilteredClasses());
 
       const anyFilterActive =
         document.getElementById("filterSearch").value.trim() ||
@@ -604,7 +795,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
         document.getElementById("filterDateFrom").value.trim() ||
         document.getElementById("filterDateTo").value.trim();
 
-      summary.textContent = anyFilterActive
+      summaryText.textContent = anyFilterActive
         ? `Showing ${filtered.length} of ${classes.length} classes`
         : classes.length
         ? `${classes.length} classes total`
@@ -612,66 +803,108 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
 
       if (classes.length === 0) {
         list.className = "empty";
-        list.textContent = "No classes yet — add one above.";
+        list.innerHTML = "No classes yet — add one above.";
         return;
       }
       if (filtered.length === 0) {
         list.className = "empty";
-        list.textContent = "No classes match your filters.";
+        list.innerHTML = "No classes match your filters.";
         return;
       }
+
+      const headerHtml = SORT_COLUMNS.map((col) => {
+        if (!col.key) return `<th>${col.label}</th>`;
+        const active = sortState.key === col.key;
+        const arrow = active ? (sortState.dir === "asc" ? "▲" : "▼") : "↕";
+        return `<th class="sortable${active ? " sort-active" : ""}" data-sort-key="${col.key}">${col.label} <span class="sort-arrow">${arrow}</span></th>`;
+      }).join("");
 
       const table = document.createElement("table");
       table.innerHTML = `
         <thead>
-          <tr>
-            <th>ID</th><th>Date / Time</th><th>Session</th><th>Subject</th><th>Topic</th>
-            <th>Status</th><th>Faculty</th><th>Students</th><th>Links</th><th>Action</th>
-          </tr>
+          <tr>${headerHtml}</tr>
         </thead>
         <tbody>
           ${filtered
-            .map(
-              (c) => `
+            .map((c) => {
+              const students = c.student_ids || [];
+              const studentsCell =
+                students.length === 0
+                  ? "—"
+                  : `<div class="students-cell">
+                       <span class="students-count-chip">${students.length} student${students.length === 1 ? "" : "s"}</span>
+                       ${students.length ? `<button type="button" class="students-toggle-btn" onclick="toggleStudentList(this)">view</button>` : ""}
+                     </div>
+                     <div class="students-full-list mono">${escapeHtml(students.join(", "))}</div>`;
+              return `
             <tr>
-              <td class="mono">${c.id}</td>
-              <td>${escapeHtml(c.class_date || "—")} ${escapeHtml(c.start_time || "")}${c.end_time ? "–" + escapeHtml(c.end_time) : ""}</td>
-              <td>${escapeHtml(c.session)}</td>
-              <td>${escapeHtml(c.subject)}</td>
-              <td>${escapeHtml(c.topic || "—")}</td>
-              <td>${classStatusBadge(c.class_status)}</td>
-              <td>${escapeHtml(c.faculty_name)}</td>
-              <td class="mono">${(c.student_ids || []).join(", ")}</td>
-              <td>
+              <td class="mono" data-label="ID">${c.id}</td>
+              <td data-label="Date / Time">${escapeHtml(c.class_date || "—")} ${escapeHtml(c.start_time || "")}${c.end_time ? "–" + escapeHtml(c.end_time) : ""}</td>
+              <td data-label="Session">${escapeHtml(c.session)}</td>
+              <td data-label="Subject">${escapeHtml(c.subject)}</td>
+              <td data-label="Topic">${escapeHtml(c.topic || "—")}</td>
+              <td data-label="Status">${classStatusBadge(c.class_status)}</td>
+              <td data-label="Faculty">${escapeHtml(c.faculty_name)}</td>
+              <td data-label="Students">${studentsCell}</td>
+              <td data-label="Links">
                 ${c.syllabus_link ? `<a href="${escapeHtml(c.syllabus_link)}" target="_blank">syllabus</a>` : ""}
                 ${c.notes_link ? ` · <a href="${escapeHtml(c.notes_link)}" target="_blank">notes</a>` : ""}
                 ${c.video_link ? ` · <a href="${escapeHtml(c.video_link)}" target="_blank">video</a>` : ""}
                 ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
+                ${!c.syllabus_link && !c.notes_link && !c.video_link && !c.assignment_link ? "—" : ""}
               </td>
-              <td>
-                <button class="edit-btn" onclick="editClass(${c.id})">
-                  ✏️ Edit
-                </button>
-
-                <button class="delete-btn" onclick="deleteClass(${c.id})">
-                  🗑 Delete
-                </button>
+              <td data-label="Action">
+                <div class="row-action-btns">
+                  <button class="edit-btn" onclick="editClass(${c.id})">✏️ Edit</button>
+                  <button class="delete-btn" onclick="deleteClass(${c.id})">🗑 Delete</button>
+                </div>
               </td>
-            </tr>`
-            )
+            </tr>`;
+            })
             .join("")}
         </tbody>`;
       list.className = "";
       list.innerHTML = "";
       list.appendChild(table);
+
+      table.querySelectorAll("th.sortable").forEach((th) => {
+        th.addEventListener("click", () => {
+          const key = th.dataset.sortKey;
+          if (sortState.key === key) {
+            sortState.dir = sortState.dir === "asc" ? "desc" : "asc";
+          } else {
+            sortState.key = key;
+            sortState.dir = "asc";
+          }
+          renderClassTable();
+        });
+      });
     }
 
-    document.getElementById("filterSearch").addEventListener("input", renderClassTable);
+    function toggleStudentList(btn) {
+      const cell = btn.closest("td");
+      const fullList = cell.querySelector(".students-full-list");
+      const open = fullList.classList.toggle("open");
+      btn.textContent = open ? "hide" : "view";
+    }
+
+    let searchDebounceTimer = null;
+    function debouncedRenderClassTable() {
+      const note = document.getElementById("searchLoadingNote");
+      note.style.display = "inline-flex";
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        renderClassTable();
+        note.style.display = "none";
+      }, 250);
+    }
+
+    document.getElementById("filterSearch").addEventListener("input", debouncedRenderClassTable);
     document.getElementById("filterFaculty").addEventListener("change", renderClassTable);
     document.getElementById("filterSubject").addEventListener("change", renderClassTable);
     document.getElementById("filterStatus").addEventListener("change", renderClassTable);
-    document.getElementById("filterDateFrom").addEventListener("input", renderClassTable);
-    document.getElementById("filterDateTo").addEventListener("input", renderClassTable);
+    document.getElementById("filterDateFrom").addEventListener("input", debouncedRenderClassTable);
+    document.getElementById("filterDateTo").addEventListener("input", debouncedRenderClassTable);
     document.getElementById("clearFilters").addEventListener("click", () => {
       document.getElementById("filterSearch").value = "";
       document.getElementById("filterFaculty").value = "";
