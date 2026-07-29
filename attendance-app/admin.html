@@ -868,7 +868,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
                   ? "—"
                   : `<div class="students-cell">
                        <span class="students-count-chip">${students.length} student${students.length === 1 ? "" : "s"}</span>
-                       ${students.length ? `<button type="button" class="students-toggle-btn" onclick="toggleStudentList(this)">view</button>` : ""}
+                       ${students.length ? `<br><button type="button" class="students-toggle-btn" onclick="toggleStudentList(this)">view</button>` : ""}
                      </div>
                      <div class="students-full-list mono">${escapeHtml(students.join(", "))}</div>`;
               return `
