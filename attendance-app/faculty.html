@@ -687,7 +687,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           .map(
             (c) => `
           <div class="class-dd-item" data-id="${c.id}">
-            <span>${escapeHtml(c.subject)} <span class="hint">(${escapeHtml(c.class_date || c.session)})</span></span>
+            <span>${String(c.id)} : (${escapeHtml(c.class_date || c.session)})<span class="hint">${escapeHtml(c.subject)}</span></span>
             ${c.class_status && c.class_status !== "Scheduled" ? `<span class="class-dd-status">${escapeHtml(c.class_status)}</span>` : ""}
           </div>`
           )
