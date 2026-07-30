@@ -47,6 +47,16 @@
     font-weight: 600;
   }
   .student-picker-header input[type="checkbox"] { width: 16px; height: 16px; }
+  .student-picker-search-row {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+  }
+  .student-picker-search-row input[type="search"] {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 6px 9px;
+  }
   .student-checkbox-list {
     max-height: 220px;
     overflow-y: auto;
@@ -67,6 +77,7 @@
     color: #666;
     font-size: 0.78rem;
   }
+  .student-picker-empty { display: none; padding: 10px; font-size: 0.85rem; color: #888; }
 
   /* ---- Responsive table ---- */
   .table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 10px; border: 1px solid #eaeaea; }
@@ -388,9 +399,13 @@
               <label for="selectAllStudents" style="margin:0; font-weight:600;">Select all</label>
               <span class="student-count-badge" id="studentCountBadge">0 selected</span>
             </div>
+            <div class="student-picker-search-row">
+              <input type="search" id="studentPickerSearch" placeholder="Search students by name or ID… (handy as the roster grows)" autocomplete="off" />
+            </div>
             <div class="student-checkbox-list" id="studentCheckboxList">
               <div class="hint" style="padding:10px;">Loading students…</div>
             </div>
+            <div class="student-picker-empty" id="studentPickerEmpty">No students match your search.</div>
           </div>
           <div class="hint">…or paste IDs directly below — both are combined:</div>
           <textarea id="studentPaste" placeholder="Comma or newline separated student IDs (std_id), e.g.&#10;STD1001, STD1002"></textarea>
@@ -588,6 +603,11 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       const selectAll = document.getElementById("selectAllStudents");
       const selected = new Set(selectedIds || []);
 
+      // Fresh list — clear any leftover search filter from before
+      const searchBox = document.getElementById("studentPickerSearch");
+      if (searchBox) searchBox.value = "";
+      document.getElementById("studentPickerEmpty").style.display = "none";
+
       if (!Array.isArray(studentOptions) || studentOptions.length === 0) {
         listEl.innerHTML = `<div class="hint" style="padding:10px;">No students found for this school</div>`;
         updateStudentCountBadge();
@@ -616,6 +636,22 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       updateStudentCountBadge();
     }
 
+    // Filters the rendered checkbox rows in place (hide/show only — the
+    // checkboxes stay in the DOM, so checked state survives filtering,
+    // clearing the search, and "select all").
+    function filterStudentPicker(query) {
+      const q = query.trim().toLowerCase();
+      const items = document.querySelectorAll("#studentCheckboxList .student-check-item");
+      let anyVisible = false;
+      items.forEach((item) => {
+        const match = !q || item.textContent.toLowerCase().includes(q);
+        item.style.display = match ? "flex" : "none";
+        if (match) anyVisible = true;
+      });
+      document.getElementById("studentPickerEmpty").style.display = items.length && !anyVisible ? "block" : "none";
+    }
+    document.getElementById("studentPickerSearch").addEventListener("input", (e) => filterStudentPicker(e.target.value));
+
     function updateSelectAllState() {
       const boxes = Array.from(document.querySelectorAll(".student-check"));
       const checkedCount = boxes.filter((b) => b.checked).length;
@@ -634,6 +670,8 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
     }
 
     document.getElementById("selectAllStudents").addEventListener("change", (e) => {
+      // Select all applies to every student, not just the ones currently
+      // visible under a search filter — matches how "select all" reads.
       document.querySelectorAll(".student-check").forEach((cb) => (cb.checked = e.target.checked));
       updateStudentCountBadge();
     });
@@ -701,6 +739,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
     async function loadClasses() {
       const list = document.getElementById("classList");
       const schoolId = document.getElementById("schoolId").value.trim();
+      currentPage = 1;
       renderSkeletonRows(6);
       try {
         const qs = schoolId ? `?school_id=${encodeURIComponent(schoolId)}` : "";
@@ -817,6 +856,69 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       { key: null, label: "Action" },
     ];
 
+    // ---- Pagination (Class Directory) — keeps each page short so the
+    // whole app page doesn't have to scroll through every class at once ----
+    let currentPage = 1;
+    const PAGE_SIZE = 15;
+
+    function getPageNumbersToShow(current, total) {
+      const delta = 1;
+      const range = [];
+      const withDots = [];
+      let last;
+      for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+          range.push(i);
+        }
+      }
+      range.forEach((i) => {
+        if (last !== undefined) {
+          if (i - last === 2) withDots.push(last + 1);
+          else if (i - last > 2) withDots.push("...");
+        }
+        withDots.push(i);
+        last = i;
+      });
+      return withDots;
+    }
+
+    function renderPaginationBar(mountEl, totalItems, totalPages) {
+      if (totalPages <= 1) return; // nothing to page through
+
+      const bar = document.createElement("div");
+      bar.className = "pagination-bar";
+
+      const startIdx = (currentPage - 1) * PAGE_SIZE + 1;
+      const endIdx = Math.min(currentPage * PAGE_SIZE, totalItems);
+
+      let buttonsHtml = `<button type="button" data-page="prev" ${currentPage === 1 ? "disabled" : ""}>‹ Prev</button>`;
+      getPageNumbersToShow(currentPage, totalPages).forEach((p) => {
+        buttonsHtml +=
+          p === "..."
+            ? `<span class="pagination-ellipsis">…</span>`
+            : `<button type="button" data-page="${p}" class="${p === currentPage ? "active-page" : ""}">${p}</button>`;
+      });
+      buttonsHtml += `<button type="button" data-page="next" ${currentPage === totalPages ? "disabled" : ""}>Next ›</button>`;
+
+      bar.innerHTML = `
+        <span>Showing ${startIdx}–${endIdx} of ${totalItems}</span>
+        <div class="pagination-controls">${buttonsHtml}</div>
+      `;
+
+      bar.querySelectorAll("button[data-page]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const val = btn.dataset.page;
+          if (val === "prev") currentPage = Math.max(1, currentPage - 1);
+          else if (val === "next") currentPage = Math.min(totalPages, currentPage + 1);
+          else currentPage = Number(val);
+          renderClassTable();
+          mountEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      mountEl.appendChild(bar);
+    }
+
     function renderClassTable() {
       const list = document.getElementById("classList");
       const summaryText = document.getElementById("filterSummaryText");
@@ -844,8 +946,14 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       if (filtered.length === 0) {
         list.className = "empty";
         list.innerHTML = "No classes match your filters.";
+        currentPage = 1;
         return;
       }
+
+      const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
       const headerHtml = SORT_COLUMNS.map((col) => {
         if (!col.key) return `<th>${col.label}</th>`;
@@ -860,7 +968,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
           <tr>${headerHtml}</tr>
         </thead>
         <tbody>
-          ${filtered
+          ${pageRows
             .map((c) => {
               const students = c.student_ids || [];
               const studentsCell =
@@ -911,9 +1019,12 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
             sortState.key = key;
             sortState.dir = "asc";
           }
+          currentPage = 1;
           renderClassTable();
         });
       });
+
+      renderPaginationBar(list, filtered.length, totalPages);
     }
 
     function toggleStudentList(btn) {
@@ -934,12 +1045,30 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       }, 250);
     }
 
-    document.getElementById("filterSearch").addEventListener("input", debouncedRenderClassTable);
-    document.getElementById("filterFaculty").addEventListener("change", renderClassTable);
-    document.getElementById("filterSubject").addEventListener("change", renderClassTable);
-    document.getElementById("filterStatus").addEventListener("change", renderClassTable);
-    document.getElementById("filterDateFrom").addEventListener("input", debouncedRenderClassTable);
-    document.getElementById("filterDateTo").addEventListener("input", debouncedRenderClassTable);
+    document.getElementById("filterSearch").addEventListener("input", () => {
+      currentPage = 1;
+      debouncedRenderClassTable();
+    });
+    document.getElementById("filterFaculty").addEventListener("change", () => {
+      currentPage = 1;
+      renderClassTable();
+    });
+    document.getElementById("filterSubject").addEventListener("change", () => {
+      currentPage = 1;
+      renderClassTable();
+    });
+    document.getElementById("filterStatus").addEventListener("change", () => {
+      currentPage = 1;
+      renderClassTable();
+    });
+    document.getElementById("filterDateFrom").addEventListener("input", () => {
+      currentPage = 1;
+      debouncedRenderClassTable();
+    });
+    document.getElementById("filterDateTo").addEventListener("input", () => {
+      currentPage = 1;
+      debouncedRenderClassTable();
+    });
     document.getElementById("clearFilters").addEventListener("click", () => {
       document.getElementById("filterSearch").value = "";
       document.getElementById("filterFaculty").value = "";
@@ -947,6 +1076,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       document.getElementById("filterStatus").value = "";
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
+      currentPage = 1;
       renderClassTable();
     });
 
