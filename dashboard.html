@@ -2127,7 +2127,7 @@ function renderAttendanceView(){
 
   const bodyRows = days.map(day => {
     const sepRow = `<tr class="att-day-sep">
-        <td colspan="9"><i class="ti ti-calendar"></i> ${day} <span>${groups[day].length} class${groups[day].length===1?"":"es"}</span></td>
+        <td colspan="9"><i class="ti ti-calendar"></i> ${day} <span> (${groups[day].length} class${groups[day].length===1?"":"es"})</span></td>
       </tr>`;
 
     const rows = groups[day].map(r => {
@@ -2153,9 +2153,9 @@ function renderAttendanceView(){
           <td>${r.subject || "—"}</td>
           <td>${r.topic || "—"}</td>
           <td>${r.faculty_name || "—"}</td>
-          <td>${attStatusPill(r.status)}</td>
-          <td>${r.reason || "—"}</td>
-          <td>${inOut}</td>
+          <td>${attStatusPill(r.status)}
+              ${r.status === 'Late' ? `<br><small class="text-muted">${inOut}</small>` : ""}
+              ${r.reason ? `<br><small class="text-danger">${r.reason}</small>` : ""}</td>                  
           <td class="att-links">${links.join(" · ") || "—"}</td>
           <td>${rateBtn}</td>
         </tr>`;
@@ -2169,7 +2169,7 @@ function renderAttendanceView(){
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr><th>Time</th><th>Subject</th><th>Topic</th><th>Faculty</th><th>Status</th><th>Reason</th><th>In / Out</th><th>Links</th><th>Feedback</th></tr>
+            <tr><th>Time</th><th>Faculty</th><th>Subject</th><th>Topic</th><th>Status</th><th>Links</th><th>Feedback</th></tr>
           </thead>
           <tbody>${bodyRows}</tbody>
         </table>
