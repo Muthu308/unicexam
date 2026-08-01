@@ -2150,9 +2150,9 @@ function renderAttendanceView(){
       return `
         <tr>
           <td>${r.start_time || "—"}${r.end_time ? "–"+r.end_time : ""}</td>
-          td>${r.faculty_name || "—"}</td>
+          <td>${r.faculty_name || "—"}</td>
           <td>${r.subject || "—"}</td>
-          <td>${r.topic || "—"}</td>          <
+          <td>${r.topic || "—"}</td>
           <td>${attStatusPill(r.status)}
               ${r.status === 'Late' ? `<br><small class="text-muted">${inOut}</small>` : ""}
               ${r.reason ? `<br><small class="text-danger">${r.reason}</small>` : ""}</td>                  
