@@ -863,10 +863,11 @@ document.getElementById('loginForm').addEventListener('submit',async function(e)
       localStorage.setItem('student',JSON.stringify(result.user));
       showToast('Login successful! Redirecting...!','success');
       setTimeout(() => {
-    if (result.user.user_role === "admin") {
-        window.location.href = "admdashboard.html";
-    } else {
+    if (result.user.user_role === "student") {
         window.location.href = "dashboard.html";
+    } else {
+      window.location.href = "admdashboard.html";
+        
     }
 }, 800);
     }else{
