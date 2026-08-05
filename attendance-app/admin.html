@@ -411,17 +411,17 @@
           <div class="hint">…or paste IDs directly below — both are combined:</div>
           <textarea id="studentPaste" placeholder="Comma or newline separated student IDs (std_id), e.g.&#10;STD1001, STD1002"></textarea>
 
-          <label for="syllabusLink">Syllabus link</label>
-          <input type="text" id="syllabusLink" placeholder="https://…" />
+          <label for="syllabusLink">Syllabus (link or text)</label>
+          <input type="text" id="syllabusLink" placeholder="https://… or plain text" />
 
-          <label for="notesLink">Notes link</label>
-          <input type="text" id="notesLink" placeholder="https://…" />
+          <label for="notesLink">Notes (link or text)</label>
+          <input type="text" id="notesLink" placeholder="https://… or plain text" />
 
           <label for="videoLink">Youtupe Video link</label>
           <input type="text" id="videoLink" placeholder="https://…" />
 
-          <label for="assignmentLink">Assignment link</label>
-          <input type="text" id="assignmentLink" placeholder="https://…" />
+          <label for="assignmentLink">Assignment (link or text)</label>
+          <input type="text" id="assignmentLink" placeholder="https://… or plain text" />
 
           <button type="submit" id="submitBtn">Save class</button>
           <button type="button" id="cancelEditBtn" class="secondary" style="display:none;">Cancel edit</button>
@@ -854,6 +854,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       { key: "faculty_name", label: "Faculty" },
       { key: "students", label: "Students" },
       { key: null, label: "Links" },
+      { key: "who_updated", label: "Updated By" },
       { key: null, label: "Action" },
     ];
 
@@ -920,6 +921,26 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       mountEl.appendChild(bar);
     }
 
+    // A syllabus/notes/assignment field can hold either a real URL or free
+    // text (e.g. "Chapter 4, pg 12-20" or "Bring printed worksheet").
+    // Render it as a clickable link only when it actually looks like one;
+    // otherwise show it as plain text so it's still visible in the directory.
+    function isLikelyUrl(str) {
+      if (!str) return false;
+      const s = str.trim();
+      return /^https?:\/\//i.test(s) || /^www\./i.test(s);
+    }
+
+    function renderLinkOrText(value, label) {
+      if (!value) return "";
+      const v = value.trim();
+      if (isLikelyUrl(v)) {
+        const href = /^https?:\/\//i.test(v) ? v : `https://${v}`;
+        return `<a href="${escapeHtml(href)}" target="_blank">${label}</a>`;
+      }
+      return `<span class="link-as-text" title="${escapeHtml(v)}">${label}: ${escapeHtml(v.length > 24 ? v.slice(0, 24) + "…" : v)}</span>`;
+    }
+
     function renderClassTable() {
       const list = document.getElementById("classList");
       const summaryText = document.getElementById("filterSummaryText");
@@ -980,6 +1001,13 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
                        ${students.length ? `<br><button type="button" class="students-toggle-btn" onclick="toggleStudentList(this)">view</button>` : ""}
                      </div>
                      <div class="students-full-list mono">${escapeHtml(students.join(", "))}</div>`;
+              const linkParts = [
+                renderLinkOrText(c.syllabus_link, "syllabus"),
+                renderLinkOrText(c.notes_link, "notes"),
+                renderLinkOrText(c.video_link, "video"),
+                renderLinkOrText(c.assignment_link, "assignment"),
+              ].filter(Boolean);
+              const linksCell = linkParts.length ? linkParts.join(" · ") : "—";
               return `
             <tr>
               <td class="mono" data-label="ID">${c.id}</td>
@@ -990,13 +1018,8 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
               <td data-label="Status">${classStatusBadge(c.class_status)}</td>
               <td data-label="Faculty">${escapeHtml(c.faculty_name)}</td>
               <td data-label="Students">${studentsCell}</td>
-              <td data-label="Links">
-                ${c.syllabus_link ? `<a href="${escapeHtml(c.syllabus_link)}" target="_blank">syllabus</a>` : ""}
-                ${c.notes_link ? ` · <a href="${escapeHtml(c.notes_link)}" target="_blank">notes</a>` : ""}
-                ${c.video_link ? ` · <a href="${escapeHtml(c.video_link)}" target="_blank">video</a>` : ""}
-                ${c.assignment_link ? ` · <a href="${escapeHtml(c.assignment_link)}" target="_blank">assignment</a>` : ""}
-                ${!c.syllabus_link && !c.notes_link && !c.video_link && !c.assignment_link ? "—" : ""}
-              </td>
+              <td data-label="Links">${linksCell}</td>
+              <td data-label="Updated By">${escapeHtml(c.who_updated || "—")}</td>
               <td data-label="Action">
                 <div class="row-action-btns">
                   <button class="edit-btn" onclick="editClass(${c.id})">✏️ Edit</button>
