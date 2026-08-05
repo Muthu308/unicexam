@@ -309,9 +309,43 @@
     .tabs { flex-wrap: wrap; }
     main { padding: 0 10px; }
     .view-tab { padding: 8px 12px; font-size: 0.88rem; }
-    table.roster-table, table.history-table { min-width: 580px; }
     .reason-input { width: 110px; }
     .filter-bar input[type="text"], .filter-bar select { min-width: 140px; }
+
+    /* Stack roster/history tables into cards instead of horizontal-scrolling
+       them — much easier to use on a phone while marking attendance. */
+    .table-scroll { overflow-x: visible; }
+    table.roster-table, table.history-table { min-width: 0; }
+    table.roster-table thead, table.history-table thead { display: none; }
+    table.roster-table, table.roster-table tbody, table.roster-table tr, table.roster-table td,
+    table.history-table, table.history-table tbody, table.history-table tr, table.history-table td {
+      display: block;
+      width: 100%;
+    }
+    table.roster-table tr, table.history-table tr {
+      border: 1px solid #eaeaea;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 8px 6px;
+      background: #fff;
+    }
+    table.roster-table td, table.history-table td {
+      border-bottom: none;
+      padding: 7px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    table.roster-table td::before, table.history-table td::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #888;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .status-choices, .inout-cell { width: 100%; }
   }
 </style>
 </head>
@@ -387,6 +421,7 @@
 
         <div class="filter-bar">
           <input type="search" id="historySearch" placeholder="Search student name, ID or status…" />
+          <select id="historyUpdatedByFilter"><option value="">All — updated by</option></select>
           <input type="text" id="historyDateFrom" placeholder="From date (YYYY-MM-DD)" style="max-width:170px;" />
           <input type="text" id="historyDateTo" placeholder="To date (YYYY-MM-DD)" style="max-width:170px;" />
           <button type="button" class="clear-filters-btn" id="clearHistoryFilters">Clear</button>
@@ -827,19 +862,19 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
                 const name = studentNameMap[sid];
                 return `
               <tr data-sid="${escapeHtml(sid)}">
-                <td class="mono">${escapeHtml(sid)}${name ? `<br><span class="hint" style="text-transform:none;">${escapeHtml(name)}</span>` : ""}</td>
-                <td>
+                <td data-label="Student" class="mono">${escapeHtml(sid)}${name ? `<br><span class="hint" style="text-transform:none;">${escapeHtml(name)}</span>` : ""}</td>
+                <td data-label="Status">
                   <div class="status-choices">
                     <button type="button" data-status="Present" class="${s.status === "Present" ? "chosen-Present" : ""}">Present</button>
                     <button type="button" data-status="Absent" class="${s.status === "Absent" ? "chosen-Absent" : ""}">Absent</button>
                     <button type="button" data-status="Late" class="late-btn ${s.status === "Late" ? "chosen-Late" : ""}" ${s.status === "Present" || s.status === "Late" ? "" : "disabled"}>Late</button>
                   </div>
                 </td>
-                <td>
+                <td data-label="Reason">
                   <input type="text" class="reason-input" placeholder="${isLate ? "Reason for being late (optional)" : "Reason (optional)"}"
                     style="display:${showReason ? "block" : "none"};" value="${escapeHtml(s.reason)}" />
                 </td>
-                <td>
+                <td data-label="In / Out Time">
                   <div class="inout-cell">
                     <span class="hint">In</span>
                     <input type="time" class="in-time-input" value="${escapeHtml(s.in_time)}" ${isLate ? "" : "disabled"} />
@@ -953,7 +988,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(
             isEdit
-              ? { id: editingRecordId, attendance_data }
+              ? { id: editingRecordId, attendance_data, who_updated: window.__session.name }
               : { class_id: currentClass.id, attendance_data, who_updated: window.__session.name}
           ),
         });
@@ -1029,12 +1064,14 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         const records = await res.json();
         if (!Array.isArray(records) || records.length === 0) {
           window.__historyRecords = [];
+          populateHistoryUpdatedByFilter();
           box.className = "empty";
           box.textContent = "No attendance submitted yet for this class.";
           return [];
         }
 
         window.__historyRecords = records;
+        populateHistoryUpdatedByFilter();
         renderHistoryRecords();
         return records;
       } catch (err) {
@@ -1042,6 +1079,20 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
         box.textContent = "Could not load history: " + err.message;
         return [];
       }
+    }
+
+    // "Updated by" filter dropdown — options come from whatever names
+    // actually appear in this class's history records.
+    function populateHistoryUpdatedByFilter() {
+      const sel = document.getElementById("historyUpdatedByFilter");
+      const current = sel.value;
+      const names = [...new Set((window.__historyRecords || []).map((r) => r.who_updated).filter(Boolean))].sort((a, b) =>
+        a.localeCompare(b)
+      );
+      sel.innerHTML =
+        `<option value="">All — updated by</option>` +
+        names.map((n) => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join("");
+      if (names.includes(current)) sel.value = current;
     }
 
     function renderHistoryRecords() {
@@ -1057,8 +1108,13 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
       const q = document.getElementById("historySearch").value.trim().toLowerCase();
       const fromDate = document.getElementById("historyDateFrom").value.trim();
       const toDate = document.getElementById("historyDateTo").value.trim();
+      const updatedBy = document.getElementById("historyUpdatedByFilter").value;
 
       let records = allRecords;
+
+      if (updatedBy) {
+        records = records.filter((r) => r.who_updated === updatedBy);
+      }
 
       if (fromDate || toDate) {
         records = records.filter((r) => {
@@ -1113,11 +1169,11 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
                       const name = studentNameMap[a.student_id];
                       return `
                     <tr>
-                      <td class="mono">${dateStr}</td>
-                      <td class="mono">${escapeHtml(a.student_id)}${name ? `<br><span class="hint" style="text-transform:none;">${escapeHtml(name)}</span>` : ""}</td>
-                      <td><span class="status-pill status-${a.status}">${a.status}</span></td>
-                      <td>${escapeHtml(a.reason || "—")}</td>
-                      <td>${
+                      <td data-label="Date" class="mono">${dateStr}</td>
+                      <td data-label="Student" class="mono">${escapeHtml(a.student_id)}${name ? `<br><span class="hint" style="text-transform:none;">${escapeHtml(name)}</span>` : ""}</td>
+                      <td data-label="Status"><span class="status-pill status-${a.status}">${a.status}</span></td>
+                      <td data-label="Reason">${escapeHtml(a.reason || "—")}</td>
+                      <td data-label="In / Out">${
                         a.status === "Late"
                           ? `${escapeHtml(a.in_time || "—")} / ${escapeHtml(a.out_time || "—")}`
                           : a.status === "Present"
@@ -1146,10 +1202,12 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
     }
 
     document.getElementById("historySearch").addEventListener("input", renderHistoryRecords);
+    document.getElementById("historyUpdatedByFilter").addEventListener("change", renderHistoryRecords);
     document.getElementById("historyDateFrom").addEventListener("input", renderHistoryRecords);
     document.getElementById("historyDateTo").addEventListener("input", renderHistoryRecords);
     document.getElementById("clearHistoryFilters").addEventListener("click", () => {
       document.getElementById("historySearch").value = "";
+      document.getElementById("historyUpdatedByFilter").value = "";
       document.getElementById("historyDateFrom").value = "";
       document.getElementById("historyDateTo").value = "";
       renderHistoryRecords();
