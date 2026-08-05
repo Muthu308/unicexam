@@ -663,7 +663,7 @@ function updateStats() {
   ).innerText =
     [...new Set(
       USERS.map(
-        x => x.school_name
+        x => x.school_id
       ).filter(Boolean)
     )].length;
 
