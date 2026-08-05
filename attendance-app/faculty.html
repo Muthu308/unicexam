@@ -954,7 +954,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           body: JSON.stringify(
             isEdit
               ? { id: editingRecordId, attendance_data }
-              : { class_id: currentClass.id, attendance_data }
+              : { class_id: currentClass.id, attendance_data, who_updated: window.__session.name }
           ),
         });
         const data = await res.json();
