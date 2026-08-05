@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     // SAVE ATTENDANCE
     // ======================================
     if (req.method === "POST") {
-      const { class_id, attendance_data } = req.body || {};
+      const { class_id, attendance_data, who_updated } = req.body || {};
 
       if (!class_id) {
         return res.status(400).json({
@@ -83,31 +83,27 @@ export default async function handler(req, res) {
           row.status === "Late"
             ? row.out_time || ""
             : "",
-
-        assignment_submitted:
-          !!row.assignment_submitted,
-
-        assignment_submission_link:
-          row.assignment_submitted
-            ? row.assignment_submission_link || ""
-            : "",
+       
       }));
 
       const mutation = `
         mutation InsertAttendance(
           $class_id:Int!,
           $attendance_data:jsonb!
+          $who_updated: String,
         ) {
           insert_attendance_one(
             object:{
               class_id:$class_id
               attendance_data:$attendance_data
+              who_updated:$who_updated
             }
           ){
             id
             class_id
             attendance_data
             marked_at
+            who_updated
           }
         }
       `;
@@ -146,6 +142,7 @@ export default async function handler(req, res) {
             class_id
             attendance_data
             marked_at
+            who_updated
           }
         }
       `;
@@ -183,11 +180,7 @@ export default async function handler(req, res) {
       row.status === "Late"
         ? row.out_time || ""
         : "",
-    assignment_submitted: !!row.assignment_submitted,
-    assignment_submission_link:
-      row.assignment_submitted
-        ? row.assignment_submission_link || ""
-        : "",
+    
   }));
 
   const mutation = `
