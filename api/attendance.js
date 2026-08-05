@@ -90,7 +90,7 @@ export default async function handler(req, res) {
         mutation InsertAttendance(
           $class_id:Int!,
           $attendance_data:jsonb!
-          $who_updated: String,
+          $who_updated:String,
         ) {
           insert_attendance_one(
             object:{
