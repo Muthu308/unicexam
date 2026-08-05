@@ -954,7 +954,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           body: JSON.stringify(
             isEdit
               ? { id: editingRecordId, attendance_data }
-              : { class_id: currentClass.id, attendance_data, who_updated: window.__session.name }
+              : { class_id: currentClass.id, attendance_data, who_updated: window.__session.name}
           ),
         });
         const data = await res.json();
@@ -1098,7 +1098,7 @@ document.getElementById("facultyLogoutLink").addEventListener("click", function 
           return `
           <div style="margin-bottom:18px;">
             <div class="hint mono" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-              <span>${dateStr} ${timeStr} — record #${r.id}</span>
+              <span>${dateStr} ${timeStr} — record #${r.id} ----- Updated BY:${r.who_updated ?? '-'} </span>
               <span class="row-actions">
                 <button type="button" class="edit-btn" data-record-id="${r.id}">Edit</button>
                 <button type="button" class="delete-btn" data-record-id="${r.id}">Delete</button>
