@@ -122,6 +122,7 @@ tbody tr.task-row{cursor:pointer}
 .badge.submitted{background:#e0e7ff;color:#3730a3}
 .badge.graded{background:#dcfce7;color:#15803d}
 .badge.notsubmitted{background:#f1f5f9;color:#64748b}
+.badge.atype{background:#f1f5f9;color:#334155;margin-left:6px}
 .icon-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:15px;padding:4px}
 .icon-btn:hover{color:#185FA5}
 .icon-btn.danger:hover{color:#dc2626}
@@ -132,6 +133,10 @@ tbody tr.task-row{cursor:pointer}
 .sub-panel .grade-form input.fb{width:auto;flex:1;min-width:120px}
 .sub-panel .grade-form button{padding:6px 12px;border:none;border-radius:6px;background:#0e1e4a;color:#fff;font-size:11.5px;cursor:pointer}
 .sub-row td{padding-left:20px;border-bottom:1px solid #eef2f7}
+
+/* Practice-question attachment picker */
+.att-preview-box{background:#f8fafc;border:1px dashed #dde3f0;border-radius:8px;padding:10px 12px;font-size:12px;color:#475569;white-space:pre-wrap;max-height:160px;overflow:auto}
+.att-preview-box img{max-width:100%;border-radius:6px;display:block;margin-top:6px}
 </style>
 </head>
 <body>
@@ -238,10 +243,32 @@ tbody tr.task-row{cursor:pointer}
           <input type="time" id="f_due_time">
         </div>
       </div>
+
       <div class="field">
-        <label>Attachment link (question paper / worksheet file)</label>
-        <input type="url" id="f_attach" placeholder="https://…">
+        <label>Question / Attachment</label>
+        <div class="target-toggle" style="margin-bottom:8px">
+          <button type="button" class="active" id="attTypeLinkBtn" onclick="setAttachType('link')"><i class="ti ti-link"></i> Link</button>
+          <button type="button" id="attTypeTextBtn" onclick="setAttachType('text')"><i class="ti ti-pencil"></i> Type question</button>
+          <button type="button" id="attTypeImageBtn" onclick="setAttachType('image')"><i class="ti ti-photo"></i> Upload image</button>
+        </div>
+
+        <div id="attLinkWrap">
+          <input type="url" id="f_attach" placeholder="https://… (question paper / worksheet file)">
+          <div class="hint">Paste a link to an existing file (Drive, PDF host, etc.).</div>
+        </div>
+
+        <div id="attTextWrap" style="display:none">
+          <textarea id="f_attach_text" placeholder="Type the practice question(s) here — this will show up like a practice session for the student to read and answer directly, no separate file needed." style="min-height:110px"></textarea>
+          <div class="hint">Stored with the task automatically — no file upload required.</div>
+        </div>
+
+        <div id="attImageWrap" style="display:none">
+          <input type="file" id="f_attach_image" accept="image/*" onchange="handleAttachImage(this)">
+          <div class="hint" id="attImageHint">Image is converted to base64 and embedded directly in the task — no external hosting needed. Max ~4MB.</div>
+          <img id="attImagePreview" style="display:none;max-width:100%;margin-top:8px;border-radius:8px;border:1px solid #dde3f0">
+        </div>
       </div>
+
       <div class="field">
         <label>Instructions / description</label>
         <textarea id="f_desc" placeholder="What should students do? Any special instructions?"></textarea>
@@ -288,6 +315,15 @@ tbody tr.task-row{cursor:pointer}
      id, title, task_type, subject, total_marks, due_date, due_time,
      attachment_link, description, target_mode, target_class_name,
      who_create_at, created_at, target_school_id (jsonb)
+
+   `attachment_link` now doubles as a generic "question payload":
+     - a normal http(s) URL  -> treated as a Link
+     - "data:text/plain;charset=utf-8;base64,...."  -> a typed practice
+       question, stored inline (decode + base64 the text client-side)
+     - "data:image/<type>;base64,...."               -> an uploaded
+       image, embedded inline as base64 (from <input type=file>)
+   This keeps the existing single `attachment_link` column doing all
+   three jobs, so nothing changes schema-side.
 
    Because `tasks` has no student_ids/batch_id column, the jsonb
    `target_school_id` column is reused as a generic "audience" array:
@@ -347,6 +383,10 @@ let adminTaskFilter = "all";
 let editingTaskId = null;
 let expandedTaskId = null;
 
+/* Attachment / "practice question" picker state */
+let attachType = "link";       // 'link' | 'text' | 'image'
+let attachImageDataUrl = null; // set once an image is chosen + read
+
 document.querySelectorAll(".type-chip").forEach((el) => {
   el.addEventListener("click", () => {
     document.querySelectorAll(".type-chip").forEach((c) => c.classList.remove("sel"));
@@ -365,6 +405,118 @@ function setTargetMode(mode) {
   $("schoolPicker").style.display = mode === "school" ? "block" : "none";
   if (mode === "class") updateClassAudienceHint();
   if (mode === "school") updateSchoolAudienceHint();
+}
+
+/* ---- Attachment / practice-question type toggle ---- */
+function setAttachType(type) {
+  attachType = type;
+  $("attTypeLinkBtn").classList.toggle("active", type === "link");
+  $("attTypeTextBtn").classList.toggle("active", type === "text");
+  $("attTypeImageBtn").classList.toggle("active", type === "image");
+  $("attLinkWrap").style.display = type === "link" ? "block" : "none";
+  $("attTextWrap").style.display = type === "text" ? "block" : "none";
+  $("attImageWrap").style.display = type === "image" ? "block" : "none";
+}
+
+// base64-safe encode for unicode text
+function utf8ToBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function base64ToUtf8(str) {
+  try { return decodeURIComponent(escape(atob(str))); } catch (e) { return ""; }
+}
+
+function handleAttachImage(input) {
+  const file = input.files && input.files[0];
+  if (!file) {
+    attachImageDataUrl = null;
+    $("attImagePreview").style.display = "none";
+    return;
+  }
+  if (!file.type.startsWith("image/")) {
+    alert("Please choose an image file.");
+    input.value = "";
+    return;
+  }
+  const MAX_BYTES = 4 * 1024 * 1024; // ~4MB, keep base64 payload reasonable
+  if (file.size > MAX_BYTES) {
+    alert("That image is too large to embed (max ~4MB). Please choose a smaller image, or use a Link instead.");
+    input.value = "";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    attachImageDataUrl = reader.result; // "data:image/...;base64,...."
+    $("attImagePreview").src = attachImageDataUrl;
+    $("attImagePreview").style.display = "block";
+  };
+  reader.onerror = () => {
+    alert("Could not read that image. Please try another file.");
+    attachImageDataUrl = null;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Builds the value that goes into attachment_link, based on the
+// currently selected attachment type.
+function buildAttachmentLink() {
+  if (attachType === "link") {
+    return $("f_attach").value.trim() || null;
+  }
+  if (attachType === "text") {
+    const txt = $("f_attach_text").value;
+    if (!txt.trim()) return null;
+    return `data:text/plain;charset=utf-8;base64,${utf8ToBase64(txt)}`;
+  }
+  if (attachType === "image") {
+    return attachImageDataUrl || null;
+  }
+  return null;
+}
+
+// Restores the picker UI from a stored attachment_link value (used by editTask)
+function loadAttachmentIntoForm(link) {
+  attachImageDataUrl = null;
+  $("f_attach").value = "";
+  $("f_attach_text").value = "";
+  $("f_attach_image").value = "";
+  $("attImagePreview").style.display = "none";
+
+  if (!link) { setAttachType("link"); return; }
+
+  if (link.startsWith("data:image")) {
+    attachImageDataUrl = link;
+    $("attImagePreview").src = link;
+    $("attImagePreview").style.display = "block";
+    setAttachType("image");
+  } else if (link.startsWith("data:text")) {
+    const b64 = link.split(",")[1] || "";
+    $("f_attach_text").value = base64ToUtf8(b64);
+    setAttachType("text");
+  } else {
+    $("f_attach").value = link;
+    setAttachType("link");
+  }
+}
+
+// Small label + preview helpers used by the task list
+function attachmentTypeLabel(link) {
+  if (!link) return null;
+  if (link.startsWith("data:image")) return "Image";
+  if (link.startsWith("data:text")) return "Typed question";
+  return "Link";
+}
+function attachmentPreviewHtml(link) {
+  if (!link) return "";
+  if (link.startsWith("data:image")) {
+    return `<div class="att-preview-box"><img src="${link}" alt="attachment"></div>`;
+  }
+  if (link.startsWith("data:text")) {
+    const b64 = link.split(",")[1] || "";
+    const txt = base64ToUtf8(b64);
+    return `<div class="att-preview-box">${escapeHtml(txt)}</div>`;
+  }
+  return `<a href="${escapeHtml(link)}" target="_blank" style="color:#185FA5">Open attachment link</a>`;
 }
 
 /* ---- Load students: SAME pattern as admin.html's loadPeople() ---- */
@@ -495,6 +647,11 @@ function resetTaskForm() {
   $("f_due_date").value = "";
   $("f_due_time").value = "";
   $("f_attach").value = "";
+  $("f_attach_text").value = "";
+  $("f_attach_image").value = "";
+  attachImageDataUrl = null;
+  $("attImagePreview").style.display = "none";
+  setAttachType("link");
   $("f_desc").value = "";
   $("formMsg").className = "msg";
   document.querySelectorAll(".type-chip").forEach((c) => c.classList.remove("sel"));
@@ -531,6 +688,11 @@ async function assignTask() {
     target_school_id = [sch];
   }
 
+  if (attachType === "image" && $("f_attach_image").files[0] && !attachImageDataUrl) {
+    showMsg("err", "Still reading the image — try again in a moment.");
+    return;
+  }
+
   const payload = {
     title,
     task_type: selectedType,
@@ -538,7 +700,7 @@ async function assignTask() {
     total_marks: $("f_marks").value ? Number($("f_marks").value) : null,
     due_date: $("f_due_date").value || null,
     due_time: $("f_due_time").value || null,
-    attachment_link: $("f_attach").value.trim() || null,
+    attachment_link: buildAttachmentLink(),
     description: $("f_desc").value.trim() || null,
     target_mode: targetMode,
     target_class_name,
@@ -580,7 +742,7 @@ async function editTask(taskId) {
   $("f_marks").value = t.total_marks ?? "";
   $("f_due_date").value = t.due_date || "";
   $("f_due_time").value = t.due_time || "";
-  $("f_attach").value = t.attachment_link || "";
+  loadAttachmentIntoForm(t.attachment_link || "");
   $("f_desc").value = t.description || "";
 
   document.querySelectorAll(".type-chip").forEach((c) => c.classList.toggle("sel", c.dataset.t === (t.task_type || "Assignment")));
@@ -686,16 +848,18 @@ function renderAdminTaskList() {
         : t.target_mode === "school" ? `School: ${escapeHtml((t.target_school_id || [])[0] || "—")}`
         : `${audience.length} student(s)`;
       const isOpen = expandedTaskId === t.id;
+      const atypeLabel = attachmentTypeLabel(t.attachment_link);
 
       const expandRow = isOpen ? `
         <tr class="sub-row"><td colspan="6">
+          ${t.attachment_link ? `<div style="margin-bottom:10px">${attachmentPreviewHtml(t.attachment_link)}</div>` : ""}
           ${renderSubmissionPanel(t, audience, subs)}
         </td></tr>` : "";
 
       return `
         <tr class="task-row" onclick="toggleExpandTask(${t.id}, event)">
           <td><i class="ti ${isOpen ? "ti-chevron-down" : "ti-chevron-right"}" style="color:#94a3b8"></i></td>
-          <td><strong>${escapeHtml(t.title)}</strong><br><span style="color:#94a3b8;font-size:11px">${escapeHtml(t.task_type)} · ${escapeHtml(t.subject || "—")}</span></td>
+          <td><strong>${escapeHtml(t.title)}</strong><br><span style="color:#94a3b8;font-size:11px">${escapeHtml(t.task_type)} · ${escapeHtml(t.subject || "—")}</span>${atypeLabel ? `<span class="badge atype">${escapeHtml(atypeLabel)}</span>` : ""}</td>
           <td>${targetLabel}</td>
           <td>${escapeHtml(t.due_date || "—")}${t.due_time ? " " + escapeHtml(t.due_time) : ""}</td>
           <td>${submittedCount}/${audience.length} submitted · ${gradedCount} graded</td>
