@@ -302,7 +302,14 @@ body{background:#f0f4fb;color:#1e293b}
 .submit-btn:hover{background:#1a3060}
 .submit-btn.edit{background:#f1f5f9;color:#475569}
 .submit-btn.edit:hover{background:#e2e8f0}
-  
+
+/* Question / attachment preview inside task cards + submit modal */
+.task-question-label{font-size:10.5px;font-weight:700;color:#64748b;margin-bottom:4px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:.3px}
+.task-question-text{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 12px;font-size:12px;color:#334155;white-space:pre-wrap;max-height:180px;overflow:auto;margin-bottom:4px;line-height:1.55}
+.task-question-image{max-width:100%;max-height:220px;object-fit:contain;border-radius:8px;border:1px solid #e2e8f0;cursor:zoom-in;display:block;margin-bottom:4px;background:#f8fafc}
+.task-question-image-wrap{text-align:center}
+.task-question-image-hint{font-size:10px;color:#94a3b8;margin-top:2px}
+
 /* Resource links (assignment / worksheet / homework) */
 .resource-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .resource-chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;padding:5px 10px;border-radius:7px;text-decoration:none;border:1px solid transparent;transition:.15s}
@@ -435,7 +442,7 @@ th.total-group{background:#7c3aed !important}
     <button class="nav-item active" onclick="showPage('profile',this)"><i class="ti ti-user"></i> Profile</button>
     <button class="nav-item" onclick="showPage('upcoming',this)"><i class="ti ti-calendar-time"></i> Upcoming Classes</button>
     <button class="nav-item" onclick="showPage('attendance',this)"><i class="ti ti-calendar-check"></i> Attendance</button>
-    <button class="nav-item" onclick="showPage('testschedule',this)"><i class="ti ti-clipboard-text"></i> Test Schedule</button>
+    <button class="nav-item" onclick="showPage('testschedule',this)"><i class="ti ti-clipboard-text"></i> Test Schedule <span class="nav-count" id="navTestCount" style="display:none"></span></button>
     <button class="nav-item" onclick="showPage('tasks',this)"><i class="ti ti-checklist"></i> Task Tracking <span class="nav-count" id="navTaskCount" style="display:none"></span></button>
    <div class="nav-label">Academics</div>
  <button class="nav-item" onclick="showPage('results',this)"><i class="ti ti-chart-bar"></i> Exam Results</button>
@@ -738,6 +745,7 @@ th.total-group{background:#7c3aed !important}
     <button class="modal-close-x" onclick="closeTaskSubmitModal()"><i class="ti ti-x"></i></button>
     <h3 id="taskSubmitTitle">Submit your work</h3>
     <p class="sub" id="taskSubmitSub">—</p>
+    <div id="taskSubmitAttachment"></div>
     <div class="field" style="margin-top:6px">
       <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px">Submission link <span style="font-weight:400;text-transform:none;color:#94a3b8">(Drive / photo / doc URL)</span></label>
       <input type="url" id="taskSubmitLink" placeholder="https://…" style="width:100%;padding:9px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;outline:none">
@@ -1093,15 +1101,16 @@ function updateProfileQuickStats(){
          ${nc.class_status?classStatusPill(nc.class_status):""}`
       : `No upcoming classes scheduled.`;
   }
- /* const nextTestBox = $("profileNextTest");
+
+  const nextTestBox = $("profileNextTest");
   if(nextTestBox){
-    const nt = testSchedules[0];
+    const nt = (allTestSchedule||[]).find(t => ["today","upcoming"].includes(testStatusOf(t)));
     nextTestBox.innerHTML = nt
       ? `<div style="font-weight:700;color:#0e1e4a;font-size:13px">${nt.test_name||"—"}</div>
          <div style="color:#64748b;margin-top:2px">${nt.test_date||"—"} · ${nt.start_time||"—"}</div>
          ${nt.syllabus_link?`<a href="${nt.syllabus_link}" target="_blank" style="color:#185FA5;font-weight:500;font-size:11.5px">View syllabus →</a>`:""}`
       : `No test scheduled yet.`;
-  }*/
+  }
 }
 
 
@@ -2280,6 +2289,39 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+/* base64 <-> utf8 text (mirrors the admin "typed question" encoding) */
+function base64ToUtf8(str) {
+  try { return decodeURIComponent(escape(atob(str))); } catch (e) { return ""; }
+}
+
+/* Renders a task's attachment_link clearly depending on what it is:
+   - data:image/...  -> inline image (tap to zoom via lightbox)
+   - data:text/...   -> typed practice question, shown as readable text
+   - anything else    -> a normal "open link" chip                        */
+function renderTaskAttachment(link, typeCls){
+  if(!link) return "";
+  const chipCls = typeCls==='homework' ? 'homework' : typeCls==='worksheet' ? 'worksheet' : 'assignment';
+
+  if(link.startsWith("data:image")){
+    return `<div class="task-attach">
+      <div class="task-question-label"><i class="ti ti-photo"></i> Question image</div>
+      <div class="task-question-image-wrap">
+        <img src="${link}" class="task-question-image" onclick="openLightbox(this.src,'Question')">
+        <div class="task-question-image-hint">Tap image to enlarge</div>
+      </div>
+    </div>`;
+  }
+  if(link.startsWith("data:text")){
+    const b64 = link.split(",")[1] || "";
+    const txt = base64ToUtf8(b64);
+    return `<div class="task-attach">
+      <div class="task-question-label"><i class="ti ti-pencil"></i> Practice question</div>
+      <div class="task-question-text">${escapeHtml(txt)}</div>
+    </div>`;
+  }
+  return `<div class="task-attach"><a class="resource-chip ${chipCls}" href="${escapeHtml(link)}" target="_blank"><i class="ti ti-paperclip"></i> Open task file / link</a></div>`;
+}
+
 /*════════════════TASK TRACKING══════════════════════════════ */
 let allTasks = [];
 let taskFilter = "all";
@@ -2364,10 +2406,7 @@ function renderTasks(){
       dueRow = `<div class="task-meta-row${overdue?' due-warn':''}"><i class="ti ${overdue?'ti-alert-triangle':'ti-calendar-due'}"></i> Due ${escapeHtml(t.due_date)}${t.due_time?" · "+escapeHtml(t.due_time):""}</div>`;
     }
 
-    let attach = "";
-    if(t.attachment_link){
-      attach = `<div class="task-attach"><a class="resource-chip ${typeCls==='homework'?'homework':typeCls==='worksheet'?'worksheet':'assignment'}" href="${escapeHtml(t.attachment_link)}" target="_blank"><i class="ti ti-paperclip"></i> View Task File</a></div>`;
-    }
+    const attach = renderTaskAttachment(t.attachment_link, typeCls);
 
     let submissionBlock = "";
     if(t.submission){
@@ -2419,6 +2458,7 @@ function openTaskSubmitModal(taskId){
   activeSubmitTaskId = taskId;
   $("taskSubmitTitle").textContent = t.submission ? "Edit your submission" : "Submit your work";
   $("taskSubmitSub").textContent = `${t.title} · ${t.subject||""}`;
+  $("taskSubmitAttachment").innerHTML = renderTaskAttachment(t.attachment_link, (t.task_type||"assignment").toLowerCase());
   $("taskSubmitLink").value = t.submission?.submission_link || "";
   $("taskSubmitText").value = t.submission?.submission_text || "";
   $("taskSubmitModal").classList.add("open");
@@ -2472,22 +2512,81 @@ function testStatusOf(t){
   return "upcoming";
 }
 
+/* Maps one entry from exam_config.json (the live-test config format) into
+   the same shape renderTestSchedule() already understands. Used as a
+   fallback whenever the /api/testschedules endpoint returns nothing, so
+   the Test Schedule tab still shows something useful. */
+function mapExamConfigToTestSchedule(cfg, idx){
+  let test_date = "", start_time = "";
+  if(cfg.start_time){
+    const parts = String(cfg.start_time).trim().split(" ");
+    test_date = parts[0] || "";
+    start_time = parts.slice(1).join(" ") || "";
+  }
+
+  let subjects = [];
+  if(cfg.exam_name && cfg.exam_name.includes(" - ")){
+    subjects = cfg.exam_name.split(" - ").pop().split(",").map(s=>s.trim()).filter(Boolean);
+  }
+
+  const duration_minutes = cfg.duration ? Math.round(Number(cfg.duration)/60) : null;
+
+  const instructionLines = Array.isArray(cfg.instructions) ? cfg.instructions.filter(Boolean) : [];
+  const shortDesc = instructionLines
+    .filter(l => !/^instructions for/i.test(l) && !/^\*/.test(l))
+    .slice(0, 2)
+    .join(" · ");
+
+  return {
+    _key: cfg.exam_module || `cfg-${idx}`,
+    test_name: cfg.exam_name || "Untitled test",
+    test_date,
+    start_time,
+    subjects,
+    duration_minutes,
+    total_questions: cfg.total_questions || null,
+    description: shortDesc,
+    _instructions: instructionLines,
+    syllabus_link: null,
+    _isLive: String(cfg.status || "").toLowerCase() === "yes",
+  };
+}
+
 async function loadTestSchedule(){
   const box = $("testScheduleContent");
   try{
-    const qs = new URLSearchParams({ std_id: user.std_id });
-    if (user.class_name) qs.set("class_name", user.class_name);
-    if (user.school_id) qs.set("school_id", user.school_id);
+    let rows = [];
 
-    const res = await fetch(`/api/testschedules?${qs.toString()}`);
-    const rows = await res.json();
-    if (!res.ok) throw new Error((rows && rows.error) || "Failed to load test schedule");
+    // 1) Try the normal API first.
+    try{
+      const qs = new URLSearchParams({ std_id: user.std_id });
+      if (user.class_name) qs.set("class_name", user.class_name);
+      if (user.school_id) qs.set("school_id", user.school_id);
+      const res = await fetch(`/api/testschedules?${qs.toString()}`);
+      if(res.ok){
+        const data = await res.json();
+        if(Array.isArray(data)) rows = data;
+      }
+    }catch(e){ /* fall through to exam_config.json below */ }
 
-    allTestSchedule = (Array.isArray(rows) ? rows : [])
-      .sort((a,b) => (a.test_date||"9999-99-99").localeCompare(b.test_date||"9999-99-99"));
+    // 2) If the API has nothing, fall back to exam_config.json so the
+    //    tab isn't left empty — this is the live-test config file.
+    if(!rows.length){
+      try{
+        const res2 = await fetch("exam_config.json");
+        if(res2.ok){
+          const cfg = await res2.json();
+          const list = Array.isArray(cfg) ? cfg : [cfg];
+          rows = list.map(mapExamConfigToTestSchedule);
+        }
+      }catch(e){ console.warn("exam_config.json load failed:", e); }
+    }
+
+    allTestSchedule = rows.sort((a,b) => (a.test_date||"9999-99-99").localeCompare(b.test_date||"9999-99-99"));
 
     renderTestSchedule();
     updateNavTestBadge();
+    updateProfileQuickStats();
   }catch(err){
     console.error(err);
     box.innerHTML = `<div class="test-empty" style="color:#dc2626">Could not load test schedule: ${escapeHtml(err.message)}</div>`;
@@ -2542,11 +2641,20 @@ function renderTestSchedule(){
       syllabus = `<div class="task-attach"><a class="resource-chip assignment" href="${escapeHtml(t.syllabus_link)}" target="_blank"><i class="ti ti-paperclip"></i> View Syllabus</a></div>`;
     }
 
+    let instructionsBlock = "";
+    if(t._instructions && t._instructions.length){
+      instructionsBlock = `<details style="margin-top:8px;font-size:11.5px;color:#64748b">
+        <summary style="cursor:pointer;color:#185FA5;font-weight:600">View full instructions</summary>
+        <ul style="margin:6px 0 0 16px;padding:0">${t._instructions.map(i=>`<li style="margin-bottom:3px">${escapeHtml(i)}</li>`).join("")}</ul>
+      </details>`;
+    }
+
     return `
     <div class="task-card${status==='today'?' overdue':''}">
       <div class="task-card-hdr">
         <div class="task-type-row">
           <span class="task-status-tag ${status}">${statusLbl}</span>
+          ${t._isLive?`<span class="task-status-tag submitted"><i class="ti ti-broadcast"></i> Live</span>`:""}
         </div>
         <h4>${escapeHtml(t.test_name || "Untitled test")}</h4>
         ${subjectsRow}
@@ -2555,8 +2663,10 @@ function renderTestSchedule(){
         ${t.description?`<div class="task-desc">${escapeHtml(t.description)}</div>`:""}
         ${dueRow}
         ${t.duration_minutes?`<div class="task-meta-row"><i class="ti ti-clock"></i> ${t.duration_minutes} minutes</div>`:""}
+        ${t.total_questions?`<div class="task-meta-row"><i class="ti ti-list-numbers"></i> ${t.total_questions} questions</div>`:""}
         ${t.total_marks?`<div class="task-meta-row"><i class="ti ti-target-arrow"></i> ${t.total_marks} marks</div>`:""}
         ${syllabus}
+        ${instructionsBlock}
       </div>
     </div>`;
   }).join("") + `</div>`;
@@ -2581,6 +2691,7 @@ setText("p_id", user.std_id);
 loadStudentResults().then(()=>{ initTableSort(); });
 loadAttendance();
 loadTasks();
+loadTestSchedule();
 document.addEventListener("click", e=>{
   if(!$("qwSearchWrap")?.contains(e.target)){
     $("qwDropdown")?.classList.remove("open");
