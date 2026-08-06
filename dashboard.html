@@ -1967,16 +1967,34 @@ async function loadUpcomingClasses(){
   }
 }
 
+function renderResource(label, value){
+  if(!value) return "";
+
+  // URL
+  if(/^https?:\/\//i.test(value)){
+    return `
+      <a class="resource-chip"
+         href="${escapeHtml(value)}"
+         target="_blank">
+        ${label}
+      </a>`;
+  }
+
+  // Plain text
+  return `
+    <div class="task-attach">
+      <div class="task-question-label">${label}</div>
+      <div class="task-question-text">${escapeHtml(value)}</div>
+    </div>`;
+}
+
 function renderUpcomingClasses(todayStr){
 
   const box = $("upcomingClassesContent");
-
   // Indian Standard Time fallback
   todayStr = todayStr || new Date().toLocaleDateString("en-CA", {
     timeZone: "Asia/Kolkata"
   });
-
-
   if(!upcomingClasses.length){
     box.innerHTML = `
       <div class="att-empty">
@@ -1984,48 +2002,27 @@ function renderUpcomingClasses(todayStr){
       </div>`;
     return;
   }
-
-
   box.innerHTML = `<div class="upcoming-grid">` + upcomingClasses.map(c => {
-
-    const links = [];
-
-    if(c.syllabus_link) 
-      links.push(`<a href="${c.syllabus_link}" target="_blank">Syllabus</a>`);
-
-    if(c.notes_link) 
-      links.push(`<a href="${c.notes_link}" target="_blank">Notes</a>`);
-
-    if(c.video_link) 
-      links.push(`<a href="${c.video_link}" target="_blank">Video</a>`);
-
-    if(c.assignment_link) 
-      links.push(`<a href="${c.assignment_link}" target="_blank">Assignment</a>`);
-
-
+const resources = [];
+resources.push(renderResource("Join Class", c.class_link));
+resources.push(renderResource("Syllabus", c.syllabus_link));
+resources.push(renderResource("Notes", c.notes_link));
+resources.push(renderResource("Video", c.video_link));
+resources.push(renderResource("Assignment", c.assignment_link));
     const isToday = c.class_date === todayStr;
-
     let dayNum = "—", monthLbl = "";
 
-
     if(c.class_date){
-
       // Avoid timezone shift
       const d = new Date(c.class_date + "T00:00:00+05:30");
-
       if(!isNaN(d)){
-
         dayNum = d.getDate();
-
         monthLbl = d.toLocaleDateString("en-IN", {
           month:"short",
           timeZone:"Asia/Kolkata"
         });
-
       }
     }
-
-
     return `
       <div class="upcoming-card${isToday?' today':''}">
 
@@ -2055,8 +2052,8 @@ function renderUpcomingClasses(todayStr){
           </div>
 
           ${
-            links.length 
-            ? `<div class="upcoming-links">${links.join(" · ")}</div>` 
+            resources.length 
+            ? `<div class="upcoming-links">${resources.join(" · ")}</div>` 
             : ""
           }
 
