@@ -323,7 +323,7 @@
     </div>
     <nav class="tabs">
       <a href="https://unicexamschool.vercel.app/admdashboard.html">Home</a>
-      <a href="https://unicexamschool.vercel.app/task-tracking-admin.html">Task Assignment</a>
+      <a href="https://unicexamschool.vercel.app/task-tracking-admin.html">Create TASK/Assignment</a>
       <a href="admin.html" class="active">Add Class</a>
       <a href="faculty.html">Attendance</a> 
       <a class="nav-link" href="classfeedback.html"><i class="bi bi-calendar2-week"></i>Student Class feedback</a>
@@ -438,6 +438,7 @@
           <input type="search" id="filterSearch" placeholder="Search subject, topic, session, faculty…" />
           <select id="filterFaculty"><option value="">All faculty</option></select>
           <select id="filterSubject"><option value="">All subjects</option></select>
+          <select id="filterUpdatedBy"><option value="">All updated by</option></select>
           <select id="filterStatus">
             <option value="">All statuses</option>
             <option value="Scheduled">Scheduled</option>
@@ -758,8 +759,10 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
     function populateFilterOptions() {
       const facultySel = document.getElementById("filterFaculty");
       const subjectSel = document.getElementById("filterSubject");
+      const updatedBySel = document.getElementById("filterUpdatedBy");
       const currentFaculty = facultySel.value;
       const currentSubject = subjectSel.value;
+      const currentUpdatedBy = updatedBySel.value;
 
       // Faculty options come from the real user_student table (/api/users?role=faculty)
       // — loaded into facultyOptions by loadPeople() — merged with any free-typed
@@ -772,6 +775,9 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       const subjects = [...new Set(classes.map((c) => c.subject).filter(Boolean))].sort((a, b) =>
         a.localeCompare(b)
       );
+      const updatedByNames = [...new Set(classes.map((c) => c.who_updated).filter(Boolean))].sort((a, b) =>
+        a.localeCompare(b)
+      );
 
       facultySel.innerHTML =
         `<option value="">All faculty</option>` +
@@ -779,10 +785,14 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       subjectSel.innerHTML =
         `<option value="">All subjects</option>` +
         subjects.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+      updatedBySel.innerHTML =
+        `<option value="">All updated by</option>` +
+        updatedByNames.map((u) => `<option value="${escapeHtml(u)}">${escapeHtml(u)}</option>`).join("");
 
       // Preserve selection if the value still exists after refresh
       if (faculties.includes(currentFaculty)) facultySel.value = currentFaculty;
       if (subjects.includes(currentSubject)) subjectSel.value = currentSubject;
+      if (updatedByNames.includes(currentUpdatedBy)) updatedBySel.value = currentUpdatedBy;
     }
 
     let sortState = { key: "class_date", dir: "desc" };
@@ -815,6 +825,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       const q = document.getElementById("filterSearch").value.trim().toLowerCase();
       const faculty = document.getElementById("filterFaculty").value;
       const subject = document.getElementById("filterSubject").value;
+      const updatedBy = document.getElementById("filterUpdatedBy").value;
       const status = document.getElementById("filterStatus").value;
       const dateFrom = document.getElementById("filterDateFrom").value.trim();
       const dateTo = document.getElementById("filterDateTo").value.trim();
@@ -822,6 +833,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       return classes.filter((c) => {
         if (faculty && c.faculty_name !== faculty) return false;
         if (subject && c.subject !== subject) return false;
+        if (updatedBy && c.who_updated !== updatedBy) return false;
         if (status && (c.class_status || "Scheduled") !== status) return false;
         if (dateFrom && (!c.class_date || c.class_date < dateFrom)) return false;
         if (dateTo && (!c.class_date || c.class_date > dateTo)) return false;
@@ -833,6 +845,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
             c.faculty_name,
             c.class_date,
             c.school_id,
+            c.who_updated,
             ...(c.student_ids || []),
           ]
             .filter(Boolean)
@@ -950,6 +963,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
         document.getElementById("filterSearch").value.trim() ||
         document.getElementById("filterFaculty").value ||
         document.getElementById("filterSubject").value ||
+        document.getElementById("filterUpdatedBy").value ||
         document.getElementById("filterStatus").value ||
         document.getElementById("filterDateFrom").value.trim() ||
         document.getElementById("filterDateTo").value.trim();
@@ -1081,6 +1095,10 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       currentPage = 1;
       renderClassTable();
     });
+    document.getElementById("filterUpdatedBy").addEventListener("change", () => {
+      currentPage = 1;
+      renderClassTable();
+    });
     document.getElementById("filterStatus").addEventListener("change", () => {
       currentPage = 1;
       renderClassTable();
@@ -1097,6 +1115,7 @@ document.getElementById("adminLogoutLink").addEventListener("click", function (e
       document.getElementById("filterSearch").value = "";
       document.getElementById("filterFaculty").value = "";
       document.getElementById("filterSubject").value = "";
+      document.getElementById("filterUpdatedBy").value = "";
       document.getElementById("filterStatus").value = "";
       document.getElementById("filterDateFrom").value = "";
       document.getElementById("filterDateTo").value = "";
