@@ -2053,7 +2053,7 @@ resources.push(renderResource("Assignment", c.assignment_link));
 
           ${
             resources.length 
-            ? `<div class="upcoming-links">${resources.join(" · ")}</div>` 
+            ? `<div class="upcoming-links">${resources.join(" ")}</div>` 
             : ""
           }
 
@@ -2063,6 +2063,7 @@ resources.push(renderResource("Assignment", c.assignment_link));
 
   }).join("") + `</div>`;
 }
+
   function populateAttendanceFilters(){
   const dates = [...new Set(attendanceRecords.map(r => r.class_date).filter(Boolean))]
     .sort((a,b) => new Date(b) - new Date(a));
@@ -2138,9 +2139,11 @@ function renderAttendanceView(){
 
     const rows = groups[day].map(r => {
       const links = [];
-      if(r.syllabus_link) links.push(`<a href="${r.syllabus_link}" target="_blank">Syllabus</a>`);
-      if(r.notes_link) links.push(`<a href="${r.notes_link}" target="_blank">Notes</a>`);
-      if(r.assignment_link) links.push(`<a href="${r.assignment_link}" target="_blank">Assignment</a>`);
+      links.push(renderResource("Join Class", c.class_link));
+      links.push(renderResource("Syllabus", c.syllabus_link));
+      links.push(renderResource("Notes", c.notes_link));
+      links.push(renderResource("Video", c.video_link));
+      links.push(renderResource("Assignment", c.assignment_link));
       const assignmentStatus = r.assignment_submitted
         ? `Submitted${r.assignment_submission_link ? ` — <a href="${r.assignment_submission_link}" target="_blank">your link</a>` : ""}`
         : `<span style="color:#94a3b8">Not submitted</span>`;
@@ -2162,7 +2165,7 @@ function renderAttendanceView(){
           <td>${attStatusPill(r.status)}
               ${r.status === 'Late' ? `<br><small class="text-muted">${inOut}</small>` : ""}
               ${r.reason ? `<br><small class="text-danger">${r.reason}</small>` : ""}</td>                  
-          <td class="att-links">${links.join(" · ") || "—"}</td>
+          <td class="att-links">${links.join(" ") || "—"}</td>
           <td>${rateBtn}</td>
         </tr>`;
     }).join("");
@@ -2175,7 +2178,7 @@ function renderAttendanceView(){
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr><th>Date & Time</th><th>Faculty</th><th>Subject</th><th>Topic</th><th>Status</th><th>Links</th><th>Feedback</th></tr>
+            <tr><th>Date & Time</th><th>Faculty</th><th>Subject</th><th>Topic</th><th>Status</th><th>Details</th><th>Feedback</th></tr>
           </thead>
           <tbody>${bodyRows}</tbody>
         </table>
