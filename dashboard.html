@@ -2139,11 +2139,11 @@ function renderAttendanceView(){
 
     const rows = groups[day].map(r => {
       const links = [];
-      links.push(renderResource("Join Class", c.class_link));
-      links.push(renderResource("Syllabus", c.syllabus_link));
-      links.push(renderResource("Notes", c.notes_link));
-      links.push(renderResource("Video", c.video_link));
-      links.push(renderResource("Assignment", c.assignment_link));
+      links.push(renderResource("Join Class", r.class_link));
+      links.push(renderResource("Syllabus", r.syllabus_link));
+      links.push(renderResource("Notes", r.notes_link));
+      links.push(renderResource("Video", r.video_link));
+      links.push(renderResource("Assignment", r.assignment_link));
       const assignmentStatus = r.assignment_submitted
         ? `Submitted${r.assignment_submission_link ? ` — <a href="${r.assignment_submission_link}" target="_blank">your link</a>` : ""}`
         : `<span style="color:#94a3b8">Not submitted</span>`;
