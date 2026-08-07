@@ -4,12 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UNIC Academy – Admin · Task Tracking</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-body{background:#f0f4fb;color:#1e293b;padding:24px}
+/* ============================================================
+   Task Tracking — restyled to match the shared Attendance
+   Register theme: paper ledger background, forest-green ink,
+   serif headers, monospace labels/tabs.
+   ============================================================ */
+:root {
+  --paper: #f7f4ea;
+  --paper-line: #e3ddc9;
+  --ink: #24291f;
+  --ink-soft: #5b6152;
+  --green: #2d5f4c;
+  --green-deep: #1c3f32;
+  --red: #a3372c;
+  --amber: #a3782c;
+  --blue: #2d4f6c;
+  --card: #fffdf7;
+  --border: #d8d0b8;
+  --radius: 10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  background: var(--paper);
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 39px, var(--paper-line) 40px);
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  min-height: 100vh;
+  padding: 0;
+}
 
 .topbar {
   display: flex;
@@ -19,123 +46,170 @@ body{background:#f0f4fb;color:#1e293b;padding:24px}
   border-bottom: 2px solid var(--green-deep);
   background: var(--paper);
 }
-
-.topbar h1 {
-  font-size: 1.5rem;
-  letter-spacing: 0.03em;
-  margin: 0;
-  color: var(--green-deep);
-}
-
+.topbar h1 { font-size: 1.5rem; letter-spacing: 0.03em; margin: 0; color: var(--green-deep); }
 .topbar .eyebrow {
   font-family: "Courier New", monospace;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--ink-soft);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-soft);
 }
-
-nav.tabs {
-  display: flex;
-  gap: 6px;
-}
-
+nav.tabs { display: flex; gap: 6px; }
 nav.tabs a {
   font-family: "Courier New", monospace;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  color: var(--ink-soft);
-  padding: 8px 14px;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+  text-decoration: none; color: var(--ink-soft);
+  padding: 8px 14px; border: 1px solid transparent; border-radius: 999px;
+}
+nav.tabs a.active, nav.tabs a:hover {
+  color: var(--green-deep); border-color: var(--green); background: rgba(45, 95, 76, 0.08);
 }
 
-nav.tabs a.active,
-nav.tabs a:hover {
-  color: var(--green-deep);
-  border-color: var(--green);
-  background: rgba(45, 95, 76, 0.08);
+.wrap{max-width:1220px;margin:0 auto;padding:32px 40px 80px}
+.hdr{margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.hdr h1{
+  font-size:1.2rem;color:var(--green-deep);font-weight:700;display:flex;align-items:center;gap:8px;
 }
-  
-.wrap{max-width:1180px;margin:0 auto}
-.hdr{margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
-.hdr h1{font-size:19px;color:#0e1e4a;font-weight:700;display:flex;align-items:center;gap:8px}
-.hdr h1 i{color:#f0b800}
-.hdr p{font-size:12px;color:#94a3b8;margin-top:2px}
-.hdr-right{font-size:12px;color:#64748b;text-align:right}
-.hdr-right a{color:#b91c1c;cursor:pointer;text-decoration:none;font-weight:600}
-.grid{display:grid;grid-template-columns:440px 1fr;gap:18px}
+.hdr h1 i{color:var(--amber)}
+.hdr p{font-size:0.85rem;color:var(--ink-soft);margin-top:4px;max-width:60ch}
+.hdr-right{font-family:"Courier New",monospace;font-size:0.78rem;color:var(--ink-soft);text-align:right}
+.hdr-right a{color:var(--red);cursor:pointer;text-decoration:none;font-weight:600}
+
+.grid{display:grid;grid-template-columns:440px 1fr;gap:22px}
 @media(max-width:1200px){.grid{grid-template-columns:1fr}}
-.card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
-.card h2{font-size:14px;color:#0e1e4a;margin-bottom:14px;display:flex;align-items:center;gap:7px}
-.card h2 i{color:#185FA5}
-.field{margin-bottom:13px}
-.field label{display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
-.field input,.field textarea,.field select{width:100%;padding:9px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;color:#1e293b;outline:none}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:#0e1e4a}
+
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 28px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.03);
+}
+.card h2{
+  font-size:1.05rem;color:var(--green-deep);margin-bottom:16px;
+  border-bottom:1px solid var(--border);padding-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.card h2 i{color:var(--blue)}
+
+.field{margin-bottom:14px}
+.field label{
+  display:block;font-family:"Courier New",monospace;font-size:0.72rem;font-weight:600;
+  color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px
+}
+.field input,.field textarea,.field select{
+  width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;
+  background:#fff;font-family:inherit;font-size:.92rem;color:var(--ink);outline:none
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--green-deep)}
 .field textarea{min-height:70px;resize:vertical}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.hint{font-size:11px;color:#94a3b8;margin-top:4px}
+.hint{font-size:.78rem;color:var(--ink-soft);margin-top:5px}
 
 /* Target picker */
 .target-toggle{display:flex;gap:6px;margin-bottom:10px}
-.target-toggle button{flex:1;padding:8px;border-radius:8px;border:1.5px solid #dde3f0;background:#fff;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:#64748b;cursor:pointer}
-.target-toggle button.active{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
+.target-toggle button{
+  flex:1;padding:9px;border-radius:6px;border:1px solid var(--border);background:#fff;
+  font-family:"Courier New",monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;
+  font-weight:600;color:var(--ink-soft);cursor:pointer
+}
+.target-toggle button.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+
 .student-search-wrap{position:relative}
 .student-search-wrap input{width:100%}
-.student-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid #dde3f0;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:50;max-height:220px;overflow-y:auto;display:none}
+.student-dd{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--border);
+  border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:50;max-height:220px;overflow-y:auto;display:none
+}
 .student-dd.open{display:block}
-.student-dd-item{padding:9px 14px;font-size:12.5px;cursor:pointer;display:flex;justify-content:space-between}
-.student-dd-item:hover{background:#eff6ff}
+.student-dd-item{padding:9px 14px;font-size:.85rem;cursor:pointer;display:flex;justify-content:space-between}
+.student-dd-item:hover{background:rgba(45,95,76,.07)}
 .selected-students{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.student-chip{display:inline-flex;align-items:center;gap:6px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:11.5px;font-weight:500;padding:5px 10px;border-radius:20px}
-.student-chip button{background:none;border:none;cursor:pointer;color:#1d4ed8;display:flex}
+.student-chip{
+  display:inline-flex;align-items:center;gap:6px;background:rgba(45,95,76,.08);
+  border:1px solid rgba(45,95,76,.25);color:var(--green-deep);font-size:.78rem;font-weight:500;
+  padding:5px 10px;border-radius:20px
+}
+.student-chip button{background:none;border:none;cursor:pointer;color:var(--green-deep);display:flex}
 
 .type-chip-select{display:flex;flex-wrap:wrap;gap:6px}
-.type-chip{padding:7px 14px;border-radius:20px;border:1.5px solid #dde3f0;font-size:12px;cursor:pointer}
-.type-chip.sel{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
+.type-chip{
+  padding:7px 14px;border-radius:20px;border:1px solid var(--border);font-size:.8rem;cursor:pointer;
+  background:#fff;color:var(--ink-soft)
+}
+.type-chip.sel{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
 
-.btn{padding:10px 18px;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.btn.primary{background:#0e1e4a;color:#fff}
-.btn.primary:hover{background:#1a3060}
-.btn.secondary{background:#f1f5f9;color:#475569}
-.btn-row{display:flex;gap:8px;margin-top:6px}
-.msg{font-size:12px;padding:8px 12px;border-radius:8px;margin-top:10px;display:none}
-.msg.ok{background:#dcfce7;color:#15803d;display:block}
-.msg.err{background:#fee2e2;color:#b91c1c;display:block}
+.btn{
+  font-family:"Courier New",monospace;text-transform:uppercase;letter-spacing:.06em;
+  padding:11px 18px;border:none;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px
+}
+.btn.primary{background:var(--green-deep);color:#fff}
+.btn.primary:hover{background:var(--green)}
+.btn.secondary{background:transparent;color:var(--green-deep);border:1px solid var(--green-deep)}
+.btn.secondary:hover{background:rgba(45,95,76,.08)}
+.btn-row{display:flex;gap:8px;margin-top:8px}
+.msg{font-size:.82rem;padding:9px 12px;border-radius:6px;margin-top:12px;display:none;font-family:inherit}
+.msg.ok{background:rgba(45,95,76,.10);color:var(--green-deep);display:block}
+.msg.err{background:rgba(163,55,44,.10);color:var(--red);display:block}
 
 /* Task list + submissions */
-.list-toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
-.list-toolbar input[type="search"]{flex:1;min-width:160px;padding:8px 12px;border:1.5px solid #dde3f0;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12.5px;outline:none}
-.task-filter-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.task-filter-tabs button{padding:6px 13px;border-radius:20px;border:1.5px solid #dde3f0;background:#fff;font-family:'Poppins',sans-serif;font-size:11.5px;font-weight:600;color:#64748b;cursor:pointer}
-.task-filter-tabs button.active{background:#0e1e4a;color:#fff;border-color:#0e1e4a}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-thead th{background:#0e1e4a;color:#fff;padding:9px 10px;text-align:left;font-weight:500;font-size:11.5px}
-tbody td{padding:9px 10px;border-bottom:1px solid #f1f5f9;vertical-align:top}
-tbody tr:hover{background:#f8fafc}
+.list-toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.list-toolbar input[type="search"]{
+  flex:1;min-width:160px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;
+  font-family:inherit;font-size:.85rem;outline:none;background:#fff
+}
+.task-filter-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.task-filter-tabs button{
+  padding:7px 13px;border-radius:20px;border:1px solid var(--border);background:#fff;
+  font-family:"Courier New",monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;
+  font-weight:600;color:var(--ink-soft);cursor:pointer
+}
+.task-filter-tabs button.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+.task-filter-tabs.creator-tabs button.active{background:var(--blue);border-color:var(--blue)}
+.filter-group-label{
+  font-family:"Courier New",monospace;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-soft);margin:2px 0 6px
+}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead th{
+  background:var(--green-deep);color:#fff;padding:10px 10px;text-align:left;
+  font-weight:500;font-family:"Courier New",monospace;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em
+}
+tbody td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr:hover{background:rgba(45,95,76,.04)}
 tbody tr.task-row{cursor:pointer}
-.badge{padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
-.badge.pending{background:#fef9c3;color:#92400e}
-.badge.submitted{background:#e0e7ff;color:#3730a3}
-.badge.graded{background:#dcfce7;color:#15803d}
-.badge.notsubmitted{background:#f1f5f9;color:#64748b}
-.badge.atype{background:#f1f5f9;color:#334155;margin-left:6px}
-.icon-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:15px;padding:4px}
-.icon-btn:hover{color:#185FA5}
-.icon-btn.danger:hover{color:#dc2626}
-.empty{padding:30px;text-align:center;color:#94a3b8;font-size:12.5px}
-.sub-panel{background:#f8fafc;border-radius:8px;padding:10px 12px;font-size:11.5px}
+
+.badge{
+  padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:600;white-space:nowrap;
+  font-family:"Courier New",monospace;letter-spacing:.03em
+}
+.badge.pending{background:rgba(163,120,44,.14);color:var(--amber)}
+.badge.submitted{background:rgba(45,79,108,.12);color:var(--blue)}
+.badge.graded{background:rgba(45,95,76,.12);color:var(--green-deep)}
+.badge.notsubmitted{background:#f1efe6;color:var(--ink-soft)}
+.badge.atype{background:#f1efe6;color:var(--ink);margin-left:6px}
+.badge.creator-admin{background:rgba(45,95,76,.12);color:var(--green-deep)}
+.badge.creator-faculty{background:rgba(163,120,44,.14);color:var(--amber)}
+.creator-name{font-size:.78rem;color:var(--ink-soft)}
+
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--ink-soft);font-size:15px;padding:4px}
+.icon-btn:hover{color:var(--blue)}
+.icon-btn.danger:hover{color:var(--red)}
+.empty{padding:30px;text-align:center;color:var(--ink-soft);font-size:.85rem;font-style:italic}
+.sub-panel{background:#faf8f0;border-radius:6px;padding:10px 12px;font-size:.82rem;border:1px solid var(--border)}
 .sub-panel .grade-form{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
-.sub-panel .grade-form input{width:90px;padding:6px 9px;border:1px solid #dde3f0;border-radius:6px;font-size:12px}
+.sub-panel .grade-form input{width:90px;padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:.82rem}
 .sub-panel .grade-form input.fb{width:auto;flex:1;min-width:120px}
-.sub-panel .grade-form button{padding:6px 12px;border:none;border-radius:6px;background:#0e1e4a;color:#fff;font-size:11.5px;cursor:pointer}
-.sub-row td{padding-left:20px;border-bottom:1px solid #eef2f7}
+.sub-panel .grade-form button{
+  padding:6px 12px;border:none;border-radius:6px;background:var(--green-deep);color:#fff;
+  font-size:.75rem;cursor:pointer;font-family:"Courier New",monospace;text-transform:uppercase;letter-spacing:.04em
+}
+.sub-row td{padding-left:20px;border-bottom:1px solid var(--border)}
 
 /* Practice-question attachment picker */
-.att-preview-box{background:#f8fafc;border:1px dashed #dde3f0;border-radius:8px;padding:10px 12px;font-size:12px;color:#475569;white-space:pre-wrap;max-height:160px;overflow:auto}
+.att-preview-box{
+  background:#faf8f0;border:1px dashed var(--border);border-radius:6px;padding:10px 12px;font-size:.85rem;
+  color:var(--ink);white-space:pre-wrap;max-height:160px;overflow:auto
+}
 .att-preview-box img{max-width:100%;border-radius:6px;display:block;margin-top:6px}
 </style>
 </head>
@@ -173,6 +247,15 @@ tbody tr.task-row{cursor:pointer}
         <label>School ID (optional filter)</label>
         <input type="text" id="f_school_filter" placeholder="e.g. SCH001 — narrows students/classes below">
         <div class="hint">Leave blank to search across every school.</div>
+      </div>
+
+      <div class="field">
+        <label>Created as</label>
+        <div class="target-toggle">
+          <button type="button" class="active" id="creatorAdminBtn" onclick="setCreatorRole('Admin')">Admin</button>
+          <button type="button" id="creatorFacultyBtn" onclick="setCreatorRole('Faculty')">Faculty</button>
+        </div>
+        <div class="hint">Shown on the task list so students and staff can see who set the work.</div>
       </div>
 
       <div class="field">
@@ -265,7 +348,7 @@ tbody tr.task-row{cursor:pointer}
         <div id="attImageWrap" style="display:none">
           <input type="file" id="f_attach_image" accept="image/*" onchange="handleAttachImage(this)">
           <div class="hint" id="attImageHint">Image is converted to base64 and embedded directly in the task — no external hosting needed. Max ~4MB.</div>
-          <img id="attImagePreview" style="display:none;max-width:100%;margin-top:8px;border-radius:8px;border:1px solid #dde3f0">
+          <img id="attImagePreview" style="display:none;max-width:100%;margin-top:8px;border-radius:8px;border:1px solid var(--border)">
         </div>
       </div>
 
@@ -286,12 +369,22 @@ tbody tr.task-row{cursor:pointer}
       <div class="list-toolbar">
         <input type="search" id="taskSearch" placeholder="Search title or subject…" oninput="renderAdminTaskList()">
       </div>
+
+      <div class="filter-group-label">Status</div>
       <div class="task-filter-tabs">
         <button class="active" data-f="all" onclick="setAdminTaskFilter('all',this)">All</button>
         <button data-f="pending" onclick="setAdminTaskFilter('pending',this)">Not submitted</button>
         <button data-f="submitted" onclick="setAdminTaskFilter('submitted',this)">Submitted</button>
         <button data-f="graded" onclick="setAdminTaskFilter('graded',this)">Graded</button>
       </div>
+
+      <div class="filter-group-label">Created by</div>
+      <div class="task-filter-tabs creator-tabs">
+        <button class="active" data-cf="all" onclick="setCreatorFilter('all',this)">All Creators</button>
+        <button data-cf="Admin" onclick="setCreatorFilter('Admin',this)">Admin Tasks</button>
+        <button data-cf="Faculty" onclick="setCreatorFilter('Faculty',this)">Faculty Tasks</button>
+      </div>
+
       <div id="taskListWrap"><div class="empty">Loading…</div></div>
     </div>
   </div>
@@ -316,7 +409,7 @@ tbody tr.task-row{cursor:pointer}
      attachment_link, description, target_mode, target_class_name,
      who_create_at, created_at, target_school_id (jsonb)
 
-   `attachment_link` now doubles as a generic "question payload":
+   `attachment_link` doubles as a generic "question payload":
      - a normal http(s) URL  -> treated as a Link
      - "data:text/plain;charset=utf-8;base64,...."  -> a typed practice
        question, stored inline (decode + base64 the text client-side)
@@ -324,6 +417,11 @@ tbody tr.task-row{cursor:pointer}
        image, embedded inline as base64 (from <input type=file>)
    This keeps the existing single `attachment_link` column doing all
    three jobs, so nothing changes schema-side.
+
+   `who_create_at` doubles as "role - name", e.g. "Admin - Priya S."
+   or "Faculty - Karthik R.". No schema change needed — the role
+   is just a prefix that the UI parses back out for the creator badge
+   and the "Created by" filter tabs.
 
    Because `tasks` has no student_ids/batch_id column, the jsonb
    `target_school_id` column is reused as a generic "audience" array:
@@ -379,13 +477,17 @@ let targetMode = "students"; // 'students' | 'class' | 'school'
 let selectedType = "Assignment";
 let adminTasks = [];
 let submissionsByTask = {};  // task_id -> array (cache, loaded lazily on expand)
-let adminTaskFilter = "all";
+let adminTaskFilter = "all";      // status filter: all | pending | submitted | graded
+let adminCreatorFilter = "all";   // creator filter: all | Admin | Faculty
 let editingTaskId = null;
 let expandedTaskId = null;
 
 /* Attachment / "practice question" picker state */
 let attachType = "link";       // 'link' | 'text' | 'image'
 let attachImageDataUrl = null; // set once an image is chosen + read
+
+/* Creator role state — defaults to whoever is signed in */
+let creatorRole = (window.__sessionKey === "faculty") ? "Faculty" : "Admin";
 
 document.querySelectorAll(".type-chip").forEach((el) => {
   el.addEventListener("click", () => {
@@ -405,6 +507,13 @@ function setTargetMode(mode) {
   $("schoolPicker").style.display = mode === "school" ? "block" : "none";
   if (mode === "class") updateClassAudienceHint();
   if (mode === "school") updateSchoolAudienceHint();
+}
+
+/* ---- Created-as role toggle ---- */
+function setCreatorRole(role) {
+  creatorRole = role;
+  $("creatorAdminBtn").classList.toggle("active", role === "Admin");
+  $("creatorFacultyBtn").classList.toggle("active", role === "Faculty");
 }
 
 /* ---- Attachment / practice-question type toggle ---- */
@@ -516,7 +625,23 @@ function attachmentPreviewHtml(link) {
     const txt = base64ToUtf8(b64);
     return `<div class="att-preview-box">${escapeHtml(txt)}</div>`;
   }
-  return `<a href="${escapeHtml(link)}" target="_blank" style="color:#185FA5">Open attachment link</a>`;
+  return `<a href="${escapeHtml(link)}" target="_blank" style="color:var(--blue)">Open attachment link</a>`;
+}
+
+/* ---- "Role - Name" parsing for who_create_at ---- */
+function parseCreator(who) {
+  if (!who) return { role: "Admin", name: "—" };
+  const m = String(who).match(/^\s*(Admin|Faculty)\s*-\s*(.*)$/i);
+  if (m) {
+    const role = m[1][0].toUpperCase() + m[1].slice(1).toLowerCase();
+    return { role, name: m[2].trim() || "—" };
+  }
+  return { role: "Admin", name: who };
+}
+function creatorBadgeHtml(who) {
+  const { role, name } = parseCreator(who);
+  const cls = role === "Faculty" ? "creator-faculty" : "creator-admin";
+  return `<span class="badge ${cls}">${escapeHtml(role)}</span> <span class="creator-name">${escapeHtml(name)}</span>`;
 }
 
 /* ---- Load students: SAME pattern as admin.html's loadPeople() ---- */
@@ -599,10 +724,10 @@ function filterStudentDropdown(val) {
   const list = !q ? studentPickerList : studentPickerList.filter((s) =>
     (s.name || "").toLowerCase().includes(q) || String(s.std_id).toLowerCase().includes(q));
   dd.innerHTML = !list.length
-    ? `<div class="student-dd-item" style="color:#94a3b8">No students found</div>`
+    ? `<div class="student-dd-item" style="color:var(--ink-soft)">No students found</div>`
     : list.slice(0, 30).map((s) => `
       <div class="student-dd-item" onclick="addStudent('${escapeHtml(s.std_id)}')">
-        <span>${escapeHtml(s.name)}</span><span style="color:#94a3b8">${escapeHtml(s.std_id)}</span>
+        <span>${escapeHtml(s.name)}</span><span style="color:var(--ink-soft)">${escapeHtml(s.std_id)}</span>
       </div>`).join("");
   dd.classList.add("open");
 }
@@ -636,7 +761,7 @@ function renderSelectedStudents() {
 function resetTaskForm() {
   editingTaskId = null;
   $("formTitle").textContent = "Assign a Task";
-  $("submitTaskBtn").innerHTML = `<i class="ti ti-send"></i> Assign Task`;
+  $("submitTaskBtn").innerHTML = `<i class="ti ti-send"></i> Save Assigment/Homework/Task/`;
   selectedStudentIds.clear();
   renderSelectedStudents();
   $("f_class_name").value = "";
@@ -652,6 +777,7 @@ function resetTaskForm() {
   attachImageDataUrl = null;
   $("attImagePreview").style.display = "none";
   setAttachType("link");
+  setCreatorRole(window.__sessionKey === "faculty" ? "Faculty" : "Admin");
   $("f_desc").value = "";
   $("formMsg").className = "msg";
   document.querySelectorAll(".type-chip").forEach((c) => c.classList.remove("sel"));
@@ -705,7 +831,7 @@ async function assignTask() {
     target_mode: targetMode,
     target_class_name,
     target_school_id,
-    who_create_at: window.__session.name || null,
+    who_create_at: `${creatorRole} - ${window.__session.name || "Unknown"}`,
   };
 
   const btn = $("submitTaskBtn");
@@ -744,6 +870,9 @@ async function editTask(taskId) {
   $("f_due_time").value = t.due_time || "";
   loadAttachmentIntoForm(t.attachment_link || "");
   $("f_desc").value = t.description || "";
+
+  const parsedCreator = parseCreator(t.who_create_at);
+  setCreatorRole(parsedCreator.role === "Faculty" ? "Faculty" : "Admin");
 
   document.querySelectorAll(".type-chip").forEach((c) => c.classList.toggle("sel", c.dataset.t === (t.task_type || "Assignment")));
   selectedType = t.task_type || "Assignment";
@@ -790,7 +919,14 @@ async function deleteAdminTask(taskId) {
 /* ---- Task list ---- */
 function setAdminTaskFilter(f, el) {
   adminTaskFilter = f;
-  document.querySelectorAll(".task-filter-tabs button").forEach((b) => b.classList.remove("active"));
+  document.querySelectorAll(".task-filter-tabs:not(.creator-tabs) button").forEach((b) => b.classList.remove("active"));
+  el.classList.add("active");
+  renderAdminTaskList();
+}
+
+function setCreatorFilter(f, el) {
+  adminCreatorFilter = f;
+  document.querySelectorAll(".task-filter-tabs.creator-tabs button").forEach((b) => b.classList.remove("active"));
   el.classList.add("active");
   renderAdminTaskList();
 }
@@ -804,7 +940,7 @@ async function loadAdminTasks() {
     adminTasks = Array.isArray(rows) ? rows : [];
     renderAdminTaskList();
   } catch (e) {
-    box.innerHTML = `<div class="empty" style="color:#dc2626">Could not load tasks: ${escapeHtml(e.message)}</div>`;
+    box.innerHTML = `<div class="empty" style="color:var(--red)">Could not load tasks: ${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -832,13 +968,17 @@ function renderAdminTaskList() {
   if (!adminTasks.length) { box.innerHTML = `<div class="empty">No tasks assigned yet.</div>`; return; }
 
   const q = ($("taskSearch").value || "").toLowerCase().trim();
-  const tasksToShow = q
+  let tasksToShow = q
     ? adminTasks.filter((t) => [t.title, t.subject, t.task_type].filter(Boolean).join(" ").toLowerCase().includes(q))
     : adminTasks;
 
-  if (!tasksToShow.length) { box.innerHTML = `<div class="empty">No tasks match your search.</div>`; return; }
+  if (adminCreatorFilter !== "all") {
+    tasksToShow = tasksToShow.filter((t) => parseCreator(t.who_create_at).role === adminCreatorFilter);
+  }
 
-  box.innerHTML = `<table><thead><tr><th></th><th>Task</th><th>Target</th><th>Due</th><th>Progress</th><th></th></tr></thead><tbody>` +
+  if (!tasksToShow.length) { box.innerHTML = `<div class="empty">No tasks match your search/filters.</div>`; return; }
+
+  box.innerHTML = `<table><thead><tr><th></th><th>Task</th><th>Created by</th><th>Target</th><th>Due</th><th>Progress</th><th></th></tr></thead><tbody>` +
     tasksToShow.map((t) => {
       const audience = audienceForTask(t);
       const subs = submissionsByTask[t.id] || [];
@@ -851,15 +991,16 @@ function renderAdminTaskList() {
       const atypeLabel = attachmentTypeLabel(t.attachment_link);
 
       const expandRow = isOpen ? `
-        <tr class="sub-row"><td colspan="6">
+        <tr class="sub-row"><td colspan="7">
           ${t.attachment_link ? `<div style="margin-bottom:10px">${attachmentPreviewHtml(t.attachment_link)}</div>` : ""}
           ${renderSubmissionPanel(t, audience, subs)}
         </td></tr>` : "";
 
       return `
         <tr class="task-row" onclick="toggleExpandTask(${t.id}, event)">
-          <td><i class="ti ${isOpen ? "ti-chevron-down" : "ti-chevron-right"}" style="color:#94a3b8"></i></td>
-          <td><strong>${escapeHtml(t.title)}</strong><br><span style="color:#94a3b8;font-size:11px">${escapeHtml(t.task_type)} · ${escapeHtml(t.subject || "—")}</span>${atypeLabel ? `<span class="badge atype">${escapeHtml(atypeLabel)}</span>` : ""}</td>
+          <td><i class="ti ${isOpen ? "ti-chevron-down" : "ti-chevron-right"}" style="color:var(--ink-soft)"></i></td>
+          <td><strong>${escapeHtml(t.title)}</strong><br><span style="color:var(--ink-soft);font-size:11px">${escapeHtml(t.task_type)} · ${escapeHtml(t.subject || "—")}</span>${atypeLabel ? `<span class="badge atype">${escapeHtml(atypeLabel)}</span>` : ""}</td>
+          <td>${creatorBadgeHtml(t.who_create_at)}</td>
           <td>${targetLabel}</td>
           <td>${escapeHtml(t.due_date || "—")}${t.due_time ? " " + escapeHtml(t.due_time) : ""}</td>
           <td>${submittedCount}/${audience.length} submitted · ${gradedCount} graded</td>
@@ -908,10 +1049,10 @@ function renderSubmissionPanel(t, audience, subs) {
       (adminTaskFilter === "pending" && status === "notsubmitted");
     if (!filtered) return "";
     return `
-      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #eef2f7;flex-wrap:wrap">
-        <div style="min-width:170px">${escapeHtml(stu.name || stu.std_id)} <span style="color:#94a3b8">(${escapeHtml(stu.std_id)})</span></div>
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
+        <div style="min-width:170px">${escapeHtml(stu.name || stu.std_id)} <span style="color:var(--ink-soft)">(${escapeHtml(stu.std_id)})</span></div>
         <span class="badge ${status}">${status === "notsubmitted" ? "not submitted" : status}</span>
-        ${sub && sub.submission_link ? ` <a href="${escapeHtml(sub.submission_link)}" target="_blank" style="color:#185FA5">link</a>` : ""}
+        ${sub && sub.submission_link ? ` <a href="${escapeHtml(sub.submission_link)}" target="_blank" style="color:var(--blue)">link</a>` : ""}
         ${sub && sub.submission_text ? ` <span>"${escapeHtml(sub.submission_text.slice(0, 60))}${sub.submission_text.length > 60 ? "…" : ""}"</span>` : ""}
         <div class="grade-form">
           <input type="number" placeholder="Marks" id="marks_${t.id}_${escapeHtml(stu.std_id)}" value="${sub && sub.marks_obtained != null ? sub.marks_obtained : ""}">
@@ -951,6 +1092,7 @@ async function gradeSubmission(taskId, stdId) {
 
 /* ---- Boot ---- */
 (async () => {
+  setCreatorRole(creatorRole);
   await loadStudentDirectory();
   await loadStudentPicker();
   await loadClassesForTargeting();
